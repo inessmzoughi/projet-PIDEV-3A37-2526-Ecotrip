@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.controller.ListHebergementsController"
+            styleClass="root-pane"
+            stylesheets="@../css/ecotrip.css">
+
+    <left>
+        <VBox styleClass="sidebar" minWidth="240" maxWidth="240">
+            <HBox styleClass="sidebar-logo" alignment="CENTER_LEFT" spacing="12">
+                <Label text="🌿" styleClass="sidebar-logo-icon"/>
+                <VBox spacing="2">
+                    <Label text="EcoTrip" styleClass="brand-name"/>
+                    <Label text="Admin Panel" styleClass="brand-sub"/>
+                </VBox>
+            </HBox>
+            <VBox styleClass="nav-section" VBox.vgrow="ALWAYS">
+                <Label text="PRINCIPAL" styleClass="nav-label"/>
+                <Button text="  📊  Dashboard" styleClass="nav-item" maxWidth="Infinity"/>
+                <Label text="CONTENU" styleClass="nav-label"/>
+                <Button text="  🏨  Hébergements" styleClass="nav-item" maxWidth="Infinity" onAction="#onNavHebergements"/>
+                <Button text="      📋  Liste" styleClass="nav-item nav-sub-item nav-item-active" maxWidth="Infinity" onAction="#onNavHebergements"/>
+                <Button text="      🛏  Chambres" styleClass="nav-item nav-sub-item" maxWidth="Infinity" onAction="#onNavChambres"/>
+                <Button text="      🔧  Équipements" styleClass="nav-item nav-sub-item" maxWidth="Infinity" onAction="#onNavEquipements"/>
+                <Button text="      🏷  Catégories" styleClass="nav-item nav-sub-item" maxWidth="Infinity" onAction="#onNavCategories"/>
+                <Label text="GESTION" styleClass="nav-label"/>
+                <Button text="  📋  Réservations" styleClass="nav-item" maxWidth="Infinity"/>
+                <Button text="  👥  Utilisateurs" styleClass="nav-item" maxWidth="Infinity"/>
+            </VBox>
+            <VBox styleClass="sidebar-footer">
+                <Separator styleClass="sidebar-sep"/>
+                <HBox styleClass="sidebar-user" alignment="CENTER_LEFT" spacing="10">
+                    <Label text="IN" styleClass="avatar"/>
+                    <VBox>
+                        <Label text="Ines Mzoughi" styleClass="user-name"/>
+                        <Label text="Administrateur" styleClass="user-role"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+        </VBox>
+    </left>
+
+    <center>
+        <VBox styleClass="main-content">
+            <HBox styleClass="topbar" alignment="CENTER_LEFT" spacing="16">
+                <Label text="Gestion des Hébergements" styleClass="topbar-title" HBox.hgrow="ALWAYS"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="admin@ecotrip.tn" styleClass="topbar-email"/>
+                <Button text="Déconnexion" styleClass="btn-logout" onAction="#onLogout"/>
+            </HBox>
+
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane">
+                <VBox styleClass="page-body" spacing="24">
+                    <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
+
+                    <VBox spacing="4">
+                        <HBox spacing="4">
+                            <Label text="Dashboard" styleClass="breadcrumb-link"/>
+                            <Label text=" › " styleClass="breadcrumb-sep"/>
+                            <Label text="Hébergements" styleClass="breadcrumb-active"/>
+                        </HBox>
+                        <Label text="Hébergements" styleClass="page-title"/>
+                    </VBox>
+
+                    <!-- Stat Cards -->
+                    <HBox spacing="20">
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
+                            <HBox spacing="12" alignment="CENTER_LEFT">
+                                <Label text="🏨" styleClass="stat-icon stat-icon-green"/>
+                                <VBox spacing="2">
+                                    <Label text="Total Hébergements" styleClass="stat-label"/>
+                                    <Label fx:id="statTotal" text="0" styleClass="stat-value"/>
+                                    <Label text="↑ Mis à jour" styleClass="stat-sub"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
+                            <HBox spacing="12" alignment="CENTER_LEFT">
+                                <Label text="⭐" styleClass="stat-icon stat-icon-blue"/>
+                                <VBox spacing="2">
+                                    <Label text="Étoiles Moyennes" styleClass="stat-label"/>
+                                    <Label fx:id="statEtoiles" text="—" styleClass="stat-value"/>
+                                    <Label text="sur 5" styleClass="stat-sub"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
+                            <HBox spacing="12" alignment="CENTER_LEFT">
+                                <Label text="✅" styleClass="stat-icon stat-icon-orange"/>
+                                <VBox spacing="2">
+                                    <Label text="Hébergements Actifs" styleClass="stat-label"/>
+                                    <Label fx:id="statActif" text="—" styleClass="stat-value"/>
+                                    <Label text="en ligne" styleClass="stat-sub"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                    </HBox>
+
+                    <HBox alignment="TOP_LEFT" spacing="24">
+
+                        <!-- ── FORMULAIRE ── -->
+                        <VBox minWidth="380" maxWidth="380" spacing="0" styleClass="form-card">
+                            <HBox styleClass="form-card-header" alignment="CENTER_LEFT" spacing="14">
+                                <Label fx:id="formIcon" text="🏨" styleClass="form-icon"/>
+                                <VBox spacing="4">
+                                    <Label fx:id="formTitle" text="Nouvel Hébergement" styleClass="form-heading-title"/>
+                                    <Label fx:id="formSubtitle" text="Remplissez les informations ci-dessous." styleClass="form-heading-sub"/>
+                                </VBox>
+                            </HBox>
+
+                            <VBox styleClass="form-body" spacing="14">
+                                <padding><Insets top="20" right="20" bottom="16" left="20"/></padding>
+
+                                <!-- Nom -->
+                                <VBox spacing="5" styleClass="form-group">
+                                    <Label text="🏷️ Nom *" styleClass="form-label"/>
+                                    <TextField fx:id="nomField" promptText="Ex: Riad Dar Zitoun"
+                                               styleClass="form-input" onKeyReleased="#validateNom"/>
+                                    <Label fx:id="errNom" text="Le nom est requis."
+                                           styleClass="err-msg" managed="false" visible="false"/>
+                                </VBox>
+
+                                <!-- Ville -->
+                                <VBox spacing="5" styleClass="form-group">
+                                    <Label text="📍 Ville *" styleClass="form-label"/>
+                                    <TextField fx:id="villeField" promptText="Ex: Tunis"
+                                               styleClass="form-input" onKeyReleased="#validateVille"/>
+                                    <Label fx:id="errVille" text="La ville est requise."
+                                           styleClass="err-msg" managed="false" visible="false"/>
+                                </VBox>
+
+                                <!-- Adresse -->
+                                <VBox spacing="5" styleClass="form-group">
+                                    <Label text="🗺️ Adresse" styleClass="form-label"/>
+                                    <TextField fx:id="adresseField" promptText="Ex: 12 Rue de la Médina"
+                                               styleClass="form-input"/>
+                                </VBox>
+
+                                <!-- Étoiles + Catégorie -->
+                                <HBox spacing="12">
+                                    <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                        <Label text="⭐ Étoiles (1-5) *" styleClass="form-label"/>
+                                        <TextField fx:id="nbEtoilesField" promptText="Ex: 3"
+                                                   styleClass="form-input" onKeyReleased="#validateNbEtoiles"/>
+                                        <Label fx:id="errNbEtoiles" text="Valeur entre 1 et 5."
+                                               styleClass="err-msg" managed="false" visible="false"/>
+                                    </VBox>
+                                    <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                        <Label text="🏷 Catégorie *" styleClass="form-label"/>
+                                        <ComboBox fx:id="categorieCombo" promptText="Choisir…"
+                                                  styleClass="sort-select" maxWidth="Infinity"/>
+                                        <Label fx:id="errCategorie" text="Catégorie requise."
+                                               styleClass="err-msg" managed="false" visible="false"/>
+                                    </VBox>
+                                </HBox>
+
+                                <!-- Label Éco -->
+                                <VBox spacing="5" styleClass="form-group">
+                                    <Label text="🌿 Label Éco" styleClass="form-label"/>
+                                    <TextField fx:id="labelEcoField" promptText="Ex: Green Key"
+                                               styleClass="form-input"/>
+                                </VBox>
+
+                                <!-- Image Principale -->
+                                <VBox spacing="5" styleClass="form-group">
+                                    <Label text="🖼️ Image principale (URL)" styleClass="form-label"/>
+                                    <TextField fx:id="imagePrincipaleField" promptText="Ex: https://…"
+                                               styleClass="form-input"/>
+                                </VBox>
+
+                                <!-- Propriétaire -->
+                                <VBox spacing="5" styleClass="form-group">
+                                    <Label text="👤 Propriétaire" styleClass="form-label"/>
+                                    <ComboBox fx:id="propietaireCombo" promptText="Choisir un propriétaire…"
+                                              styleClass="sort-select" maxWidth="Infinity"/>
+                                    <Label fx:id="errPropietaire" text="Le propriétaire est requis."
+                                           styleClass="err-msg" managed="false" visible="false"/>
+                                </VBox>
+
+                                <!-- Statut -->
+                                <VBox spacing="5" styleClass="form-group">
+                                    <Label text="✅ Statut" styleClass="form-label"/>
+                                    <ComboBox fx:id="actifCombo" styleClass="sort-select" maxWidth="Infinity"/>
+                                </VBox>
+
+                                <!-- Latitude + Longitude -->
+                                <HBox spacing="12">
+                                    <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                        <Label text="🌐 Latitude" styleClass="form-label"/>
+                                        <TextField fx:id="latitudeField" promptText="Ex: 36.8065"
+                                                   styleClass="form-input"/>
+                                    </VBox>
+                                    <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                        <Label text="🌐 Longitude" styleClass="form-label"/>
+                                        <TextField fx:id="longitudeField" promptText="Ex: 10.1815"
+                                                   styleClass="form-input"/>
+                                    </VBox>
+                                </HBox>
+
+                                <!-- Description -->
+                                <VBox spacing="5" styleClass="form-group">
+                                    <Label text="📝 Description" styleClass="form-label"/>
+                                    <TextArea fx:id="descriptionField" promptText="Décrivez l'hébergement…"
+                                              styleClass="form-textarea" prefHeight="80"
+                                              wrapText="true" onKeyReleased="#updateCounter"/>
+                                    <Label fx:id="charCount" text="0 / 500 caractères" styleClass="char-count"/>
+                                </VBox>
+                            </VBox>
+
+                            <HBox styleClass="form-footer" alignment="CENTER_RIGHT" spacing="10">
+                                <Button text="↺ Réinitialiser" styleClass="btn-cancel" onAction="#onReset"/>
+                                <Button fx:id="submitBtn" text="➕ Ajouter" styleClass="btn-submit" onAction="#onSubmit"/>
+                            </HBox>
+                        </VBox>
+
+                        <!-- ── TABLE ── -->
+                        <VBox spacing="14" HBox.hgrow="ALWAYS">
+                            <HBox styleClass="action-bar" alignment="CENTER_LEFT" spacing="12">
+                                <HBox alignment="CENTER_LEFT" spacing="8" HBox.hgrow="ALWAYS">
+                                    <Label text="🏨 Tous les hébergements" styleClass="table-card-title"/>
+                                    <Label fx:id="badgeCount" text="0" styleClass="badge badge-green"/>
+                                </HBox>
+                                <HBox styleClass="search-wrap" alignment="CENTER_LEFT" spacing="6">
+                                    <Label text="🔍" styleClass="search-icon"/>
+                                    <TextField fx:id="searchField" promptText="Rechercher…"
+                                               styleClass="search-input" onKeyReleased="#onSearch" prefWidth="200"/>
+                                </HBox>
+                                <ComboBox fx:id="sortCombo" promptText="Trier par…"
+                                          styleClass="sort-select" onAction="#onSort" prefWidth="160"/>
+                            </HBox>
+
+                            <VBox styleClass="table-card" spacing="0" VBox.vgrow="ALWAYS">
+                                <TableView fx:id="tableView" styleClass="main-table" VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn fx:id="colIndex"     text="#"         prefWidth="45"/>
+                                        <TableColumn fx:id="colNom"       text="Nom"       prefWidth="160"/>
+                                        <TableColumn fx:id="colVille"     text="Ville"     prefWidth="110"/>
+                                        <TableColumn fx:id="colNbEtoiles" text="Étoiles"   prefWidth="90"/>
+                                        <TableColumn fx:id="colLabelEco"  text="Label Éco" prefWidth="110"/>
+                                        <TableColumn fx:id="colActif"     text="Statut"    prefWidth="90"/>
+                                        <TableColumn fx:id="colActions"   text="Actions"   prefWidth="160"/>
+                                    </columns>
+                                    <placeholder>
+                                        <VBox alignment="CENTER" spacing="8" styleClass="empty-state">
+                                            <Label text="🔍" styleClass="empty-icon"/>
+                                            <Label text="Aucun hébergement trouvé." styleClass="empty-label"/>
+                                        </VBox>
+                                    </placeholder>
+                                </TableView>
+                                <HBox fx:id="paginationBar" styleClass="pagination-bar"
+                                      alignment="CENTER_LEFT" spacing="8">
+                                    <Label fx:id="pagInfo" text="" styleClass="pag-info" HBox.hgrow="ALWAYS"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <HBox fx:id="pagButtons" spacing="4"/>
+                                </HBox>
+                            </VBox>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </ScrollPane>
+        </VBox>
+    </center>
+</BorderPane>

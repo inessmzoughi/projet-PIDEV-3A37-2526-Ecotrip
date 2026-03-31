@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane styleClass="root-pane" stylesheets="@../css/ecotrip.css"
+            xmlns="http://javafx.com/javafx/25"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.controller.CategoriesHebergementController">
+
+    <!-- ═══ SIDEBAR ═══ -->
+    <left>
+        <VBox maxWidth="240" minWidth="240" styleClass="sidebar">
+            <HBox alignment="CENTER_LEFT" spacing="12" styleClass="sidebar-logo">
+                <Label styleClass="sidebar-logo-icon" text="🌿"/>
+                <VBox spacing="2">
+                    <Label styleClass="brand-name" text="EcoTrip"/>
+                    <Label styleClass="brand-sub" text="Admin Panel"/>
+                </VBox>
+            </HBox>
+            <VBox styleClass="nav-section" VBox.vgrow="ALWAYS">
+                <Label styleClass="nav-label" text="PRINCIPAL"/>
+                <Button maxWidth="Infinity" styleClass="nav-item" text="  📊  Dashboard"/>
+                <Label styleClass="nav-label" text="CONTENU"/>
+                <Button maxWidth="Infinity" onAction="#onNavHebergements" styleClass="nav-item" text="  🏨  Hébergements"/>
+                <Button maxWidth="Infinity" onAction="#onNavHebergements" styleClass="nav-item nav-sub-item" text="      📋  Liste"/>
+                <Button maxWidth="Infinity" onAction="#onNavChambres" styleClass="nav-item nav-sub-item" text="      🛏  Chambres"/>
+                <Button maxWidth="Infinity" onAction="#onNavEquipements" styleClass="nav-item nav-sub-item" text="      🔧  Équipements"/>
+                <Button maxWidth="Infinity" styleClass="nav-item nav-sub-item nav-item-active" text="      🏷  Catégories"/>
+                <Label styleClass="nav-label" text="GESTION"/>
+                <Button maxWidth="Infinity" styleClass="nav-item" text="  📋  Réservations"/>
+                <Button maxWidth="Infinity" styleClass="nav-item" text="  👥  Utilisateurs"/>
+            </VBox>
+            <VBox styleClass="sidebar-footer">
+                <Separator styleClass="sidebar-sep"/>
+                <HBox alignment="CENTER_LEFT" spacing="10" styleClass="sidebar-user">
+                    <Label styleClass="avatar" text="IN"/>
+                    <VBox>
+                        <Label styleClass="user-name" text="Ines Mzoughi"/>
+                        <Label styleClass="user-role" text="Administrateur"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+        </VBox>
+    </left>
+
+    <!-- ═══ CENTER ═══ -->
+    <center>
+        <VBox styleClass="main-content">
+
+            <!-- Topbar -->
+            <HBox alignment="CENTER_LEFT" spacing="16" styleClass="topbar">
+                <Label styleClass="topbar-title" text="🏷️ Catégories Hébergement" HBox.hgrow="ALWAYS"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label styleClass="topbar-email" text="admin@ecotrip.tn"/>
+                <Button onAction="#onLogout" styleClass="btn-logout" text="Déconnexion"/>
+            </HBox>
+
+            <ScrollPane fitToWidth="true" styleClass="scroll-pane" VBox.vgrow="ALWAYS">
+                <VBox spacing="24" styleClass="page-body">
+                    <padding><Insets bottom="32" left="32" right="32" top="32"/></padding>
+
+                    <!-- Breadcrumb -->
+                    <VBox spacing="4">
+                        <HBox spacing="4">
+                            <Label styleClass="breadcrumb-link" text="Dashboard"/>
+                            <Label styleClass="breadcrumb-sep" text=" › "/>
+                            <Label onMouseClicked="#onNavHebergements" styleClass="breadcrumb-link" text="Hébergements"/>
+                            <Label styleClass="breadcrumb-sep" text=" › "/>
+                            <Label styleClass="breadcrumb-active" text="Catégories"/>
+                        </HBox>
+                        <Label styleClass="page-title" text="Catégories d'Hébergement"/>
+                    </VBox>
+
+                    <!-- Stat Cards -->
+                    <HBox spacing="20">
+                        <VBox spacing="8" styleClass="stat-card" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT" spacing="12">
+                                <Label styleClass="stat-icon stat-icon-green" text="🏷️"/>
+                                <VBox spacing="2">
+                                    <Label styleClass="stat-label" text="Total Catégories"/>
+                                    <Label fx:id="statTotal" styleClass="stat-value" text="0"/>
+                                    <Label styleClass="stat-sub" text="créées"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                        <VBox spacing="8" styleClass="stat-card" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT" spacing="12">
+                                <Label styleClass="stat-icon stat-icon-blue" text="🏨"/>
+                                <VBox spacing="2">
+                                    <Label styleClass="stat-label" text="Hébergements classés"/>
+                                    <Label fx:id="statHeb" styleClass="stat-value" text="0"/>
+                                    <Label styleClass="stat-sub" text="associés"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                        <VBox spacing="8" styleClass="stat-card" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT" spacing="12">
+                                <Label styleClass="stat-icon stat-icon-orange" text="🌟"/>
+                                <VBox spacing="2">
+                                    <Label styleClass="stat-label" text="Catégorie la + utilisée"/>
+                                    <Label fx:id="statTop" styleClass="stat-value-sm" text="—"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Two-column layout -->
+                    <HBox alignment="TOP_LEFT" spacing="24">
+
+                        <!-- ── FORMULAIRE ── -->
+                        <VBox maxWidth="360" minWidth="360" spacing="0" styleClass="form-card cat-form-card">
+
+                            <!-- Header avec preview icône -->
+                            <HBox alignment="CENTER_LEFT" spacing="14" styleClass="cat-form-header">
+                                <Label fx:id="formPreviewIcon" styleClass="cat-form-preview-icon" text="🏷️"/>
+                                <Label fx:id="formTitle" styleClass="cat-form-title" text="Nouvelle Catégorie"/>
+                            </HBox>
+
+                            <VBox spacing="16" styleClass="form-body">
+                                <padding><Insets bottom="16" left="22" right="22" top="22"/></padding>
+
+                                <!-- Nom -->
+                                <VBox spacing="5" styleClass="form-group">
+                                    <Label styleClass="form-label" text="Nom *"/>
+                                    <TextField fx:id="nomField" onKeyReleased="#onNomChanged"
+                                               promptText="Ex: Hôtel de luxe" styleClass="form-input"/>
+                                    <Label fx:id="errNom" managed="false" styleClass="err-msg"
+                                           text="Le nom est requis." visible="false"/>
+                                </VBox>
+
+                                <!-- Description -->
+                                <VBox spacing="5" styleClass="form-group">
+                                    <Label styleClass="form-label" text="Description"/>
+                                    <TextArea fx:id="descField" prefHeight="80"
+                                              promptText="Décrivez cette catégorie…"
+                                              styleClass="form-textarea" wrapText="true"/>
+                                </VBox>
+
+                                <!-- ✅ Sélecteur d'icône -->
+                                <VBox spacing="6" styleClass="form-group">
+                                    <Label styleClass="form-label" text="🎨 Icône"/>
+                                    <FlowPane fx:id="iconGrid" hgap="6" vgap="6"
+                                              styleClass="icon-picker-pane"/>
+                                </VBox>
+
+                                <!-- ✅ Sélecteur de couleur -->
+                                <VBox spacing="6" styleClass="form-group">
+                                    <Label styleClass="form-label" text="🎨 Couleur"/>
+                                    <FlowPane fx:id="colorGrid" hgap="6" vgap="6"
+                                              styleClass="color-picker-pane"/>
+                                </VBox>
+
+                            </VBox>
+
+                            <HBox alignment="CENTER_RIGHT" spacing="10" styleClass="form-footer">
+                                <Button onAction="#onReset" styleClass="btn-cancel" text="↺ Réinitialiser"/>
+                                <Button onAction="#AjouterCategorie" styleClass="btn-submit" text="💾 Enregistrer"/>
+                            </HBox>
+                        </VBox>
+
+                        <!-- ── LISTE CARTES ── -->
+                        <VBox spacing="14" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT" spacing="12">
+                                <HBox alignment="CENTER_LEFT" spacing="8" HBox.hgrow="ALWAYS">
+                                    <Label styleClass="table-card-title" text="🏷️ Catégories"/>
+                                    <Label fx:id="badgeCount" styleClass="badge badge-green" text="0"/>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="6" styleClass="search-wrap">
+                                    <Label styleClass="search-icon" text="🔍"/>
+                                    <TextField fx:id="searchField" onKeyReleased="#onSearch"
+                                               prefWidth="200" promptText="Rechercher…"
+                                               styleClass="search-input"/>
+                                </HBox>
+                            </HBox>
+
+                            <FlowPane fx:id="catCardsPane" hgap="16" prefWrapLength="600"
+                                      styleClass="cat-cards-flow" vgap="16"/>
+
+                            <VBox fx:id="emptyState" alignment="CENTER" managed="false"
+                                  spacing="8" styleClass="empty-state" visible="false">
+                                <Label styleClass="empty-icon" text="🔍"/>
+                                <Label styleClass="empty-label" text="Aucune catégorie trouvée."/>
+                            </VBox>
+                        </VBox>
+                    </HBox>
+
+                </VBox>
+            </ScrollPane>
+        </VBox>
+    </center>
+</BorderPane>
