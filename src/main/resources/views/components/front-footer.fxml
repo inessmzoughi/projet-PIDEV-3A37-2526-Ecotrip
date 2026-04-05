@@ -1,14 +1,95 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="CONTROLLER_NAME"
-            prefHeight="400.0" prefWidth="600.0">
+<VBox spacing="20"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.controller.component.FrontFooterController"
+      styleClass="footer-area"
+      padding="20">
 
-</AnchorPane>
+    <GridPane hgap="30" vgap="20">
+
+        <!-- ABOUT -->
+        <VBox spacing="10" GridPane.columnIndex="0">
+            <Label text="À Propos EcoTrip" styleClass="footer_title"/>
+            <Label wrapText="true"
+                   text="EcoTrip est votre compagnon de voyage pour découvrir la Tunisie de manière responsable et durable..."/>
+        </VBox>
+
+        <!-- NAVIGATION -->
+        <VBox spacing="10" GridPane.columnIndex="1">
+            <Label text="Navigation" styleClass="footer_title"/>
+
+            <HBox spacing="20">
+                <VBox spacing="5">
+                    <Hyperlink text="Accueil" onAction="#goHome"/>
+                    <Hyperlink text="Hébergement" onAction="#goHebergement"/>
+                    <Hyperlink text="Activités" onAction="#goActivites"/>
+                    <Hyperlink text="Transport" onAction="#goTransport"/>
+                </VBox>
+
+                <VBox spacing="5">
+                    <Hyperlink text="Boutique" onAction="#goBoutique"/>
+                    <Hyperlink text="À Propos" onAction="#goAbout"/>
+                    <Hyperlink text="Contact" onAction="#goContact"/>
+
+                    <!-- dynamic login/logout -->
+                    <Hyperlink fx:id="authLink" onAction="#handleAuth"/>
+                </VBox>
+            </HBox>
+        </VBox>
+
+        <!-- NEWSLETTER -->
+        <VBox spacing="10" GridPane.columnIndex="2">
+            <Label text="Newsletter Écologique" styleClass="footer_title"/>
+
+            <Label wrapText="true"
+                   text="Recevez nos meilleures offres d'activités écologiques..."/>
+
+            <HBox spacing="5">
+                <TextField fx:id="emailField" promptText="Votre adresse email"/>
+                <Button text="Envoyer" onAction="#handleSubscribe"/>
+            </HBox>
+
+            <Label fx:id="infoLabel" styleClass="small-text"/>
+        </VBox>
+
+        <!-- SOCIAL + CONTACT -->
+        <VBox spacing="10" GridPane.columnIndex="3">
+            <Label text="Suivez-nous" styleClass="footer_title"/>
+
+            <HBox spacing="10">
+                <Button text="Facebook" onAction="#openFacebook"/>
+                <Button text="Instagram" onAction="#openInstagram"/>
+                <Button text="Twitter" onAction="#openTwitter"/>
+                <Button text="YouTube" onAction="#openYoutube"/>
+            </HBox>
+
+            <Label text="Contact" styleClass="footer_title"/>
+
+            <VBox spacing="5">
+                <Label text="+216 99950854"/>
+                <Label text="contact@ecotrip.tn"/>
+                <Label text="Tunis, Tunisie"/>
+            </VBox>
+        </VBox>
+
+    </GridPane>
+
+    <Separator/>
+
+    <!-- BOTTOM -->
+    <HBox spacing="20">
+        <Label text="© 2026 EcoTrip Tunisie - Tourisme Responsable et Durable"
+               HBox.hgrow="ALWAYS"/>
+
+        <HBox spacing="10">
+            <Button text="Facebook" onAction="#openFacebook"/>
+            <Button text="Instagram" onAction="#openInstagram"/>
+        </HBox>
+    </HBox>
+
+</VBox>

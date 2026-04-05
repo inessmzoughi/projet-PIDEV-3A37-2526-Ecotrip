@@ -1,14 +1,140 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.shape.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="CONTROLLER_NAME"
-            prefHeight="400.0" prefWidth="600.0">
+<!-- Only {% block body %} content — front-shell provides navbar + footer -->
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.controller.front.HomeController"
+      spacing="0">
 
-</AnchorPane>
+    <!-- ══ BANNER AREA ══════════════════════════════════════ -->
+    <VBox styleClass="banner-area" alignment="CENTER" spacing="0">
+
+        <!-- Hero text -->
+        <VBox styleClass="banner-content" alignment="CENTER" spacing="16">
+            <Label text="LOIN DE LA VIE MONOTONE" styleClass="banner-sub"/>
+            <Label text="Détendez Votre Esprit"   styleClass="banner-title"/>
+            <Label text="Découvrez la Tunisie de manière responsable et durable. Des expériences écologiques authentiques qui respectent l'environnement."
+                   styleClass="banner-desc" wrapText="true"/>
+            <Button text="COMMENCER"
+                    onAction="#handleCommencer"
+                    styleClass="btn-theme"/>
+        </VBox>
+
+        <!-- Booking form bar -->
+        <HBox styleClass="booking-bar" alignment="CENTER_LEFT" spacing="16">
+            <VBox alignment="CENTER_LEFT" spacing="4">
+                <Label text="RÉSERVEZ VOTRE CHAMBRE" styleClass="booking-title"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <VBox spacing="6" alignment="CENTER_LEFT">
+                <Label text="Date d'arrivée" styleClass="booking-label"/>
+                <DatePicker fx:id="checkInPicker" styleClass="booking-date" promptText="Arrivée"/>
+            </VBox>
+            <VBox spacing="6" alignment="CENTER_LEFT">
+                <Label text="Date de départ" styleClass="booking-label"/>
+                <DatePicker fx:id="checkOutPicker" styleClass="booking-date" promptText="Départ"/>
+            </VBox>
+            <VBox spacing="6" alignment="CENTER_LEFT">
+                <Label text="Voyageurs" styleClass="booking-label"/>
+                <ComboBox fx:id="guestCombo" styleClass="booking-combo"
+                          promptText="Adulte"/>
+            </VBox>
+            <VBox spacing="6" alignment="CENTER_LEFT">
+                <Label text="Chambres" styleClass="booking-label"/>
+                <ComboBox fx:id="roomCombo" styleClass="booking-combo"
+                          promptText="1 chambre"/>
+            </VBox>
+            <Button text="RÉSERVER MAINTENANT"
+                    onAction="#handleBookNow"
+                    styleClass="btn-theme btn-book"/>
+        </HBox>
+    </VBox>
+
+    <!-- ══ ACCOMMODATION AREA ════════════════════════════════ -->
+    <VBox styleClass="section-gap" spacing="32" alignment="CENTER">
+        <VBox alignment="CENTER" spacing="10">
+            <Label text="Hébergement à l'hôtel" styleClass="section-title"/>
+            <Label text="Nous vivons dans une époque moderne où tout va très vite."
+                   styleClass="section-sub"/>
+        </VBox>
+        <HBox spacing="20" alignment="CENTER" fx:id="roomsContainer">
+            <!-- Room cards built programmatically in controller -->
+        </HBox>
+    </VBox>
+
+    <!-- ══ FACILITIES AREA (dark bg) ════════════════════════ -->
+    <VBox styleClass="facilities-area section-gap" spacing="32" alignment="CENTER">
+        <VBox alignment="CENTER" spacing="10">
+            <Label text="Services de luxe" styleClass="section-title-white"/>
+            <Label text="Pour ceux qui aiment mélanger entre les voyages de luxe et les aventures en pleine nature."
+                   styleClass="section-sub-white" wrapText="true"/>
+        </VBox>
+        <GridPane hgap="24" vgap="24" alignment="CENTER">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="33.33"/>
+                <ColumnConstraints percentWidth="33.33"/>
+                <ColumnConstraints percentWidth="33.33"/>
+            </columnConstraints>
+            <!-- Row 1 -->
+            <VBox styleClass="facility-item" GridPane.columnIndex="0" GridPane.rowIndex="0" spacing="10">
+                <Label text="🍽" styleClass="facility-icon"/>
+                <Label text="Restaurant" styleClass="facility-title"/>
+                <Label text="Profitez de restaurants de haute qualité proposant une cuisine locale et internationale."
+                       styleClass="facility-desc" wrapText="true"/>
+            </VBox>
+            <VBox styleClass="facility-item" GridPane.columnIndex="1" GridPane.rowIndex="0" spacing="10">
+                <Label text="🏊" styleClass="facility-icon"/>
+                <Label text="Piscine" styleClass="facility-title"/>
+                <Label text="Détendez-vous dans des piscines luxueuses avec une vue magnifique."
+                       styleClass="facility-desc" wrapText="true"/>
+            </VBox>
+            <VBox styleClass="facility-item" GridPane.columnIndex="2" GridPane.rowIndex="0" spacing="10">
+                <Label text="🚌" styleClass="facility-icon"/>
+                <Label text="Transport" styleClass="facility-title"/>
+                <Label text="Un service de transport disponible pour faciliter vos déplacements."
+                       styleClass="facility-desc" wrapText="true"/>
+            </VBox>
+            <!-- Row 2 -->
+            <VBox styleClass="facility-item" GridPane.columnIndex="0" GridPane.rowIndex="1" spacing="10">
+                <Label text="🛍" styleClass="facility-icon"/>
+                <Label text="Boutique" styleClass="facility-title"/>
+                <Label text="Des boutiques spécialisées avec tout le matériel pour votre voyage."
+                       styleClass="facility-desc" wrapText="true"/>
+            </VBox>
+            <VBox styleClass="facility-item" GridPane.columnIndex="1" GridPane.rowIndex="1" spacing="10">
+                <Label text="🏔" styleClass="facility-icon"/>
+                <Label text="Aventures" styleClass="facility-title"/>
+                <Label text="Destinations naturelles : montagne, mer, désert et plages vierges."
+                       styleClass="facility-desc" wrapText="true"/>
+            </VBox>
+        </GridPane>
+    </VBox>
+
+    <!-- ══ ABOUT AREA ════════════════════════════════════════ -->
+    <HBox styleClass="section-gap about-area" spacing="48" alignment="CENTER">
+        <VBox spacing="20" HBox.hgrow="ALWAYS" maxWidth="480">
+            <Label text="À propos" styleClass="about-overtitle"/>
+            <Label text="Notre histoire\nMission &amp; Vision" styleClass="about-title" wrapText="true"/>
+            <Label text="Notre site offre des voyages de luxe et des aventures. Notre objectif est d'offrir une expérience unique qui combine confort et découverte de l'environnement. La Tunisie est un pays riche en paysages naturels : plages vierges, montagnes, désert et sites touristiques exceptionnels."
+                   styleClass="about-desc" wrapText="true"/>
+            <Button text="Découvrir" onAction="#handleDecouvrir" styleClass="btn-theme-outline"/>
+        </VBox>
+        <Rectangle fx:id="aboutImage"
+                   width="420" height="300"
+                   styleClass="about-image-placeholder"
+                   arcWidth="16" arcHeight="16"/>
+    </HBox>
+
+    <!-- ══ TESTIMONIALS ══════════════════════════════════════ -->
+    <VBox styleClass="section-gap" spacing="32" alignment="CENTER">
+        <VBox alignment="CENTER" spacing="10">
+            <Label text="Témoignages de nos clients" styleClass="section-title"/>
+            <Label text="Découvrez ce que nos clients pensent de nos services."
+                   styleClass="section-sub"/>
+        </VBox>
+        <HBox fx:id="testimonialsContainer" spacing="20" alignment="CENTER"/>
+    </VBox>
+
+</VBox>

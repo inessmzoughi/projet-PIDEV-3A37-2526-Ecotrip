@@ -1,4 +1,4 @@
-package org.example.controller;
+package org.example.controller.back.hebergement;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

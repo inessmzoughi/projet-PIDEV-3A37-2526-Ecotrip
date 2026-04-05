@@ -1,0 +1,148 @@
+/* ── Page background ───────────────────────────────── */
+.auth-page {
+    -fx-background-color: #f0f4ed;
+    -fx-padding: 40;
+}
+
+/* ── Brand ─────────────────────────────────────────── */
+.brand-circle {
+    -fx-fill: #2d5016;
+}
+.brand-name {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d5016;
+}
+
+/* ── Card ──────────────────────────────────────────── */
+.auth-card {
+    -fx-background-color: white;
+    -fx-border-color: #dde8d4;
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 32 36 28 36;
+    -fx-max-width: 420;
+    -fx-min-width: 380;
+}
+
+.auth-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d5016;
+    -fx-alignment: CENTER;
+    -fx-max-width: Infinity;
+    -fx-padding: 0 0 22 0;
+}
+
+/* ── Alerts ────────────────────────────────────────── */
+.auth-alert-error {
+    -fx-background-color: #fde8e8;
+    -fx-text-fill: #9b1c1c;
+    -fx-border-color: #fca5a5;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 10 14 10 14;
+    -fx-font-size: 13px;
+    -fx-max-width: Infinity;
+    -fx-margin: 0 0 16 0;
+}
+.auth-alert-success {
+    -fx-background-color: #f0fdf4;
+    -fx-text-fill: #166534;
+    -fx-border-color: #86efac;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 10 14 10 14;
+    -fx-font-size: 13px;
+    -fx-max-width: Infinity;
+}
+
+/* ── Form fields ───────────────────────────────────── */
+.auth-field {
+    -fx-padding: 0 0 14 0;
+}
+
+.field-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #374151;
+}
+
+.auth-input {
+    -fx-background-color: #fafcf8;
+    -fx-border-color: #d1ddc8;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 10 14 10 14;
+    -fx-font-size: 14px;
+    -fx-text-fill: #1a202c;
+}
+.auth-input:focused {
+    -fx-border-color: #2d5016;
+    -fx-effect: dropshadow(gaussian, rgba(45,80,22,0.15), 6, 0, 0, 0);
+}
+
+/* ── Checkbox ──────────────────────────────────────── */
+.auth-checkbox {
+    -fx-font-size: 13px;
+    -fx-text-fill: #4a5568;
+    -fx-padding: 0 0 18 0;
+}
+.auth-checkbox .box {
+    -fx-border-color: #d1ddc8;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+.auth-checkbox:selected .mark {
+    -fx-background-color: #2d5016;
+}
+
+/* ── Login button ──────────────────────────────────── */
+.btn-login {
+    -fx-background-color: #2d5016;
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-padding: 12 0 12 0;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+.btn-login:hover   { -fx-background-color: #1e4620; }
+.btn-login:pressed { -fx-background-color: #163515; }
+.btn-login:disabled {
+    -fx-background-color: #9ab88a;
+    -fx-text-fill: white;
+}
+
+/* ── Divider ───────────────────────────────────────── */
+.auth-divider {
+    -fx-padding: 18 0 14 0;
+    -fx-border-color: #e8efe0;
+}
+
+/* ── Bottom links ──────────────────────────────────── */
+.auth-hint {
+    -fx-font-size: 13px;
+    -fx-text-fill: #4a5568;
+}
+.auth-sep {
+    -fx-font-size: 13px;
+    -fx-text-fill: #cbd5c0;
+}
+.btn-link {
+    -fx-background-color: transparent;
+    -fx-text-fill: #2d5016;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 0;
+    -fx-border-width: 0;
+}
+.btn-link:hover {
+    -fx-underline: true;
+}

@@ -12,10 +12,10 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane styleClass="root-pane" stylesheets="@../css/ecotrip.css"
+<BorderPane styleClass="root-pane" stylesheets="@../../../styles/ecotrip.css"
             xmlns="http://javafx.com/javafx/25"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.example.controller.CategoriesHebergementController">
+            fx:controller="org.example.controller.back.hebergement.CategoriesHebergementController">
 
     <!-- ═══ SIDEBAR ═══ -->
     <left>

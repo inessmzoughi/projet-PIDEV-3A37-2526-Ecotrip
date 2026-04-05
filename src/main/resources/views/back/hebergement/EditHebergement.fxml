@@ -5,9 +5,9 @@
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.controller.AddHebergementController"
+            fx:controller="org.example.controller.back.hebergement.EditHebergementController"
             styleClass="root-pane"
-            stylesheets="@../css/ecotrip.css">
+            stylesheets="@../../../styles/ecotrip.css">
 
     <left>
         <VBox styleClass="sidebar" minWidth="240" maxWidth="240">
@@ -44,7 +44,7 @@
     <center>
         <VBox styleClass="main-content">
             <HBox styleClass="topbar" alignment="CENTER_LEFT">
-                <Label text="Ajouter un Hébergement" styleClass="topbar-title" HBox.hgrow="ALWAYS"/>
+                <Label text="Modifier un Hébergement" styleClass="topbar-title" HBox.hgrow="ALWAYS"/>
                 <Region HBox.hgrow="ALWAYS"/>
                 <Label text="admin@ecotrip.tn" styleClass="topbar-email"/>
                 <Button text="Déconnexion" styleClass="btn-logout" onAction="#onLogout"/>
@@ -61,19 +61,19 @@
                                 <Label text=" › " styleClass="breadcrumb-sep"/>
                                 <Label text="Hébergements" styleClass="breadcrumb-link" onMouseClicked="#onNavHebergements"/>
                                 <Label text=" › " styleClass="breadcrumb-sep"/>
-                                <Label text="Ajouter" styleClass="breadcrumb-active"/>
+                                <Label text="Modifier" styleClass="breadcrumb-active"/>
                             </HBox>
-                            <Label text="Ajouter un Hébergement" styleClass="page-title"/>
+                            <Label text="Modifier l'Hébergement" styleClass="page-title"/>
                         </VBox>
                         <Button text="← Retour" styleClass="btn-back" onAction="#onNavHebergements"/>
                     </HBox>
 
                     <VBox styleClass="form-card" spacing="0">
                         <HBox styleClass="form-card-header" alignment="CENTER_LEFT" spacing="16">
-                            <Label text="🏨" styleClass="form-icon"/>
+                            <Label text="✏️" styleClass="form-icon"/>
                             <VBox spacing="4">
-                                <Label text="Nouvel Hébergement" styleClass="form-heading-title"/>
-                                <Label text="Remplissez les informations pour créer un nouvel hébergement." styleClass="form-heading-sub"/>
+                                <Label text="Modifier l'Hébergement" styleClass="form-heading-title"/>
+                                <Label text="Mettez à jour les informations de l'hébergement." styleClass="form-heading-sub"/>
                             </VBox>
                         </HBox>
 
@@ -83,15 +83,13 @@
                             <HBox spacing="20">
                                 <VBox HBox.hgrow="ALWAYS" spacing="6" styleClass="form-group">
                                     <Label text="🏷️ Nom *" styleClass="form-label"/>
-                                    <TextField fx:id="nomField" promptText="Ex: Riad Dar Zitoun"
-                                               styleClass="form-input" onKeyReleased="#validateNom"/>
+                                    <TextField fx:id="nomField" styleClass="form-input" onKeyReleased="#validateNom"/>
                                     <Label fx:id="errNom" text="Le nom est requis."
                                            styleClass="err-msg" managed="false" visible="false"/>
                                 </VBox>
                                 <VBox HBox.hgrow="ALWAYS" spacing="6" styleClass="form-group">
                                     <Label text="📍 Ville *" styleClass="form-label"/>
-                                    <TextField fx:id="villeField" promptText="Ex: Tunis"
-                                               styleClass="form-input" onKeyReleased="#validateVille"/>
+                                    <TextField fx:id="villeField" styleClass="form-input" onKeyReleased="#validateVille"/>
                                     <Label fx:id="errVille" text="La ville est requise."
                                            styleClass="err-msg" managed="false" visible="false"/>
                                 </VBox>
@@ -100,21 +98,18 @@
                             <HBox spacing="20">
                                 <VBox HBox.hgrow="ALWAYS" spacing="6" styleClass="form-group">
                                     <Label text="🗺️ Adresse" styleClass="form-label"/>
-                                    <TextField fx:id="adresseField" promptText="Ex: 12 Rue de la Médina"
-                                               styleClass="form-input"/>
+                                    <TextField fx:id="adresseField" styleClass="form-input"/>
                                 </VBox>
                                 <VBox HBox.hgrow="ALWAYS" spacing="6" styleClass="form-group">
                                     <Label text="🌿 Label Éco" styleClass="form-label"/>
-                                    <TextField fx:id="labelEcoField" promptText="Ex: Green Key"
-                                               styleClass="form-input"/>
+                                    <TextField fx:id="labelEcoField" styleClass="form-input"/>
                                 </VBox>
                             </HBox>
 
                             <HBox spacing="20">
                                 <VBox HBox.hgrow="ALWAYS" spacing="6" styleClass="form-group">
                                     <Label text="⭐ Nb Étoiles (1-5) *" styleClass="form-label"/>
-                                    <TextField fx:id="nbEtoilesField" promptText="Ex: 3"
-                                               styleClass="form-input" onKeyReleased="#validateNbEtoiles"/>
+                                    <TextField fx:id="nbEtoilesField" styleClass="form-input" onKeyReleased="#validateNbEtoiles"/>
                                     <Label fx:id="errNbEtoiles" text="Valeur entre 1 et 5 requise."
                                            styleClass="err-msg" managed="false" visible="false"/>
                                 </VBox>
@@ -130,8 +125,7 @@
                             <!-- Image Principale -->
                             <VBox spacing="6" styleClass="form-group">
                                 <Label text="🖼️ Image principale (URL)" styleClass="form-label"/>
-                                <TextField fx:id="imagePrincipaleField" promptText="Ex: https://…"
-                                           styleClass="form-input"/>
+                                <TextField fx:id="imagePrincipaleField" styleClass="form-input"/>
                             </VBox>
 
                             <!-- Propriétaire -->
@@ -152,28 +146,26 @@
                             <HBox spacing="20">
                                 <VBox HBox.hgrow="ALWAYS" spacing="6" styleClass="form-group">
                                     <Label text="🌐 Latitude" styleClass="form-label"/>
-                                    <TextField fx:id="latitudeField" promptText="Ex: 36.8065"
-                                               styleClass="form-input"/>
+                                    <TextField fx:id="latitudeField" styleClass="form-input"/>
                                 </VBox>
                                 <VBox HBox.hgrow="ALWAYS" spacing="6" styleClass="form-group">
                                     <Label text="🌐 Longitude" styleClass="form-label"/>
-                                    <TextField fx:id="longitudeField" promptText="Ex: 10.1815"
-                                               styleClass="form-input"/>
+                                    <TextField fx:id="longitudeField" styleClass="form-input"/>
                                 </VBox>
                             </HBox>
 
                             <VBox spacing="6" styleClass="form-group">
                                 <Label text="📝 Description" styleClass="form-label"/>
-                                <TextArea fx:id="descriptionField" promptText="Décrivez l'hébergement…"
-                                          styleClass="form-textarea" prefHeight="120"
-                                          wrapText="true" onKeyReleased="#updateCounter"/>
+                                <TextArea fx:id="descriptionField" styleClass="form-textarea"
+                                          prefHeight="120" wrapText="true" onKeyReleased="#updateCounter"/>
                                 <Label fx:id="charCount" text="0 / 500 caractères" styleClass="char-count"/>
                             </VBox>
                         </VBox>
 
                         <HBox styleClass="form-footer" alignment="CENTER_RIGHT" spacing="12">
                             <Button text="Annuler" styleClass="btn-cancel" onAction="#onNavHebergements"/>
-                            <Button text="➕ Ajouter l'hébergement" styleClass="btn-submit" onAction="#onSubmit"/>
+                            <Button text="💾 Enregistrer les modifications"
+                                    styleClass="btn-submit" onAction="#onSubmit"/>
                         </HBox>
                     </VBox>
                 </VBox>

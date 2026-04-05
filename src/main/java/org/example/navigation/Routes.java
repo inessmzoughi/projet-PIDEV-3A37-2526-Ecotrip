@@ -17,6 +17,7 @@ public class Routes {
     public static final String MON_COMPTE     = "mon-compte";
 
     // ── Back Office (ADMIN role) ─────────────────────────────
+    public static final String ADMIN_ADD_HEBERGEMENT     = "admin-add-hebergement";
     public static final String ADMIN_DASHBOARD    = "admin-dashboard";
     public static final String ADMIN_ACTIVITES    = "admin-activites";
     public static final String ADMIN_HEBERGEMENTS = "admin-hebergements";

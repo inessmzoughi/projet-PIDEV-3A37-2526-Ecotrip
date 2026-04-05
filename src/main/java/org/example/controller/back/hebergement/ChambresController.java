@@ -1,4 +1,4 @@
-package org.example.controller;
+package org.example.controller.back.hebergement;
 
 import javafx.scene.layout.VBox;
 import org.example.models.Chambre;
@@ -349,7 +349,7 @@ public class ChambresController implements Initializable {
         ButtonType confirm = new ButtonType("Supprimer", ButtonBar.ButtonData.OK_DONE);
         alert.getButtonTypes().setAll(cancel, confirm);
         alert.getDialogPane().getStylesheets().add(
-                getClass().getResource("/css/ecotrip.css").toExternalForm());
+                getClass().getResource("/styles/ecotrip.css").toExternalForm());
         alert.showAndWait().filter(b -> b == confirm).ifPresent(b -> {
             try {
                 service.supprimer(c.getId());
@@ -389,7 +389,7 @@ public class ChambresController implements Initializable {
         Alert a = new Alert(type, msg, ButtonType.OK);
         a.setTitle(title);
         a.getDialogPane().getStylesheets().add(
-                getClass().getResource("/css/ecotrip.css").toExternalForm());
+                getClass().getResource("/styles/ecotrip.css").toExternalForm());
         a.showAndWait();
     }
 }

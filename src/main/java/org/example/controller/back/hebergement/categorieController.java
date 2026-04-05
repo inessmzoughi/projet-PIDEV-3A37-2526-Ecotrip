@@ -1,4 +1,4 @@
-package org.example.controller;
+package org.example.controller.back.hebergement;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -6,7 +6,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.AnchorPane;
 import org.example.models.Categorie_hebergement;
 import org.example.services.CategorieH_service;

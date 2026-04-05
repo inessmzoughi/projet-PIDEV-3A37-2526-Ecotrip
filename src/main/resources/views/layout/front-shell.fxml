@@ -19,8 +19,8 @@
     </center>
 
     <!-- BOTTOM: Footer (mirrors your footer.html.twig) -->
-    <bottom>
-        <fx:include fx:id="footer" source="../components/front-footer.fxml"/>
-    </bottom>
+<!--    <bottom>-->
+<!--        <fx:include fx:id="footer" source="../components/front-footer.fxml"/>-->
+<!--    </bottom>-->
 
 </BorderPane>

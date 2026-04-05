@@ -1,4 +1,4 @@
-package org.example.controller;
+package org.example.controller.back.hebergement;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -18,7 +18,7 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.*;
 
-public class AddHebergementController implements Initializable {
+public class EditHebergementController implements Initializable {
 
     @FXML private TextField        nomField;
     @FXML private TextField        villeField;
@@ -40,6 +40,7 @@ public class AddHebergementController implements Initializable {
     @FXML private Label errPropietaire;
     @FXML private Label charCount;
 
+    private Hebergement hebergement;
     private final Hebergement_service service          = new Hebergement_service();
     private final CategorieH_service  categorieService = new CategorieH_service();
 
@@ -48,13 +49,9 @@ public class AddHebergementController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // ✅ actif
         actifCombo.setItems(FXCollections.observableArrayList("Actif", "Inactif"));
-        actifCombo.getSelectionModel().selectFirst();
-
         loadCategories();
         loadPropietaires();
-        updateCounter();
     }
 
     private void loadCategories() {
@@ -87,10 +84,38 @@ public class AddHebergementController implements Initializable {
                 noms.add(username);
             }
             propietaireCombo.setItems(FXCollections.observableArrayList(noms));
-            propietaireCombo.getSelectionModel().selectFirst();
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, "Impossible de charger les propriétaires : " + e.getMessage()).show();
         }
+    }
+
+    /* Appelé par ListHebergementsController pour injecter l'hébergement */
+    public void setHebergement(Hebergement h) {
+        this.hebergement = h;
+        nomField.setText(h.getNom());
+        villeField.setText(h.getVille());
+        if (adresseField         != null) adresseField.setText(h.getAdresse()           != null ? h.getAdresse()           : "");
+        nbEtoilesField.setText(String.valueOf(h.getNb_etoiles()));
+        if (labelEcoField        != null) labelEcoField.setText(h.getLabel_eco()         != null ? h.getLabel_eco()         : "");
+        if (imagePrincipaleField != null) imagePrincipaleField.setText(h.getImage_principale() != null ? h.getImage_principale() : "");
+        if (latitudeField        != null) latitudeField.setText(String.valueOf(h.getLatitude()));
+        if (longitudeField       != null) longitudeField.setText(String.valueOf(h.getLongitude()));
+        descriptionField.setText(h.getDescription() != null ? h.getDescription() : "");
+
+        // Catégorie
+        categorieMap.forEach((nom, id) -> { if (id == h.getCategorie_id()) categorieCombo.setValue(nom); });
+
+        // Propriétaire
+        if (h.getPropietaire_id() == 0) {
+            propietaireCombo.setValue("— Aucun —");
+        } else {
+            propietaireMap.forEach((nom, id) -> { if (id == h.getPropietaire_id()) propietaireCombo.setValue(nom); });
+        }
+
+        // ✅ Actif
+        actifCombo.setValue(h.getActif() == 1 ? "Actif" : "Inactif");
+
+        updateCounter();
     }
 
     /* ══════ VALIDATION ══════ */
@@ -125,7 +150,8 @@ public class AddHebergementController implements Initializable {
     private void onSubmit() {
         if (!validateAll()) return;
 
-        double lat = 0.0, lng = 0.0;
+        double lat = hebergement.getLatitude();
+        double lng = hebergement.getLongitude();
         try { lat = Double.parseDouble(latitudeField.getText().trim());  } catch (NumberFormatException ignored) {}
         try { lng = Double.parseDouble(longitudeField.getText().trim()); } catch (NumberFormatException ignored) {}
 
@@ -134,23 +160,21 @@ public class AddHebergementController implements Initializable {
                 propietaireCombo.getValue() != null ? propietaireCombo.getValue() : "— Aucun —", 0);
         int actif = "Actif".equals(actifCombo.getValue()) ? 1 : 0;
 
-        Hebergement h = new Hebergement(
-                0,
-                nomField.getText().trim(),
-                descriptionField.getText().trim(),
-                adresseField         != null ? adresseField.getText().trim()           : "",
-                villeField.getText().trim(),
-                Integer.parseInt(nbEtoilesField.getText().trim()),
-                imagePrincipaleField != null ? imagePrincipaleField.getText().trim()   : "",
-                labelEcoField        != null ? labelEcoField.getText().trim()          : "",
-                lat, lng,
-                actif,
-                categorieId,
-                propietaireId
-        );
+        hebergement.setNom(nomField.getText().trim());
+        hebergement.setVille(villeField.getText().trim());
+        if (adresseField         != null) hebergement.setAdresse(adresseField.getText().trim());
+        hebergement.setNb_etoiles(Integer.parseInt(nbEtoilesField.getText().trim()));
+        hebergement.setCategorie_id(categorieId);
+        if (labelEcoField        != null) hebergement.setLabel_eco(labelEcoField.getText().trim());
+        if (imagePrincipaleField != null) hebergement.setImage_principale(imagePrincipaleField.getText().trim());
+        hebergement.setLatitude(lat);
+        hebergement.setLongitude(lng);
+        hebergement.setActif(actif);
+        hebergement.setDescription(descriptionField.getText().trim());
+        hebergement.setPropietaire_id(propietaireId);
 
         try {
-            service.ajouter(h);
+            service.modifier(hebergement);
             navigateToList();
         } catch (SQLException e) {
             new Alert(Alert.AlertType.ERROR, "Erreur SQL : " + e.getMessage()).show();
@@ -163,7 +187,7 @@ public class AddHebergementController implements Initializable {
 
     private void navigateToList() {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/fxml/ListHebergements.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/views/back/hebergement/ListHebergements.fxml"));
             Stage stage = (Stage) nomField.getScene().getWindow();
             stage.setScene(new Scene(root, stage.getWidth(), stage.getHeight()));
             stage.setTitle("EcoTrip Admin — Hébergements");

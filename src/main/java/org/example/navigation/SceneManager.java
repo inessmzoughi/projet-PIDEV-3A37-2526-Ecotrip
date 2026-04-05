@@ -45,6 +45,7 @@ public class SceneManager {
         frontRoutes.put(Routes.MES_RESERVATIONS,  "/views/front/mes-reservations.fxml");
         frontRoutes.put(Routes.MON_COMPTE,        "/views/front/mon-compte.fxml");
 
+        backRoutes.put(Routes.ADMIN_ADD_HEBERGEMENT, "/views/back/AddHebergement.fxml");
         backRoutes.put(Routes.ADMIN_DASHBOARD,    "/views/back/dashboard.fxml");
         backRoutes.put(Routes.ADMIN_ACTIVITES,    "/views/back/activites.fxml");
         backRoutes.put(Routes.ADMIN_HEBERGEMENTS, "/views/back/hebergements.fxml");

@@ -27,7 +27,7 @@ public class UserRepository {
     }
 
     public User save(User user) {
-        String sql = "INSERT INTO user (username, email, password, roles) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO user (username, email, password, roles, is_verified ) VALUES (?, ?, ?, ?, ?)";
         try {
             PreparedStatement stmt = Base.getInstance().getConnection().prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
@@ -35,6 +35,7 @@ public class UserRepository {
             stmt.setString(2, user.getEmail());
             stmt.setString(3, user.getPassword()); // already hashed
             stmt.setString(4, user.getRoles().toString());
+            stmt.setBoolean(5,true);
             stmt.executeUpdate();
             System.out.println("User saved");
 
@@ -52,7 +53,7 @@ public class UserRepository {
         u.setUsername(rs.getString("username"));
         u.setEmail(rs.getString("email"));
         u.setPassword(rs.getString("password"));
-        u.setRoles(Role.valueOf(rs.getString("role")));
+        u.setRoles(Role.valueOf(rs.getString("roles")));
         return u;
     }
 }

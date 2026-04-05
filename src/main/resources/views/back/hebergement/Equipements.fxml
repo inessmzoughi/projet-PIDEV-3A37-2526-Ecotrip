@@ -5,9 +5,9 @@
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.controller.EquipementsController"
+            fx:controller="org.example.controller.back.hebergement.EquipementsController"
             styleClass="root-pane"
-            stylesheets="@../css/ecotrip.css">
+            stylesheets="@../../../styles/ecotrip.css">
 
     <!-- ═══ SIDEBAR ═══ -->
     <left>

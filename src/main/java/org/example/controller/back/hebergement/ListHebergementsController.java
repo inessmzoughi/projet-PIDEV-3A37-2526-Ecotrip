@@ -1,4 +1,4 @@
-package org.example.controller;
+package org.example.controller.back.hebergement;
 
 import org.example.models.Categorie_hebergement;
 import org.example.models.Hebergement;

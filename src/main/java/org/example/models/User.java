@@ -13,7 +13,7 @@ public class User {
     private String address;
     private String telephone;
     private String image;
-    private JsonArray face_descriptor;
+    private String face_descriptor;
     public User (){};
     public User(int id, String username, String email, String password) {
         this.id = id;
@@ -81,8 +81,8 @@ public class User {
     public void setImage(String image) {
         this.image = image;
     }
-    public String getFace_descriptor() { return face_descriptor.toString();}
-    public void setFace_descriptor(JsonArray face_descriptor) {
+    public String getFace_descriptor() { return face_descriptor;}
+    public void setFace_descriptor(String face_descriptor) {
         this.face_descriptor = face_descriptor;
     }
 }

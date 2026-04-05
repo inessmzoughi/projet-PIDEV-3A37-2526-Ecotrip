@@ -1,20 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.geometry.*?>
+<?import javafx.scene.shape.*?>
 
-<VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.controller.auth.LoginController"
-      spacing="15" alignment="CENTER"
-      styleClass="login-container">
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="org.example.controller.auth.LoginController"
+           styleClass="auth-page">
 
-    <Label text="Welcome to EcoTrip" styleClass="title-label"/>
+    <VBox alignment="CENTER" spacing="0">
 
-    <TextField fx:id="emailField" promptText="Email"/>
-    <PasswordField fx:id="passwordField" promptText="Password"/>
+        <!-- Brand logo -->
+        <VBox alignment="CENTER" spacing="10" style="-fx-padding: 0 0 28 0;">
+            <Circle fx:id="logoCircle" radius="22" styleClass="brand-circle"/>
+            <Label text="EcoTrip" styleClass="brand-name"/>
+        </VBox>
 
-    <Label fx:id="errorLabel" styleClass="error-label"/>
+        <!-- Card -->
+        <VBox styleClass="auth-card" spacing="0">
 
-    <Button text="Login" onAction="#handleLogin" styleClass="btn-primary"/>
-    <Button text="Register" onAction="#handleRegister" styleClass="btn-secondary"/>
-</VBox>
+            <Label text="Connexion" styleClass="auth-title"/>
+
+            <!-- Error label (hidden by default) -->
+            <Label fx:id="errorLabel"
+                   styleClass="auth-alert-error"
+                   managed="false" visible="false"
+                   wrapText="true"/>
+
+            <!-- Success label (hidden by default) -->
+            <Label fx:id="successLabel"
+                   styleClass="auth-alert-success"
+                   managed="false" visible="false"
+                   wrapText="true"/>
+
+            <!-- Email field -->
+            <VBox styleClass="auth-field" spacing="6">
+                <Label text="Email" styleClass="field-label"/>
+                <TextField fx:id="emailField"
+                           promptText="votre@email.com"
+                           styleClass="auth-input"/>
+            </VBox>
+
+            <!-- Password field -->
+            <VBox styleClass="auth-field" spacing="6">
+                <Label text="Mot de passe" styleClass="field-label"/>
+                <PasswordField fx:id="passwordField"
+                               promptText="••••••••"
+                               styleClass="auth-input"/>
+            </VBox>
+
+            <!-- Remember me -->
+            <CheckBox fx:id="rememberMe"
+                      text="Se souvenir de moi"
+                      selected="true"
+                      styleClass="auth-checkbox"/>
+
+            <!-- Login button -->
+            <Button fx:id="loginButton"
+                    text="Se connecter"
+                    onAction="#handleLogin"
+                    styleClass="btn-login"
+                    maxWidth="Infinity"/>
+
+            <!-- Bottom links -->
+            <HBox alignment="CENTER" spacing="8" >
+                <Label text="Pas encore de compte ?" styleClass="auth-hint"/>
+                <Button text="S'inscrire"
+                        onAction="#handleRegister"
+                        styleClass="btn-link"/>
+                <Label text="|" styleClass="auth-sep"/>
+                <Button text="Mot de passe oublié ?"
+                        onAction="#handleForgotPassword"
+                        styleClass="btn-link"/>
+            </HBox>
+
+        </VBox>
+    </VBox>
+
+</StackPane>
