@@ -1,0 +1,214 @@
+/* Shell */
+.front-shell    { -fx-background-color: #f8f9fa; }
+.front-scroll   { -fx-background: transparent; -fx-background-color: transparent; }
+.front-content  { -fx-padding: 0; }
+
+/* Navbar */
+.front-navbar {
+    -fx-background-color: white;
+    -fx-padding: 12 32 12 32;
+    -fx-border-color: #e8ecef;
+    -fx-border-width: 0 0 1 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);
+}
+
+.navbar-logo {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d5016;
+}
+
+/* Nav buttons */
+.nav-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #444;
+    -fx-font-size: 14px;
+    -fx-padding: 8 14 8 14;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+.nav-btn:hover          { -fx-background-color: #f0f7ed; -fx-text-fill: #2d5016; }
+.nav-btn-active         { -fx-text-fill: #2d5016 !important; -fx-font-weight: bold; }
+.nav-btn-primary        { -fx-background-color: #2d5016; -fx-text-fill: white; -fx-background-radius: 8; }
+.nav-btn-primary:hover  { -fx-background-color: #1e4620; }
+.nav-btn-logout         { -fx-text-fill: #c0392b !important; }
+.nav-btn-logout:hover   { -fx-background-color: #fde8e8; }
+
+/* Footer */
+.front-footer {
+    -fx-background-color: #1a2e1a;
+    -fx-padding: 40 60 24 60;
+}
+.footer-title   { -fx-text-fill: #7ecba1; -fx-font-size: 14px; -fx-font-weight: bold; }
+.footer-text    { -fx-text-fill: #a8c5a0; -fx-font-size: 13px; }
+.footer-bottom  { -fx-text-fill: #6b9a6b; -fx-font-size: 12px; }
+/* ── Banner ─────────────────────────────────────────── */
+.banner-area {
+    -fx-background-color: #1a2e1a;
+    -fx-min-height: 420;
+}
+.banner-content {
+    -fx-padding: 80 60 40 60;
+    -fx-max-width: 700;
+}
+.banner-sub   { -fx-font-size: 13px; -fx-text-fill: #7ecba1; -fx-font-weight: bold; }
+.banner-title { -fx-font-size: 40px; -fx-font-weight: bold; -fx-text-fill: white; }
+.banner-desc  { -fx-font-size: 14px; -fx-text-fill: rgba(255,255,255,0.75); -fx-max-width: 560; -fx-text-alignment: CENTER; }
+
+/* ── Booking bar ─────────────────────────────────────── */
+.booking-bar {
+    -fx-background-color: white;
+    -fx-padding: 24 40 24 40;
+    -fx-border-color: #e8ecef;
+    -fx-border-width: 1 0 0 0;
+}
+.booking-title  { -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2d5016; }
+.booking-label  { -fx-font-size: 12px; -fx-text-fill: #64748b; }
+.booking-date   { -fx-pref-width: 150; }
+.booking-combo  { -fx-pref-width: 130; }
+.btn-book       { -fx-padding: 14 24 14 24; -fx-font-size: 13px; }
+
+/* ── Theme buttons ───────────────────────────────────── */
+.btn-theme {
+    -fx-background-color: #2d5016;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 12 24 12 24;
+    -fx-cursor: hand;
+}
+.btn-theme:hover { -fx-background-color: #1e4620; }
+
+.btn-theme-outline {
+    -fx-background-color: transparent;
+    -fx-text-fill: #2d5016;
+    -fx-border-color: #2d5016;
+    -fx-border-width: 2;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 10 24 10 24;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+.btn-theme-outline:hover { -fx-background-color: #f0f7ed; }
+
+/* ── Section shared ──────────────────────────────────── */
+.section-gap      { -fx-padding: 60 60 60 60; }
+.section-title    { -fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2d5016; }
+.section-sub      { -fx-font-size: 14px; -fx-text-fill: #64748b; }
+.section-title-white { -fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: white; }
+.section-sub-white   { -fx-font-size: 14px; -fx-text-fill: rgba(255,255,255,0.75); -fx-max-width: 500; -fx-text-alignment: CENTER; }
+
+/* ── Room cards ──────────────────────────────────────── */
+.room-card {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #e8ecef;
+    -fx-border-width: 1;
+    -fx-padding: 0 0 16 0;
+    -fx-pref-width: 220;
+}
+.room-img-placeholder { -fx-fill: #c0dd97; }
+.room-name  { -fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1a2e1a; -fx-padding: 8 12 0 12; }
+.room-price { -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2d5016; -fx-padding: 0 12 0 12; }
+
+/* ── Facilities ──────────────────────────────────────── */
+.facilities-area { -fx-background-color: #1a2e1a; }
+.facility-item   { -fx-padding: 20; }
+.facility-icon   { -fx-font-size: 28px; }
+.facility-title  { -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white; }
+.facility-desc   { -fx-font-size: 13px; -fx-text-fill: rgba(255,255,255,0.7); }
+
+/* ── About ───────────────────────────────────────────── */
+.about-area      { -fx-background-color: #f8faf5; -fx-padding: 60; }
+.about-overtitle { -fx-font-size: 14px; -fx-text-fill: #2d5016; -fx-font-weight: bold; }
+.about-title     { -fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #1a2e1a; }
+.about-desc      { -fx-font-size: 14px; -fx-text-fill: #4a5568; -fx-line-spacing: 4; }
+.about-image-placeholder { -fx-fill: #c0dd97; }
+
+/* ── Testimonials ────────────────────────────────────── */
+.testimonial-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #e8ecef;
+    -fx-border-width: 1;
+    -fx-padding: 24;
+    -fx-pref-width: 280;
+}
+.testimonial-text   { -fx-font-size: 13px; -fx-text-fill: #4a5568; -fx-font-style: italic; }
+.testimonial-author { -fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2d5016; }
+.star-filled        { -fx-font-size: 16px; -fx-text-fill: #f59e0b; }
+/* ROOT FOOTER */
+.footer-area {
+    -fx-background-color: #1f2a1f; /* dark green */
+    -fx-padding: 30;
+}
+
+/* TITLES */
+.footer_title {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+/* NORMAL TEXT */
+.label {
+    -fx-text-fill: #cccccc;
+    -fx-font-size: 13px;
+}
+
+/* SMALL TEXT */
+.small-text {
+    -fx-text-fill: #999999;
+    -fx-font-size: 11px;
+}
+
+/* LINKS */
+.hyperlink {
+    -fx-text-fill: #cccccc;
+    -fx-border-color: transparent;
+}
+
+.hyperlink:hover {
+    -fx-text-fill: #4a7c2e; /* eco green */
+}
+
+/* BUTTONS (SOCIAL + SUBMIT) */
+.button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #cccccc;
+    -fx-border-color: #4a7c2e;
+    -fx-border-radius: 5;
+    -fx-padding: 5 10;
+}
+
+.button:hover {
+    -fx-background-color: #4a7c2e;
+    -fx-text-fill: white;
+}
+
+/* TEXT FIELD (EMAIL INPUT) */
+.text-field {
+    -fx-background-color: #2c3a2c;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: #888888;
+    -fx-border-color: #4a7c2e;
+}
+
+/* SEPARATOR */
+.separator .line {
+    -fx-border-color: #3a4a3a;
+}
+
+/* BOTTOM TEXT */
+.footer-area .label {
+    -fx-text-fill: #aaaaaa;
+}
+
+/* HOVER EFFECT FOR SOCIAL BUTTONS */
+.button:hover {
+    -fx-cursor: hand;
+}

@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.chart.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.controller.back.DashboardController"
+            styleClass="dash-board" spacing="24">
+        <!-- HERO BANNER -->
+        <VBox styleClass="dash-hero" spacing="6">
+            <Label fx:id="heroTitle" text="Vue d'ensemble" styleClass="hero-title"/>
+            <Label text="Bienvenue sur le tableau de bord EcoTrip — gérez vos activités, hébergements, transports et boutique."
+                   styleClass="hero-subtitle" wrapText="true"/>
+        </VBox>
+
+        <!-- STATS GRID: 6 cards -->
+        <GridPane styleClass="stats-grid" hgap="16" vgap="16">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="16.66"/>
+                <ColumnConstraints percentWidth="16.66"/>
+                <ColumnConstraints percentWidth="16.66"/>
+                <ColumnConstraints percentWidth="16.66"/>
+                <ColumnConstraints percentWidth="16.66"/>
+                <ColumnConstraints percentWidth="16.66"/>
+            </columnConstraints>
+
+            <!-- Activités -->
+            <VBox styleClass="stat-card stat-green" GridPane.columnIndex="0" spacing="10">
+                <Label text="📅" styleClass="stat-icon"/>
+                <Label fx:id="statActivites" text="0" styleClass="stat-number"/>
+                <Label text="Activités" styleClass="stat-label"/>
+            </VBox>
+
+            <!-- Hébergements -->
+            <VBox styleClass="stat-card stat-blue" GridPane.columnIndex="1" spacing="10">
+                <Label text="🏨" styleClass="stat-icon"/>
+                <Label fx:id="statHebergements" text="0" styleClass="stat-number"/>
+                <Label text="Hébergements" styleClass="stat-label"/>
+            </VBox>
+
+            <!-- Transports -->
+            <VBox styleClass="stat-card stat-orange" GridPane.columnIndex="2" spacing="10">
+                <Label text="🚌" styleClass="stat-icon"/>
+                <Label fx:id="statTransports" text="0" styleClass="stat-number"/>
+                <Label text="Transports" styleClass="stat-label"/>
+            </VBox>
+
+            <!-- Produits -->
+            <VBox styleClass="stat-card stat-red" GridPane.columnIndex="3" spacing="10">
+                <Label text="🛍" styleClass="stat-icon"/>
+                <Label fx:id="statProduits" text="0" styleClass="stat-number"/>
+                <Label text="Produits" styleClass="stat-label"/>
+            </VBox>
+
+            <!-- Utilisateurs -->
+            <VBox styleClass="stat-card stat-purple" GridPane.columnIndex="4" spacing="10">
+                <Label text="👥" styleClass="stat-icon"/>
+                <Label fx:id="statUtilisateurs" text="0" styleClass="stat-number"/>
+                <Label text="Utilisateurs" styleClass="stat-label"/>
+            </VBox>
+
+            <!-- Réservations -->
+            <VBox styleClass="stat-card stat-teal" GridPane.columnIndex="5" spacing="10">
+                <Label text="📋" styleClass="stat-icon"/>
+                <Label fx:id="statReservations" text="0" styleClass="stat-number"/>
+                <Label text="Réservations" styleClass="stat-label"/>
+            </VBox>
+        </GridPane>
+
+        <!-- MODULE: ACTIVITÉS -->
+        <VBox styleClass="module-block" spacing="0">
+            <HBox styleClass="module-head" spacing="12" alignment="CENTER_LEFT">
+                <Label text="📅" styleClass="module-icon module-icon-green"/>
+                <Label text="Module Activités" styleClass="module-title"/>
+            </HBox>
+
+            <!-- Sub-stats row -->
+            <GridPane styleClass="module-stats-grid" hgap="12" vgap="0">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="25"/>
+                    <ColumnConstraints percentWidth="25"/>
+                    <ColumnConstraints percentWidth="25"/>
+                    <ColumnConstraints percentWidth="25"/>
+                </columnConstraints>
+                <VBox styleClass="module-stat" GridPane.columnIndex="0" spacing="4">
+                    <Label text="📅" styleClass="mstat-icon" style="-fx-text-fill:#16a34a;"/>
+                    <Label fx:id="mstatTotalActivites" text="0" styleClass="mstat-number"/>
+                    <Label text="Total Activités" styleClass="mstat-label"/>
+                    <Button text="Voir tout →" onAction="#handleViewActivites" styleClass="mstat-link"/>
+                </VBox>
+                <VBox styleClass="module-stat" GridPane.columnIndex="1" spacing="4">
+                    <Label text="✅" styleClass="mstat-icon" style="-fx-text-fill:#2563eb;"/>
+                    <Label fx:id="mstatActiveActivites" text="0" styleClass="mstat-number"/>
+                    <Label text="Activités Actives" styleClass="mstat-label"/>
+                </VBox>
+                <VBox styleClass="module-stat" GridPane.columnIndex="2" spacing="4">
+                    <Label text="🏷" styleClass="mstat-icon" style="-fx-text-fill:#ea580c;"/>
+                    <Label fx:id="mstatCategoriesActivites" text="0" styleClass="mstat-number"/>
+                    <Label text="Catégories" styleClass="mstat-label"/>
+                </VBox>
+                <VBox styleClass="module-stat" GridPane.columnIndex="3" spacing="4">
+                    <Label text="👤" styleClass="mstat-icon" style="-fx-text-fill:#7c3aed;"/>
+                    <Label fx:id="mstatGuides" text="0" styleClass="mstat-number"/>
+                    <Label text="Guides" styleClass="mstat-label"/>
+                </VBox>
+            </GridPane>
+
+            <!-- Two panels: recent items + quick actions -->
+            <GridPane hgap="16" vgap="0" style="-fx-padding: 16 0 0 0;">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="50"/>
+                    <ColumnConstraints percentWidth="50"/>
+                </columnConstraints>
+
+                <!-- Recent activités -->
+                <VBox styleClass="panel-card" GridPane.columnIndex="0" spacing="0">
+                    <Label text="⏱ Activités Récentes" styleClass="panel-title"/>
+                    <VBox fx:id="recentActivitesList" spacing="0"/>
+                </VBox>
+
+                <!-- Quick actions -->
+                <VBox styleClass="panel-card" GridPane.columnIndex="1" spacing="12">
+                    <Label text="⚡ Actions Rapides" styleClass="panel-title"/>
+                    <GridPane hgap="10" vgap="10">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="50"/>
+                        </columnConstraints>
+                        <Button text="+ Nouvelle Activité"   onAction="#handleNewActivite"   styleClass="action-btn action-primary"   maxWidth="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                        <Button text="+ Nouvelle Catégorie"  onAction="#handleNewCatActivite" styleClass="action-btn action-warning"   maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                        <Button text="+ Nouvel Horaire"      onAction="#handleNewHoraire"     styleClass="action-btn action-info"      maxWidth="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                        <Button text="+ Nouveau Guide"       onAction="#handleNewGuide"       styleClass="action-btn action-secondary" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                    </GridPane>
+                </VBox>
+            </GridPane>
+        </VBox>
+
+        <!-- MODULE: HÉBERGEMENT -->
+        <VBox styleClass="module-block" spacing="0">
+            <HBox styleClass="module-head" spacing="12" alignment="CENTER_LEFT">
+                <Label text="🏨" styleClass="module-icon module-icon-blue"/>
+                <Label text="Module Hébergement" styleClass="module-title"/>
+            </HBox>
+
+            <!-- Charts row (2x2) using JavaFX charts -->
+            <GridPane hgap="16" vgap="16" style="-fx-padding: 0 0 16 0;">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="50"/>
+                    <ColumnConstraints percentWidth="50"/>
+                </columnConstraints>
+
+                <VBox styleClass="chart-card" GridPane.columnIndex="0" GridPane.rowIndex="0" spacing="8">
+                    <Label text="Chambres par hébergement" styleClass="chart-title"/>
+                    <BarChart fx:id="chartChambres" styleClass="dash-chart"
+                              prefHeight="220" animated="false">
+                        <xAxis><CategoryAxis/></xAxis>
+                        <yAxis><NumberAxis/></yAxis>
+                    </BarChart>
+                </VBox>
+
+                <VBox styleClass="chart-card" GridPane.columnIndex="1" GridPane.rowIndex="0" spacing="8">
+                    <Label text="Hébergements par catégorie" styleClass="chart-title"/>
+                    <PieChart fx:id="chartHebPie" styleClass="dash-chart"
+                              prefHeight="220" animated="false" labelsVisible="false"/>
+                </VBox>
+            </GridPane>
+
+            <!-- Sub-stats -->
+            <GridPane styleClass="module-stats-grid" hgap="12">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="25"/>
+                    <ColumnConstraints percentWidth="25"/>
+                    <ColumnConstraints percentWidth="25"/>
+                    <ColumnConstraints percentWidth="25"/>
+                </columnConstraints>
+                <VBox styleClass="module-stat" GridPane.columnIndex="0" spacing="4">
+                    <Label text="🏨" styleClass="mstat-icon" style="-fx-text-fill:#2563eb;"/>
+                    <Label fx:id="mstatHebergements" text="0" styleClass="mstat-number"/>
+                    <Label text="Hébergements" styleClass="mstat-label"/>
+                </VBox>
+                <VBox styleClass="module-stat" GridPane.columnIndex="1" spacing="4">
+                    <Label text="🛏" styleClass="mstat-icon" style="-fx-text-fill:#16a34a;"/>
+                    <Label fx:id="mstatChambres" text="0" styleClass="mstat-number"/>
+                    <Label text="Chambres" styleClass="mstat-label"/>
+                </VBox>
+                <VBox styleClass="module-stat" GridPane.columnIndex="2" spacing="4">
+                    <Label text="⚙" styleClass="mstat-icon" style="-fx-text-fill:#ea580c;"/>
+                    <Label fx:id="mstatEquipements" text="0" styleClass="mstat-number"/>
+                    <Label text="Équipements" styleClass="mstat-label"/>
+                </VBox>
+                <VBox styleClass="module-stat" GridPane.columnIndex="3" spacing="4">
+                    <Label text="🏷" styleClass="mstat-icon" style="-fx-text-fill:#7c3aed;"/>
+                    <Label fx:id="mstatCategoriesHeb" text="0" styleClass="mstat-number"/>
+                    <Label text="Catégories" styleClass="mstat-label"/>
+                </VBox>
+            </GridPane>
+
+            <!-- Quick actions -->
+            <VBox styleClass="panel-card" style="-fx-padding: 16 0 0 0;" spacing="12">
+                <Label text="⚡ Actions Rapides" styleClass="panel-title"/>
+                <GridPane hgap="10" vgap="10">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="25"/>
+                        <ColumnConstraints percentWidth="25"/>
+                        <ColumnConstraints percentWidth="25"/>
+                        <ColumnConstraints percentWidth="25"/>
+                    </columnConstraints>
+                    <Button text="+ Nouvel Hébergement" onAction="#handleNewHeberg"    styleClass="action-btn action-primary"   maxWidth="Infinity" GridPane.columnIndex="0"/>
+                    <Button text="+ Nouvelle Chambre"   onAction="#handleNewChambre"   styleClass="action-btn action-warning"   maxWidth="Infinity" GridPane.columnIndex="1"/>
+                    <Button text="+ Nouvel Équipement"  onAction="#handleNewEquipement" styleClass="action-btn action-info"     maxWidth="Infinity" GridPane.columnIndex="2"/>
+                    <Button text="+ Nouvelle Catégorie" onAction="#handleNewCatHeberg" styleClass="action-btn action-secondary" maxWidth="Infinity" GridPane.columnIndex="3"/>
+                </GridPane>
+            </VBox>
+        </VBox>
+
+        <!-- MODULE: TRANSPORT -->
+        <VBox styleClass="module-block" spacing="0">
+            <HBox styleClass="module-head" spacing="12" alignment="CENTER_LEFT">
+                <Label text="🚌" styleClass="module-icon module-icon-orange"/>
+                <Label text="Module Transport" styleClass="module-title"/>
+            </HBox>
+
+            <GridPane styleClass="module-stats-grid" hgap="12">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="25"/>
+                    <ColumnConstraints percentWidth="25"/>
+                    <ColumnConstraints percentWidth="25"/>
+                    <ColumnConstraints percentWidth="25"/>
+                </columnConstraints>
+                <VBox styleClass="module-stat" GridPane.columnIndex="0" spacing="4">
+                    <Label text="🚌" styleClass="mstat-icon" style="-fx-text-fill:#ea580c;"/>
+                    <Label fx:id="mstatTransports" text="0" styleClass="mstat-number"/>
+                    <Label text="Total Transports" styleClass="mstat-label"/>
+                </VBox>
+                <VBox styleClass="module-stat" GridPane.columnIndex="1" spacing="4">
+                    <Label text="🏷" styleClass="mstat-icon" style="-fx-text-fill:#7c3aed;"/>
+                    <Label fx:id="mstatCategoriesTransport" text="0" styleClass="mstat-number"/>
+                    <Label text="Catégories" styleClass="mstat-label"/>
+                </VBox>
+                <VBox styleClass="module-stat" GridPane.columnIndex="2" spacing="4">
+                    <Label text="👤" styleClass="mstat-icon" style="-fx-text-fill:#2563eb;"/>
+                    <Label fx:id="mstatChauffeurs" text="0" styleClass="mstat-number"/>
+                    <Label text="Chauffeurs" styleClass="mstat-label"/>
+                </VBox>
+                <VBox styleClass="module-stat" GridPane.columnIndex="3" spacing="4">
+                    <Label text="🗺" styleClass="mstat-icon" style="-fx-text-fill:#16a34a;"/>
+                    <Label fx:id="mstatTrajets" text="0" styleClass="mstat-number"/>
+                    <Label text="Trajets" styleClass="mstat-label"/>
+                </VBox>
+            </GridPane>
+
+            <VBox styleClass="panel-card" style="-fx-padding: 16 0 0 0;" spacing="12">
+                <Label text="⚡ Actions Rapides" styleClass="panel-title"/>
+                <GridPane hgap="10" vgap="10">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="20"/>
+                        <ColumnConstraints percentWidth="20"/>
+                        <ColumnConstraints percentWidth="20"/>
+                        <ColumnConstraints percentWidth="20"/>
+                        <ColumnConstraints percentWidth="20"/>
+                    </columnConstraints>
+                    <Button text="+ Nouveau Transport"  onAction="#handleNewTransport"    styleClass="action-btn action-primary"   maxWidth="Infinity" GridPane.columnIndex="0"/>
+                    <Button text="+ Nouvelle Catégorie" onAction="#handleNewCatTransport"  styleClass="action-btn action-warning"   maxWidth="Infinity" GridPane.columnIndex="1"/>
+                    <Button text="+ Nouveau Chauffeur"  onAction="#handleNewChauffeur"     styleClass="action-btn action-info"      maxWidth="Infinity" GridPane.columnIndex="2"/>
+                    <Button text="+ Nouveau Trajet"     onAction="#handleNewTrajet"        styleClass="action-btn action-secondary" maxWidth="Infinity" GridPane.columnIndex="3"/>
+                    <Button text="Voir Transports"      onAction="#handleViewTransports"   styleClass="action-btn action-secondary" maxWidth="Infinity" GridPane.columnIndex="4"/>
+                </GridPane>
+            </VBox>
+        </VBox>
+
+        <!-- MODULE: BOUTIQUE -->
+        <VBox styleClass="module-block" spacing="0">
+            <HBox styleClass="module-head" spacing="12" alignment="CENTER_LEFT">
+                <Label text="🛍" styleClass="module-icon module-icon-red"/>
+                <Label text="Module Boutique" styleClass="module-title"/>
+            </HBox>
+
+            <GridPane styleClass="module-stats-grid" hgap="12">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="25"/>
+                    <ColumnConstraints percentWidth="25"/>
+                    <ColumnConstraints percentWidth="25"/>
+                    <ColumnConstraints percentWidth="25"/>
+                </columnConstraints>
+                <VBox styleClass="module-stat" GridPane.columnIndex="0" spacing="4">
+                    <Label text="🛍" styleClass="mstat-icon" style="-fx-text-fill:#dc2626;"/>
+                    <Label fx:id="mstatProduits" text="0" styleClass="mstat-number"/>
+                    <Label text="Total Produits" styleClass="mstat-label"/>
+                </VBox>
+                <VBox styleClass="module-stat" GridPane.columnIndex="1" spacing="4">
+                    <Label text="🏷" styleClass="mstat-icon" style="-fx-text-fill:#7c3aed;"/>
+                    <Label fx:id="mstatCategoriesBoutique" text="0" styleClass="mstat-number"/>
+                    <Label text="Catégories" styleClass="mstat-label"/>
+                </VBox>
+                <VBox styleClass="module-stat" GridPane.columnIndex="2" spacing="4">
+                    <Label text="🛒" styleClass="mstat-icon" style="-fx-text-fill:#2563eb;"/>
+                    <Label fx:id="mstatCommandes" text="0" styleClass="mstat-number"/>
+                    <Label text="Commandes" styleClass="mstat-label"/>
+                </VBox>
+                <VBox styleClass="module-stat" GridPane.columnIndex="3" spacing="4">
+                    <Label text="💳" styleClass="mstat-icon" style="-fx-text-fill:#16a34a;"/>
+                    <Label fx:id="mstatPaiements" text="0" styleClass="mstat-number"/>
+                    <Label text="Paiements" styleClass="mstat-label"/>
+                </VBox>
+            </GridPane>
+
+            <VBox styleClass="panel-card" style="-fx-padding: 16 0 0 0;" spacing="12">
+                <Label text="⚡ Actions Rapides" styleClass="panel-title"/>
+                <GridPane hgap="10" vgap="10">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="25"/>
+                        <ColumnConstraints percentWidth="25"/>
+                        <ColumnConstraints percentWidth="25"/>
+                        <ColumnConstraints percentWidth="25"/>
+                    </columnConstraints>
+                    <Button text="+ Nouveau Produit"    onAction="#handleNewProduit"    styleClass="action-btn action-primary"   maxWidth="Infinity" GridPane.columnIndex="0"/>
+                    <Button text="+ Nouvelle Catégorie" onAction="#handleNewCatBoutique" styleClass="action-btn action-warning"   maxWidth="Infinity" GridPane.columnIndex="1"/>
+                    <Button text="Commandes"            onAction="#handleViewCommandes"  styleClass="action-btn action-info"      maxWidth="Infinity" GridPane.columnIndex="2"/>
+                    <Button text="Paiements"            onAction="#handleViewPaiements"  styleClass="action-btn action-secondary" maxWidth="Infinity" GridPane.columnIndex="3"/>
+                </GridPane>
+            </VBox>
+        </VBox>
+
+        <!-- bottom padding -->
+        <Region prefHeight="20"/>
+</VBox>
