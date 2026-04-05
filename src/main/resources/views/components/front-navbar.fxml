@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+
+<HBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.controller.component.FrontNavbarController"
+      styleClass="front-navbar" alignment="CENTER_LEFT" spacing="0">
+
+    <!-- Logo -->
+    <HBox styleClass="navbar-brand" alignment="CENTER">
+        <Label text="🌿 EcoTrip" styleClass="navbar-logo"/>
+    </HBox>
+
+    <!-- Spacer -->
+    <Region HBox.hgrow="ALWAYS"/>
+
+    <!-- Nav links -->
+    <HBox styleClass="nav-links" spacing="4" alignment="CENTER">
+        <Button fx:id="homeBtn"        text="Home"            onAction="#handleHome"       styleClass="nav-btn"/>
+        <Button fx:id="aboutBtn"       text="À propos"        onAction="#handleAbout"      styleClass="nav-btn"/>
+        <Button fx:id="hebergBtn"      text="Hébergement"     onAction="#handleHeberg"     styleClass="nav-btn"/>
+        <Button fx:id="activitesBtn"   text="Activités"       onAction="#handleActivites"  styleClass="nav-btn"/>
+        <Button fx:id="transportBtn"   text="Transport"       onAction="#handleTransport"  styleClass="nav-btn"/>
+        <Button fx:id="boutiqueBtn"    text="Boutique"        onAction="#handleBoutique"   styleClass="nav-btn"/>
+        <Button fx:id="contactBtn"     text="Contact"         onAction="#handleContact"    styleClass="nav-btn"/>
+
+        <!-- Shown only when logged in -->
+        <Button fx:id="reservationsBtn" text="Mes réservations" onAction="#handleReservations" styleClass="nav-btn" visible="false" managed="false"/>
+        <Button fx:id="monCompteBtn"    text="Mon compte"        onAction="#handleMonCompte"    styleClass="nav-btn" visible="false" managed="false"/>
+        <Button fx:id="logoutBtn"       text="Déconnexion"       onAction="#handleLogout"       styleClass="nav-btn nav-btn-logout" visible="false" managed="false"/>
+        <Button fx:id="loginBtn"        text="Connexion"         onAction="#handleLogin"        styleClass="nav-btn nav-btn-primary"/>
+    </HBox>
+
+</HBox>

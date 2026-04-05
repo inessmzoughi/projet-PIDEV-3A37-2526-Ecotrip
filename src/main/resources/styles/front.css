@@ -1,0 +1,45 @@
+/* Shell */
+.front-shell    { -fx-background-color: #f8f9fa; }
+.front-scroll   { -fx-background: transparent; -fx-background-color: transparent; }
+.front-content  { -fx-padding: 0; }
+
+/* Navbar */
+.front-navbar {
+    -fx-background-color: white;
+    -fx-padding: 12 32 12 32;
+    -fx-border-color: #e8ecef;
+    -fx-border-width: 0 0 1 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);
+}
+
+.navbar-logo {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d5016;
+}
+
+/* Nav buttons */
+.nav-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #444;
+    -fx-font-size: 14px;
+    -fx-padding: 8 14 8 14;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+.nav-btn:hover          { -fx-background-color: #f0f7ed; -fx-text-fill: #2d5016; }
+.nav-btn-active         { -fx-text-fill: #2d5016 !important; -fx-font-weight: bold; }
+.nav-btn-primary        { -fx-background-color: #2d5016; -fx-text-fill: white; -fx-background-radius: 8; }
+.nav-btn-primary:hover  { -fx-background-color: #1e4620; }
+.nav-btn-logout         { -fx-text-fill: #c0392b !important; }
+.nav-btn-logout:hover   { -fx-background-color: #fde8e8; }
+
+/* Footer */
+.front-footer {
+    -fx-background-color: #1a2e1a;
+    -fx-padding: 40 60 24 60;
+}
+.footer-title   { -fx-text-fill: #7ecba1; -fx-font-size: 14px; -fx-font-weight: bold; }
+.footer-text    { -fx-text-fill: #a8c5a0; -fx-font-size: 13px; }
+.footer-bottom  { -fx-text-fill: #6b9a6b; -fx-font-size: 12px; }

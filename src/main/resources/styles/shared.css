@@ -1,0 +1,15 @@
+/* ── Brand tokens ─────────────────────────────────── */
+* { -fx-font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif; }
+
+.title-color   { -fx-text-fill: #2d5016; }
+.btn-primary   {
+    -fx-background-color: #2d5016;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-padding: 10 20 10 20;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
+}
+.btn-primary:hover { -fx-background-color: #1e4620; }
+
+.error-label { -fx-text-fill: #c0392b; -fx-font-size: 13px; }
