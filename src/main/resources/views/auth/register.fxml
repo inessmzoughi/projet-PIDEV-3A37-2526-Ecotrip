@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="org.example.controller.auth.RegisterController"
+      alignment="CENTER" spacing="16"
+      styleClass="auth-container">
+
+    <Label text="🌿 EcoTrip" styleClass="auth-logo"/>
+    <Label text="Create your account" styleClass="auth-subtitle"/>
+
+    <VBox styleClass="auth-form" spacing="12">
+        <TextField fx:id="usernameField" promptText="username"/>
+        <TextField fx:id="emailField"     promptText="Email address"/>
+        <PasswordField fx:id="passwordField"        promptText="Password"/>
+        <PasswordField fx:id="confirmPasswordField" promptText="Confirm password"/>
+        <Label fx:id="errorLabel" styleClass="error-label"/>
+        <Button text="Register" onAction="#handleRegister"
+                styleClass="btn-primary" maxWidth="Infinity"/>
+        <Button text="Already have an account? Login"
+                onAction="#handleLogin"
+                styleClass="btn-link" maxWidth="Infinity"/>
+    </VBox>
+</VBox>
