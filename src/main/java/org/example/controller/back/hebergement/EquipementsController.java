@@ -1,7 +1,9 @@
 package org.example.controller.back.hebergement;
 
 import org.example.models.Equipement;
-import org.example.services.Equipement_service;
+import org.example.navigation.Routes;
+import org.example.navigation.SceneManager;
+import org.example.services.hebergement.Equipement_service;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -285,11 +287,11 @@ public class EquipementsController implements Initializable {
     /* ══════════════════════════════════════════
        NAVIGATION
        ══════════════════════════════════════════ */
-    @FXML private void onNavHebergements() { navigateTo("ListHebergements.fxml",      "Hébergements"); }
+    @FXML private void onNavHebergements() { SceneManager.navigateTo(Routes.ADMIN_HEBERGEMENTS); }
     @FXML private void onNavChambres()     { navigateTo("Chambres.fxml",              "Chambres"); }
     @FXML private void onNavCategories()   { navigateTo("CategoriesHebergement.fxml", "Catégories"); }
     @FXML private void onLogout()          { System.exit(0); }
-
+    @FXML private void onNavDashboard() { SceneManager.navigateTo(Routes.ADMIN_DASHBOARD); }
     private void navigateTo(String fxml, String title) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/" + fxml));

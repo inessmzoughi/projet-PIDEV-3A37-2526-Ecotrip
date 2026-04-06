@@ -17,13 +17,19 @@ public class Routes {
     public static final String MON_COMPTE     = "mon-compte";
 
     // ── Back Office (ADMIN role) ─────────────────────────────
-    public static final String ADMIN_ADD_HEBERGEMENT     = "admin-add-hebergement";
+    //public static final String ADMIN_ADD_HEBERGEMENT     = "admin-add-hebergement";
     public static final String ADMIN_DASHBOARD    = "admin-dashboard";
     public static final String ADMIN_ACTIVITES    = "admin-activites";
-    public static final String ADMIN_HEBERGEMENTS = "admin-hebergements";
+    //public static final String ADMIN_HEBERGEMENTS = "admin-hebergements";
     public static final String ADMIN_TRANSPORT    = "admin-transport";
     public static final String ADMIN_BOUTIQUE     = "admin-boutique";
     public static final String ADMIN_RESERVATIONS = "admin-reservations";
     public static final String ADMIN_USERS        = "admin-users";
     public static final String ADMIN_MON_COMPTE   = "admin-mon-compte";
+    public static final String ADMIN_HEBERGEMENTS          = "admin-hebergements";
+    public static final String ADMIN_ADD_HEBERGEMENT       = "admin-add-hebergement";
+    public static final String ADMIN_EDIT_HEBERGEMENT      = "admin-edit-hebergement";
+    public static final String ADMIN_CATEGORIES_HEBERGEMENT = "admin-categories-hebergement";
+    public static final String ADMIN_CHAMBRES              = "admin-chambres";
+    public static final String ADMIN_EQUIPEMENTS           = "admin-equipements";
 }
