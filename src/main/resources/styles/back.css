@@ -188,9 +188,53 @@
     -fx-background-color: white;
     -fx-background-radius: 16;
     -fx-border-radius: 16;
-    -fx-border-color: rgba(0,0,0,0.05);
+    -fx-border-color: #e5e7eb;
     -fx-border-width: 1;
     -fx-padding: 20;
 }
-.chart-title { -fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #0f172a; }
-.dash-chart  { -fx-background-color: transparent; }
+
+/* TITRE */
+.chart-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #111827;
+}
+
+/* CHART GLOBAL */
+.dash-chart {
+    -fx-background-color: transparent;
+}
+
+/* AXES */
+.chart-axis {
+    -fx-tick-label-fill: #6b7280;
+    -fx-font-size: 11px;
+}
+
+/* BARRES */
+.default-color0.chart-bar {
+    -fx-bar-fill: linear-gradient(to top, #f97316, #fb923c);
+    -fx-background-radius: 6;
+}
+
+/* PIE CHART COLORS */
+.default-color0.chart-pie { -fx-pie-color: #f97316; }
+.default-color1.chart-pie { -fx-pie-color: #22c55e; }
+.default-color2.chart-pie { -fx-pie-color: #3b82f6; }
+.default-color3.chart-pie { -fx-pie-color: #eab308; }
+
+/* LEGEND */
+.chart-legend {
+    -fx-background-color: transparent;
+}
+
+.chart-legend-item {
+    -fx-text-fill: #374151;
+    -fx-font-size: 12px;
+}
+
+/* PIE LABEL */
+.chart-pie-label {
+    -fx-fill: #111827;
+    -fx-font-size: 11px;
+}

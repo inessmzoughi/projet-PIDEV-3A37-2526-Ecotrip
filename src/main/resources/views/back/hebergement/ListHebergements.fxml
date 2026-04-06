@@ -9,57 +9,15 @@
             styleClass="root-pane"
             stylesheets="@../../../styles/ecotrip.css">
 
-    <left>
-        <VBox styleClass="sidebar" minWidth="240" maxWidth="240">
-            <HBox styleClass="sidebar-logo" alignment="CENTER_LEFT" spacing="12">
-                <Label text="🌿" styleClass="sidebar-logo-icon"/>
-                <VBox spacing="2">
-                    <Label text="EcoTrip" styleClass="brand-name"/>
-                    <Label text="Admin Panel" styleClass="brand-sub"/>
-                </VBox>
-            </HBox>
-            <VBox styleClass="nav-section" VBox.vgrow="ALWAYS">
-                <Label text="PRINCIPAL" styleClass="nav-label"/>
-                <Button text="  📊  Dashboard" styleClass="nav-item" maxWidth="Infinity"/>
-                <Label text="CONTENU" styleClass="nav-label"/>
-                <Button text="  🏨  Hébergements" styleClass="nav-item" maxWidth="Infinity" onAction="#onNavHebergements"/>
-                <Button text="      📋  Liste" styleClass="nav-item nav-sub-item nav-item-active" maxWidth="Infinity" onAction="#onNavHebergements"/>
-                <Button text="      🛏  Chambres" styleClass="nav-item nav-sub-item" maxWidth="Infinity" onAction="#onNavChambres"/>
-                <Button text="      🔧  Équipements" styleClass="nav-item nav-sub-item" maxWidth="Infinity" onAction="#onNavEquipements"/>
-                <Button text="      🏷  Catégories" styleClass="nav-item nav-sub-item" maxWidth="Infinity" onAction="#onNavCategories"/>
-                <Label text="GESTION" styleClass="nav-label"/>
-                <Button text="  📋  Réservations" styleClass="nav-item" maxWidth="Infinity"/>
-                <Button text="  👥  Utilisateurs" styleClass="nav-item" maxWidth="Infinity"/>
-            </VBox>
-            <VBox styleClass="sidebar-footer">
-                <Separator styleClass="sidebar-sep"/>
-                <HBox styleClass="sidebar-user" alignment="CENTER_LEFT" spacing="10">
-                    <Label text="IN" styleClass="avatar"/>
-                    <VBox>
-                        <Label text="Ines Mzoughi" styleClass="user-name"/>
-                        <Label text="Administrateur" styleClass="user-role"/>
-                    </VBox>
-                </HBox>
-            </VBox>
-        </VBox>
-    </left>
-
     <center>
         <VBox styleClass="main-content">
-            <HBox styleClass="topbar" alignment="CENTER_LEFT" spacing="16">
-                <Label text="Gestion des Hébergements" styleClass="topbar-title" HBox.hgrow="ALWAYS"/>
-                <Region HBox.hgrow="ALWAYS"/>
-                <Label text="admin@ecotrip.tn" styleClass="topbar-email"/>
-                <Button text="Déconnexion" styleClass="btn-logout" onAction="#onLogout"/>
-            </HBox>
-
             <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane">
                 <VBox styleClass="page-body" spacing="24">
                     <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
 
                     <VBox spacing="4">
                         <HBox spacing="4">
-                            <Label text="Dashboard" styleClass="breadcrumb-link"/>
+                            <Button text="Dashboard" styleClass="breadcrumb-link" onAction="#onNavDashboard"/>
                             <Label text=" › " styleClass="breadcrumb-sep"/>
                             <Label text="Hébergements" styleClass="breadcrumb-active"/>
                         </HBox>
@@ -209,6 +167,15 @@
                                               wrapText="true" onKeyReleased="#updateCounter"/>
                                     <Label fx:id="charCount" text="0 / 500 caractères" styleClass="char-count"/>
                                 </VBox>
+
+                                <!-- Équipements -->
+                                <VBox spacing="5" styleClass="form-group">
+                                    <Label text="🔧 Équipements" styleClass="form-label"/>
+                                    <FlowPane fx:id="equipementsCheckboxPane"
+                                              hgap="10" vgap="8"
+                                              styleClass="eq-checkbox-pane"/>
+                                </VBox>
+
                             </VBox>
 
                             <HBox styleClass="form-footer" alignment="CENTER_RIGHT" spacing="10">

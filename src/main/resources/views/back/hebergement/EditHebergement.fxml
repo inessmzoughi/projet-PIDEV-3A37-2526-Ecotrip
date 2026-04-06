@@ -9,7 +9,7 @@
             styleClass="root-pane"
             stylesheets="@../../../styles/ecotrip.css">
 
-    <left>
+   <!-- <left>
         <VBox styleClass="sidebar" minWidth="240" maxWidth="240">
             <HBox styleClass="sidebar-logo" alignment="CENTER_LEFT" spacing="12">
                 <Label text="🌿" styleClass="sidebar-logo-icon"/>
@@ -40,15 +40,15 @@
             </VBox>
         </VBox>
     </left>
-
+-->
     <center>
         <VBox styleClass="main-content">
-            <HBox styleClass="topbar" alignment="CENTER_LEFT">
+            <!--<HBox styleClass="topbar" alignment="CENTER_LEFT">
                 <Label text="Modifier un Hébergement" styleClass="topbar-title" HBox.hgrow="ALWAYS"/>
                 <Region HBox.hgrow="ALWAYS"/>
                 <Label text="admin@ecotrip.tn" styleClass="topbar-email"/>
                 <Button text="Déconnexion" styleClass="btn-logout" onAction="#onLogout"/>
-            </HBox>
+            </HBox>-->
 
             <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane">
                 <VBox styleClass="page-body" spacing="24">
@@ -57,7 +57,7 @@
                     <HBox alignment="CENTER_LEFT">
                         <VBox HBox.hgrow="ALWAYS" spacing="4">
                             <HBox spacing="4">
-                                <Label text="Dashboard" styleClass="breadcrumb-link"/>
+                                <<Button text="Dashboard" styleClass="breadcrumb-link" onAction="#onNavDashboard"/>
                                 <Label text=" › " styleClass="breadcrumb-sep"/>
                                 <Label text="Hébergements" styleClass="breadcrumb-link" onMouseClicked="#onNavHebergements"/>
                                 <Label text=" › " styleClass="breadcrumb-sep"/>

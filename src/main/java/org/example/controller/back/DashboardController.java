@@ -1,13 +1,27 @@
 package org.example.controller.back;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.chart.*;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
+import org.example.models.Categorie_hebergement;
+import org.example.models.Chambre;
+import org.example.models.Hebergement;
 import org.example.navigation.Routes;
 import org.example.navigation.SceneManager;
+import org.example.services.hebergement.CategorieH_service;
+import org.example.services.hebergement.Chambre_service;
+import org.example.services.hebergement.Equipement_service;
+import org.example.services.hebergement.Hebergement_service;
 import org.example.session.SessionManager;
+
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class DashboardController {
 
@@ -27,10 +41,10 @@ public class DashboardController {
     @FXML private VBox  recentActivitesList;
 
     // ── Hébergement module ───────────────────────────────────
-    @FXML private Label    mstatHebergements;
-    @FXML private Label    mstatChambres;
-    @FXML private Label    mstatEquipements;
-    @FXML private Label    mstatCategoriesHeb;
+    @FXML private Label mstatHebergements;
+    @FXML private Label mstatChambres;
+    @FXML private Label mstatEquipements;
+    @FXML private Label mstatCategoriesHeb;
     @FXML private BarChart<String, Number> chartChambres;
     @FXML private PieChart chartHebPie;
 
@@ -46,27 +60,54 @@ public class DashboardController {
     @FXML private Label mstatCommandes;
     @FXML private Label mstatPaiements;
 
+    // ── Services Hébergement ─────────────────────────────────
+    private final Hebergement_service hebergementService = new Hebergement_service();
+    private final Chambre_service     chambreService     = new Chambre_service();
+    private final Equipement_service  equipementService  = new Equipement_service();
+    private final CategorieH_service  categorieHService  = new CategorieH_service();
+
     @FXML
     public void initialize() {
         if (!SessionManager.getInstance().isAdmin()) {
             Platform.runLater(() -> SceneManager.navigateTo(Routes.LOGIN));
             return;
         }
-
         loadStats();
         loadCharts();
         loadRecentActivites();
     }
 
-    // ── Data loading ─────────────────────────────────────────
-
+    // ── Chargement des stats ─────────────────────────────────
     private void loadStats() {
-        // Replace these with real service/repository calls
-        // e.g. int total = activiteService.count();
-        // For now wired to 0 — connect your services here
+        // ── Stats hébergement (données réelles) ──
+        try {
+            int totalHeb  = hebergementService.getAll().size();
+            int totalCh   = chambreService.getAll().size();
+            int totalEq   = equipementService.getAll().size();
+            int totalCat  = categorieHService.getAll().size();
 
+            List<Hebergement> hebs = hebergementService.getAll();
+            long actifs = hebs.stream().filter(h -> h.getActif() == 1).count();
+
+            // Top cards
+            statHebergements.setText(String.valueOf(totalHeb));
+
+            // Module hébergement
+            mstatHebergements.setText(String.valueOf(totalHeb));
+            mstatChambres.setText(String.valueOf(totalCh));
+            mstatEquipements.setText(String.valueOf(totalEq));
+            mstatCategoriesHeb.setText(String.valueOf(totalCat));
+
+        } catch (SQLException e) {
+            mstatHebergements.setText("—");
+            mstatChambres.setText("—");
+            mstatEquipements.setText("—");
+            mstatCategoriesHeb.setText("—");
+            statHebergements.setText("—");
+        }
+
+        // ── Stats autres modules (à connecter plus tard) ──
         statActivites.setText("0");
-        statHebergements.setText("0");
         statTransports.setText("0");
         statProduits.setText("0");
         statUtilisateurs.setText("0");
@@ -76,11 +117,6 @@ public class DashboardController {
         mstatActiveActivites.setText("0");
         mstatCategoriesActivites.setText("0");
         mstatGuides.setText("0");
-
-        mstatHebergements.setText("0");
-        mstatChambres.setText("0");
-        mstatEquipements.setText("0");
-        mstatCategoriesHeb.setText("0");
 
         mstatTransports.setText("0");
         mstatCategoriesTransport.setText("0");
@@ -93,46 +129,71 @@ public class DashboardController {
         mstatPaiements.setText("0");
     }
 
+    // ── Chargement des graphiques ────────────────────────────
     private void loadCharts() {
-        // Bar chart: chambres par hébergement
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("Chambres");
-        // Replace with real data:
-        // for (HebergementStat s : hebergementService.getChambresPerHeberg()) {
-        //     series.getData().add(new XYChart.Data<>(s.getName(), s.getCount()));
-        // }
-        series.getData().add(new XYChart.Data<>("Exemple 1", 5));
-        series.getData().add(new XYChart.Data<>("Exemple 2", 3));
-        series.getData().add(new XYChart.Data<>("Exemple 3", 8));
-        chartChambres.getData().add(series);
-        chartChambres.setLegendVisible(false);
+        // ── BAR CHART ─────────────────────────────────────────
+        try {
+            XYChart.Series<String, Number> series = new XYChart.Series<>();
+            series.setName("Nombre de chambres");
+            List<Hebergement> hebs = hebergementService.getAll();
 
-        // Pie chart: hébergements par catégorie
-        // Replace with real data from service
-        chartHebPie.getData().addAll(
-                new PieChart.Data("Éco-lodge", 4),
-                new PieChart.Data("Hôtel", 6),
-                new PieChart.Data("Camping", 2)
-        );
+            for (Hebergement h : hebs) {
+                int count = chambreService.getByHebergement(h.getId()).size();
+                // ✅ Supprimé le if (count > 0) — affiche même les hébergements sans chambres
+                String nom = h.getNom().length() > 12
+                        ? h.getNom().substring(0, 12) + "…"
+                        : h.getNom();
+                series.getData().add(new XYChart.Data<>(nom, count));
+            }
+
+            chartChambres.getData().clear();
+            chartChambres.getData().add(series);
+            chartChambres.setLegendVisible(true);
+            chartChambres.setTitle("Chambres par hébergement");
+
+        } catch (SQLException e) {
+            chartChambres.getData().clear();
+        }
+
+        // ── PIE CHART ─────────────────────────────────────────
+        try {
+            chartHebPie.getData().clear();
+            List<Hebergement> hebs = hebergementService.getAll();
+            java.util.Map<Integer, Long> countParCat = hebs.stream()
+                    .collect(java.util.stream.Collectors.groupingBy(
+                            Hebergement::getCategorie_id,
+                            java.util.stream.Collectors.counting()
+                    ));
+            for (java.util.Map.Entry<Integer, Long> entry : countParCat.entrySet()) {
+                String nom;
+                try {
+                    var cat = categorieHService.getById(entry.getKey());
+                    nom = (cat != null) ? cat.getNom() : "Cat " + entry.getKey();
+                } catch (SQLException ex) {
+                    nom = "Cat " + entry.getKey();
+                }
+                chartHebPie.getData().add(
+                        new PieChart.Data(nom + " (" + entry.getValue() + ")", entry.getValue()));
+            }
+            chartHebPie.setLegendVisible(true);
+            chartHebPie.setLabelsVisible(true);
+            chartHebPie.setTitle("Répartition des hébergements");
+
+        } catch (SQLException e) {
+            chartHebPie.getData().clear();
+        }
     }
 
+    // ── Activités récentes ───────────────────────────────────
     private void loadRecentActivites() {
-        // Replace with real data:
-        // List<Activite> recents = activiteService.findRecent(3);
-        // for (Activite a : recents) {
-        //     recentActivitesList.getChildren().add(buildRecentItem(a));
-        // }
-
-        // Placeholder — shows structure
+        // À connecter avec ton service Activité quand disponible
+        recentActivitesList.getChildren().clear();
         recentActivitesList.getChildren().add(
-                buildRecentItem("Randonnée Zaghouan", "Zaghouan • 45 TND", true)
-        );
+                buildRecentItem("Randonnée Zaghouan", "Zaghouan • 45 TND", true));
         recentActivitesList.getChildren().add(
-                buildRecentItem("Plongée Tabarka", "Tabarka • 80 TND", true)
-        );
+                buildRecentItem("Plongée Tabarka", "Tabarka • 80 TND", true));
     }
 
-    // Builds one recent item row (mirrors .recent-item in the web)
     private HBox buildRecentItem(String title, String subtitle, boolean active) {
         HBox row = new HBox(12);
         row.getStyleClass().add("recent-item");
@@ -143,7 +204,6 @@ public class DashboardController {
         Label subLabel = new Label(subtitle);
         subLabel.getStyleClass().add("recent-sub");
         info.getChildren().addAll(titleLabel, subLabel);
-
         HBox.setHgrow(info, javafx.scene.layout.Priority.ALWAYS);
         row.getChildren().add(info);
 
@@ -152,12 +212,10 @@ public class DashboardController {
             badge.getStyleClass().add("badge-success");
             row.getChildren().add(badge);
         }
-
         return row;
     }
 
-    // ── Navigation handlers ──────────────────────────────────
-
+    // ── Navigation ───────────────────────────────────────────
     @FXML private void handleViewActivites()    { SceneManager.navigateTo(Routes.ADMIN_ACTIVITES); }
     @FXML private void handleNewActivite()      { SceneManager.navigateTo(Routes.ADMIN_ACTIVITES); }
     @FXML private void handleNewCatActivite()   { SceneManager.navigateTo(Routes.ADMIN_ACTIVITES); }
@@ -166,8 +224,8 @@ public class DashboardController {
 
     @FXML private void handleNewHeberg()        { SceneManager.navigateTo(Routes.ADMIN_HEBERGEMENTS); }
     @FXML private void handleNewChambre()       { SceneManager.navigateTo(Routes.ADMIN_HEBERGEMENTS); }
-    @FXML private void handleNewEquipement()    { SceneManager.navigateTo(Routes.ADMIN_HEBERGEMENTS); }
-    @FXML private void handleNewCatHeberg()     { SceneManager.navigateTo(Routes.ADMIN_HEBERGEMENTS); }
+    @FXML private void handleNewEquipement()    { SceneManager.navigateTo(Routes.ADMIN_EQUIPEMENTS); }
+    @FXML private void handleNewCatHeberg()     { SceneManager.navigateTo(Routes.ADMIN_CATEGORIES_HEBERGEMENT); }
 
     @FXML private void handleNewTransport()     { SceneManager.navigateTo(Routes.ADMIN_TRANSPORT); }
     @FXML private void handleNewCatTransport()  { SceneManager.navigateTo(Routes.ADMIN_TRANSPORT); }

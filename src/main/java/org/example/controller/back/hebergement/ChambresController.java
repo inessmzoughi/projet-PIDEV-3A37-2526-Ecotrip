@@ -3,8 +3,10 @@ package org.example.controller.back.hebergement;
 import javafx.scene.layout.VBox;
 import org.example.models.Chambre;
 import org.example.models.Hebergement;
-import org.example.services.Chambre_service;
-import org.example.services.Hebergement_service;
+import org.example.navigation.Routes;
+import org.example.navigation.SceneManager;
+import org.example.services.hebergement.Chambre_service;
+import org.example.services.hebergement.Hebergement_service;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -368,10 +370,11 @@ public class ChambresController implements Initializable {
     /* ══════════════════════════════════════════
        NAVIGATION
        ══════════════════════════════════════════ */
-    @FXML private void onNavHebergements() { navigateTo("ListHebergements.fxml",       "Hébergements"); }
+    @FXML private void onNavHebergements() { SceneManager.navigateTo(Routes.ADMIN_HEBERGEMENTS); }
     @FXML private void onNavEquipements()  { navigateTo("Equipements.fxml",            "Équipements"); }
     @FXML private void onNavCategories()   { navigateTo("CategoriesHebergement.fxml",  "Catégories"); }
     @FXML private void onLogout()          { System.exit(0); }
+    @FXML private void onNavDashboard() { SceneManager.navigateTo(Routes.ADMIN_DASHBOARD); }
 
     private void navigateTo(String fxml, String title) {
         try {

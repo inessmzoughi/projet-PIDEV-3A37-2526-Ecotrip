@@ -8,7 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import org.example.models.Categorie_hebergement;
-import org.example.services.CategorieH_service;
+import org.example.services.hebergement.CategorieH_service;
 
 import java.sql.SQLException;
 

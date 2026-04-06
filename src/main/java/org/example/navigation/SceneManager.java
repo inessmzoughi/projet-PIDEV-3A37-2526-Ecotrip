@@ -44,16 +44,22 @@ public class SceneManager {
         frontRoutes.put(Routes.CONTACT,           "/views/front/contact.fxml");
         frontRoutes.put(Routes.MES_RESERVATIONS,  "/views/front/mes-reservations.fxml");
         frontRoutes.put(Routes.MON_COMPTE,        "/views/front/mon-compte.fxml");
-
-        backRoutes.put(Routes.ADMIN_ADD_HEBERGEMENT, "/views/back/AddHebergement.fxml");
+//*****************back
+       // backRoutes.put(Routes.ADMIN_ADD_HEBERGEMENT, "/views/back/AddHebergement.fxml");
         backRoutes.put(Routes.ADMIN_DASHBOARD,    "/views/back/dashboard.fxml");
         backRoutes.put(Routes.ADMIN_ACTIVITES,    "/views/back/activites.fxml");
-        backRoutes.put(Routes.ADMIN_HEBERGEMENTS, "/views/back/hebergements.fxml");
+        //backRoutes.put(Routes.ADMIN_HEBERGEMENTS, "/views/back/hebergements.fxml");
         backRoutes.put(Routes.ADMIN_TRANSPORT,    "/views/back/transport.fxml");
         backRoutes.put(Routes.ADMIN_BOUTIQUE,     "/views/back/boutique.fxml");
         backRoutes.put(Routes.ADMIN_RESERVATIONS, "/views/back/reservations.fxml");
         backRoutes.put(Routes.ADMIN_USERS,        "/views/back/users.fxml");
         backRoutes.put(Routes.ADMIN_MON_COMPTE,   "/views/back/mon-compte.fxml");
+        backRoutes.put(Routes.ADMIN_HEBERGEMENTS,           "/views/back/hebergement/ListHebergements.fxml");
+        backRoutes.put(Routes.ADMIN_ADD_HEBERGEMENT,        "/views/back/hebergement/AddHebergement.fxml");
+        backRoutes.put(Routes.ADMIN_EDIT_HEBERGEMENT,       "/views/back/hebergement/EditHebergement.fxml");
+        backRoutes.put(Routes.ADMIN_CATEGORIES_HEBERGEMENT, "/views/back/hebergement/CategoriesHebergement.fxml");
+        backRoutes.put(Routes.ADMIN_CHAMBRES,               "/views/back/hebergement/Chambres.fxml");
+        backRoutes.put(Routes.ADMIN_EQUIPEMENTS,            "/views/back/hebergement/Equipements.fxml");
     }
 
     public static void initialize(Stage stage) {

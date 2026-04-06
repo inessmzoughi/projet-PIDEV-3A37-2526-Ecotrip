@@ -704,3 +704,14 @@
 .dialog-btn-danger:hover {
     -fx-background-color: #dc2626;
 }
+.breadcrumb-link {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-cursor: hand;
+    -fx-text-fill: #16a34a;
+    -fx-padding: 0;
+}
+
+.breadcrumb-link:hover {
+    -fx-underline: true;
+}
