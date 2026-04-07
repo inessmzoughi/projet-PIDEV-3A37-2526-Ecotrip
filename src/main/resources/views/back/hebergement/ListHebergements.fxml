@@ -28,7 +28,7 @@
                     <HBox spacing="20">
                         <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
                             <HBox spacing="12" alignment="CENTER_LEFT">
-                                <Label text="🏨" styleClass="stat-icon stat-icon-green"/>
+                                <Label text="🏨" styleClass="stat-icon,stat-icon-green"/>
                                 <VBox spacing="2">
                                     <Label text="Total Hébergements" styleClass="stat-label"/>
                                     <Label fx:id="statTotal" text="0" styleClass="stat-value"/>
@@ -38,7 +38,7 @@
                         </VBox>
                         <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
                             <HBox spacing="12" alignment="CENTER_LEFT">
-                                <Label text="⭐" styleClass="stat-icon stat-icon-blue"/>
+                                <Label text="⭐" styleClass="stat-icon, stat-icon-blue"/>
                                 <VBox spacing="2">
                                     <Label text="Étoiles Moyennes" styleClass="stat-label"/>
                                     <Label fx:id="statEtoiles" text="—" styleClass="stat-value"/>
@@ -48,7 +48,7 @@
                         </VBox>
                         <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
                             <HBox spacing="12" alignment="CENTER_LEFT">
-                                <Label text="✅" styleClass="stat-icon stat-icon-orange"/>
+                                <Label text="✅" styleClass="stat-icon, stat-icon-orange"/>
                                 <VBox spacing="2">
                                     <Label text="Hébergements Actifs" styleClass="stat-label"/>
                                     <Label fx:id="statActif" text="—" styleClass="stat-value"/>
@@ -58,10 +58,10 @@
                         </VBox>
                     </HBox>
 
-                    <HBox alignment="TOP_LEFT" spacing="24">
+                    <HBox spacing="24">
 
                         <!-- ── FORMULAIRE ── -->
-                        <VBox minWidth="380" maxWidth="380" spacing="0" styleClass="form-card">
+                        <VBox minWidth="380" maxWidth="380"  styleClass="form-card">
                             <HBox styleClass="form-card-header" alignment="CENTER_LEFT" spacing="14">
                                 <Label fx:id="formIcon" text="🏨" styleClass="form-icon"/>
                                 <VBox spacing="4">
@@ -130,7 +130,7 @@
                                                styleClass="form-input"/>
                                 </VBox>
 
-                                <!-- Propriétaire -->
+                                <!-- Proprietary -->
                                 <VBox spacing="5" styleClass="form-group">
                                     <Label text="👤 Propriétaire" styleClass="form-label"/>
                                     <ComboBox fx:id="propietaireCombo" promptText="Choisir un propriétaire…"
@@ -189,7 +189,7 @@
                             <HBox styleClass="action-bar" alignment="CENTER_LEFT" spacing="12">
                                 <HBox alignment="CENTER_LEFT" spacing="8" HBox.hgrow="ALWAYS">
                                     <Label text="🏨 Tous les hébergements" styleClass="table-card-title"/>
-                                    <Label fx:id="badgeCount" text="0" styleClass="badge badge-green"/>
+                                    <Label fx:id="badgeCount" text="0" styleClass="badge, badge-green"/>
                                 </HBox>
                                 <HBox styleClass="search-wrap" alignment="CENTER_LEFT" spacing="6">
                                     <Label text="🔍" styleClass="search-icon"/>
@@ -200,7 +200,7 @@
                                           styleClass="sort-select" onAction="#onSort" prefWidth="160"/>
                             </HBox>
 
-                            <VBox styleClass="table-card" spacing="0" VBox.vgrow="ALWAYS">
+                            <VBox styleClass="table-card"  VBox.vgrow="ALWAYS">
                                 <TableView fx:id="tableView" styleClass="main-table" VBox.vgrow="ALWAYS">
                                     <columns>
                                         <TableColumn fx:id="colIndex"     text="#"         prefWidth="45"/>
@@ -220,7 +220,7 @@
                                 </TableView>
                                 <HBox fx:id="paginationBar" styleClass="pagination-bar"
                                       alignment="CENTER_LEFT" spacing="8">
-                                    <Label fx:id="pagInfo" text="" styleClass="pag-info" HBox.hgrow="ALWAYS"/>
+                                    <Label fx:id="pagInfo"  styleClass="pag-info" HBox.hgrow="ALWAYS"/>
                                     <Region HBox.hgrow="ALWAYS"/>
                                     <HBox fx:id="pagButtons" spacing="4"/>
                                 </HBox>

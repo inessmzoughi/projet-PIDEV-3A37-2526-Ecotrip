@@ -9,47 +9,9 @@
             styleClass="root-pane"
             stylesheets="@../../../styles/ecotrip.css">
 
-   <!-- <left>
-        <VBox styleClass="sidebar" minWidth="240" maxWidth="240">
-            <HBox styleClass="sidebar-logo" alignment="CENTER_LEFT" spacing="12">
-                <Label text="🌿" styleClass="sidebar-logo-icon"/>
-                <VBox spacing="2">
-                    <Label text="EcoTrip" styleClass="brand-name"/>
-                    <Label text="Admin Panel" styleClass="brand-sub"/>
-                </VBox>
-            </HBox>
-            <VBox styleClass="nav-section" VBox.vgrow="ALWAYS">
-                <Label text="PRINCIPAL" styleClass="nav-label"/>
-                <Button text="  📊  Dashboard" styleClass="nav-item" maxWidth="Infinity"/>
-                <Label text="CONTENU" styleClass="nav-label"/>
-                <Button text="  🏨  Hébergements" styleClass="nav-item" maxWidth="Infinity" onAction="#onNavHebergements"/>
-                <Button text="      📋  Liste" styleClass="nav-item nav-sub-item nav-item-active" maxWidth="Infinity" onAction="#onNavHebergements"/>
-                <Label text="GESTION" styleClass="nav-label"/>
-                <Button text="  📋  Réservations" styleClass="nav-item" maxWidth="Infinity"/>
-                <Button text="  👥  Utilisateurs" styleClass="nav-item" maxWidth="Infinity"/>
-            </VBox>
-            <VBox styleClass="sidebar-footer">
-                <Separator styleClass="sidebar-sep"/>
-                <HBox styleClass="sidebar-user" alignment="CENTER_LEFT" spacing="10">
-                    <Label text="IN" styleClass="avatar"/>
-                    <VBox>
-                        <Label text="Ines Mzoughi" styleClass="user-name"/>
-                        <Label text="Administrateur" styleClass="user-role"/>
-                    </VBox>
-                </HBox>
-            </VBox>
-        </VBox>
-    </left>
--->
+
     <center>
         <VBox styleClass="main-content">
-            <!--<HBox styleClass="topbar" alignment="CENTER_LEFT">
-                <Label text="Modifier un Hébergement" styleClass="topbar-title" HBox.hgrow="ALWAYS"/>
-                <Region HBox.hgrow="ALWAYS"/>
-                <Label text="admin@ecotrip.tn" styleClass="topbar-email"/>
-                <Button text="Déconnexion" styleClass="btn-logout" onAction="#onLogout"/>
-            </HBox>-->
-
             <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane">
                 <VBox styleClass="page-body" spacing="24">
                     <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
@@ -63,7 +25,7 @@
                                 <Label text=" › " styleClass="breadcrumb-sep"/>
                                 <Label text="Modifier" styleClass="breadcrumb-active"/>
                             </HBox>
-                            <Label text="Modifier l'Hébergement" styleClass="page-title"/>
+                            <Label text="Modifier l'hébergement" styleClass="page-title"/>
                         </VBox>
                         <Button text="← Retour" styleClass="btn-back" onAction="#onNavHebergements"/>
                     </HBox>
@@ -72,7 +34,7 @@
                         <HBox styleClass="form-card-header" alignment="CENTER_LEFT" spacing="16">
                             <Label text="✏️" styleClass="form-icon"/>
                             <VBox spacing="4">
-                                <Label text="Modifier l'Hébergement" styleClass="form-heading-title"/>
+                                <Label text="Modifier l'hébergement" styleClass="form-heading-title"/>
                                 <Label text="Mettez à jour les informations de l'hébergement." styleClass="form-heading-sub"/>
                             </VBox>
                         </HBox>

@@ -10,11 +10,7 @@ import java.util.List;
 public class Hebergement_service {
 
     private final Connection connection = Base.getInstance().getConnection();
-
-    // CREATE — retourne l'ID généré
-    public int ajouter(Hebergement h) throws SQLException {
-        String sql = "INSERT INTO hebergement (nom, description, adresse, ville, nb_etoiles, image_principale, label_eco, latitude, longitude, actif, categorie_id, propietaire_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+    private void setHebergementParams(PreparedStatement ps, Hebergement h) throws SQLException {
         ps.setString(1, h.getNom());
         ps.setString(2, h.getDescription());
         ps.setString(3, h.getAdresse());
@@ -27,12 +23,21 @@ public class Hebergement_service {
         ps.setInt(10, h.getActif());
         ps.setInt(11, h.getCategorie_id());
         ps.setInt(12, h.getPropietaire_id());
+    }
+
+    // CREATE — retourne l'ID généré
+    public int ajouter(Hebergement h) throws SQLException {
+        String sql = "INSERT INTO hebergement (nom, description, adresse, ville, nb_etoiles, image_principale, label_eco, latitude, longitude, actif, categorie_id, propietaire_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+        setHebergementParams(ps, h);
+
         ps.executeUpdate();
+
         ResultSet keys = ps.getGeneratedKeys();
         if (keys.next()) return keys.getInt(1);
         return -1;
     }
-
     // READ ALL
     public List<Hebergement> getAll() throws SQLException {
         List<Hebergement> list = new ArrayList<>();
@@ -46,6 +51,7 @@ public class Hebergement_service {
     }
 
     // READ BY ID
+    @SuppressWarnings("unused")
     public Hebergement getById(int id) throws SQLException {
         String sql = "SELECT * FROM hebergement WHERE id = ?";
         PreparedStatement ps = connection.prepareStatement(sql);
@@ -59,22 +65,12 @@ public class Hebergement_service {
     public void modifier(Hebergement h) throws SQLException {
         String sql = "UPDATE hebergement SET nom=?, description=?, adresse=?, ville=?, nb_etoiles=?, image_principale=?, label_eco=?, latitude=?, longitude=?, actif=?, categorie_id=?, propietaire_id=? WHERE id=?";
         PreparedStatement ps = connection.prepareStatement(sql);
-        ps.setString(1, h.getNom());
-        ps.setString(2, h.getDescription());
-        ps.setString(3, h.getAdresse());
-        ps.setString(4, h.getVille());
-        ps.setInt(5, h.getNb_etoiles());
-        ps.setString(6, h.getImage_principale());
-        ps.setString(7, h.getLabel_eco());
-        ps.setDouble(8, h.getLatitude());
-        ps.setDouble(9, h.getLongitude());
-        ps.setInt(10, h.getActif());
-        ps.setInt(11, h.getCategorie_id());
-        ps.setInt(12, h.getPropietaire_id());
-        ps.setInt(13, h.getId());
+
+        setHebergementParams(ps, h);
+        ps.setInt(13, h.getId()); // ⚠️ important
+
         ps.executeUpdate();
     }
-
     // DELETE
     public void supprimer(int id) throws SQLException {
         String sql = "DELETE FROM hebergement WHERE id = ?";

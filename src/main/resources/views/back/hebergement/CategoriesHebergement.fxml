@@ -15,53 +15,10 @@
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="tn.esprit.controller.back.hebergement.CategoriesHebergementController">
 
-    <!-- ═══ SIDEBAR ═══ -->
-   <!-- <left>
-        <VBox maxWidth="240" minWidth="240" styleClass="sidebar">
-            <HBox alignment="CENTER_LEFT" spacing="12" styleClass="sidebar-logo">
-                <Label styleClass="sidebar-logo-icon" text="🌿"/>
-                <VBox spacing="2">
-                    <Label styleClass="brand-name" text="EcoTrip"/>
-                    <Label styleClass="brand-sub" text="Admin Panel"/>
-                </VBox>
-            </HBox>
-            <VBox styleClass="nav-section" VBox.vgrow="ALWAYS">
-                <Label styleClass="nav-label" text="PRINCIPAL"/>
-                <Button maxWidth="Infinity" styleClass="nav-item" text="  📊  Dashboard"/>
-                <Label styleClass="nav-label" text="CONTENU"/>
-                <Button maxWidth="Infinity" onAction="#onNavHebergements" styleClass="nav-item" text="  🏨  Hébergements"/>
-                <Button maxWidth="Infinity" onAction="#onNavHebergements" styleClass="nav-item nav-sub-item" text="      📋  Liste"/>
-                <Button maxWidth="Infinity" onAction="#onNavChambres" styleClass="nav-item nav-sub-item" text="      🛏  Chambres"/>
-                <Button maxWidth="Infinity" onAction="#onNavEquipements" styleClass="nav-item nav-sub-item" text="      🔧  Équipements"/>
-                <Button maxWidth="Infinity" styleClass="nav-item nav-sub-item nav-item-active" text="      🏷  Catégories"/>
-                <Label styleClass="nav-label" text="GESTION"/>
-                <Button maxWidth="Infinity" styleClass="nav-item" text="  📋  Réservations"/>
-                <Button maxWidth="Infinity" styleClass="nav-item" text="  👥  Utilisateurs"/>
-            </VBox>
-            <VBox styleClass="sidebar-footer">
-                <Separator styleClass="sidebar-sep"/>
-                <HBox alignment="CENTER_LEFT" spacing="10" styleClass="sidebar-user">
-                    <Label styleClass="avatar" text="IN"/>
-                    <VBox>
-                        <Label styleClass="user-name" text="Ines Mzoughi"/>
-                        <Label styleClass="user-role" text="Administrateur"/>
-                    </VBox>
-                </HBox>
-            </VBox>
-        </VBox>
-    </left>
--->
+
     <!-- ═══ CENTER ═══ -->
     <center>
         <VBox styleClass="main-content">
-
-            <!-- Topbar -->
-           <!-- <HBox alignment="CENTER_LEFT" spacing="16" styleClass="topbar">
-                <Label styleClass="topbar-title" text="🏷️ Catégories Hébergement" HBox.hgrow="ALWAYS"/>
-                <Region HBox.hgrow="ALWAYS"/>
-                <Label styleClass="topbar-email" text="admin@ecotrip.tn"/>
-                <Button onAction="#onLogout" styleClass="btn-logout" text="Déconnexion"/>
-            </HBox>-->
 
             <ScrollPane fitToWidth="true" styleClass="scroll-pane" VBox.vgrow="ALWAYS">
                 <VBox spacing="24" styleClass="page-body">
@@ -83,7 +40,7 @@
                     <HBox spacing="20">
                         <VBox spacing="8" styleClass="stat-card" HBox.hgrow="ALWAYS">
                             <HBox alignment="CENTER_LEFT" spacing="12">
-                                <Label styleClass="stat-icon stat-icon-green" text="🏷️"/>
+                                <Label styleClass="badge, badge-green" text="🏷️"/>
                                 <VBox spacing="2">
                                     <Label styleClass="stat-label" text="Total Catégories"/>
                                     <Label fx:id="statTotal" styleClass="stat-value" text="0"/>
@@ -93,7 +50,7 @@
                         </VBox>
                         <VBox spacing="8" styleClass="stat-card" HBox.hgrow="ALWAYS">
                             <HBox alignment="CENTER_LEFT" spacing="12">
-                                <Label styleClass="stat-icon stat-icon-blue" text="🏨"/>
+                                <Label styleClass="stat-icon, stat-icon-blue" text="🏨"/>
                                 <VBox spacing="2">
                                     <Label styleClass="stat-label" text="Hébergements classés"/>
                                     <Label fx:id="statHeb" styleClass="stat-value" text="0"/>
@@ -103,7 +60,7 @@
                         </VBox>
                         <VBox spacing="8" styleClass="stat-card" HBox.hgrow="ALWAYS">
                             <HBox alignment="CENTER_LEFT" spacing="12">
-                                <Label styleClass="stat-icon stat-icon-orange" text="🌟"/>
+                                <Label styleClass="stat-icon, stat-icon-orange" text="🌟"/>
                                 <VBox spacing="2">
                                     <Label styleClass="stat-label" text="Catégorie la + utilisée"/>
                                     <Label fx:id="statTop" styleClass="stat-value-sm" text="—"/>
@@ -116,7 +73,7 @@
                     <HBox spacing="24">
 
                         <!-- ── FORMULAIRE ── -->
-                        <VBox maxWidth="360" minWidth="360" styleClass="form-card cat-form-card">
+                        <VBox maxWidth="360" minWidth="360" styleClass="form-card, cat-form-card">
 
                             <!-- Header avec preview icône -->
                             <HBox alignment="CENTER_LEFT" spacing="14" styleClass="cat-form-header">
@@ -171,7 +128,7 @@
                             <HBox alignment="CENTER_LEFT" spacing="12">
                                 <HBox alignment="CENTER_LEFT" spacing="8" HBox.hgrow="ALWAYS">
                                     <Label styleClass="table-card-title" text="🏷️ Catégories"/>
-                                    <Label fx:id="badgeCount" styleClass="badge badge-green" text="0"/>
+                                    <Label fx:id="badgeCount" styleClass="badge, badge-green" text="0"/>
                                 </HBox>
                                 <HBox alignment="CENTER_LEFT" spacing="6" styleClass="search-wrap">
                                     <Label styleClass="search-icon" text="🔍"/>

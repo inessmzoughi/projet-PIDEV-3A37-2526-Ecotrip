@@ -4,6 +4,7 @@ public class Categorie_hebergement {
     private int id;
     private String nom;
     private String description;
+    @SuppressWarnings("unused")
     public Categorie_hebergement(){}
     public Categorie_hebergement(int id,String nom, String description){
         this.id= id;
