@@ -12,7 +12,7 @@ public class BackOfficeShellController {
     @FXML private StackPane contentArea;
     @FXML private Label pageTitle;
     @FXML private Label adminNameLabel;
-    @FXML private BackSidebarController sidebarController; // auto-injected
+    @FXML private BackSidebarController sidebarController;
 
     @FXML
     public void initialize() {
@@ -28,15 +28,20 @@ public class BackOfficeShellController {
 
     private String getPageTitle(String routeName) {
         return switch (routeName) {
-            case "admin-dashboard"    -> "Dashboard — Vue d'ensemble";
-            case "admin-activites"    -> "Module Activités";
-            case "admin-hebergements" -> "Module Hébergements";
-            case "admin-transport"    -> "Module Transport";
-            case "admin-boutique"     -> "Module Boutique";
-            case "admin-reservations" -> "Réservations";
-            case "admin-users"        -> "Gestion Utilisateurs";
-            case "admin-mon-compte"   -> "Mon Compte";
-            default -> "EcoTrip Admin";
+            case "admin-dashboard"              -> "Dashboard — Vue d'ensemble";
+            case "admin-activites"              -> "Module Activités";
+            case "admin-transport"              -> "Module Transport";
+            case "admin-boutique"               -> "Module Boutique";
+            case "admin-reservations"           -> "Réservations";
+            case "admin-users"                  -> "Gestion Utilisateurs";
+            case "admin-mon-compte"             -> "Mon Compte";
+            case "admin-hebergements"           -> "Hébergements";
+            case "admin-add-hebergement"        -> "Ajouter un Hébergement";
+            case "admin-edit-hebergement"       -> "Modifier un Hébergement";
+            case "admin-categories-hebergement" -> "Catégories d'Hébergement";
+            case "admin-chambres"               -> "Chambres";
+            case "admin-equipements"            -> "Équipements";
+            default                             -> "EcoTrip Admin";
         };
     }
 }

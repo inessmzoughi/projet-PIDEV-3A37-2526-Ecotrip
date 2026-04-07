@@ -18,7 +18,7 @@
             fx:controller="org.example.controller.back.hebergement.CategoriesHebergementController">
 
     <!-- ═══ SIDEBAR ═══ -->
-    <left>
+   <!-- <left>
         <VBox maxWidth="240" minWidth="240" styleClass="sidebar">
             <HBox alignment="CENTER_LEFT" spacing="12" styleClass="sidebar-logo">
                 <Label styleClass="sidebar-logo-icon" text="🌿"/>
@@ -52,18 +52,18 @@
             </VBox>
         </VBox>
     </left>
-
+-->
     <!-- ═══ CENTER ═══ -->
     <center>
         <VBox styleClass="main-content">
 
             <!-- Topbar -->
-            <HBox alignment="CENTER_LEFT" spacing="16" styleClass="topbar">
+           <!-- <HBox alignment="CENTER_LEFT" spacing="16" styleClass="topbar">
                 <Label styleClass="topbar-title" text="🏷️ Catégories Hébergement" HBox.hgrow="ALWAYS"/>
                 <Region HBox.hgrow="ALWAYS"/>
                 <Label styleClass="topbar-email" text="admin@ecotrip.tn"/>
                 <Button onAction="#onLogout" styleClass="btn-logout" text="Déconnexion"/>
-            </HBox>
+            </HBox>-->
 
             <ScrollPane fitToWidth="true" styleClass="scroll-pane" VBox.vgrow="ALWAYS">
                 <VBox spacing="24" styleClass="page-body">
@@ -72,9 +72,9 @@
                     <!-- Breadcrumb -->
                     <VBox spacing="4">
                         <HBox spacing="4">
-                            <Label styleClass="breadcrumb-link" text="Dashboard"/>
+                            <Button text="Dashboard" styleClass="breadcrumb-link" onAction="#onNavDashboard"/>
                             <Label styleClass="breadcrumb-sep" text=" › "/>
-                            <Label onMouseClicked="#onNavHebergements" styleClass="breadcrumb-link" text="Hébergements"/>
+                            <Button text="Hébergements" styleClass="breadcrumb-link" onAction="#onNavHebergements"/>
                             <Label styleClass="breadcrumb-sep" text=" › "/>
                             <Label styleClass="breadcrumb-active" text="Catégories"/>
                         </HBox>

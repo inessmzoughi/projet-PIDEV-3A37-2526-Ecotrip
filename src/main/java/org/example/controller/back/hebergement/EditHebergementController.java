@@ -10,8 +10,10 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import org.example.models.Categorie_hebergement;
 import org.example.models.Hebergement;
-import org.example.services.CategorieH_service;
-import org.example.services.Hebergement_service;
+import org.example.navigation.Routes;
+import org.example.navigation.SceneManager;
+import org.example.services.hebergement.CategorieH_service;
+import org.example.services.hebergement.Hebergement_service;
 
 import java.io.IOException;
 import java.net.URL;
@@ -184,6 +186,7 @@ public class EditHebergementController implements Initializable {
     /* ══════ NAVIGATION ══════ */
     @FXML private void onNavHebergements() { navigateToList(); }
     @FXML private void onLogout()          { System.exit(0); }
+    @FXML private void onNavDashboard() { SceneManager.navigateTo(Routes.ADMIN_DASHBOARD); }
 
     private void navigateToList() {
         try {

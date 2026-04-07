@@ -11,7 +11,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.example.models.Categorie_hebergement;
-import org.example.services.CategorieH_service;
+import org.example.navigation.Routes;
+import org.example.navigation.SceneManager;
+import org.example.services.hebergement.CategorieH_service;
 
 import java.io.IOException;
 import java.net.URL;
@@ -389,10 +391,11 @@ public class CategoriesHebergementController implements Initializable {
     /* ══════════════════════════════════════════
        NAVIGATION
        ══════════════════════════════════════════ */
-    @FXML private void onNavHebergements() { navigateTo("ListHebergements.fxml", "Hébergements"); }
+    @FXML private void onNavHebergements() { SceneManager.navigateTo(Routes.ADMIN_HEBERGEMENTS); }
     @FXML private void onNavChambres()     { navigateTo("Chambres.fxml",         "Chambres"); }
     @FXML private void onNavEquipements()  { navigateTo("Equipements.fxml",      "Équipements"); }
     @FXML private void onLogout()          { System.exit(0); }
+    @FXML private void onNavDashboard() { SceneManager.navigateTo(Routes.ADMIN_DASHBOARD); }
 
     private void navigateTo(String fxml, String title) {
         try {
