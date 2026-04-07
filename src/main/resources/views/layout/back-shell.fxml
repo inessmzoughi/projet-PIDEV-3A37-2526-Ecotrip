@@ -1,29 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.*?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml"
+<BorderPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.example.controller.layout.BackOfficeShellController"
             styleClass="back-shell">
 
-    <!-- LEFT: Sidebar (mirrors your sidebar.html.twig) -->
+    <!-- LEFT: Sidebar -->
     <left>
-        <fx:include fx:id="sidebar" source="../components/back-sidebar.fxml"/>
+        <fx:include fx:id="sidebar" source="/views/components/back-sidebar.fxml"/>
     </left>
 
-    <!-- CENTER: page content -->
+    <!-- CENTER: contenu dynamique -->
     <center>
         <BorderPane styleClass="back-main">
-            <!-- Top bar with page title and user info -->
             <top>
-                <HBox fx:id="topbar" styleClass="back-topbar" alignment="CENTER_LEFT" spacing="16">
+                <HBox fx:id="topbar" styleClass="back-topbar"
+                      alignment="CENTER_LEFT" spacing="16">
                     <Label fx:id="pageTitle" styleClass="back-page-title"/>
                     <Region HBox.hgrow="ALWAYS"/>
                     <Label fx:id="adminNameLabel" styleClass="back-admin-name"/>
                 </HBox>
             </top>
-            <!-- Content area -->
             <center>
                 <ScrollPane fitToWidth="true" styleClass="back-scroll">
                     <StackPane fx:id="contentArea" styleClass="back-content"/>

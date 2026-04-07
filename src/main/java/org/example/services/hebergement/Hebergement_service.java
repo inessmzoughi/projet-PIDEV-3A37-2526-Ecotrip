@@ -1,4 +1,4 @@
-package org.example.services;
+package org.example.services.hebergement;
 
 import org.example.database.Base;
 import org.example.models.Hebergement;
@@ -11,10 +11,10 @@ public class Hebergement_service {
 
     private final Connection connection = Base.getInstance().getConnection();
 
-    // CREATE
-    public void ajouter(Hebergement h) throws SQLException {
+    // CREATE — retourne l'ID généré
+    public int ajouter(Hebergement h) throws SQLException {
         String sql = "INSERT INTO hebergement (nom, description, adresse, ville, nb_etoiles, image_principale, label_eco, latitude, longitude, actif, categorie_id, propietaire_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        PreparedStatement ps = connection.prepareStatement(sql);
+        PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         ps.setString(1, h.getNom());
         ps.setString(2, h.getDescription());
         ps.setString(3, h.getAdresse());
@@ -28,6 +28,9 @@ public class Hebergement_service {
         ps.setInt(11, h.getCategorie_id());
         ps.setInt(12, h.getPropietaire_id());
         ps.executeUpdate();
+        ResultSet keys = ps.getGeneratedKeys();
+        if (keys.next()) return keys.getInt(1);
+        return -1;
     }
 
     // READ ALL

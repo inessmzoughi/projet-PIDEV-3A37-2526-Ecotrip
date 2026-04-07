@@ -1,4 +1,4 @@
-package org.example.services;
+package org.example.services.hebergement;
 
 import org.example.models.Categorie_hebergement;
 import org.example.database.Base;
