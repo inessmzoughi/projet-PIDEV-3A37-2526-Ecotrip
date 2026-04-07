@@ -27,7 +27,7 @@ public class Equipement_service {
         }
         return list;
     }
-
+    @SuppressWarnings("unused")
     public Equipement getById(int id) throws SQLException {
         PreparedStatement ps = connection.prepareStatement("SELECT * FROM equipement WHERE id = ?");
         ps.setInt(1, id);
