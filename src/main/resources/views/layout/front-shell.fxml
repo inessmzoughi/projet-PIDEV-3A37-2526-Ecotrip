@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.controller.layout.FrontOfficeShellController"
+            fx:controller="tn.esprit.controller.layout.FrontOfficeShellController"
             styleClass="front-shell">
 
     <!-- TOP: Navbar (mirrors your navbar.html.twig) -->

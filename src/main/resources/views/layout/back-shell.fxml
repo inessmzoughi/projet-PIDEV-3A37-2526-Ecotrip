@@ -4,7 +4,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.example.controller.layout.BackOfficeShellController"
+            fx:controller="tn.esprit.controller.layout.BackOfficeShellController"
             styleClass="back-shell">
 
     <!-- LEFT: Sidebar -->

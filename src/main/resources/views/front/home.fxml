@@ -5,7 +5,7 @@
 
 <!-- Only {% block body %} content — front-shell provides navbar + footer -->
 <VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.controller.front.HomeController"
+      fx:controller="tn.esprit.controller.front.HomeController"
       spacing="0">
 
     <!-- ══ BANNER AREA ══════════════════════════════════════ -->

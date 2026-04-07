@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.shape.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="tn.esprit.controller.compte.MonCompteController"
+      styleClass="profile-page" spacing="24">
+
+    <!-- PROFILE HERO -->
+    <VBox styleClass="profile-hero" spacing="0">
+        <HBox spacing="24" alignment="CENTER_LEFT">
+            <!-- Avatar circle -->
+            <StackPane>
+                <Circle fx:id="avatarCircle" radius="52" styleClass="avatar-circle"/>
+                <Label fx:id="avatarInitials" styleClass="avatar-initials"/>
+            </StackPane>
+            <!-- Greeting -->
+            <VBox spacing="6">
+                <Label fx:id="greetingLabel" styleClass="profile-greeting"/>
+                <Label text="Bienvenue sur votre espace personnel EcoTrip"
+                       styleClass="profile-sub"/>
+            </VBox>
+        </HBox>
+    </VBox>
+
+    <!-- INFO CARD -->
+    <VBox styleClass="info-card" spacing="0">
+        <HBox styleClass="info-card-header" alignment="CENTER_LEFT" spacing="10">
+            <Label text="🪪" style="-fx-font-size:16px;"/>
+            <Label text="Informations du profil" styleClass="info-card-title"/>
+        </HBox>
+
+        <!-- Info grid: 2 columns -->
+        <GridPane styleClass="info-grid" hgap="0" vgap="0">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="50"/>
+                <ColumnConstraints percentWidth="50"/>
+            </columnConstraints>
+
+            <!-- Email -->
+            <HBox styleClass="info-item info-item-odd" spacing="16" alignment="CENTER_LEFT"
+                  GridPane.columnIndex="0" GridPane.rowIndex="0">
+                <StackPane styleClass="info-icon">
+                    <Label text="✉" style="-fx-font-size:16px;"/>
+                </StackPane>
+                <VBox spacing="3">
+                    <Label text="EMAIL" styleClass="info-label"/>
+                    <Label fx:id="emailValue" styleClass="info-value"/>
+                </VBox>
+            </HBox>
+
+            <!-- Username -->
+            <HBox styleClass="info-item info-item-even" spacing="16" alignment="CENTER_LEFT"
+                  GridPane.columnIndex="1" GridPane.rowIndex="0">
+                <StackPane styleClass="info-icon">
+                    <Label text="👤" style="-fx-font-size:16px;"/>
+                </StackPane>
+                <VBox spacing="3">
+                    <Label text="NOM D'UTILISATEUR" styleClass="info-label"/>
+                    <Label fx:id="usernameValue" styleClass="info-value"/>
+                </VBox>
+            </HBox>
+
+            <!-- Address -->
+            <HBox styleClass="info-item info-item-odd" spacing="16" alignment="CENTER_LEFT"
+                  GridPane.columnIndex="0" GridPane.rowIndex="1">
+                <StackPane styleClass="info-icon">
+                    <Label text="📍" style="-fx-font-size:16px;"/>
+                </StackPane>
+                <VBox spacing="3">
+                    <Label text="ADRESSE" styleClass="info-label"/>
+                    <Label fx:id="addressValue" styleClass="info-value"/>
+                </VBox>
+            </HBox>
+
+            <!-- Phone -->
+            <HBox styleClass="info-item info-item-even" spacing="16" alignment="CENTER_LEFT"
+                  GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <StackPane styleClass="info-icon">
+                    <Label text="📞" style="-fx-font-size:16px;"/>
+                </StackPane>
+                <VBox spacing="3">
+                    <Label text="TÉLÉPHONE" styleClass="info-label"/>
+                    <Label fx:id="phoneValue" styleClass="info-value"/>
+                </VBox>
+            </HBox>
+        </GridPane>
+    </VBox>
+
+    <!-- ACTION CARDS -->
+    <HBox spacing="20">
+        <!-- Edit profile -->
+        <VBox styleClass="action-card action-card-edit" spacing="12"
+              onMouseClicked="#handleEditProfile" HBox.hgrow="ALWAYS">
+            <StackPane styleClass="action-icon-box action-icon-green">
+                <Label text="✏" style="-fx-font-size:22px;"/>
+            </StackPane>
+            <VBox spacing="4">
+                <Label text="Modifier mon profil" styleClass="action-card-title"/>
+                <Label text="Mettre à jour vos informations personnelles"
+                       styleClass="action-card-sub" wrapText="true"/>
+            </VBox>
+        </VBox>
+
+        <!-- Change password -->
+        <VBox styleClass="action-card action-card-password" spacing="12"
+              onMouseClicked="#handleChangePassword" HBox.hgrow="ALWAYS">
+            <StackPane styleClass="action-icon-box action-icon-blue">
+                <Label text="🔒" style="-fx-font-size:22px;"/>
+            </StackPane>
+            <VBox spacing="4">
+                <Label text="Changer le mot de passe" styleClass="action-card-title"/>
+                <Label text="Sécuriser votre compte" styleClass="action-card-sub"/>
+            </VBox>
+        </VBox>
+
+        <!-- Facial recognition — placeholder, disabled for now -->
+        <VBox styleClass="action-card action-card-face" spacing="12"
+              HBox.hgrow="ALWAYS" opacity="0.5">
+            <StackPane styleClass="action-icon-box action-icon-amber">
+                <Label text="📷" style="-fx-font-size:22px;"/>
+            </StackPane>
+            <VBox spacing="4">
+                <Label text="Reconnaissance faciale" styleClass="action-card-title"/>
+                <Label text="Connexion par le visage" styleClass="action-card-sub"/>
+                <Label text="Bientôt disponible" styleClass="action-card-coming-soon"/>
+            </VBox>
+        </VBox>
+    </HBox>
+
+</VBox>

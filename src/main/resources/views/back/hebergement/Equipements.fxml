@@ -5,7 +5,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.controller.back.hebergement.EquipementsController"
+            fx:controller="tn.esprit.controller.back.hebergement.EquipementsController"
             styleClass="root-pane"
             stylesheets="@../../../styles/ecotrip.css">
 

@@ -4,7 +4,7 @@
 <?import javafx.scene.shape.*?>
 
 <StackPane xmlns:fx="http://javafx.com/fxml"
-           fx:controller="org.example.controller.auth.LoginController"
+           fx:controller="tn.esprit.controller.auth.LoginController"
            styleClass="auth-page">
 
     <VBox alignment="CENTER" spacing="0">
