@@ -5,7 +5,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.controller.back.hebergement.EditHebergementController"
+            fx:controller="tn.esprit.controller.back.hebergement.EditHebergementController"
             styleClass="root-pane"
             stylesheets="@../../../styles/ecotrip.css">
 
@@ -57,7 +57,7 @@
                     <HBox alignment="CENTER_LEFT">
                         <VBox HBox.hgrow="ALWAYS" spacing="4">
                             <HBox spacing="4">
-                                <<Button text="Dashboard" styleClass="breadcrumb-link" onAction="#onNavDashboard"/>
+                                <Button text="Dashboard" styleClass="breadcrumb-link" onAction="#onNavDashboard"/>
                                 <Label text=" › " styleClass="breadcrumb-sep"/>
                                 <Label text="Hébergements" styleClass="breadcrumb-link" onMouseClicked="#onNavHebergements"/>
                                 <Label text=" › " styleClass="breadcrumb-sep"/>

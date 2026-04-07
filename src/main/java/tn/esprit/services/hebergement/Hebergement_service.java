@@ -1,0 +1,104 @@
+package tn.esprit.services.hebergement;
+
+import tn.esprit.database.Base;
+import tn.esprit.models.Hebergement;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Hebergement_service {
+
+    private final Connection connection = Base.getInstance().getConnection();
+
+    // CREATE — retourne l'ID généré
+    public int ajouter(Hebergement h) throws SQLException {
+        String sql = "INSERT INTO hebergement (nom, description, adresse, ville, nb_etoiles, image_principale, label_eco, latitude, longitude, actif, categorie_id, propietaire_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        ps.setString(1, h.getNom());
+        ps.setString(2, h.getDescription());
+        ps.setString(3, h.getAdresse());
+        ps.setString(4, h.getVille());
+        ps.setInt(5, h.getNb_etoiles());
+        ps.setString(6, h.getImage_principale());
+        ps.setString(7, h.getLabel_eco());
+        ps.setDouble(8, h.getLatitude());
+        ps.setDouble(9, h.getLongitude());
+        ps.setInt(10, h.getActif());
+        ps.setInt(11, h.getCategorie_id());
+        ps.setInt(12, h.getPropietaire_id());
+        ps.executeUpdate();
+        ResultSet keys = ps.getGeneratedKeys();
+        if (keys.next()) return keys.getInt(1);
+        return -1;
+    }
+
+    // READ ALL
+    public List<Hebergement> getAll() throws SQLException {
+        List<Hebergement> list = new ArrayList<>();
+        String sql = "SELECT * FROM hebergement";
+        Statement st = connection.createStatement();
+        ResultSet rs = st.executeQuery(sql);
+        while (rs.next()) {
+            list.add(mapResultSet(rs));
+        }
+        return list;
+    }
+
+    // READ BY ID
+    public Hebergement getById(int id) throws SQLException {
+        String sql = "SELECT * FROM hebergement WHERE id = ?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setInt(1, id);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) return mapResultSet(rs);
+        return null;
+    }
+
+    // UPDATE
+    public void modifier(Hebergement h) throws SQLException {
+        String sql = "UPDATE hebergement SET nom=?, description=?, adresse=?, ville=?, nb_etoiles=?, image_principale=?, label_eco=?, latitude=?, longitude=?, actif=?, categorie_id=?, propietaire_id=? WHERE id=?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setString(1, h.getNom());
+        ps.setString(2, h.getDescription());
+        ps.setString(3, h.getAdresse());
+        ps.setString(4, h.getVille());
+        ps.setInt(5, h.getNb_etoiles());
+        ps.setString(6, h.getImage_principale());
+        ps.setString(7, h.getLabel_eco());
+        ps.setDouble(8, h.getLatitude());
+        ps.setDouble(9, h.getLongitude());
+        ps.setInt(10, h.getActif());
+        ps.setInt(11, h.getCategorie_id());
+        ps.setInt(12, h.getPropietaire_id());
+        ps.setInt(13, h.getId());
+        ps.executeUpdate();
+    }
+
+    // DELETE
+    public void supprimer(int id) throws SQLException {
+        String sql = "DELETE FROM hebergement WHERE id = ?";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setInt(1, id);
+        ps.executeUpdate();
+    }
+
+    // MAPPER
+    private Hebergement mapResultSet(ResultSet rs) throws SQLException {
+        return new Hebergement(
+                rs.getInt("id"),
+                rs.getString("nom"),
+                rs.getString("description"),
+                rs.getString("adresse"),
+                rs.getString("ville"),
+                rs.getInt("nb_etoiles"),
+                rs.getString("image_principale"),
+                rs.getString("label_eco"),
+                rs.getDouble("latitude"),
+                rs.getDouble("longitude"),
+                rs.getInt("actif"),
+                rs.getInt("categorie_id"),
+                rs.getInt("propietaire_id")
+        );
+    }
+}

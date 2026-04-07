@@ -4,7 +4,7 @@
 
 <VBox xmlns="http://javafx.com/javafx/17"
       xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="org.example.controller.component.BackSidebarController"
+      fx:controller="tn.esprit.controller.component.BackSidebarController"
       styleClass="admin-sidebar" prefWidth="240" spacing="0">
 
     <!-- Logo -->
@@ -75,6 +75,8 @@
     <VBox styleClass="sidebar-footer" spacing="6">
         <Button text="🌐  Voir le site" onAction="#handleViewSite"
                 styleClass="sidebar-btn" maxWidth="Infinity"/>
+        <Button fx:id="monCompteBtn" text="Mon Compte" onAction="#handleMonCompte"
+                styleClass="sidebar-btn" maxWidth="-Infinity"/>
         <Button text="⬅  Déconnexion" onAction="#handleLogout"
                 styleClass="sidebar-btn-logout" maxWidth="Infinity"/>
     </VBox>

@@ -3,19 +3,17 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane styleClass="root-pane" stylesheets="@../../../styles/ecotrip.css"
             xmlns="http://javafx.com/javafx/25"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.example.controller.back.hebergement.CategoriesHebergementController">
+            fx:controller="tn.esprit.controller.back.hebergement.CategoriesHebergementController">
 
     <!-- ═══ SIDEBAR ═══ -->
    <!-- <left>
@@ -115,10 +113,10 @@
                     </HBox>
 
                     <!-- Two-column layout -->
-                    <HBox alignment="TOP_LEFT" spacing="24">
+                    <HBox spacing="24">
 
                         <!-- ── FORMULAIRE ── -->
-                        <VBox maxWidth="360" minWidth="360" spacing="0" styleClass="form-card cat-form-card">
+                        <VBox maxWidth="360" minWidth="360" styleClass="form-card cat-form-card">
 
                             <!-- Header avec preview icône -->
                             <HBox alignment="CENTER_LEFT" spacing="14" styleClass="cat-form-header">
