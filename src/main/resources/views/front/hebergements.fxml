@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.String?>
+
+<!--
+    ✅ Le ScrollPane enveloppe TOUT (hero + filtres + cartes + pagination + footer).
+    ✅ Pas de hauteur contrainte sur le VBox interne → le contenu détermine sa propre hauteur.
+    ✅ Le scroll fonctionne normalement.
+    ✅ Le footer apparaît après les cartes + pagination.
+-->
+<ScrollPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="tn.esprit.controller.front.HebergementsController"
+            fitToWidth="true"
+            hbarPolicy="NEVER"
+            vbarPolicy="AS_NEEDED"
+            styleClass="heb-scroll">
+
+    <stylesheets>
+        <String fx:value="@/styles/front.css"/>
+    </stylesheets>
+
+    <VBox styleClass="heb-page" spacing="0">
+
+        <!-- ══ HERO ══ -->
+        <VBox styleClass="heb-hero" alignment="CENTER" spacing="14">
+            <padding><Insets top="80" bottom="80" left="40" right="40"/></padding>
+            <Label text="Eco-Friendly Accommodations" styleClass="heb-hero-title"/>
+            <Label text="Discover sustainable places to stay in Tunisia" styleClass="heb-hero-sub"/>
+        </VBox>
+
+        <!-- ══ FILTRES ══ -->
+        <VBox styleClass="heb-filters-container">
+            <padding><Insets top="30" bottom="30" left="40" right="40"/></padding>
+            <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 0 0 20 0;">
+                <Region styleClass="filters-title-bar"/>
+                <Label text="SEARCH &amp; FILTER ACCOMMODATIONS" styleClass="filters-section-title"/>
+            </HBox>
+            <HBox spacing="16" alignment="CENTER_LEFT">
+                <TextField fx:id="searchField"
+                           promptText="Search by name or city..."
+                           styleClass="heb-filter-input"
+                           HBox.hgrow="ALWAYS"/>
+                <ComboBox fx:id="sortSelect" styleClass="heb-filter-input" prefWidth="180">
+                    <items>
+                        <javafx.collections.FXCollections fx:factory="observableArrayList">
+                            <String fx:value="Sort by"/>
+                            <String fx:value="Name (A-Z)"/>
+                            <String fx:value="Name (Z-A)"/>
+                            <String fx:value="Best Rated"/>
+                            <String fx:value="City (A-Z)"/>
+                        </javafx.collections.FXCollections>
+                    </items>
+                </ComboBox>
+                <ComboBox fx:id="filterVille"   styleClass="heb-filter-input" prefWidth="160"/>
+                <ComboBox fx:id="filterEtoiles" styleClass="heb-filter-input" prefWidth="150"/>
+                <Button text="Clear Filters" styleClass="heb-clear-btn" onAction="#onReset" prefWidth="140"/>
+            </HBox>
+        </VBox>
+
+        <!-- ══ RÉSULTATS HEADER ══ -->
+        <HBox alignment="CENTER_LEFT">
+            <padding><Insets top="24" bottom="12" left="40" right="40"/></padding>
+            <Label fx:id="resultCount" text="0 Accommodation(s) Found" styleClass="heb-result-count"/>
+        </HBox>
+
+        <!-- ══ CARTES ══ -->
+        <FlowPane fx:id="cardsPane" hgap="28" vgap="28" styleClass="heb-cards-pane">
+            <padding><Insets top="0" bottom="20" left="40" right="40"/></padding>
+        </FlowPane>
+
+        <!-- ══ EMPTY STATE ══ -->
+        <VBox fx:id="emptyState" alignment="CENTER" spacing="16"
+              managed="false" visible="false" styleClass="heb-empty">
+            <padding><Insets top="60" bottom="60"/></padding>
+            <Label text="🏨" styleClass="heb-empty-icon"/>
+            <Label text="No Accommodations Found" styleClass="heb-empty-title"/>
+            <Label text="Try adjusting your filters to see more results" styleClass="heb-empty-sub"/>
+            <Button text="↺  Reset Filters" styleClass="heb-clear-btn" onAction="#onReset"/>
+        </VBox>
+
+        <!-- ✅ PAGINATION -->
+        <HBox fx:id="paginationBar"
+              alignment="CENTER" spacing="16"
+              managed="false" visible="false"
+              styleClass="heb-pagination">
+            <padding><Insets top="24" bottom="24" left="40" right="40"/></padding>
+            <Button fx:id="btnPrev" text="← Précédent" styleClass="heb-page-btn" onAction="#onPrev"/>
+            <Label fx:id="pagInfo" text="Page 1 / 1" styleClass="heb-page-info"/>
+            <Button fx:id="btnNext" text="Suivant →"   styleClass="heb-page-btn" onAction="#onNext"/>
+        </HBox>
+
+        <!-- ✅ FOOTER — après les cartes + pagination, dans le scroll -->
+        <fx:include source="../components/front-footer.fxml"/>
+
+    </VBox>
+</ScrollPane>

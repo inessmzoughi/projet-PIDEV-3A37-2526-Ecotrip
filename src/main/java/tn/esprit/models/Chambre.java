@@ -33,55 +33,53 @@ public class Chambre {
         return numero;
     }
 
-    public void setNumero(String numero) {
-        this.numero = numero;
-    }
+
+
 
     public String getType() {
         return type;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
+
+
+
 
     public int getCapacite() {
         return capacite;
     }
 
-    public void setCapacite(int capacite) {
-        this.capacite = capacite;
-    }
+
+
+
 
     public double getPrix_par_nuit() {
         return prix_par_nuit;
     }
 
-    public void setPrix_par_nuit(double prix_par_nuit) {
-        this.prix_par_nuit = prix_par_nuit;
-    }
+
+
+
 
     public String getDescription() {
         return description;
     }
 
+
     public void setDescription(String description) {
         this.description = description;
     }
+
 
     public int getDisponible() {
         return disponible;
     }
 
-    public void setDisponible(int disponible) {
-        this.disponible = disponible;
-    }
+
+
 
     public int getHebergement_id() {
         return hebergement_id;
     }
 
-    public void setHebergement_id(int hebergement_id) {
-        this.hebergement_id = hebergement_id;
-    }
+
 }
