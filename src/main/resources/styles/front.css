@@ -374,3 +374,452 @@
     -fx-padding: 14 18 14 18;
     -fx-font-size: 13px;
 }
+/* ═══════════════════════════════════════════════════════
+   hebergements.css  –  EcoTrip JavaFX Front
+   Palette principale : vert forêt #2d5016 / #1e4620
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Page ── */
+.heb-page {
+    -fx-background-color: #f5f7f2;
+}
+
+/* ── HERO ── */
+.heb-hero {
+    -fx-background-color: linear-gradient(to bottom right, #2d5016, #1e4620);
+}
+
+.heb-hero-title {
+    -fx-text-fill: white;
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+}
+
+.heb-hero-sub {
+    -fx-text-fill: rgba(255,255,255,0.92);
+    -fx-font-size: 16px;
+}
+
+/* ── FILTRES container ── */
+.heb-filters-container {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 30, 0, 0, 8);
+    -fx-translate-y: -40;
+    -fx-margin: 0 40 0 40;
+}
+
+.filters-title-bar {
+    -fx-min-width: 4;
+    -fx-pref-width: 4;
+    -fx-pref-height: 22;
+    -fx-background-color: #2d5016;
+    -fx-background-radius: 2;
+}
+
+.filters-section-title {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d5016;
+    -fx-letter-spacing: 1;
+}
+
+/* ── Inputs & Combos ── */
+.heb-filter-input {
+    -fx-background-color: #fafafa;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 2;
+    -fx-border-radius: 14;
+    -fx-background-radius: 14;
+    -fx-padding: 12 16 12 16;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+    -fx-prompt-text-fill: #999;
+    -fx-pref-height: 46;
+}
+
+.heb-filter-input:focused {
+    -fx-border-color: #2d5016;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(45,80,22,0.15), 8, 0, 0, 0);
+}
+
+.heb-filter-input .combo-box-popup .list-cell {
+    -fx-font-weight: 600;
+    -fx-padding: 8 12 8 12;
+}
+
+/* ── Bouton Clear ── */
+.heb-clear-btn {
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 2;
+    -fx-border-radius: 14;
+    -fx-background-radius: 14;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #666;
+    -fx-cursor: hand;
+    -fx-pref-height: 46;
+}
+
+.heb-clear-btn:hover {
+    -fx-border-color: #2d5016;
+    -fx-text-fill: #2d5016;
+}
+
+/* ── Résultats bar ── */
+.heb-results-bar {
+    -fx-background-color: transparent;
+    -fx-translate-y: -20;
+}
+
+.heb-result-count {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d5016;
+}
+
+/* ── ScrollPane ── */
+.heb-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+    -fx-translate-y: -20;
+}
+
+.heb-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* ── FlowPane (grille de cartes) ── */
+.heb-cards-pane {
+    -fx-background-color: transparent;
+    -fx-pref-wrap-length: 1000;
+}
+
+/* ═══════════════════════════════════════════════════════
+   CARTE HÉBERGEMENT
+   ═══════════════════════════════════════════════════════ */
+.heb-card {
+    -fx-background-color: white;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.09), 24, 0, 0, 6);
+    -fx-cursor: hand;
+    -fx-pref-width: 320;
+    -fx-max-width: 340;
+}
+
+.heb-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(45,80,22,0.28), 50, 0, 0, 16);
+    -fx-translate-y: -6;
+}
+
+/* Zone image */
+.heb-card-img {
+    -fx-background-color: linear-gradient(to bottom right, #e8f5e9, #c8e6c9);
+    -fx-background-radius: 18 18 0 0;
+    -fx-border-radius: 18 18 0 0;
+    -fx-min-height: 200;
+    -fx-pref-height: 200;
+}
+
+/* Badge éco (label en haut à droite) */
+.heb-card-eco-badge {
+    -fx-background-color: rgba(45,80,22,0.92);
+    -fx-background-radius: 20;
+    -fx-text-fill: white;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 5 14 5 14;
+}
+
+/* Étoiles */
+.heb-card-stars {
+    -fx-text-fill: #ffc107;
+    -fx-font-size: 16px;
+    -fx-padding: 0 0 2 0;
+}
+
+/* Catégorie pill */
+.heb-card-category {
+    -fx-background-color: linear-gradient(to right, #e8f5e9, #c8e6c9);
+    -fx-background-radius: 14;
+    -fx-text-fill: #2d5016;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 5 12 5 12;
+}
+
+/* Nom */
+.heb-card-nom {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1a1a1a;
+    -fx-wrap-text: true;
+}
+
+/* Ville */
+.heb-card-ville {
+    -fx-font-size: 13px;
+    -fx-text-fill: #777;
+}
+
+/* Description */
+.heb-card-desc {
+    -fx-font-size: 13px;
+    -fx-text-fill: #888;
+    -fx-wrap-text: true;
+    -fx-line-spacing: 3;
+}
+
+/* Badge équipement */
+.heb-card-equipement {
+    -fx-background-color: #f8f9fa;
+    -fx-background-radius: 7;
+    -fx-text-fill: #666;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 4 10 4 10;
+}
+
+.heb-card-equipement:hover {
+    -fx-background-color: #e8f5e9;
+    -fx-text-fill: #2d5016;
+}
+
+/* Zone prix */
+.heb-card-price-box {
+    -fx-background-color: linear-gradient(to right, #e8f5e9, #c8e6c9);
+    -fx-background-radius: 12;
+    -fx-padding: 14 18 14 18;
+    -fx-alignment: center;
+}
+
+.heb-card-price-amount {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d5016;
+}
+
+.heb-card-price-currency {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d5016;
+}
+
+.heb-card-price-unit {
+    -fx-font-size: 13px;
+    -fx-text-fill: #666;
+}
+
+.heb-card-price-request {
+    -fx-font-size: 14px;
+    -fx-text-fill: #2d5016;
+    -fx-font-weight: bold;
+}
+
+/* Bouton Réserver */
+.heb-card-btn {
+    -fx-background-color: linear-gradient(to bottom right, #2d5016, #1e4620);
+    -fx-background-radius: 13;
+    -fx-border-radius: 13;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 14 20 14 20;
+    -fx-cursor: hand;
+    -fx-max-width: infinity;
+    -fx-alignment: center;
+}
+
+.heb-card-btn:hover {
+    -fx-background-color: #3a6620;
+    -fx-effect: dropshadow(gaussian, rgba(45,80,22,0.40), 20, 0, 0, 6);
+    -fx-translate-y: -2;
+}
+
+.heb-card-btn:pressed {
+    -fx-translate-y: 0;
+    -fx-effect: none;
+}
+
+/* ── Empty state ── */
+.heb-empty {
+    -fx-alignment: center;
+}
+
+.heb-empty-icon {
+    -fx-font-size: 60px;
+    -fx-text-fill: #cccccc;
+}
+
+.heb-empty-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #888;
+}
+
+.heb-empty-sub {
+    -fx-font-size: 15px;
+    -fx-text-fill: #aaa;
+}
+/* ═══════════════════════════════════════
+   front-footer.css  –  EcoTrip Footer
+   ═══════════════════════════════════════ */
+
+.footer-area {
+    -fx-background-color: #1e4620;
+}
+
+/* Titres */
+.footer-title {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* Texte courant */
+.footer-text {
+    -fx-text-fill: rgba(255, 255, 255, 0.75);
+    -fx-font-size: 12px;
+}
+
+/* Liens navigation */
+.footer-link {
+    -fx-text-fill: rgba(255, 255, 255, 0.75);
+    -fx-border-color: transparent;
+    -fx-font-size: 12px;
+    -fx-padding: 0;
+}
+
+.footer-link:hover {
+    -fx-text-fill: white;
+}
+
+/* Lien auth (connexion/déconnexion) */
+.footer-link-auth {
+    -fx-text-fill: #a5d6a7;
+    -fx-border-color: transparent;
+    -fx-font-size: 12px;
+    -fx-padding: 0;
+}
+
+/* Input newsletter */
+.footer-input {
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-padding: 8 12 8 12;
+    -fx-font-size: 12px;
+}
+
+/* Bouton envoyer */
+.footer-btn-send {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-font-weight: bold;
+    -fx-padding: 8 14 8 14;
+    -fx-cursor: hand;
+}
+
+.footer-btn-send:hover {
+    -fx-background-color: #43A047;
+}
+
+/* Label info newsletter */
+.footer-info-label {
+    -fx-text-fill: #a5d6a7;
+    -fx-font-size: 11px;
+}
+
+/* Boutons réseaux sociaux */
+.footer-btn-fb {
+    -fx-background-color: #3b5998;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-font-size: 11px;
+    -fx-padding: 6 10 6 10;
+    -fx-cursor: hand;
+}
+
+.footer-btn-ig {
+    -fx-background-color: #C13584;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-font-size: 11px;
+    -fx-padding: 6 10 6 10;
+    -fx-cursor: hand;
+}
+
+.footer-btn-tw {
+    -fx-background-color: #1DA1F2;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-font-size: 11px;
+    -fx-padding: 6 10 6 10;
+    -fx-cursor: hand;
+}
+
+.footer-btn-yt {
+    -fx-background-color: #FF0000;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-font-size: 11px;
+    -fx-padding: 6 10 6 10;
+    -fx-cursor: hand;
+}
+
+/* Séparateur */
+.footer-separator {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Copyright */
+.footer-copyright {
+    -fx-text-fill: rgba(255, 255, 255, 0.6);
+    -fx-font-size: 12px;
+}
+/* ─── À AJOUTER dans front.css ─── */
+
+/* Pagination bar */
+.heb-pagination {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1 0 0 0;
+}
+
+.heb-page-btn {
+    -fx-background-color: white;
+    -fx-text-fill: #1a3a2a;
+    -fx-border-color: #c6f6d5;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-border-width: 1.5;
+    -fx-font-size: 13.5px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 10 24 10 24;
+}
+
+.heb-page-btn:hover {
+    -fx-background-color: #f0fff4;
+    -fx-border-color: #38a169;
+}
+
+.heb-page-btn:disabled {
+    -fx-opacity: 0.4;
+    -fx-cursor: default;
+}
+
+.heb-page-info {
+    -fx-font-size: 14px;
+    -fx-text-fill: #475569;
+    -fx-font-weight: bold;
+    -fx-min-width: 100px;
+    -fx-alignment: CENTER;
+}
