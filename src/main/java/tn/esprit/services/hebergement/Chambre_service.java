@@ -10,10 +10,7 @@ import java.util.List;
 public class Chambre_service {
 
     private final Connection connection = Base.getInstance().getConnection();
-
-    public void ajouter(Chambre c) throws SQLException {
-        String sql = "INSERT INTO chambre (numero, type, capacite, prix_par_nuit, description, disponible, hebergement_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        PreparedStatement ps = connection.prepareStatement(sql);
+    private void setChambreParams(PreparedStatement ps, Chambre c, boolean withId) throws SQLException {
         ps.setString(1, c.getNumero());
         ps.setString(2, c.getType());
         ps.setInt(3, c.getCapacite());
@@ -21,9 +18,20 @@ public class Chambre_service {
         ps.setString(5, c.getDescription());
         ps.setInt(6, c.getDisponible());
         ps.setInt(7, c.getHebergement_id());
-        ps.executeUpdate();
+
+        if (withId) {
+            ps.setInt(8, c.getId());
+        }
     }
 
+    public void ajouter(Chambre c) throws SQLException {
+        String sql = "INSERT INTO chambre (numero, type, capacite, prix_par_nuit, description, disponible, hebergement_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        PreparedStatement ps = connection.prepareStatement(sql);
+        setChambreParams(ps, c, false);
+
+        ps.executeUpdate();
+    }
     public List<Chambre> getAll() throws SQLException {
         List<Chambre> list = new ArrayList<>();
         ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM chambre");
@@ -41,7 +49,7 @@ public class Chambre_service {
         while (rs.next()) list.add(mapResultSet(rs));
         return list;
     }
-
+    @SuppressWarnings("unused")
     public Chambre getById(int id) throws SQLException {
         PreparedStatement ps = connection.prepareStatement("SELECT * FROM chambre WHERE id = ?");
         ps.setInt(1, id);
@@ -52,15 +60,10 @@ public class Chambre_service {
 
     public void modifier(Chambre c) throws SQLException {
         String sql = "UPDATE chambre SET numero=?, type=?, capacite=?, prix_par_nuit=?, description=?, disponible=?, hebergement_id=? WHERE id=?";
+
         PreparedStatement ps = connection.prepareStatement(sql);
-        ps.setString(1, c.getNumero());
-        ps.setString(2, c.getType());
-        ps.setInt(3, c.getCapacite());
-        ps.setDouble(4, c.getPrix_par_nuit());
-        ps.setString(5, c.getDescription());
-        ps.setInt(6, c.getDisponible());
-        ps.setInt(7, c.getHebergement_id());
-        ps.setInt(8, c.getId());
+        setChambreParams(ps, c, true);
+
         ps.executeUpdate();
     }
 

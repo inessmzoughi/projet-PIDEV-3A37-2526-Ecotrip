@@ -162,9 +162,7 @@ public class AddHebergementController implements Initializable {
 
     /* ══════ NAVIGATION ══════ */
     @FXML private void onNavHebergements() { navigateToList(); }
-    @FXML private void onLogout()          { System.exit(0); }
     @FXML private void onNavDashboard() { SceneManager.navigateTo(Routes.ADMIN_DASHBOARD); }
-
     private void navigateToList() {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/views/back/hebergement/ListHebergements.fxml"));

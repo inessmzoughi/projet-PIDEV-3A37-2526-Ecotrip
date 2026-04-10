@@ -39,6 +39,8 @@ public class ListHebergementsController implements Initializable {
     @FXML private Label            errNom, errVille, errNbEtoiles, errCategorie, charCount;
     @FXML private Button           submitBtn;
     @FXML private FlowPane         equipementsCheckboxPane;
+    @FXML private Label errPropietaire;
+
 
     /* ─── Table ─── */
     @FXML private TextField              searchField;
@@ -50,6 +52,8 @@ public class ListHebergementsController implements Initializable {
     @FXML private TableColumn<Hebergement, Void>    colActions;
     @FXML private Label badgeCount, pagInfo;
     @FXML private HBox  pagButtons;
+    @FXML
+    private HBox paginationBar;
 
     /* ─── State ─── */
     private final Hebergement_service            service                    = new Hebergement_service();

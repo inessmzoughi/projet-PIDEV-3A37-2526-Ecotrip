@@ -14,6 +14,7 @@ public class Hebergement {
     private int actif;
     private int categorie_id;
     private int propietaire_id;
+    @SuppressWarnings("unused")
     public Hebergement(){}
     public Hebergement(int id, String nom, String description, String adresse, String ville, int nb_etoiles, String image_principale, String label_eco, double latitude, double longitude, int actif, int categorie_id, int propietaire_id) {
         this.id = id;

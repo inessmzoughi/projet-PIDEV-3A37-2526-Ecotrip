@@ -4,6 +4,8 @@ public class Equipement {
     private int id;
     private String nom;
     private String description;
+    @SuppressWarnings("unused")
+
     public Equipement(){}
     public Equipement(int id, String nom, String description) {
         this.id = id;
