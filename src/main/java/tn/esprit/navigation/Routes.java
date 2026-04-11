@@ -28,7 +28,6 @@ public class Routes {
     public static final String ADMIN_TRANSPORT    = "admin-transport";
     public static final String ADMIN_BOUTIQUE     = "admin-boutique";
     public static final String ADMIN_RESERVATIONS = "admin-reservations";
-    public static final String ADMIN_USERS        = "admin-users";
     public static final String ADMIN_HEBERGEMENTS          = "admin-hebergements";
     public static final String ADMIN_ADD_HEBERGEMENT       = "admin-add-hebergement";
     public static final String ADMIN_EDIT_HEBERGEMENT      = "admin-edit-hebergement";
@@ -38,4 +37,10 @@ public class Routes {
     public static final String ADMIN_MON_COMPTE      = "admin-mon-compte";
     public static final String ADMIN_UPDATE_ACCOUNT  = "admin-update-account";
     public static final String ADMIN_CHANGE_PASSWORD = "admin-change-password";
+    // gestion user
+    public static final String ADMIN_USERS      = "admin-users";
+    public static final String ADMIN_USER_NEW   = "admin-user-new";
+    public static final String ADMIN_USER_SHOW  = "admin-user-show";
+    public static final String ADMIN_USER_EDIT  = "admin-user-edit";
+
 }

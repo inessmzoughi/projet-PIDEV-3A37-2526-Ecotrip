@@ -19,7 +19,7 @@ public class User {
         this.username = username;
         this.email = email;
         this.password = password;
-        this.roles = Role.User;
+        this.roles = Role.ROLE_USER;
         this.is_verified = false;
         this.address = null;
         this.telephone = null;
@@ -56,10 +56,10 @@ public class User {
     public void setRoles(Role roles) {
         this.roles = roles;
     }
-    public boolean isIs_verified() {
+    public boolean isVerified() {
         return is_verified;
     }
-    public void setIs_verified(boolean is_verified) {
+    public void setIsVerified(boolean is_verified) {
         this.is_verified = is_verified;
     }
     public String getAddress() {
@@ -80,8 +80,8 @@ public class User {
     public void setImage(String image) {
         this.image = image;
     }
-    public String getFace_descriptor() { return face_descriptor;}
-    public void setFace_descriptor(String face_descriptor) {
+    public String getFaceDescriptor() { return face_descriptor;}
+    public void setFaceDescriptor(String face_descriptor) {
         this.face_descriptor = face_descriptor;
     }
 }

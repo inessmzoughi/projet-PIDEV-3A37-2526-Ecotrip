@@ -34,7 +34,7 @@ public class SceneManager {
     static {
         publicRoutes.put(Routes.LOGIN,    "/views/auth/login.fxml");
         publicRoutes.put(Routes.REGISTER, "/views/auth/register.fxml");
-
+        //FRONTOFFICE
         frontRoutes.put(Routes.HOME,              "/views/front/home.fxml");
         frontRoutes.put(Routes.ABOUT,             "/views/front/about.fxml");
         frontRoutes.put(Routes.HEBERGEMENTS,      "/views/front/hebergements.fxml");
@@ -43,26 +43,31 @@ public class SceneManager {
         frontRoutes.put(Routes.BOUTIQUE,          "/views/front/boutique.fxml");
         frontRoutes.put(Routes.CONTACT,           "/views/front/contact.fxml");
         frontRoutes.put(Routes.MES_RESERVATIONS,  "/views/front/mes-reservations.fxml");
+        //gestion profile
         frontRoutes.put(Routes.FRONT_MON_COMPTE,      "/views/compte/mon-compte.fxml");
         frontRoutes.put(Routes.FRONT_UPDATE_ACCOUNT,  "/views/compte/update-account.fxml");
         frontRoutes.put(Routes.FRONT_CHANGE_PASSWORD, "/views/compte/change-password.fxml");
-//*****************back
+        //BACKOFFICE
         backRoutes.put(Routes.ADMIN_DASHBOARD,    "/views/back/dashboard.fxml");
         backRoutes.put(Routes.ADMIN_ACTIVITES,    "/views/back/activites.fxml");
         backRoutes.put(Routes.ADMIN_TRANSPORT,    "/views/back/transport.fxml");
         backRoutes.put(Routes.ADMIN_BOUTIQUE,     "/views/back/boutique.fxml");
         backRoutes.put(Routes.ADMIN_RESERVATIONS, "/views/back/reservations.fxml");
-        backRoutes.put(Routes.ADMIN_USERS,        "/views/back/users.fxml");
         backRoutes.put(Routes.ADMIN_HEBERGEMENTS,           "/views/back/hebergement/ListHebergements.fxml");
         backRoutes.put(Routes.ADMIN_ADD_HEBERGEMENT,        "/views/back/hebergement/AddHebergement.fxml");
         backRoutes.put(Routes.ADMIN_EDIT_HEBERGEMENT,       "/views/back/hebergement/EditHebergement.fxml");
         backRoutes.put(Routes.ADMIN_CATEGORIES_HEBERGEMENT, "/views/back/hebergement/CategoriesHebergement.fxml");
         backRoutes.put(Routes.ADMIN_CHAMBRES,               "/views/back/hebergement/Chambres.fxml");
         backRoutes.put(Routes.ADMIN_EQUIPEMENTS,            "/views/back/hebergement/Equipements.fxml");
+        //gestion profile
         backRoutes.put(Routes.ADMIN_MON_COMPTE,       "/views/compte/mon-compte.fxml");
         backRoutes.put(Routes.ADMIN_UPDATE_ACCOUNT,   "/views/compte/update-account.fxml");
         backRoutes.put(Routes.ADMIN_CHANGE_PASSWORD,  "/views/compte/change-password.fxml");
-    }
+        // gestion user
+        backRoutes.put(Routes.ADMIN_USERS,     "/views/back/user/user-list.fxml");
+        backRoutes.put(Routes.ADMIN_USER_NEW,  "/views/back/user/user-form.fxml");
+        backRoutes.put(Routes.ADMIN_USER_SHOW, "/views/back/user/user-show.fxml");
+        backRoutes.put(Routes.ADMIN_USER_EDIT, "/views/back/user/user-form.fxml");}
 
     public static void initialize(Stage stage) {
         primaryStage = stage;
@@ -215,4 +220,5 @@ public class SceneManager {
         );
         primaryStage.setScene(scene);
     }
+
 }
