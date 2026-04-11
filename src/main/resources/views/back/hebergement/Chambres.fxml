@@ -7,56 +7,12 @@
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="tn.esprit.controller.back.hebergement.ChambresController"
             styleClass="root-pane"
-            stylesheets="@../../../styles/ecotrip.css">
+           >
 
-    <!-- ═══ SIDEBAR ═══ -->
-   <!-- <left>
-        <VBox styleClass="sidebar" minWidth="240" maxWidth="240">
-            <HBox styleClass="sidebar-logo" alignment="CENTER_LEFT" spacing="12">
-                <Label text="🌿" styleClass="sidebar-logo-icon"/>
-                <VBox spacing="2">
-                    <Label text="EcoTrip" styleClass="brand-name"/>
-                    <Label text="Admin Panel" styleClass="brand-sub"/>
-                </VBox>
-            </HBox>
-            <VBox styleClass="nav-section" VBox.vgrow="ALWAYS">
-                <Label text="PRINCIPAL" styleClass="nav-label"/>
-                <Button text="  📊  Dashboard"     styleClass="nav-item" maxWidth="Infinity"/>
-                <Label text="CONTENU" styleClass="nav-label"/>
-                <Button text="  🏨  Hébergements"  styleClass="nav-item" maxWidth="Infinity" onAction="#onNavHebergements"/>
-                <Button text="      📋  Liste"       styleClass="nav-item nav-sub-item" maxWidth="Infinity" onAction="#onNavHebergements"/>
-                <Button text="      🛏  Chambres"    styleClass="nav-item nav-sub-item nav-item-active" maxWidth="Infinity"/>
-                <Button text="      🔧  Équipements" styleClass="nav-item nav-sub-item" maxWidth="Infinity" onAction="#onNavEquipements"/>
-                <Button text="      🏷  Catégories"  styleClass="nav-item nav-sub-item" maxWidth="Infinity" onAction="#onNavCategories"/>
-                <Label text="GESTION" styleClass="nav-label"/>
-                <Button text="  📋  Réservations"  styleClass="nav-item" maxWidth="Infinity"/>
-                <Button text="  👥  Utilisateurs"  styleClass="nav-item" maxWidth="Infinity"/>
-            </VBox>
-            <VBox styleClass="sidebar-footer">
-                <Separator styleClass="sidebar-sep"/>
-                <HBox styleClass="sidebar-user" alignment="CENTER_LEFT" spacing="10">
-                    <Label text="IN" styleClass="avatar"/>
-                    <VBox>
-                        <Label text="Ines Mzoughi" styleClass="user-name"/>
-                        <Label text="Administrateur" styleClass="user-role"/>
-                    </VBox>
-                </HBox>
-            </VBox>
-        </VBox>
-    </left>
--->
+
     <!-- ═══ CENTER ═══ -->
     <center>
         <VBox styleClass="main-content">
-
-            <!-- Topbar -->
-           <!-- <HBox styleClass="topbar" alignment="CENTER_LEFT" spacing="16">
-                <Label text="🛏️ Chambres" styleClass="topbar-title" HBox.hgrow="ALWAYS"/>
-                <Region HBox.hgrow="ALWAYS"/>
-                <Label text="admin@ecotrip.tn" styleClass="topbar-email"/>
-                <Button text="Déconnexion" styleClass="btn-logout" onAction="#onLogout"/>
-            </HBox>
--->
             <!-- Page Body -->
             <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane">
                 <VBox styleClass="page-body" spacing="20">
@@ -78,7 +34,7 @@
                     <HBox spacing="16">
                         <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
                             <HBox spacing="12" alignment="CENTER_LEFT">
-                                <Label text="🛏️" styleClass="stat-icon stat-icon-green"/>
+                                <Label text="🛏️" styleClass="stat-icon, stat-icon-green"/>
                                 <VBox spacing="2">
                                     <Label text="Total Chambres" styleClass="stat-label"/>
                                     <Label fx:id="statTotal" text="0" styleClass="stat-value"/>
@@ -88,7 +44,7 @@
                         </VBox>
                         <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
                             <HBox spacing="12" alignment="CENTER_LEFT">
-                                <Label text="💰" styleClass="stat-icon stat-icon-blue"/>
+                                <Label text="💰" styleClass="stat-icon, stat-icon-blue"/>
                                 <VBox spacing="2">
                                     <Label text="Prix Moyen" styleClass="stat-label"/>
                                     <Label fx:id="statPrix" text="—" styleClass="stat-value"/>
@@ -98,7 +54,7 @@
                         </VBox>
                         <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
                             <HBox spacing="12" alignment="CENTER_LEFT">
-                                <Label text="👤" styleClass="stat-icon stat-icon-purple"/>
+                                <Label text="👤" styleClass="stat-icon, stat-icon-purple"/>
                                 <VBox spacing="2">
                                     <Label text="Capacité Moy." styleClass="stat-label"/>
                                     <Label fx:id="statCap" text="—" styleClass="stat-value"/>
@@ -108,7 +64,7 @@
                         </VBox>
                         <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
                             <HBox spacing="12" alignment="CENTER_LEFT">
-                                <Label text="🏨" styleClass="stat-icon stat-icon-orange"/>
+                                <Label text="🏨" styleClass="stat-icon, stat-icon-orange"/>
                                 <VBox spacing="2">
                                     <Label text="Hébergements" styleClass="stat-label"/>
                                     <Label fx:id="statHeb" text="0" styleClass="stat-value"/>
@@ -119,7 +75,7 @@
                     </HBox>
 
                     <!-- FORM PANEL -->
-                    <VBox fx:id="formPanel" styleClass="form-card inline-form-panel"
+                    <VBox fx:id="formPanel" styleClass="form-card, inline-form-panel"
                           visible="false" managed="false" spacing="0">
 
                         <HBox styleClass="cat-form-header" alignment="CENTER_LEFT" spacing="10">
@@ -203,7 +159,7 @@
                     <VBox styleClass="table-card" spacing="0">
                         <HBox styleClass="table-card-header" alignment="CENTER_LEFT" spacing="8">
                             <Label text="🛏️ Liste des Chambres" styleClass="table-card-title" HBox.hgrow="ALWAYS"/>
-                            <Label fx:id="badgeCount" text="0" styleClass="badge badge-green"/>
+                            <Label fx:id="badgeCount" text="0" styleClass="badge, badge-green"/>
                         </HBox>
 
                         <TableView fx:id="tableView" styleClass="main-table" VBox.vgrow="ALWAYS">
