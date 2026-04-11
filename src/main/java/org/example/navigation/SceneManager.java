@@ -60,6 +60,10 @@ public class SceneManager {
         backRoutes.put(Routes.ADMIN_CATEGORIES_HEBERGEMENT, "/views/back/hebergement/CategoriesHebergement.fxml");
         backRoutes.put(Routes.ADMIN_CHAMBRES,               "/views/back/hebergement/Chambres.fxml");
         backRoutes.put(Routes.ADMIN_EQUIPEMENTS,            "/views/back/hebergement/Equipements.fxml");
+        backRoutes.put(Routes.ADMIN_ACTIVITIES,          "/views/back/activity/ListActivities.fxml");
+        backRoutes.put(Routes.ADMIN_ACTIVITY_CATEGORIES, "/views/back/activity/Categories.fxml");
+        backRoutes.put(Routes.ADMIN_GUIDES,              "/views/back/activity/Guides.fxml");
+        backRoutes.put(Routes.ADMIN_SCHEDULES,           "/views/back/activity/Schedules.fxml");
     }
 
     public static void initialize(Stage stage) {

@@ -32,4 +32,9 @@ public class Routes {
     public static final String ADMIN_CATEGORIES_HEBERGEMENT = "admin-categories-hebergement";
     public static final String ADMIN_CHAMBRES              = "admin-chambres";
     public static final String ADMIN_EQUIPEMENTS           = "admin-equipements";
+    // ── Activity (ADMIN) ─────────────────────────────────────
+    public static final String ADMIN_ACTIVITIES           = "admin-activities";
+    public static final String ADMIN_ACTIVITY_CATEGORIES  = "admin-activity-categories";
+    public static final String ADMIN_GUIDES               = "admin-guides";
+    public static final String ADMIN_SCHEDULES            = "admin-schedules";
 }

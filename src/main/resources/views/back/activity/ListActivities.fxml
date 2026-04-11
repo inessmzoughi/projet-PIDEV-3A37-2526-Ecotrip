@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.controller.back.activity.ListActivitiesController"
+            styleClass="root-pane"
+            stylesheets="@../../../styles/ecotrip.css">
+    <center>
+        <VBox styleClass="main-content">
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane">
+                <VBox styleClass="page-body" spacing="24">
+                    <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
+
+                    <!-- Breadcrumb + Title -->
+                    <VBox spacing="4">
+                        <HBox spacing="4">
+                            <Button text="Dashboard" styleClass="breadcrumb-link" onAction="#onNavDashboard"/>
+                            <Label text=" › " styleClass="breadcrumb-sep"/>
+                            <Label text="Activités" styleClass="breadcrumb-active"/>
+                        </HBox>
+                        <Label text="Gestion des Activités" styleClass="page-title"/>
+                    </VBox>
+
+                    <!-- Stat Cards -->
+                    <HBox spacing="20">
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
+                            <HBox spacing="12" alignment="CENTER_LEFT">
+                                <Label text="🏃" styleClass="stat-icon stat-icon-green"/>
+                                <VBox spacing="2">
+                                    <Label text="Total Activités" styleClass="stat-label"/>
+                                    <Label fx:id="statTotal" text="0" styleClass="stat-value"/>
+                                    <Label text="activités enregistrées" styleClass="stat-sub"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
+                            <HBox spacing="12" alignment="CENTER_LEFT">
+                                <Label text="✅" styleClass="stat-icon stat-icon-blue"/>
+                                <VBox spacing="2">
+                                    <Label text="Activités Actives" styleClass="stat-label"/>
+                                    <Label fx:id="statActive" text="0" styleClass="stat-value"/>
+                                    <Label text="en ligne" styleClass="stat-sub"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
+                            <HBox spacing="12" alignment="CENTER_LEFT">
+                                <Label text="💰" styleClass="stat-icon stat-icon-orange"/>
+                                <VBox spacing="2">
+                                    <Label text="Prix Moyen" styleClass="stat-label"/>
+                                    <Label fx:id="statAvgPrice" text="—" styleClass="stat-value"/>
+                                    <Label text="par activité" styleClass="stat-sub"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                    </HBox>
+
+                    <HBox alignment="TOP_LEFT" spacing="24">
+
+                        <!-- FORM -->
+                        <VBox minWidth="380" maxWidth="380" spacing="0" styleClass="form-card">
+                            <HBox styleClass="form-card-header" alignment="CENTER_LEFT" spacing="14">
+                                <Label fx:id="formIcon" text="🏃" styleClass="form-icon"/>
+                                <VBox spacing="4">
+                                    <Label fx:id="formTitle" text="Nouvelle Activité" styleClass="form-heading-title"/>
+                                    <Label fx:id="formSubtitle" text="Remplissez les informations." styleClass="form-heading-sub"/>
+                                </VBox>
+                            </HBox>
+                            <VBox styleClass="form-body" spacing="14">
+                                <padding><Insets top="20" right="20" bottom="16" left="20"/></padding>
+
+                                <!-- Title -->
+                                <VBox spacing="5" styleClass="form-group">
+                                    <Label text="🏷️ Titre *" styleClass="form-label"/>
+                                    <TextField fx:id="titleField" promptText="Ex: Randonnée Jebel Zaghouan"
+                                               styleClass="form-input" onKeyReleased="#validateTitle"/>
+                                    <Label fx:id="errTitle" text="Titre requis (3-150 car.)."
+                                           styleClass="err-msg" managed="false" visible="false"/>
+                                </VBox>
+
+                                <!-- Category + Active -->
+                                <HBox spacing="12">
+                                    <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                        <Label text="🏷 Catégorie *" styleClass="form-label"/>
+                                        <ComboBox fx:id="categoryCombo" promptText="Choisir…"
+                                                  styleClass="sort-select" maxWidth="Infinity"/>
+                                        <Label fx:id="errCategory" text="Catégorie requise."
+                                               styleClass="err-msg" managed="false" visible="false"/>
+                                    </VBox>
+                                    <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                        <Label text="✅ Statut" styleClass="form-label"/>
+                                        <ComboBox fx:id="activeCombo" styleClass="sort-select" maxWidth="Infinity"/>
+                                    </VBox>
+                                </HBox>
+
+                                <!-- Price + Duration -->
+                                <HBox spacing="12">
+                                    <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                        <Label text="💰 Prix (TND) *" styleClass="form-label"/>
+                                        <TextField fx:id="priceField" promptText="Ex: 50.0"
+                                                   styleClass="form-input" onKeyReleased="#validatePrice"/>
+                                        <Label fx:id="errPrice" text="Prix positif requis."
+                                               styleClass="err-msg" managed="false" visible="false"/>
+                                    </VBox>
+                                    <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                        <Label text="⏱️ Durée (min) *" styleClass="form-label"/>
+                                        <TextField fx:id="durationField" promptText="Ex: 120"
+                                                   styleClass="form-input" onKeyReleased="#validateDuration"/>
+                                        <Label fx:id="errDuration" text="Durée entre 5 et 1440."
+                                               styleClass="err-msg" managed="false" visible="false"/>
+                                    </VBox>
+                                </HBox>
+
+                                <!-- Location -->
+                                <VBox spacing="5" styleClass="form-group">
+                                    <Label text="📍 Lieu *" styleClass="form-label"/>
+                                    <TextField fx:id="locationField" promptText="Ex: Zaghouan, Tunisie"
+                                               styleClass="form-input" onKeyReleased="#validateLocation"/>
+                                    <Label fx:id="errLocation" text="Lieu requis (min 3 car.)."
+                                           styleClass="err-msg" managed="false" visible="false"/>
+                                </VBox>
+
+                                <!-- Max Participants + Guide -->
+                                <HBox spacing="12">
+                                    <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                        <Label text="👥 Max Participants" styleClass="form-label"/>
+                                        <TextField fx:id="maxParticipantsField" promptText="Ex: 20"
+                                                   styleClass="form-input"/>
+                                    </VBox>
+                                    <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                        <Label text="🧭 Guide" styleClass="form-label"/>
+                                        <ComboBox fx:id="guideCombo" promptText="— Aucun —"
+                                                  styleClass="sort-select" maxWidth="Infinity"/>
+                                    </VBox>
+                                </HBox>
+
+                                <!-- Image -->
+                                <VBox spacing="5" styleClass="form-group">
+                                    <Label text="🖼️ Image (URL)" styleClass="form-label"/>
+                                    <TextField fx:id="imageField" promptText="Ex: https://…"
+                                               styleClass="form-input"/>
+                                </VBox>
+
+                                <!-- Latitude + Longitude -->
+                                <HBox spacing="12">
+                                    <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                        <Label text="🌐 Latitude" styleClass="form-label"/>
+                                        <TextField fx:id="latitudeField" promptText="Ex: 36.8065"
+                                                   styleClass="form-input"/>
+                                    </VBox>
+                                    <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                        <Label text="🌐 Longitude" styleClass="form-label"/>
+                                        <TextField fx:id="longitudeField" promptText="Ex: 10.1815"
+                                                   styleClass="form-input"/>
+                                    </VBox>
+                                </HBox>
+
+                                <!-- Description -->
+                                <VBox spacing="5" styleClass="form-group">
+                                    <Label text="📝 Description *" styleClass="form-label"/>
+                                    <TextArea fx:id="descriptionField" promptText="Décrivez l'activité…"
+                                              styleClass="form-textarea" prefHeight="90"
+                                              wrapText="true" onKeyReleased="#updateCounter"/>
+                                    <Label fx:id="charCount" text="0 / 5000 caractères" styleClass="char-count"/>
+                                    <Label fx:id="errDescription" text="Description requise (min 10 car.)."
+                                           styleClass="err-msg" managed="false" visible="false"/>
+                                </VBox>
+
+                            </VBox>
+                            <HBox styleClass="form-footer" alignment="CENTER_RIGHT" spacing="10">
+                                <Button text="↺ Réinitialiser" styleClass="btn-cancel" onAction="#onReset"/>
+                                <Button fx:id="submitBtn" text="➕ Ajouter" styleClass="btn-submit" onAction="#onSubmit"/>
+                            </HBox>
+                        </VBox>
+
+                        <!-- TABLE -->
+                        <VBox spacing="14" HBox.hgrow="ALWAYS">
+                            <HBox styleClass="action-bar" alignment="CENTER_LEFT" spacing="12">
+                                <HBox alignment="CENTER_LEFT" spacing="8" HBox.hgrow="ALWAYS">
+                                    <Label text="🏃 Toutes les activités" styleClass="table-card-title"/>
+                                    <Label fx:id="badgeCount" text="0" styleClass="badge badge-green"/>
+                                </HBox>
+                                <HBox styleClass="search-wrap" alignment="CENTER_LEFT" spacing="6">
+                                    <Label text="🔍" styleClass="search-icon"/>
+                                    <TextField fx:id="searchField" promptText="Rechercher…"
+                                               styleClass="search-input" onKeyReleased="#onSearch" prefWidth="180"/>
+                                </HBox>
+                                <ComboBox fx:id="sortCombo" promptText="Trier par…"
+                                          styleClass="sort-select" onAction="#onSort" prefWidth="150"/>
+                            </HBox>
+
+                            <VBox styleClass="table-card" spacing="0" VBox.vgrow="ALWAYS">
+                                <TableView fx:id="tableView" styleClass="main-table" VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn fx:id="colIndex"    text="#"          prefWidth="45"/>
+                                        <TableColumn fx:id="colTitle"    text="Titre"      prefWidth="160"/>
+                                        <TableColumn fx:id="colCategory" text="Catégorie"  prefWidth="110"/>
+                                        <TableColumn fx:id="colPrice"    text="Prix"       prefWidth="80"/>
+                                        <TableColumn fx:id="colDuration" text="Durée"      prefWidth="80"/>
+                                        <TableColumn fx:id="colLocation" text="Lieu"       prefWidth="110"/>
+                                        <TableColumn fx:id="colActive"   text="Statut"     prefWidth="90"/>
+                                        <TableColumn fx:id="colActions"  text="Actions"    prefWidth="160"/>
+                                    </columns>
+                                    <placeholder>
+                                        <VBox alignment="CENTER" spacing="8" styleClass="empty-state">
+                                            <Label text="🏃" styleClass="empty-icon"/>
+                                            <Label text="Aucune activité trouvée." styleClass="empty-label"/>
+                                        </VBox>
+                                    </placeholder>
+                                </TableView>
+                                <HBox styleClass="pagination-bar" alignment="CENTER_LEFT" spacing="8">
+                                    <Label fx:id="pagInfo" text="" styleClass="pag-info" HBox.hgrow="ALWAYS"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <HBox fx:id="pagButtons" spacing="4"/>
+                                </HBox>
+                            </VBox>
+
+                            <!-- Quick nav to sub-modules -->
+                            <HBox spacing="12">
+                                <Button text="🏷️ Gérer les Catégories" styleClass="btn-back"
+                                        onAction="#onNavCategories" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                                <Button text="🧭 Gérer les Guides" styleClass="btn-back"
+                                        onAction="#onNavGuides" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                                <Button text="📅 Gérer les Plannings" styleClass="btn-back"
+                                        onAction="#onNavSchedules" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                            </HBox>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </ScrollPane>
+        </VBox>
+    </center>
+</BorderPane>
