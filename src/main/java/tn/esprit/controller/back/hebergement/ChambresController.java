@@ -54,7 +54,6 @@ public class ChambresController implements Initializable {
     @FXML private ComboBox<String> sortCombo;
 
     @FXML private TableView<Chambre>            tableView;
-    @FXML private TableColumn<Chambre, Integer> colIndex;
     @FXML private TableColumn<Chambre, String>  colNumero;
     @FXML private TableColumn<Chambre, String>  colHeb;
     @FXML private TableColumn<Chambre, String>  colType;
@@ -65,6 +64,16 @@ public class ChambresController implements Initializable {
     @FXML private TableColumn<Chambre, Void>    colActions;
 
     @FXML private Label badgeCount;
+
+    /* ─── Pagination ─── */
+    @FXML private Button             btnPrevPage;
+    @FXML private Button             btnNextPage;
+    @FXML private Label              lblPageInfo;
+    @FXML private ComboBox<Integer>  pageSizeCombo;
+
+    private int currentPage = 0;
+    private int pageSize    = 10;
+    private List<Chambre> filteredData = new ArrayList<>();
 
     /* ─── Services ─── */
     private final Chambre_service     service    = new Chambre_service();
@@ -89,11 +98,28 @@ public class ChambresController implements Initializable {
         typeCombo.getSelectionModel().select("Double");
         dispoCombo.setItems(FXCollections.observableArrayList("Disponible", "Indisponible"));
         dispoCombo.getSelectionModel().selectFirst();
-        filterType.setItems(FXCollections.observableArrayList("", "Simple", "Double", "Suite", "Familiale"));
+        filterType.setItems(FXCollections.observableArrayList(
+                "", "Simple", "Double", "Suite", "Familiale"));
         filterType.setPromptText("Tous les types");
         sortCombo.setItems(FXCollections.observableArrayList(
-                "Trier par…", "Numéro (A→Z)", "Prix (croissant)", "Capacité (croissante)"));
+                "Trier par\u2026", "Num\u00e9ro (A\u2192Z)",
+                "Prix (croissant)", "Capacit\u00e9 (croissante)"));
         sortCombo.getSelectionModel().selectFirst();
+
+        pageSizeCombo.setItems(FXCollections.observableArrayList(5, 10, 20, 50));
+        pageSizeCombo.setValue(pageSize);
+        pageSizeCombo.setOnAction(e -> {
+            pageSize = pageSizeCombo.getValue();
+            currentPage = 0;
+            renderTable();
+        });
+
+        // Recherche en temps réel
+        searchField.textProperty().addListener((obs, oldVal, newVal) -> {
+            currentPage = 0;
+            renderTable();
+        });
+
         loadHebergements();
         setupColumns();
         loadData();
@@ -115,6 +141,7 @@ public class ChambresController implements Initializable {
             showAlert(Alert.AlertType.ERROR, "Erreur de chargement", e.getMessage());
             allData = List.of();
         }
+        currentPage = 0;
         renderTable();
         updateStats();
     }
@@ -125,9 +152,9 @@ public class ChambresController implements Initializable {
     @FXML private void validateNumero() {
         String val = numeroField.getText().trim();
         if (val.isEmpty())
-            setFieldError(numeroField, errNumero, "Le numéro est requis.");
+            setFieldError(numeroField, errNumero, "Le num\u00e9ro est requis.");
         else if (!val.matches("\\d+"))
-            setFieldError(numeroField, errNumero, "Le numéro doit être un entier (ex: 101).");
+            setFieldError(numeroField, errNumero, "Le num\u00e9ro doit \u00eatre un entier (ex: 101).");
         else
             clearFieldError(numeroField, errNumero);
     }
@@ -135,7 +162,7 @@ public class ChambresController implements Initializable {
     @FXML private void validatePrix() {
         try {
             double prix = Double.parseDouble(prixField.getText().trim());
-            if (prix <= 0) setFieldError(prixField, errPrix, "Le prix doit être strictement positif.");
+            if (prix <= 0) setFieldError(prixField, errPrix, "Le prix doit \u00eatre strictement positif.");
             else           clearFieldError(prixField, errPrix);
         } catch (NumberFormatException e) {
             setFieldError(prixField, errPrix, "Veuillez entrer un nombre valide.");
@@ -145,7 +172,7 @@ public class ChambresController implements Initializable {
     @FXML private void validateCap() {
         try {
             int cap = Integer.parseInt(capField.getText().trim());
-            if (cap < 1 || cap > 4) setFieldError(capField, errCap, "La capacité doit être entre 1 et 4.");
+            if (cap < 1 || cap > 4) setFieldError(capField, errCap, "La capacit\u00e9 doit \u00eatre entre 1 et 4.");
             else                    clearFieldError(capField, errCap);
         } catch (NumberFormatException e) {
             setFieldError(capField, errCap, "Veuillez entrer un entier (1-4).");
@@ -158,36 +185,32 @@ public class ChambresController implements Initializable {
     private boolean validateAll() {
         boolean ok = true;
 
-        // Numéro : requis + entier
         String numero = numeroField.getText().trim();
         if (numero.isEmpty()) {
-            setFieldError(numeroField, errNumero, "Le numéro est requis."); ok = false;
+            setFieldError(numeroField, errNumero, "Le num\u00e9ro est requis."); ok = false;
         } else if (!numero.matches("\\d+")) {
-            setFieldError(numeroField, errNumero, "Le numéro doit être un entier (ex: 101)."); ok = false;
+            setFieldError(numeroField, errNumero, "Le num\u00e9ro doit \u00eatre un entier (ex: 101)."); ok = false;
         } else {
             clearFieldError(numeroField, errNumero);
         }
 
-        // Hébergement : obligatoire
         if (hebCombo.getValue() == null) {
-            setComboError(hebCombo, errHeb, "Veuillez sélectionner un hébergement."); ok = false;
+            setComboError(hebCombo, errHeb, "Veuillez s\u00e9lectionner un h\u00e9bergement."); ok = false;
         } else {
             clearComboError(hebCombo, errHeb);
         }
 
-        // Prix : requis + > 0
         try {
             double prix = Double.parseDouble(prixField.getText().trim());
-            if (prix <= 0) { setFieldError(prixField, errPrix, "Le prix doit être strictement positif."); ok = false; }
+            if (prix <= 0) { setFieldError(prixField, errPrix, "Le prix doit \u00eatre strictement positif."); ok = false; }
             else             clearFieldError(prixField, errPrix);
         } catch (NumberFormatException e) {
             setFieldError(prixField, errPrix, "Veuillez entrer un nombre valide."); ok = false;
         }
 
-        // Capacité : requis + 1-4
         try {
             int cap = Integer.parseInt(capField.getText().trim());
-            if (cap < 1 || cap > 4) { setFieldError(capField, errCap, "La capacité doit être entre 1 et 4."); ok = false; }
+            if (cap < 1 || cap > 4) { setFieldError(capField, errCap, "La capacit\u00e9 doit \u00eatre entre 1 et 4."); ok = false; }
             else                       clearFieldError(capField, errCap);
         } catch (NumberFormatException e) {
             setFieldError(capField, errCap, "Veuillez entrer un entier (1-4)."); ok = false;
@@ -201,7 +224,7 @@ public class ChambresController implements Initializable {
        ══════════════════════════════════════════ */
     @FXML private void onOpenForm() {
         editingId = null;
-        formPanelTitle.setText("🛏️ Nouvelle Chambre");
+        formPanelTitle.setText("\uD83D\uDECF\uFE0F Nouvelle Chambre");
         numeroField.clear(); prixField.clear(); capField.clear(); descField.clear();
         typeCombo.getSelectionModel().select("Double");
         dispoCombo.getSelectionModel().selectFirst();
@@ -220,7 +243,7 @@ public class ChambresController implements Initializable {
 
     private void openEdit(Chambre c) {
         editingId = c.getId();
-        formPanelTitle.setText("✏️ Modifier la Chambre");
+        formPanelTitle.setText("\u270F\uFE0F Modifier la Chambre");
         numeroField.setText(c.getNumero());
         prixField  .setText(String.valueOf((int) c.getPrix_par_nuit()));
         capField   .setText(String.valueOf(c.getCapacite()));
@@ -260,8 +283,8 @@ public class ChambresController implements Initializable {
     private void confirmDelete(Chambre c) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Supprimer la chambre ?");
-        alert.setHeaderText("🗑️  Supprimer la chambre « " + c.getNumero() + " » ?");
-        alert.setContentText("Cette action est irréversible.");
+        alert.setHeaderText("\uD83D\uDDD1\uFE0F  Supprimer la chambre \u00ab " + c.getNumero() + " \u00bb ?");
+        alert.setContentText("Cette action est irr\u00e9versible.");
         ButtonType cancel  = new ButtonType("Annuler",   ButtonBar.ButtonData.CANCEL_CLOSE);
         ButtonType confirm = new ButtonType("Supprimer", ButtonBar.ButtonData.OK_DONE);
         alert.getButtonTypes().setAll(cancel, confirm);
@@ -281,23 +304,18 @@ public class ChambresController implements Initializable {
         colType  .setCellValueFactory(new PropertyValueFactory<>("type"));
         colDesc  .setCellValueFactory(new PropertyValueFactory<>("description"));
 
-        colIndex.setCellFactory(col -> new TableCell<>() {
-            @Override protected void updateItem(Integer i, boolean e) {
-                super.updateItem(i, e);
-                setText(e ? null : String.valueOf(getIndex() + 1));
-                getStyleClass().add("td-index");
-            }
-        });
         colHeb.setCellFactory(col -> new TableCell<>() {
             @Override protected void updateItem(String i, boolean e) {
                 super.updateItem(i, e);
                 if (e || getTableRow() == null || getTableRow().getItem() == null) { setText(null); return; }
                 Chambre c = (Chambre) getTableRow().getItem();
-                String name = allHeb.stream().filter(h -> h.getId() == c.getHebergement_id())
-                        .map(Hebergement::getNom).findFirst().orElse("—");
-                setText("📍 " + name);
+                String name = allHeb.stream()
+                        .filter(h -> h.getId() == c.getHebergement_id())
+                        .map(Hebergement::getNom).findFirst().orElse("\u2014");
+                setText("\uD83D\uDCCD " + name);
             }
         });
+
         colType.setCellFactory(col -> new TableCell<>() {
             @Override protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -307,6 +325,7 @@ public class ChambresController implements Initializable {
                 setGraphic(chip); setText(null);
             }
         });
+
         colPrix.setCellFactory(col -> new TableCell<>() {
             @Override protected void updateItem(Double v, boolean e) {
                 super.updateItem(v, e);
@@ -315,25 +334,28 @@ public class ChambresController implements Initializable {
                 getStyleClass().add("td-price");
             }
         });
+
         colCap.setCellFactory(col -> new TableCell<>() {
             @Override protected void updateItem(Integer v, boolean e) {
                 super.updateItem(v, e);
                 setText(e || v == null ? null : v + " pers.");
             }
         });
+
         colDispo.setCellFactory(col -> new TableCell<>() {
             @Override protected void updateItem(Integer v, boolean e) {
                 super.updateItem(v, e);
                 if (e || getTableRow() == null || getTableRow().getItem() == null) { setGraphic(null); return; }
                 Chambre c = (Chambre) getTableRow().getItem();
-                Label chip = new Label(c.getDisponible() == 1 ? "✅ Disponible" : "❌ Indisponible");
+                Label chip = new Label(c.getDisponible() == 1 ? "\u2705 Disponible" : "\u274C Indisponible");
                 chip.getStyleClass().add(c.getDisponible() == 1 ? "chip-green" : "chip-gray");
                 setGraphic(chip); setText(null);
             }
         });
+
         colActions.setCellFactory(col -> new TableCell<>() {
-            private final Button editBtn = new Button("✏️ Modifier");
-            private final Button delBtn  = new Button("🗑️");
+            private final Button editBtn = new Button("\u270F\uFE0F Modifier");
+            private final Button delBtn  = new Button("\uD83D\uDDD1\uFE0F");
             private final HBox   box     = new HBox(8, editBtn, delBtn);
             {
                 editBtn.getStyleClass().add("btn-edit");
@@ -342,59 +364,110 @@ public class ChambresController implements Initializable {
                 editBtn.setOnAction(e -> openEdit(getTableView().getItems().get(getIndex())));
                 delBtn .setOnAction(e -> confirmDelete(getTableView().getItems().get(getIndex())));
             }
-            @Override protected void updateItem(Void i, boolean e) { super.updateItem(i, e); setGraphic(e ? null : box); }
+            @Override protected void updateItem(Void i, boolean e) {
+                super.updateItem(i, e); setGraphic(e ? null : box);
+            }
         });
     }
 
     /* ══════════════════════════════════════════
-       RENDU TABLEAU + STATS
+       RENDU TABLEAU + PAGINATION + STATS
        ══════════════════════════════════════════ */
     private void renderTable() {
         String q    = searchField.getText().toLowerCase().trim();
         String type = filterType.getValue();
         String sort = sortCombo.getValue();
-        List<Chambre> filtered = allData.stream()
-                .filter(c -> q.isEmpty() || c.getNumero().toLowerCase().contains(q)
+
+        filteredData = allData.stream()
+                .filter(c -> q.isEmpty()
+                        || c.getNumero().toLowerCase().contains(q)
                         || hebName(c.getHebergement_id()).toLowerCase().contains(q)
-                        || c.getDescription().toLowerCase().contains(q))
+                        || (c.getDescription() != null && c.getDescription().toLowerCase().contains(q)))
                 .filter(c -> type == null || type.isEmpty() || c.getType().equals(type))
                 .collect(Collectors.toList());
-        if ("Numéro (A→Z)".equals(sort))       filtered.sort(Comparator.comparing(Chambre::getNumero));
-        else if ("Prix (croissant)".equals(sort))     filtered.sort(Comparator.comparingDouble(Chambre::getPrix_par_nuit));
-        else if ("Capacité (croissante)".equals(sort)) filtered.sort(Comparator.comparingInt(Chambre::getCapacite));
-        badgeCount.setText(String.valueOf(filtered.size()));
-        tableView.setItems(FXCollections.observableArrayList(filtered));
+
+        if ("Num\u00e9ro (A\u2192Z)".equals(sort))
+            filteredData.sort(Comparator.comparing(Chambre::getNumero));
+        else if ("Prix (croissant)".equals(sort))
+            filteredData.sort(Comparator.comparingDouble(Chambre::getPrix_par_nuit));
+        else if ("Capacit\u00e9 (croissante)".equals(sort))
+            filteredData.sort(Comparator.comparingInt(Chambre::getCapacite));
+
+        badgeCount.setText(String.valueOf(filteredData.size()));
+        applyPage();
+    }
+
+    private void applyPage() {
+        int total      = filteredData.size();
+        int totalPages = Math.max(1, (int) Math.ceil((double) total / pageSize));
+
+        if (currentPage >= totalPages) currentPage = totalPages - 1;
+        if (currentPage < 0)           currentPage = 0;
+
+        int from = currentPage * pageSize;
+        int to   = Math.min(from + pageSize, total);
+
+        tableView.setItems(FXCollections.observableArrayList(filteredData.subList(from, to)));
+
+        lblPageInfo.setText("Page " + (currentPage + 1) + " / " + totalPages
+                + "  (" + total + " r\u00e9sultats)");
+        btnPrevPage.setDisable(currentPage == 0);
+        btnNextPage.setDisable(currentPage >= totalPages - 1);
+    }
+
+    @FXML private void onPrevPage() {
+        if (currentPage > 0) { currentPage--; applyPage(); }
+    }
+
+    @FXML private void onNextPage() {
+        int totalPages = Math.max(1, (int) Math.ceil((double) filteredData.size() / pageSize));
+        if (currentPage < totalPages - 1) { currentPage++; applyPage(); }
     }
 
     private void updateStats() {
         statTotal.setText(String.valueOf(allData.size()));
-        statPrix.setText(allData.isEmpty() ? "—" :
+        statPrix.setText(allData.isEmpty() ? "\u2014" :
                 (int) Math.round(allData.stream().mapToDouble(Chambre::getPrix_par_nuit).average().orElse(0)) + " DT");
-        statCap.setText(allData.isEmpty() ? "—" :
+        statCap.setText(allData.isEmpty() ? "\u2014" :
                 String.valueOf((int) Math.round(allData.stream().mapToInt(Chambre::getCapacite).average().orElse(0))));
         statHeb.setText(String.valueOf(allData.stream().map(Chambre::getHebergement_id).distinct().count()));
     }
 
     private String hebName(int hebId) {
-        return allHeb.stream().filter(h -> h.getId() == hebId).map(Hebergement::getNom).findFirst().orElse("—");
+        return allHeb.stream()
+                .filter(h -> h.getId() == hebId)
+                .map(Hebergement::getNom)
+                .findFirst().orElse("\u2014");
     }
 
     /* ══════════════════════════════════════════
        NAVIGATION
        ══════════════════════════════════════════ */
-    @FXML private void onSearch()          { renderTable(); }
-    @FXML private void onNavHebergements() { SceneManager.navigateTo(Routes.ADMIN_HEBERGEMENTS); }
-    @FXML private void onNavEquipements()  { navigateTo("Equipements.fxml",           "Équipements"); }
-    @FXML private void onNavCategories()   { navigateTo("CategoriesHebergement.fxml", "Catégories"); }
+    @FXML private void onSearch() {
+        currentPage = 0;
+        renderTable();
+    }
+
+    @FXML private void onNavHebergements() {
+        onCloseForm();
+        SceneManager.navigateTo(Routes.ADMIN_HEBERGEMENTS);
+    }
+
+    @FXML private void onNavEquipements()  { onCloseForm(); navigateTo("Equipements.fxml",           "\u00c9quipements"); }
+    @FXML private void onNavCategories()   { onCloseForm(); navigateTo("CategoriesHebergement.fxml", "Cat\u00e9gories"); }
     @FXML private void onLogout()          { System.exit(0); }
-    @FXML private void onNavDashboard()    { SceneManager.navigateTo(Routes.ADMIN_DASHBOARD); }
+
+    @FXML private void onNavDashboard() {
+        onCloseForm();
+        SceneManager.navigateTo(Routes.ADMIN_DASHBOARD);
+    }
 
     private void navigateTo(String fxml, String title) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/" + fxml));
             Stage  stage = (Stage) tableView.getScene().getWindow();
             stage.setScene(new Scene(root, stage.getWidth(), stage.getHeight()));
-            stage.setTitle("EcoTrip Admin — " + title);
+            stage.setTitle("EcoTrip Admin \u2014 " + title);
         } catch (IOException ex) { ex.printStackTrace(); }
     }
 
@@ -402,7 +475,8 @@ public class ChambresController implements Initializable {
        HELPERS ERREURS INLINE
        ══════════════════════════════════════════ */
     private void setFieldError(TextField field, Label lbl, String msg) {
-        if (!field.getStyleClass().contains("form-input-error")) field.getStyleClass().add("form-input-error");
+        if (!field.getStyleClass().contains("form-input-error"))
+            field.getStyleClass().add("form-input-error");
         lbl.setText(msg); lbl.setVisible(true); lbl.setManaged(true);
     }
 
@@ -412,7 +486,8 @@ public class ChambresController implements Initializable {
     }
 
     private void setComboError(ComboBox<?> combo, Label lbl, String msg) {
-        if (!combo.getStyleClass().contains("form-input-error")) combo.getStyleClass().add("form-input-error");
+        if (!combo.getStyleClass().contains("form-input-error"))
+            combo.getStyleClass().add("form-input-error");
         lbl.setText(msg); lbl.setVisible(true); lbl.setManaged(true);
     }
 
