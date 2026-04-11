@@ -4,7 +4,9 @@
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="tn.esprit.controller.layout.FrontOfficeShellController"
-            styleClass="front-shell">
+            styleClass="front-shell"
+            minWidth="900"
+            minHeight="600">
 
     <!-- TOP: Navbar (mirrors your navbar.html.twig) -->
     <top>
@@ -13,9 +15,9 @@
 
     <!-- CENTER: page content swaps here -->
     <center>
-        <ScrollPane fx:id="scrollPane" fitToWidth="true" styleClass="front-scroll">
-            <StackPane fx:id="contentArea" styleClass="front-content"/>
-        </ScrollPane>
+        <StackPane fx:id="contentArea"
+                   styleClass="front-content"
+                   BorderPane.alignment="CENTER"/>
     </center>
 
     <!-- BOTTOM: Footer (mirrors your footer.html.twig) -->
