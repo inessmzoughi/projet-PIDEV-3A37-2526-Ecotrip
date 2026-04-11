@@ -6,8 +6,7 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="tn.esprit.controller.back.hebergement.ListHebergementsController"
-            styleClass="root-pane"
-            >
+            styleClass="root-pane">
 
     <center>
         <VBox styleClass="main-content">
@@ -61,11 +60,11 @@
                     <HBox spacing="24">
 
                         <!-- ── FORMULAIRE ── -->
-                        <VBox minWidth="380" maxWidth="380"  styleClass="form-card">
+                        <VBox minWidth="380" maxWidth="380" styleClass="form-card">
                             <HBox styleClass="form-card-header" alignment="CENTER_LEFT" spacing="14">
                                 <Label fx:id="formIcon" text="🏨" styleClass="form-icon"/>
                                 <VBox spacing="4">
-                                    <Label fx:id="formTitle" text="Nouvel Hébergement" styleClass="form-heading-title"/>
+                                    <Label fx:id="formTitle"    text="Nouvel Hébergement"               styleClass="form-heading-title"/>
                                     <Label fx:id="formSubtitle" text="Remplissez les informations ci-dessous." styleClass="form-heading-sub"/>
                                 </VBox>
                             </HBox>
@@ -93,9 +92,11 @@
 
                                 <!-- Adresse -->
                                 <VBox spacing="5" styleClass="form-group">
-                                    <Label text="🗺️ Adresse" styleClass="form-label"/>
+                                    <Label text="🗺️ Adresse *" styleClass="form-label"/>
                                     <TextField fx:id="adresseField" promptText="Ex: 12 Rue de la Médina"
-                                               styleClass="form-input"/>
+                                               styleClass="form-input" onKeyReleased="#validateAdresse"/>
+                                    <Label fx:id="errAdresse" text="L'adresse est requise."
+                                           styleClass="err-msg" managed="false" visible="false"/>
                                 </VBox>
 
                                 <!-- Étoiles + Catégorie -->
@@ -118,21 +119,25 @@
 
                                 <!-- Label Éco -->
                                 <VBox spacing="5" styleClass="form-group">
-                                    <Label text="🌿 Label Éco" styleClass="form-label"/>
+                                    <Label text="🌿 Label Éco *" styleClass="form-label"/>
                                     <TextField fx:id="labelEcoField" promptText="Ex: Green Key"
-                                               styleClass="form-input"/>
+                                               styleClass="form-input" onKeyReleased="#validateLabelEco"/>
+                                    <Label fx:id="errLabelEco" text="Le label éco est requis."
+                                           styleClass="err-msg" managed="false" visible="false"/>
                                 </VBox>
 
                                 <!-- Image Principale -->
                                 <VBox spacing="5" styleClass="form-group">
-                                    <Label text="🖼️ Image principale (URL)" styleClass="form-label"/>
+                                    <Label text="🖼️ Image principale (URL) *" styleClass="form-label"/>
                                     <TextField fx:id="imagePrincipaleField" promptText="Ex: https://…"
-                                               styleClass="form-input"/>
+                                               styleClass="form-input" onKeyReleased="#validateImage"/>
+                                    <Label fx:id="errImage" text="L'image est requise."
+                                           styleClass="err-msg" managed="false" visible="false"/>
                                 </VBox>
 
-                                <!-- Proprietary -->
+                                <!-- Propriétaire -->
                                 <VBox spacing="5" styleClass="form-group">
-                                    <Label text="👤 Propriétaire" styleClass="form-label"/>
+                                    <Label text="👤 Propriétaire *" styleClass="form-label"/>
                                     <ComboBox fx:id="propietaireCombo" promptText="Choisir un propriétaire…"
                                               styleClass="sort-select" maxWidth="Infinity"/>
                                     <Label fx:id="errPropietaire" text="Le propriétaire est requis."
@@ -148,20 +153,24 @@
                                 <!-- Latitude + Longitude -->
                                 <HBox spacing="12">
                                     <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
-                                        <Label text="🌐 Latitude" styleClass="form-label"/>
+                                        <Label text="🌐 Latitude *" styleClass="form-label"/>
                                         <TextField fx:id="latitudeField" promptText="Ex: 36.8065"
-                                                   styleClass="form-input"/>
+                                                   styleClass="form-input" onKeyReleased="#validateLatitude"/>
+                                        <Label fx:id="errLatitude" text="Lat. invalide (Tunisie: 30.2~37.5)."
+                                               styleClass="err-msg" managed="false" visible="false"/>
                                     </VBox>
                                     <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
-                                        <Label text="🌐 Longitude" styleClass="form-label"/>
+                                        <Label text="🌐 Longitude *" styleClass="form-label"/>
                                         <TextField fx:id="longitudeField" promptText="Ex: 10.1815"
-                                                   styleClass="form-input"/>
+                                                   styleClass="form-input" onKeyReleased="#validateLongitude"/>
+                                        <Label fx:id="errLongitude" text="Long. invalide (Tunisie: 7.5~11.6)."
+                                               styleClass="err-msg" managed="false" visible="false"/>
                                     </VBox>
                                 </HBox>
 
                                 <!-- Description -->
                                 <VBox spacing="5" styleClass="form-group">
-                                    <Label text="📝 Description" styleClass="form-label"/>
+                                    <Label text="📝 Description *" styleClass="form-label"/>
                                     <TextArea fx:id="descriptionField" promptText="Décrivez l'hébergement…"
                                               styleClass="form-textarea" prefHeight="80"
                                               wrapText="true" onKeyReleased="#updateCounter"/>
@@ -200,7 +209,7 @@
                                           styleClass="sort-select" onAction="#onSort" prefWidth="160"/>
                             </HBox>
 
-                            <VBox styleClass="table-card"  VBox.vgrow="ALWAYS">
+                            <VBox styleClass="table-card" VBox.vgrow="ALWAYS">
                                 <TableView fx:id="tableView" styleClass="main-table" VBox.vgrow="ALWAYS">
                                     <columns>
                                         <TableColumn fx:id="colIndex"     text="#"         prefWidth="45"/>
@@ -220,7 +229,7 @@
                                 </TableView>
                                 <HBox fx:id="paginationBar" styleClass="pagination-bar"
                                       alignment="CENTER_LEFT" spacing="8">
-                                    <Label fx:id="pagInfo"  styleClass="pag-info" HBox.hgrow="ALWAYS"/>
+                                    <Label fx:id="pagInfo" styleClass="pag-info" HBox.hgrow="ALWAYS"/>
                                     <Region HBox.hgrow="ALWAYS"/>
                                     <HBox fx:id="pagButtons" spacing="4"/>
                                 </HBox>

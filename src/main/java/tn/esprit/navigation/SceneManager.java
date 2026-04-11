@@ -54,8 +54,6 @@ public class SceneManager {
         backRoutes.put(Routes.ADMIN_RESERVATIONS, "/views/back/reservations.fxml");
         backRoutes.put(Routes.ADMIN_USERS,        "/views/back/users.fxml");
         backRoutes.put(Routes.ADMIN_HEBERGEMENTS,           "/views/back/hebergement/ListHebergements.fxml");
-        backRoutes.put(Routes.ADMIN_ADD_HEBERGEMENT,        "/views/back/hebergement/AddHebergement.fxml");
-        backRoutes.put(Routes.ADMIN_EDIT_HEBERGEMENT,       "/views/back/hebergement/EditHebergement.fxml");
         backRoutes.put(Routes.ADMIN_CATEGORIES_HEBERGEMENT, "/views/back/hebergement/CategoriesHebergement.fxml");
         backRoutes.put(Routes.ADMIN_CHAMBRES,               "/views/back/hebergement/Chambres.fxml");
         backRoutes.put(Routes.ADMIN_EQUIPEMENTS,            "/views/back/hebergement/Equipements.fxml");

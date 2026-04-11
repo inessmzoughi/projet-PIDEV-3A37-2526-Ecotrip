@@ -6,14 +6,10 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="tn.esprit.controller.back.hebergement.ChambresController"
-            styleClass="root-pane"
-           >
+            styleClass="root-pane">
 
-
-    <!-- ═══ CENTER ═══ -->
     <center>
         <VBox styleClass="main-content">
-            <!-- Page Body -->
             <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane">
                 <VBox styleClass="page-body" spacing="20">
                     <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
@@ -89,33 +85,49 @@
 
                             <!-- Row 1: Numéro + Hébergement -->
                             <HBox spacing="16">
+                                <!-- Numéro -->
                                 <VBox HBox.hgrow="ALWAYS" spacing="5" styleClass="form-group">
                                     <Label text="Numéro de chambre *" styleClass="form-label"/>
                                     <TextField fx:id="numeroField" promptText="Ex: 101"
-                                               styleClass="form-input"/>
+                                               styleClass="form-input"
+                                               onKeyReleased="#validateNumero"/>
+                                    <Label fx:id="errNumero" text="Le numéro est requis."
+                                           styleClass="err-msg" visible="false" managed="false"/>
                                 </VBox>
+                                <!-- Hébergement -->
                                 <VBox HBox.hgrow="ALWAYS" spacing="5" styleClass="form-group">
                                     <Label text="Hébergement *" styleClass="form-label"/>
                                     <ComboBox fx:id="hebCombo" promptText="-- Sélectionner --"
                                               styleClass="sort-select" maxWidth="Infinity"/>
+                                    <Label fx:id="errHeb" text="Veuillez sélectionner un hébergement."
+                                           styleClass="err-msg" visible="false" managed="false"/>
                                 </VBox>
                             </HBox>
 
                             <!-- Row 2: Type + Prix + Capacité -->
                             <HBox spacing="16">
+                                <!-- Type -->
                                 <VBox HBox.hgrow="ALWAYS" spacing="5" styleClass="form-group">
                                     <Label text="Type *" styleClass="form-label"/>
                                     <ComboBox fx:id="typeCombo" styleClass="sort-select" maxWidth="Infinity"/>
                                 </VBox>
+                                <!-- Prix -->
                                 <VBox HBox.hgrow="ALWAYS" spacing="5" styleClass="form-group">
                                     <Label text="Prix / nuit (DT) *" styleClass="form-label"/>
                                     <TextField fx:id="prixField" promptText="Ex: 120"
-                                               styleClass="form-input"/>
+                                               styleClass="form-input"
+                                               onKeyReleased="#validatePrix"/>
+                                    <Label fx:id="errPrix" text="Prix invalide."
+                                           styleClass="err-msg" visible="false" managed="false"/>
                                 </VBox>
+                                <!-- Capacité -->
                                 <VBox HBox.hgrow="ALWAYS" spacing="5" styleClass="form-group">
-                                    <Label text="Capacité (pers.) *" styleClass="form-label"/>
+                                    <Label text="Capacité (1-4) *" styleClass="form-label"/>
                                     <TextField fx:id="capField" promptText="Ex: 2"
-                                               styleClass="form-input"/>
+                                               styleClass="form-input"
+                                               onKeyReleased="#validateCap"/>
+                                    <Label fx:id="errCap" text="Capacité invalide (1-4)."
+                                           styleClass="err-msg" visible="false" managed="false"/>
                                 </VBox>
                             </HBox>
 
@@ -161,7 +173,6 @@
                             <Label text="🛏️ Liste des Chambres" styleClass="table-card-title" HBox.hgrow="ALWAYS"/>
                             <Label fx:id="badgeCount" text="0" styleClass="badge, badge-green"/>
                         </HBox>
-
                         <TableView fx:id="tableView" styleClass="main-table" VBox.vgrow="ALWAYS">
                             <columns>
                                 <TableColumn fx:id="colIndex"   text="#"            prefWidth="50"/>
@@ -187,5 +198,4 @@
             </ScrollPane>
         </VBox>
     </center>
-
 </BorderPane>
