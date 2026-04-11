@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="tn.esprit.controller.back.produit.LigneCommandeController"
+            styleClass="root-pane"
+            stylesheets="@../css/ecotrip.css">
+
+
+    <!-- ═══ CENTER ═══ -->
+    <center>
+        <VBox styleClass="main-content">
+
+            <!-- Topbar -->
+            <HBox styleClass="topbar" alignment="CENTER_LEFT" spacing="16">
+                <Label text="📋 Lignes de Commande" styleClass="topbar-title" HBox.hgrow="ALWAYS"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="admin@ecotrip.tn" styleClass="topbar-email"/>
+                <Button text="Déconnexion" styleClass="btn-logout" onAction="#onLogout"/>
+            </HBox>
+
+            <!-- Page Body -->
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane">
+                <VBox styleClass="page-body" spacing="20">
+                    <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
+
+                    <!-- Breadcrumb + Title -->
+                    <VBox spacing="4">
+                        <HBox spacing="4">
+                            <Label text="Dashboard"          styleClass="breadcrumb-link"/>
+                            <Label text=" › "               styleClass="breadcrumb-sep"/>
+                            <Label text="Gestion"           styleClass="breadcrumb-link"/>
+                            <Label text=" › "               styleClass="breadcrumb-sep"/>
+                            <Label text="Lignes de Commande" styleClass="breadcrumb-active"/>
+                        </HBox>
+                        <Label text="Gestion des Lignes de Commande" styleClass="page-title"/>
+                    </VBox>
+
+                    <!-- Stat Cards -->
+                    <HBox spacing="16">
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                            <HBox spacing="12" alignment="CENTER_LEFT">
+                                <Label text="📋" styleClass="stat-icon stat-icon-green"/>
+                                <VBox spacing="2">
+                                    <Label text="Total Lignes" styleClass="stat-label"/>
+                                    <Label fx:id="statTotal" text="0" styleClass="stat-value"/>
+                                    <Label text="enregistrées" styleClass="stat-sub"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                            <HBox spacing="12" alignment="CENTER_LEFT">
+                                <Label text="💰" styleClass="stat-icon stat-icon-blue"/>
+                                <VBox spacing="2">
+                                    <Label text="Chiffre d'affaires" styleClass="stat-label"/>
+                                    <Label fx:id="statTotalCA" text="—" styleClass="stat-value"/>
+                                    <Label text="DT total" styleClass="stat-sub"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                            <HBox spacing="12" alignment="CENTER_LEFT">
+                                <Label text="📦" styleClass="stat-icon stat-icon-purple"/>
+                                <VBox spacing="2">
+                                    <Label text="Qté Moyenne" styleClass="stat-label"/>
+                                    <Label fx:id="statQte" text="—" styleClass="stat-value"/>
+                                    <Label text="articles / ligne" styleClass="stat-sub"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                            <HBox spacing="12" alignment="CENTER_LEFT">
+                                <Label text="🛒" styleClass="stat-icon stat-icon-orange"/>
+                                <VBox spacing="2">
+                                    <Label text="Commandes" styleClass="stat-label"/>
+                                    <Label fx:id="statCommandes" text="0" styleClass="stat-value"/>
+                                    <Label text="commandes distinctes" styleClass="stat-sub"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                    </HBox>
+
+                    <!-- FORM PANEL -->
+                    <VBox fx:id="formPanel" styleClass="form-card inline-form-panel"
+                          visible="false" managed="false" spacing="0">
+
+                        <HBox styleClass="cat-form-header" alignment="CENTER_LEFT" spacing="10">
+                            <Label fx:id="formPanelTitle" text="📋 Nouvelle Ligne de Commande"
+                                   styleClass="cat-form-title" HBox.hgrow="ALWAYS"/>
+                            <Button text="✕" styleClass="fp-close-btn" onAction="#onCloseForm"/>
+                        </HBox>
+
+                        <VBox styleClass="form-body" spacing="16">
+                            <padding><Insets top="20" right="24" bottom="12" left="24"/></padding>
+
+                            <!-- Row 1: Commande + Produit -->
+                            <HBox spacing="16">
+                                <VBox HBox.hgrow="ALWAYS" spacing="5" styleClass="form-group">
+                                    <Label text="Commande *" styleClass="form-label"/>
+                                    <ComboBox fx:id="commandeCombo" promptText="-- Sélectionner --"
+                                              styleClass="sort-select" maxWidth="Infinity"/>
+                                </VBox>
+                                <VBox HBox.hgrow="ALWAYS" spacing="5" styleClass="form-group">
+                                    <Label text="Produit *" styleClass="form-label"/>
+                                    <ComboBox fx:id="productCombo" promptText="-- Sélectionner --"
+                                              styleClass="sort-select" maxWidth="Infinity"/>
+                                </VBox>
+                            </HBox>
+
+                            <!-- Row 2: Quantité + Prix unitaire + Subtotal -->
+                            <HBox spacing="16">
+                                <VBox HBox.hgrow="ALWAYS" spacing="5" styleClass="form-group">
+                                    <Label text="Quantité *" styleClass="form-label"/>
+                                    <TextField fx:id="quantiteField" promptText="Ex: 2"
+                                               styleClass="form-input"/>
+                                </VBox>
+                                <VBox HBox.hgrow="ALWAYS" spacing="5" styleClass="form-group">
+                                    <Label text="Prix unitaire (DT) *" styleClass="form-label"/>
+                                    <TextField fx:id="unitpriceField" promptText="Ex: 49.99"
+                                               styleClass="form-input"/>
+                                </VBox>
+                                <VBox HBox.hgrow="ALWAYS" spacing="5" styleClass="form-group">
+                                    <Label text="Subtotal (DT)" styleClass="form-label"/>
+                                    <TextField fx:id="subtotalField" promptText="Calculé auto."
+                                               styleClass="form-input" editable="false"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+
+                        <HBox styleClass="form-footer" alignment="CENTER_RIGHT" spacing="10">
+                            <Button text="Annuler"        styleClass="btn-cancel" onAction="#onCloseForm"/>
+                            <Button text="💾 Enregistrer" styleClass="btn-submit" onAction="#onSave"/>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Action Bar -->
+                    <HBox styleClass="action-bar" alignment="CENTER_LEFT" spacing="12">
+                        <Button text="＋ Ajouter une ligne" styleClass="btn-primary" onAction="#onOpenForm"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <HBox styleClass="search-wrap" alignment="CENTER_LEFT" spacing="6">
+                            <Label text="🔍" styleClass="search-icon"/>
+                            <TextField fx:id="searchField" promptText="Rechercher…"
+                                       styleClass="search-input" prefWidth="220"
+                                       onKeyReleased="#onSearch"/>
+                        </HBox>
+                        <ComboBox fx:id="filterCommande" promptText="Toutes les commandes"
+                                  styleClass="sort-select" prefWidth="190" onAction="#onSearch"/>
+                        <ComboBox fx:id="sortCombo" promptText="Trier par…"
+                                  styleClass="sort-select" prefWidth="180" onAction="#onSearch"/>
+                    </HBox>
+
+                    <!-- Table Card -->
+                    <VBox styleClass="table-card" spacing="0">
+                        <HBox styleClass="table-card-header" alignment="CENTER_LEFT" spacing="8">
+                            <Label text="📋 Liste des Lignes de Commande"
+                                   styleClass="table-card-title" HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="badgeCount" text="0" styleClass="badge badge-green"/>
+                        </HBox>
+
+                        <TableView fx:id="tableView" styleClass="main-table" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="colIndex"    text="#"              prefWidth="50"/>
+                                <TableColumn fx:id="colCommande" text="Commande"       prefWidth="140"/>
+                                <TableColumn fx:id="colProduct"  text="Produit"        prefWidth="140"/>
+                                <TableColumn fx:id="colQuantite" text="Quantité"       prefWidth="100"/>
+                                <TableColumn fx:id="colUnitprice" text="Prix unitaire" prefWidth="130"/>
+                                <TableColumn fx:id="colSubtotal" text="Subtotal (DT)"  prefWidth="130"/>
+                                <TableColumn fx:id="colActions"  text="Actions"        prefWidth="180"/>
+                            </columns>
+                            <placeholder>
+                                <VBox alignment="CENTER" spacing="8" styleClass="empty-state">
+                                    <Label text="🔍" styleClass="empty-icon"/>
+                                    <Label text="Aucune ligne de commande trouvée." styleClass="empty-label"/>
+                                </VBox>
+                            </placeholder>
+                        </TableView>
+                    </VBox>
+
+                </VBox>
+            </ScrollPane>
+        </VBox>
+    </center>
+
+</BorderPane>

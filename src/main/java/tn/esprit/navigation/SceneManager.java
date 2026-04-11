@@ -46,11 +46,11 @@ public class SceneManager {
         frontRoutes.put(Routes.FRONT_MON_COMPTE,      "/views/compte/mon-compte.fxml");
         frontRoutes.put(Routes.FRONT_UPDATE_ACCOUNT,  "/views/compte/update-account.fxml");
         frontRoutes.put(Routes.FRONT_CHANGE_PASSWORD, "/views/compte/change-password.fxml");
+        frontRoutes.put(Routes.FRONT_PRODUCTS, "/views/front/produit/Products.fxml");
 //*****************back
         backRoutes.put(Routes.ADMIN_DASHBOARD,    "/views/back/dashboard.fxml");
         backRoutes.put(Routes.ADMIN_ACTIVITES,    "/views/back/activites.fxml");
         backRoutes.put(Routes.ADMIN_TRANSPORT,    "/views/back/transport.fxml");
-        backRoutes.put(Routes.ADMIN_BOUTIQUE,     "/views/back/boutique.fxml");
         backRoutes.put(Routes.ADMIN_RESERVATIONS, "/views/back/reservations.fxml");
         backRoutes.put(Routes.ADMIN_USERS,        "/views/back/users.fxml");
         backRoutes.put(Routes.ADMIN_HEBERGEMENTS,           "/views/back/hebergement/ListHebergements.fxml");
@@ -62,6 +62,13 @@ public class SceneManager {
         backRoutes.put(Routes.ADMIN_MON_COMPTE,       "/views/compte/mon-compte.fxml");
         backRoutes.put(Routes.ADMIN_UPDATE_ACCOUNT,   "/views/compte/update-account.fxml");
         backRoutes.put(Routes.ADMIN_CHANGE_PASSWORD,  "/views/compte/change-password.fxml");
+        //back produit*
+        backRoutes.put(Routes.ADMIN_COMMANDE,  "/views/back/produit/Commande.fxml");
+        backRoutes.put(Routes.ADMIN_LIGNE_COMMANDE,  "/views/back/produit/LigneCommande.fxml");
+        backRoutes.put(Routes.ADMIN_PAIEMENT,  "/views/back/produit/Payment.fxml");
+        backRoutes.put(Routes.ADMIN_PRODUCT,  "/views/back/produit/Product.fxml");
+        backRoutes.put(Routes.ADMIN_PRODUCT_CATEGORY,  "/views/back/produit/ProductCategory.fxml");
+
     }
 
     public static void initialize(Stage stage) {

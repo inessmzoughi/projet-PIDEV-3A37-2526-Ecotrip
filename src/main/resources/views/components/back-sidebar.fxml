@@ -1,84 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
 
-<VBox xmlns="http://javafx.com/javafx/17"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="tn.esprit.controller.component.BackSidebarController"
-      styleClass="admin-sidebar" prefWidth="240" spacing="0">
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefWidth="240" spacing="0" styleClass="admin-sidebar" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.esprit.controller.component.BackSidebarController">
 
     <!-- Logo -->
-    <VBox styleClass="sidebar-logo-wrap" alignment="CENTER">
-        <Label text="🌿 EcoTrip Admin" styleClass="sidebar-logo-text"/>
+    <VBox alignment="CENTER" styleClass="sidebar-logo-wrap">
+        <Label styleClass="sidebar-logo-text" text="🌿 EcoTrip Admin" />
     </VBox>
 
-    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="sidebar-scroll">
-        <VBox styleClass="sidebar-nav" spacing="2">
+    <ScrollPane fitToWidth="true" styleClass="sidebar-scroll" VBox.vgrow="ALWAYS">
+        <VBox spacing="2" styleClass="sidebar-nav">
 
             <!-- Dashboard -->
-            <Button fx:id="dashboardBtn" text="🏠  Dashboard"
-                    onAction="#handleDashboard"
-                    styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Button fx:id="dashboardBtn" maxWidth="Infinity" onAction="#handleDashboard" styleClass="sidebar-btn" text="🏠  Dashboard" />
 
             <!-- ACTIVITÉS -->
-            <Label text="ACTIVITÉS" styleClass="sidebar-section-label"/>
-            <Button fx:id="activitesBtn" text="📅  Activités"
-                    onAction="#handleActivites"
-                    styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Label styleClass="sidebar-section-label" text="ACTIVITÉS" />
+            <Button fx:id="activitesBtn" maxWidth="Infinity" onAction="#handleActivites" styleClass="sidebar-btn" text="📅  Activités" />
 
             <!-- HÉBERGEMENTS -->
-            <Label text="HÉBERGEMENTS" styleClass="sidebar-section-label"/>
-            <Button fx:id="hebergementsBtn" text="🏨  Hébergements"
-                    onAction="#handleHebergements"
-                    styleClass="sidebar-btn" maxWidth="Infinity"/>
-            <Button fx:id="listHebergementsBtn" text="    📋  Liste"
-                    onAction="#handleListHebergements"
-                    styleClass="sidebar-btn sidebar-btn-sub" maxWidth="Infinity"/>
-            <Button fx:id="chambresBtn" text="    🛏  Chambres"
-                    onAction="#handleChambres"
-                    styleClass="sidebar-btn sidebar-btn-sub" maxWidth="Infinity"/>
-            <Button fx:id="equipementsBtn" text="    🔧  Équipements"
-                    onAction="#handleEquipements"
-                    styleClass="sidebar-btn sidebar-btn-sub" maxWidth="Infinity"/>
-            <Button fx:id="categoriesBtn" text="    🏷  Catégories"
-                    onAction="#handleCategories"
-                    styleClass="sidebar-btn sidebar-btn-sub" maxWidth="Infinity"/>
+            <Label styleClass="sidebar-section-label" text="HÉBERGEMENTS" />
+            <Button fx:id="hebergementsBtn" maxWidth="Infinity" onAction="#handleHebergements" styleClass="sidebar-btn" text="🏨  Hébergements" />
+            <Button fx:id="listHebergementsBtn" maxWidth="Infinity" onAction="#handleListHebergements" styleClass="sidebar-btn sidebar-btn-sub" text="    📋  Liste" />
+            <Button fx:id="chambresBtn" maxWidth="Infinity" onAction="#handleChambres" styleClass="sidebar-btn sidebar-btn-sub" text="    🛏  Chambres" />
+            <Button fx:id="equipementsBtn" maxWidth="Infinity" onAction="#handleEquipements" styleClass="sidebar-btn sidebar-btn-sub" text="    🔧  Équipements" />
+            <Button fx:id="categoriesBtn" maxWidth="Infinity" onAction="#handleCategories" styleClass="sidebar-btn sidebar-btn-sub" text="    🏷  Catégories" />
 
             <!-- TRANSPORT -->
-            <Label text="TRANSPORT" styleClass="sidebar-section-label"/>
-            <Button fx:id="transportBtn" text="🚌  Transport"
-                    onAction="#handleTransport"
-                    styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Label styleClass="sidebar-section-label" text="TRANSPORT" />
+            <Button fx:id="transportBtn" maxWidth="Infinity" onAction="#handleTransport" styleClass="sidebar-btn" text="🚌  Transport" />
 
             <!-- BOUTIQUE -->
-            <Label text="BOUTIQUE" styleClass="sidebar-section-label"/>
-            <Button fx:id="boutiqueBtn" text="🛍  Boutique"
-                    onAction="#handleBoutique"
-                    styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Label styleClass="sidebar-section-label" text="BOUTIQUE" />
+         <Button fx:id="boutiqueBtn1" maxWidth="Infinity" onAction="#handleCommandes" styleClass="sidebar-btn" text=" 🛒  Commandes" />
+         <Button fx:id="boutiqueBtn2" maxWidth="Infinity" onAction="#handleProduits" styleClass="sidebar-btn" text="🛍  Produits" />
+         <Button fx:id="boutiqueBtn3" maxWidth="Infinity" onAction="#handleLignesCommande" styleClass="sidebar-btn" text="  📋  Lignes commande" />
+         <Button fx:id="boutiqueBtn31" maxWidth="Infinity" onAction="#handlePaiements" styleClass="sidebar-btn" text="  💳  Paiements" />
+            <Button fx:id="boutiqueBtn321" maxWidth="Infinity" onAction="#handleProductsCategory" styleClass="sidebar-btn" text="  💳  Categories produit" />
 
             <!-- RÉSERVATIONS -->
-            <Label text="RÉSERVATIONS" styleClass="sidebar-section-label"/>
-            <Button fx:id="reservationsBtn" text="📋  Réservations"
-                    onAction="#handleReservations"
-                    styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Label styleClass="sidebar-section-label" text="RÉSERVATIONS" />
+            <Button fx:id="reservationsBtn" maxWidth="Infinity" onAction="#handleReservations" styleClass="sidebar-btn" text="📋  Réservations" />
 
             <!-- UTILISATEURS -->
-            <Label text="UTILISATEURS" styleClass="sidebar-section-label"/>
-            <Button fx:id="usersBtn" text="👥  Utilisateurs"
-                    onAction="#handleUsers"
-                    styleClass="sidebar-btn" maxWidth="Infinity"/>
+            <Label styleClass="sidebar-section-label" text="UTILISATEURS" />
+            <Button fx:id="usersBtn" maxWidth="Infinity" onAction="#handleUsers" styleClass="sidebar-btn" text="👥  Utilisateurs" />
 
         </VBox>
     </ScrollPane>
 
     <!-- Footer -->
-    <VBox styleClass="sidebar-footer" spacing="6">
-        <Button text="🌐  Voir le site" onAction="#handleViewSite"
-                styleClass="sidebar-btn" maxWidth="Infinity"/>
-        <Button fx:id="monCompteBtn" text="Mon Compte" onAction="#handleMonCompte"
-                styleClass="sidebar-btn" maxWidth="-Infinity"/>
-        <Button text="⬅  Déconnexion" onAction="#handleLogout"
-                styleClass="sidebar-btn-logout" maxWidth="Infinity"/>
+    <VBox spacing="6" styleClass="sidebar-footer">
+        <Button maxWidth="Infinity" onAction="#handleViewSite" styleClass="sidebar-btn" text="🌐  Voir le site" />
+        <Button fx:id="monCompteBtn" maxWidth="-Infinity" onAction="#handleMonCompte" styleClass="sidebar-btn" text="Mon Compte" />
+        <Button maxWidth="Infinity" onAction="#handleLogout" styleClass="sidebar-btn-logout" text="⬅  Déconnexion" />
     </VBox>
 
 </VBox>
