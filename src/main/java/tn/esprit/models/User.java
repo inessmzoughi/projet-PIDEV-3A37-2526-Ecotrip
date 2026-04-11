@@ -13,7 +13,7 @@ public class User {
     private String telephone;
     private String image;
     private String face_descriptor;
-    public User (){};
+    public User (){}
     public User(int id, String username, String email, String password) {
         this.id = id;
         this.username = username;

@@ -53,9 +53,8 @@ public class SceneManager {
         backRoutes.put(Routes.ADMIN_TRANSPORT,    "/views/back/transport.fxml");
         backRoutes.put(Routes.ADMIN_BOUTIQUE,     "/views/back/boutique.fxml");
         backRoutes.put(Routes.ADMIN_RESERVATIONS, "/views/back/reservations.fxml");
+        //gestion hebergement
         backRoutes.put(Routes.ADMIN_HEBERGEMENTS,           "/views/back/hebergement/ListHebergements.fxml");
-        backRoutes.put(Routes.ADMIN_ADD_HEBERGEMENT,        "/views/back/hebergement/AddHebergement.fxml");
-        backRoutes.put(Routes.ADMIN_EDIT_HEBERGEMENT,       "/views/back/hebergement/EditHebergement.fxml");
         backRoutes.put(Routes.ADMIN_CATEGORIES_HEBERGEMENT, "/views/back/hebergement/CategoriesHebergement.fxml");
         backRoutes.put(Routes.ADMIN_CHAMBRES,               "/views/back/hebergement/Chambres.fxml");
         backRoutes.put(Routes.ADMIN_EQUIPEMENTS,            "/views/back/hebergement/Equipements.fxml");
@@ -64,10 +63,7 @@ public class SceneManager {
         backRoutes.put(Routes.ADMIN_UPDATE_ACCOUNT,   "/views/compte/update-account.fxml");
         backRoutes.put(Routes.ADMIN_CHANGE_PASSWORD,  "/views/compte/change-password.fxml");
         // gestion user
-        backRoutes.put(Routes.ADMIN_USERS,     "/views/back/user/user-list.fxml");
-        backRoutes.put(Routes.ADMIN_USER_NEW,  "/views/back/user/user-form.fxml");
-        backRoutes.put(Routes.ADMIN_USER_SHOW, "/views/back/user/user-show.fxml");
-        backRoutes.put(Routes.ADMIN_USER_EDIT, "/views/back/user/user-form.fxml");}
+        backRoutes.put(Routes.ADMIN_USERS, "/views/back/user/User.fxml");}
 
     public static void initialize(Stage stage) {
         primaryStage = stage;
