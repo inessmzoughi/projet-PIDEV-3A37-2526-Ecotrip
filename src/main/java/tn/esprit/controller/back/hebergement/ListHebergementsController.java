@@ -42,7 +42,7 @@ public class ListHebergementsController implements Initializable {
     @FXML private FlowPane         equipementsCheckboxPane;
     @FXML private Label            errPropietaire;
 
-    /* ─── Table  (colIndex supprimé) ─── */
+    /* ─── Table ─── */
     @FXML private TextField              searchField;
     @FXML private ComboBox<String>       sortCombo;
     @FXML private TableView<Hebergement> tableView;
@@ -114,7 +114,7 @@ public class ListHebergementsController implements Initializable {
         } catch (SQLException e) { showAlert("Erreur", e.getMessage()); }
     }
 
-    /* ─── Chargement équipements ─── */
+    /* ─── Chargement équipements (checkboxes) ─── */
     private void loadEquipements() {
         try {
             allEquipements = equipementService.getAll();
@@ -130,58 +130,114 @@ public class ListHebergementsController implements Initializable {
         } catch (SQLException e) { showAlert("Erreur", e.getMessage()); }
     }
 
-    /* ─── Validation temps réel ─── */
+    /* ─── Validation en temps réel ─── */
     @FXML private void validateNom()      { setFieldError(nomField,      errNom,      nomField.getText().trim().isEmpty()); }
     @FXML private void validateVille()    { setFieldError(villeField,    errVille,    villeField.getText().trim().isEmpty()); }
     @FXML private void validateAdresse()  { setFieldError(adresseField,  errAdresse,  adresseField.getText().trim().isEmpty()); }
     @FXML private void validateLabelEco() { setFieldError(labelEcoField, errLabelEco, labelEcoField.getText().trim().isEmpty()); }
     @FXML private void validateImage()    { setFieldError(imagePrincipaleField, errImage, imagePrincipaleField.getText().trim().isEmpty()); }
+
     @FXML private void validateNbEtoiles() {
         setFieldError(nbEtoilesField, errNbEtoiles, !nbEtoilesField.getText().trim().matches("[1-5]"));
     }
+
     @FXML private void updateCounter() {
         charCount.setText(descriptionField.getText().length() + " / 500 caractères");
     }
+
     @FXML private void validateLatitude() {
         try {
             double lat = Double.parseDouble(latitudeField.getText().trim());
+            // Tunisie : latitude entre 30.2 et 37.5
             setFieldError(latitudeField, errLatitude, lat < 30.2 || lat > 37.5);
-        } catch (NumberFormatException e) { setFieldError(latitudeField, errLatitude, true); }
+        } catch (NumberFormatException e) {
+            setFieldError(latitudeField, errLatitude, true);
+        }
     }
+
     @FXML private void validateLongitude() {
         try {
             double lng = Double.parseDouble(longitudeField.getText().trim());
+            // Tunisie : longitude entre 7.5 et 11.6
             setFieldError(longitudeField, errLongitude, lng < 7.5 || lng > 11.6);
-        } catch (NumberFormatException e) { setFieldError(longitudeField, errLongitude, true); }
+        } catch (NumberFormatException e) {
+            setFieldError(longitudeField, errLongitude, true);
+        }
     }
 
     /* ─── Validation globale ─── */
     private boolean validateAll() {
         boolean ok = true;
-        if (nomField.getText().trim().isEmpty())         { setFieldError(nomField,      errNom,      true); ok = false; } else setFieldError(nomField,      errNom,      false);
-        if (villeField.getText().trim().isEmpty())       { setFieldError(villeField,    errVille,    true); ok = false; } else setFieldError(villeField,    errVille,    false);
-        if (adresseField.getText().trim().isEmpty())     { setFieldError(adresseField,  errAdresse,  true); ok = false; } else setFieldError(adresseField,  errAdresse,  false);
-        if (!nbEtoilesField.getText().trim().matches("[1-5]")) { setFieldError(nbEtoilesField, errNbEtoiles, true); ok = false; } else setFieldError(nbEtoilesField, errNbEtoiles, false);
+
+        // Nom
+        if (nomField.getText().trim().isEmpty()) {
+            setFieldError(nomField, errNom, true); ok = false;
+        } else setFieldError(nomField, errNom, false);
+
+        // Ville
+        if (villeField.getText().trim().isEmpty()) {
+            setFieldError(villeField, errVille, true); ok = false;
+        } else setFieldError(villeField, errVille, false);
+
+        // Adresse
+        if (adresseField.getText().trim().isEmpty()) {
+            setFieldError(adresseField, errAdresse, true); ok = false;
+        } else setFieldError(adresseField, errAdresse, false);
+
+        // Nb Étoiles
+        if (!nbEtoilesField.getText().trim().matches("[1-5]")) {
+            setFieldError(nbEtoilesField, errNbEtoiles, true); ok = false;
+        } else setFieldError(nbEtoilesField, errNbEtoiles, false);
+
+        // Catégorie
         if (categorieCombo.getValue() == null || categorieCombo.getValue().isEmpty()) {
             errCategorie.setVisible(true); errCategorie.setManaged(true); ok = false;
         } else { errCategorie.setVisible(false); errCategorie.setManaged(false); }
-        if (labelEcoField.getText().trim().isEmpty())    { setFieldError(labelEcoField, errLabelEco, true); ok = false; } else setFieldError(labelEcoField, errLabelEco, false);
-        if (imagePrincipaleField.getText().trim().isEmpty()) { setFieldError(imagePrincipaleField, errImage, true); ok = false; } else setFieldError(imagePrincipaleField, errImage, false);
+
+        // Label Éco
+        if (labelEcoField.getText().trim().isEmpty()) {
+            setFieldError(labelEcoField, errLabelEco, true); ok = false;
+        } else setFieldError(labelEcoField, errLabelEco, false);
+
+        // Image principale
+        if (imagePrincipaleField.getText().trim().isEmpty()) {
+            setFieldError(imagePrincipaleField, errImage, true); ok = false;
+        } else setFieldError(imagePrincipaleField, errImage, false);
+
+        // Propriétaire
         if (propietaireCombo.getValue() == null || propietaireCombo.getValue().equals("— Aucun —")) {
             errPropietaire.setVisible(true); errPropietaire.setManaged(true); ok = false;
         } else { errPropietaire.setVisible(false); errPropietaire.setManaged(false); }
+
+        // Description
         if (descriptionField.getText().trim().isEmpty()) {
-            if (!descriptionField.getStyleClass().contains("form-input-error")) descriptionField.getStyleClass().add("form-input-error");
+            if (!descriptionField.getStyleClass().contains("form-input-error"))
+                descriptionField.getStyleClass().add("form-input-error");
             ok = false;
-        } else { descriptionField.getStyleClass().remove("form-input-error"); }
+        } else {
+            descriptionField.getStyleClass().remove("form-input-error");
+        }
+
+        // Latitude (Tunisie : 30.2 ~ 37.5)
         try {
             double lat = Double.parseDouble(latitudeField.getText().trim());
-            if (lat < 30.2 || lat > 37.5) { setFieldError(latitudeField, errLatitude, true); ok = false; } else setFieldError(latitudeField, errLatitude, false);
-        } catch (NumberFormatException e) { setFieldError(latitudeField, errLatitude, true); ok = false; }
+            if (lat < 30.2 || lat > 37.5) {
+                setFieldError(latitudeField, errLatitude, true); ok = false;
+            } else setFieldError(latitudeField, errLatitude, false);
+        } catch (NumberFormatException e) {
+            setFieldError(latitudeField, errLatitude, true); ok = false;
+        }
+
+        // Longitude (Tunisie : 7.5 ~ 11.6)
         try {
             double lng = Double.parseDouble(longitudeField.getText().trim());
-            if (lng < 7.5 || lng > 11.6) { setFieldError(longitudeField, errLongitude, true); ok = false; } else setFieldError(longitudeField, errLongitude, false);
-        } catch (NumberFormatException e) { setFieldError(longitudeField, errLongitude, true); ok = false; }
+            if (lng < 7.5 || lng > 11.6) {
+                setFieldError(longitudeField, errLongitude, true); ok = false;
+            } else setFieldError(longitudeField, errLongitude, false);
+        } catch (NumberFormatException e) {
+            setFieldError(longitudeField, errLongitude, true); ok = false;
+        }
+
         return ok;
     }
 
@@ -189,22 +245,32 @@ public class ListHebergementsController implements Initializable {
     @FXML
     private void onSubmit() {
         if (!validateAll()) return;
+
         double lat = 0.0, lng = 0.0;
         try { lat = Double.parseDouble(latitudeField.getText().trim());  } catch (NumberFormatException ignored) {}
         try { lng = Double.parseDouble(longitudeField.getText().trim()); } catch (NumberFormatException ignored) {}
+
         int categorieId   = categorieMap.getOrDefault(categorieCombo.getValue(), 1);
-        int propietaireId = propietaireMap.getOrDefault(propietaireCombo.getValue() != null ? propietaireCombo.getValue() : "— Aucun —", 0);
+        int propietaireId = propietaireMap.getOrDefault(
+                propietaireCombo.getValue() != null ? propietaireCombo.getValue() : "— Aucun —", 0);
         int actif = "Actif".equals(actifCombo.getValue()) ? 1 : 0;
+
         List<Integer> selectedEqIds = equipementCheckboxes.stream()
-                .filter(CheckBox::isSelected).map(cb -> (Integer) cb.getUserData()).collect(Collectors.toList());
+                .filter(CheckBox::isSelected)
+                .map(cb -> (Integer) cb.getUserData())
+                .collect(Collectors.toList());
+
         try {
             int hebergementId;
             if (hebergementEnEdition == null) {
                 hebergementId = service.ajouter(new Hebergement(0,
-                        nomField.getText().trim(), descriptionField.getText().trim(),
-                        adresseField.getText().trim(), villeField.getText().trim(),
+                        nomField.getText().trim(),
+                        descriptionField.getText().trim(),
+                        adresseField.getText().trim(),
+                        villeField.getText().trim(),
                         Integer.parseInt(nbEtoilesField.getText().trim()),
-                        imagePrincipaleField.getText().trim(), labelEcoField.getText().trim(),
+                        imagePrincipaleField.getText().trim(),
+                        labelEcoField.getText().trim(),
                         lat, lng, actif, categorieId, propietaireId));
                 showToast("✅ Hébergement ajouté !");
             } else {
@@ -241,26 +307,35 @@ public class ListHebergementsController implements Initializable {
         categorieCombo.setValue(null);
         propietaireCombo.getSelectionModel().selectFirst();
         actifCombo.getSelectionModel().selectFirst();
-        setFieldError(nomField, errNom, false); setFieldError(villeField, errVille, false);
-        setFieldError(adresseField, errAdresse, false); setFieldError(nbEtoilesField, errNbEtoiles, false);
-        setFieldError(labelEcoField, errLabelEco, false); setFieldError(imagePrincipaleField, errImage, false);
-        setFieldError(latitudeField, errLatitude, false); setFieldError(longitudeField, errLongitude, false);
-        errCategorie.setVisible(false); errCategorie.setManaged(false);
+
+        // Reset erreurs
+        setFieldError(nomField,      errNom,      false);
+        setFieldError(villeField,    errVille,    false);
+        setFieldError(adresseField,  errAdresse,  false);
+        setFieldError(nbEtoilesField,errNbEtoiles,false);
+        setFieldError(labelEcoField, errLabelEco, false);
+        setFieldError(imagePrincipaleField, errImage, false);
+        setFieldError(latitudeField, errLatitude, false);
+        setFieldError(longitudeField,errLongitude,false);
+        errCategorie.setVisible(false);   errCategorie.setManaged(false);
         errPropietaire.setVisible(false); errPropietaire.setManaged(false);
         descriptionField.getStyleClass().remove("form-input-error");
+
         charCount.setText("0 / 500 caractères");
-        formIcon.setText("🏨"); formTitle.setText("Nouvel Hébergement");
+        formIcon.setText("🏨");
+        formTitle.setText("Nouvel Hébergement");
         formSubtitle.setText("Remplissez les informations ci-dessous.");
         submitBtn.setText("➕ Ajouter");
         equipementCheckboxes.forEach(cb -> cb.setSelected(false));
     }
 
-    /* ─── Édition ─── */
+    /* ─── Charger pour édition ─── */
     private void chargerPourEdition(Hebergement h) {
         hebergementEnEdition = h;
-        nomField.setText(h.getNom()); villeField.setText(h.getVille());
-        adresseField.setText(h.getAdresse() != null ? h.getAdresse() : "");
-        labelEcoField.setText(h.getLabel_eco() != null ? h.getLabel_eco() : "");
+        nomField.setText(h.getNom());
+        villeField.setText(h.getVille());
+        adresseField.setText(h.getAdresse()           != null ? h.getAdresse()           : "");
+        labelEcoField.setText(h.getLabel_eco()         != null ? h.getLabel_eco()         : "");
         imagePrincipaleField.setText(h.getImage_principale() != null ? h.getImage_principale() : "");
         nbEtoilesField.setText(String.valueOf(h.getNb_etoiles()));
         latitudeField.setText(String.valueOf(h.getLatitude()));
@@ -271,9 +346,12 @@ public class ListHebergementsController implements Initializable {
         if (h.getPropietaire_id() == 0) propietaireCombo.setValue("— Aucun —");
         actifCombo.setValue(h.getActif() == 1 ? "Actif" : "Inactif");
         updateCounter();
-        formIcon.setText("✏️"); formTitle.setText("Modifier l'Hébergement");
-        formSubtitle.setText("Mettez à jour les informations."); submitBtn.setText("💾 Enregistrer");
+        formIcon.setText("✏️");
+        formTitle.setText("Modifier l'Hébergement");
+        formSubtitle.setText("Mettez à jour les informations.");
+        submitBtn.setText("💾 Enregistrer");
         nomField.requestFocus();
+
         try {
             List<Equipement> existing    = hebergementEqService.getEquipementsByHebergement(h.getId());
             List<Integer>    existingIds = existing.stream().map(Equipement::getId).collect(Collectors.toList());
@@ -286,7 +364,9 @@ public class ListHebergementsController implements Initializable {
         try { allData = service.getAll(); }
         catch (SQLException e) { allData = new ArrayList<>(); showAlert("Erreur", e.getMessage()); }
     }
+
     private void refreshAll() { loadData(); updateStats(); renderTable(); }
+
     private void updateStats() {
         int total = allData.size();
         statTotal.setText(String.valueOf(total));
@@ -301,9 +381,9 @@ public class ListHebergementsController implements Initializable {
         List<Hebergement> filtered = allData.stream()
                 .filter(h -> query.isEmpty() || h.getNom().toLowerCase().contains(query) || h.getVille().toLowerCase().contains(query))
                 .collect(Collectors.toList());
-        if      ("Nom (A→Z)".equals(sort))            filtered.sort(Comparator.comparing(Hebergement::getNom));
-        else if ("Étoiles (croissant)".equals(sort))  filtered.sort(Comparator.comparingInt(Hebergement::getNb_etoiles));
-        else if ("Ville (A→Z)".equals(sort))          filtered.sort(Comparator.comparing(Hebergement::getVille));
+        if ("Nom (A→Z)".equals(sort))                filtered.sort(Comparator.comparing(Hebergement::getNom));
+        else if ("Étoiles (croissant)".equals(sort)) filtered.sort(Comparator.comparingInt(Hebergement::getNb_etoiles));
+        else if ("Ville (A→Z)".equals(sort))         filtered.sort(Comparator.comparing(Hebergement::getVille));
         badgeCount.setText(String.valueOf(filtered.size()));
         int total = filtered.size(), totalPages = Math.max(1, (int) Math.ceil((double) total / PER_PAGE));
         if (currentPage > totalPages) currentPage = 1;
@@ -321,14 +401,13 @@ public class ListHebergementsController implements Initializable {
         }
     }
 
-    /* ─── Colonnes (sans colIndex) ─── */
     private void setupColumns() {
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         colNom.setCellValueFactory(new PropertyValueFactory<>("nom"));
         colVille.setCellValueFactory(new PropertyValueFactory<>("ville"));
         colNbEtoiles.setCellValueFactory(new PropertyValueFactory<>("nb_etoiles"));
         colLabelEco.setCellValueFactory(new PropertyValueFactory<>("label_eco"));
         colActif.setCellValueFactory(new PropertyValueFactory<>("actif"));
-
         colVille.setCellFactory(col -> new TableCell<>() {
             @Override protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -403,6 +482,7 @@ public class ListHebergementsController implements Initializable {
             errLabel.setVisible(false); errLabel.setManaged(false);
         }
     }
+
     private void showToast(String msg) {
         pagInfo.setText(msg);
         new Thread(() -> {
@@ -410,7 +490,11 @@ public class ListHebergementsController implements Initializable {
             javafx.application.Platform.runLater(this::renderTable);
         }).start();
     }
+
     private void showAlert(String title, String msg) {
-        Alert a = new Alert(Alert.AlertType.ERROR); a.setTitle(title); a.setContentText(msg); a.showAndWait();
+        Alert a = new Alert(Alert.AlertType.ERROR);
+        a.setTitle(title);
+        a.setContentText(msg);
+        a.showAndWait();
     }
 }
