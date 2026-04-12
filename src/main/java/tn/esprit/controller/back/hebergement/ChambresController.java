@@ -253,7 +253,7 @@ public class ChambresController implements Initializable {
             }
         });
         colActions.setCellFactory(col -> new TableCell<>() {
-            private final Button editBtn = new Button("✏️ Modifier");
+            private final Button editBtn = new Button("✏️");
             private final Button delBtn  = new Button("🗑️");
             private final HBox   box     = new HBox(8, editBtn, delBtn);
             { editBtn.getStyleClass().add("btn-edit"); delBtn.getStyleClass().add("btn-del");

@@ -18,6 +18,13 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.paint.Color;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -272,7 +279,7 @@ public class ListHebergementsController implements Initializable {
                         imagePrincipaleField.getText().trim(),
                         labelEcoField.getText().trim(),
                         lat, lng, actif, categorieId, propietaireId));
-                showToast("✅ Hébergement ajouté !");
+                showSuccessPopup("Hébergement ajouté avec succès !", "✅");
             } else {
                 hebergementEnEdition.setNom(nomField.getText().trim());
                 hebergementEnEdition.setVille(villeField.getText().trim());
@@ -288,7 +295,7 @@ public class ListHebergementsController implements Initializable {
                 hebergementEnEdition.setPropietaire_id(propietaireId);
                 service.modifier(hebergementEnEdition);
                 hebergementId = hebergementEnEdition.getId();
-                showToast("💾 Hébergement modifié !");
+                showSuccessPopup("Hébergement modifié avec succès !", "💾");
             }
             hebergementEqService.sauvegarder(hebergementId, selectedEqIds);
             onReset();
@@ -483,12 +490,49 @@ public class ListHebergementsController implements Initializable {
         }
     }
 
-    private void showToast(String msg) {
-        pagInfo.setText(msg);
-        new Thread(() -> {
-            try { Thread.sleep(3000); } catch (InterruptedException ignored) {}
-            javafx.application.Platform.runLater(this::renderTable);
-        }).start();
+    private void showSuccessPopup(String message, String iconText) {
+        Stage popup = new Stage();
+        popup.initStyle(StageStyle.UNDECORATED);
+        popup.initModality(Modality.APPLICATION_MODAL);
+        popup.initOwner(submitBtn.getScene().getWindow());
+
+        Label icon = new Label(iconText);
+        icon.setStyle("-fx-font-size:44px;");
+
+        Label msg = new Label(message);
+        msg.setStyle("-fx-font-size:15px; -fx-font-weight:bold; -fx-text-fill:#0f172a;");
+        msg.setWrapText(true);
+        msg.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+
+        Button closeBtn = new Button("OK");
+        closeBtn.setStyle(
+                "-fx-background-color:#38a169; -fx-text-fill:white; -fx-font-weight:bold;"
+                        + "-fx-background-radius:10; -fx-padding:10 40 10 40;"
+                        + "-fx-cursor:hand; -fx-border-width:0; -fx-font-size:14px;");
+        closeBtn.setOnAction(e -> popup.close());
+
+        VBox box = new VBox(16, icon, msg, closeBtn);
+        box.setAlignment(Pos.CENTER);
+        box.setPadding(new Insets(36, 40, 32, 40));
+        box.setStyle(
+                "-fx-background-color:white;"
+                        + "-fx-background-radius:16;"
+                        + "-fx-effect:dropshadow(gaussian,rgba(0,0,0,0.18),24,0,0,6);"
+                        + "-fx-border-color:#e2e8f0;"
+                        + "-fx-border-radius:16;"
+                        + "-fx-border-width:1;");
+
+        Scene scene = new Scene(box, 320, 230);
+        scene.setFill(Color.TRANSPARENT);
+        popup.setScene(scene);
+
+        popup.setOnShown(e -> {
+            Stage owner = (Stage) submitBtn.getScene().getWindow();
+            popup.setX(owner.getX() + (owner.getWidth()  - popup.getWidth())  / 2);
+            popup.setY(owner.getY() + (owner.getHeight() - popup.getHeight()) / 2);
+        });
+
+        popup.showAndWait();
     }
 
     private void showAlert(String title, String msg) {
