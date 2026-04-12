@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -19,9 +21,19 @@
             <Button fx:id="dashboardBtn" maxWidth="Infinity" onAction="#handleDashboard" styleClass="sidebar-btn" text="🏠  Dashboard" />
 
             <!-- ACTIVITÉS -->
-            <Label styleClass="sidebar-section-label" text="ACTIVITÉS" />
-            <Button fx:id="activitesBtn" maxWidth="Infinity" onAction="#handleActivites" styleClass="sidebar-btn" text="📅  Activités" />
-
+            <Label text="ACTIVITÉS" styleClass="sidebar-section-label"/>
+            <Button fx:id="activityCategoriesBtn" text="    🏷  Catégories"
+                    onAction="#handleActivityCategories"
+                    styleClass="sidebar-btn sidebar-btn-sub" maxWidth="Infinity"/>
+            <Button fx:id="guidesBtn" text="    🧭  Guides"
+                    onAction="#handleGuides"
+                    styleClass="sidebar-btn sidebar-btn-sub" maxWidth="Infinity"/>
+            <Button fx:id="schedulesBtn" text="    📅  Plannings"
+                    onAction="#handleSchedules"
+                    styleClass="sidebar-btn sidebar-btn-sub" maxWidth="Infinity"/>
+            <Button fx:id="activitiesBtn" text="    🏃  Activités"
+                    onAction="#handleActivities"
+                    styleClass="sidebar-btn sidebar-btn-sub" maxWidth="Infinity"/>
             <!-- HÉBERGEMENTS -->
             <Label styleClass="sidebar-section-label" text="HÉBERGEMENTS" />
             <Button fx:id="listHebergementsBtn" maxWidth="Infinity" onAction="#handleListHebergements" styleClass="sidebar-btn" text="🏨  Hébergements" />
