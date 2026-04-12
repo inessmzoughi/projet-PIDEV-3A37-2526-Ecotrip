@@ -13,7 +13,9 @@ import tn.esprit.models.produit.LigneCommande;
 import tn.esprit.models.produit.Product;
 import tn.esprit.services.produit.CommandeService;
 import tn.esprit.services.produit.LigneCommandeService;
+import tn.esprit.session.SessionManager;
 import tn.esprit.utils.CartManager;
+import tn.esprit.models.cart.CartItem;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -58,12 +60,13 @@ public class CartController implements Initializable {
 
         refreshCart();
     }
-
+    // Replace refreshCart() with this updated version:
     private void refreshCart() {
         itemsContainer.getChildren().clear();
-        Map<Product, Integer> items = cart.getItems();
 
-        boolean empty = items.isEmpty();
+        boolean hasProducts     = !cart.getProductItems().isEmpty();
+        boolean hasReservations = !cart.getReservationItems().isEmpty();
+        boolean empty           = !hasProducts && !hasReservations;
 
         emptyState.setVisible(empty);
         emptyState.setManaged(empty);
@@ -72,10 +75,101 @@ public class CartController implements Initializable {
 
         if (empty) return;
 
-        for (Map.Entry<Product, Integer> entry : items.entrySet())
-            itemsContainer.getChildren().add(buildItemRow(entry.getKey(), entry.getValue()));
+        // ── Reservation items ────────────────────────────
+        if (hasReservations) {
+            Label sectionLabel = new Label("🏨  Réservations");
+            sectionLabel.setStyle("-fx-font-size:15px; -fx-font-weight:bold; -fx-text-fill:#2d5a1b;");
+            itemsContainer.getChildren().add(sectionLabel);
+
+            for (CartItem item : cart.getReservationItems()) {
+                itemsContainer.getChildren().add(buildReservationRow(item));
+            }
+        }
+
+        // ── Product items (existing) ─────────────────────
+        if (hasProducts) {
+            Label sectionLabel = new Label("🛍  Produits");
+            sectionLabel.setStyle("-fx-font-size:15px; -fx-font-weight:bold; -fx-text-fill:#2d5a1b;"
+                    + (hasReservations ? "-fx-padding:16 0 0 0;" : ""));
+            itemsContainer.getChildren().add(sectionLabel);
+
+            for (Map.Entry<Product, Integer> entry : cart.getProductItems().entrySet()) {
+                itemsContainer.getChildren().add(buildItemRow(entry.getKey(), entry.getValue()));
+            }
+        }
 
         updateSummary();
+    }
+
+    // Add this new method for reservation rows:
+    private HBox buildReservationRow(CartItem item) {
+        HBox row = new HBox(16);
+        row.setAlignment(Pos.CENTER_LEFT);
+        row.setPadding(new Insets(16));
+        row.setStyle(
+                "-fx-background-color: " + WHITE + ";" +
+                        "-fx-background-radius: 12;" +
+                        "-fx-border-radius: 12;" +
+                        "-fx-border-color: #c8e6c9;" +  // green tint border for reservations
+                        "-fx-border-width: 1;"
+        );
+        row.setEffect(new DropShadow(6, Color.web("#00000015")));
+
+        // Icon based on type
+        String icon = switch (item.getType()) {
+            case HEBERGEMENT -> "🏨";
+            case ACTIVITY    -> "🧭";
+            case TRANSPORT   -> "🚌";
+        };
+        Label iconLabel = new Label(icon);
+        iconLabel.setStyle("-fx-font-size: 28px;");
+
+        // Info
+        VBox info = new VBox(4);
+        HBox.setHgrow(info, Priority.ALWAYS);
+
+        Label nom = new Label(item.getLabel());
+        nom.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: " + GREEN_DARK + ";");
+
+        String dateInfo = item.getDateFrom() != null
+                ? item.getDateFrom() + " → " + item.getDateTo()
+                + (item.getNights() > 0 ? " (" + item.getNights() + " nuits)" : "")
+                : "";
+        Label dates = new Label(dateInfo);
+        dates.setStyle("-fx-font-size: 12px; -fx-text-fill: " + GREY + ";");
+
+        Label guests = new Label("👥 " + item.getNumberOfPersons() + " personne(s)");
+        guests.setStyle("-fx-font-size: 12px; -fx-text-fill: " + GREY + ";");
+
+        info.getChildren().addAll(nom, dates, guests);
+
+        // Total
+        Label total = new Label(String.format("%.2f TND", item.getTotalPrice()));
+        total.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: " + GREEN_MED + "; -fx-min-width: 100px;");
+        total.setAlignment(Pos.CENTER_RIGHT);
+
+        // Delete
+        Button btnDel = new Button("🗑");
+        btnDel.setStyle(
+                "-fx-background-color: #ffebee;" +
+                        "-fx-text-fill: #c62828;" +
+                        "-fx-font-size: 14px;" +
+                        "-fx-background-radius: 6;" +
+                        "-fx-cursor: hand;"
+        );
+        btnDel.setOnAction(e -> {
+            cart.removeReservationItem(item);
+            refreshCart();
+        });
+
+        row.getChildren().addAll(iconLabel, info, total, btnDel);
+        return row;
+    }
+
+    // Update updateSummary() to show grand total:
+    private void updateSummary() {
+        labelTotal.setText(String.format("%.2f TND", cart.getTotal()));
+        labelCount.setText(String.valueOf(cart.getCount()));
     }
 
     private HBox buildItemRow(Product p, int qty) {
@@ -136,11 +230,11 @@ public class CartController implements Initializable {
         btnPlus.setStyle(qtyBtnStyle);
 
         btnMinus.setOnAction(e -> {
-            cart.updateQuantity(p, cart.getItems().getOrDefault(p, 1) - 1);
+            cart.updateQuantity(p, cart.getProductItems().getOrDefault(p, 1) - 1);
             refreshCart();
         });
         btnPlus.setOnAction(e -> {
-            cart.updateQuantity(p, cart.getItems().getOrDefault(p, 1) + 1);
+            cart.updateQuantity(p, cart.getProductItems().getOrDefault(p, 1) + 1);
             refreshCart();
         });
         qtyBox.getChildren().addAll(btnMinus, qtyLabel, btnPlus);
@@ -173,14 +267,10 @@ public class CartController implements Initializable {
         return row;
     }
 
-    private void updateSummary() {
-        labelTotal.setText(String.format("%.2f TND", cart.getTotal()));
-        labelCount.setText(String.valueOf(cart.getCount()));
-    }
 
     @FXML
     private void onConfirmer() {
-        if (cart.getItems().isEmpty()) {
+        if (cart.getProductItems().isEmpty() && cart.getReservationItems().isEmpty()) {
             showAlert(Alert.AlertType.WARNING,
                     "Panier vide", "Ajoutez des produits avant de confirmer.");
             return;
@@ -193,14 +283,14 @@ public class CartController implements Initializable {
 
         try {
             // ── Pour chaque produit du panier → une Commande + une LigneCommande ──
-            for (Map.Entry<Product, Integer> entry : cart.getItems().entrySet()) {
+            for (Map.Entry<Product, Integer> entry : cart.getProductItems().entrySet()) {
                 Product p   = entry.getKey();
                 int     qty = entry.getValue();
                 double  sousTotal = p.getPrix() * qty;
 
                 // 1. Créer la Commande
                 Commande commande = new Commande(
-                        1,              // TODO : remplacer par l'ID utilisateur connecté
+                        SessionManager.getInstance().getCurrentUser().getId(),  // TODO : remplacer par l'ID utilisateur connecté
                         p.getId(),
                         qty,
                         p.getPrix(),

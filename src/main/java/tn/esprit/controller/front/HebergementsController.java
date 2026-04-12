@@ -24,6 +24,16 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import tn.esprit.utils.CartManager;
+
+import java.io.IOException;
+
 public class HebergementsController implements Initializable {
 
     @FXML private TextField        searchField;
@@ -345,7 +355,39 @@ public class HebergementsController implements Initializable {
     /* ─────────────── HANDLERS ─────────────── */
 
     private void onReserver(Hebergement h) {
-        System.out.println("Réserver : " + h.getNom());
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/views/front/hebergement/HebergementReservationModal.fxml")
+            );
+            Parent root = loader.load();
+
+            HebergementReservationController ctrl = loader.getController();
+            ctrl.setHebergement(h);
+
+            // When cart is updated, refresh the cart badge in the navbar
+            ctrl.setOnCartUpdated(() -> {
+                // Update navbar cart button if you have one in your front-shell
+                // For now just log — wire to your navbar controller later
+                System.out.println("Cart updated: " + CartManager.getInstance().getCount() + " items");
+            });
+
+            Stage modal = new Stage();
+            modal.initModality(Modality.APPLICATION_MODAL);
+            modal.initStyle(StageStyle.UNDECORATED);
+            modal.setTitle("Réserver — " + h.getNom());
+
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(
+                    getClass().getResource("/styles/front.css").toExternalForm());
+            modal.setScene(scene);
+            modal.showAndWait(); // blocks until modal is closed
+
+        } catch (IOException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur");
+            alert.setContentText("Impossible d'ouvrir le formulaire de réservation.");
+            alert.showAndWait();
+        }
     }
 
     @FXML
