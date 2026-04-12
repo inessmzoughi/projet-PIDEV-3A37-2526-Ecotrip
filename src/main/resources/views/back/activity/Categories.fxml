@@ -14,7 +14,7 @@
                 <VBox styleClass="page-body" spacing="24">
                     <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
 
-                    <!-- Breadcrumb + Title -->
+                    <!-- Breadcrumb -->
                     <VBox spacing="4">
                         <HBox spacing="4">
                             <Button text="Dashboard" styleClass="breadcrumb-link" onAction="#onNavDashboard"/>
@@ -26,7 +26,7 @@
                         <Label text="Catégories d'Activités" styleClass="page-title"/>
                     </VBox>
 
-                    <!-- Stat Cards -->
+                    <!-- Stats -->
                     <HBox spacing="20">
                         <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
                             <HBox spacing="12" alignment="CENTER_LEFT">
@@ -43,7 +43,7 @@
                                 <Label text="🏃" styleClass="stat-icon stat-icon-blue"/>
                                 <VBox spacing="2">
                                     <Label text="Total Activités" styleClass="stat-label"/>
-                                    <Label fx:id="statActivities" text="0" styleClass="stat-value"/>
+                                    <Label fx:id="statActivities" text="—" styleClass="stat-value"/>
                                     <Label text="activités enregistrées" styleClass="stat-sub"/>
                                 </VBox>
                             </HBox>
@@ -83,6 +83,24 @@
                                            styleClass="err-msg" managed="false" visible="false"/>
                                 </VBox>
 
+                                <!-- Icon Picker -->
+                                <VBox spacing="8" styleClass="form-group">
+                                    <Label text="🎨 Icône" styleClass="form-label"/>
+                                    <HBox spacing="10" alignment="CENTER_LEFT">
+                                        <Button fx:id="iconPickerBtn" text="🏷️"
+                                                styleClass="icon-picker-btn"
+                                                onAction="#toggleIconPicker"/>
+                                        <TextField fx:id="iconField" promptText="ou saisir un emoji"
+                                                   styleClass="form-input" prefWidth="180"/>
+                                    </HBox>
+                                    <!-- Icon picker grid -->
+                                    <VBox fx:id="iconPickerBox" visible="false" managed="false"
+                                          styleClass="table-card" spacing="0">
+                                        <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+                                        <FlowPane fx:id="iconOptionsPane" hgap="6" vgap="6"/>
+                                    </VBox>
+                                </VBox>
+
                                 <!-- Description -->
                                 <VBox spacing="5" styleClass="form-group">
                                     <Label text="📝 Description" styleClass="form-label"/>
@@ -90,13 +108,6 @@
                                               styleClass="form-textarea" prefHeight="100"
                                               wrapText="true" onKeyReleased="#updateCounter"/>
                                     <Label fx:id="charCount" text="0 / 1000 caractères" styleClass="char-count"/>
-                                </VBox>
-
-                                <!-- Icon -->
-                                <VBox spacing="5" styleClass="form-group">
-                                    <Label text="🎨 Icône (emoji ou texte)" styleClass="form-label"/>
-                                    <TextField fx:id="iconField" promptText="Ex: 🏔️, 🌊, 🎭"
-                                               styleClass="form-input"/>
                                 </VBox>
                             </VBox>
                             <HBox styleClass="form-footer" alignment="CENTER_RIGHT" spacing="10">
@@ -122,11 +133,11 @@
                             <VBox styleClass="table-card" spacing="0" VBox.vgrow="ALWAYS">
                                 <TableView fx:id="tableView" styleClass="main-table" VBox.vgrow="ALWAYS">
                                     <columns>
-                                        <TableColumn fx:id="colIndex" text="#"           prefWidth="45"/>
-                                        <TableColumn fx:id="colIcon"  text="Icône"       prefWidth="70"/>
-                                        <TableColumn fx:id="colName"  text="Nom"         prefWidth="180"/>
-                                        <TableColumn fx:id="colDesc"  text="Description" prefWidth="220"/>
-                                        <TableColumn fx:id="colActions" text="Actions"   prefWidth="160"/>
+                                        <TableColumn fx:id="colIndex" text="#"            prefWidth="45"/>
+                                        <TableColumn fx:id="colIcon"  text="Icône"        prefWidth="80"/>
+                                        <TableColumn fx:id="colName"  text="Nom"          prefWidth="180"/>
+                                        <TableColumn fx:id="colDesc"  text="Description"  prefWidth="260"/>
+                                        <TableColumn fx:id="colActions" text="Actions"    prefWidth="160"/>
                                     </columns>
                                     <placeholder>
                                         <VBox alignment="CENTER" spacing="8" styleClass="empty-state">
