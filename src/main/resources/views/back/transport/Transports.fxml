@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="tn.esprit.controller.back.transport.TransportsController"
+            styleClass="root-pane">
+    <center>
+        <VBox styleClass="main-content">
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane">
+                <VBox styleClass="page-body" spacing="24">
+                    <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
+
+                    <VBox spacing="4">
+                        <HBox spacing="4">
+                            <Button text="Dashboard" styleClass="breadcrumb-link" onAction="#onNavDashboard"/>
+                            <Label text=" > " styleClass="breadcrumb-sep"/>
+                            <Label text="Transport" styleClass="breadcrumb-active"/>
+                        </HBox>
+                        <Label text="Transports" styleClass="page-title"/>
+                    </VBox>
+
+                    <HBox spacing="20">
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                            <Label text="Total transports" styleClass="stat-label"/>
+                            <Label fx:id="statTotal" text="0" styleClass="stat-value"/>
+                        </VBox>
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                            <Label text="Disponibles" styleClass="stat-label"/>
+                            <Label fx:id="statDisponible" text="0" styleClass="stat-value"/>
+                        </VBox>
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                            <Label text="Prix moyen" styleClass="stat-label"/>
+                            <Label fx:id="statPrixMoyen" text="—" styleClass="stat-value"/>
+                        </VBox>
+                    </HBox>
+
+                    <HBox spacing="12">
+                        <Button text="Transports" styleClass="btn-primary" onAction="#onNavTransports"/>
+                        <Button text="Chauffeurs" styleClass="btn-cancel" onAction="#onNavChauffeurs"/>
+                        <Button text="Categories" styleClass="btn-cancel" onAction="#onNavCategories"/>
+                    </HBox>
+
+                    <HBox spacing="24">
+                        <VBox minWidth="360" maxWidth="360" styleClass="form-card">
+                            <HBox styleClass="form-card-header" alignment="CENTER_LEFT" spacing="14">
+                                <VBox spacing="4">
+                                    <Label fx:id="formTitle" text="Nouveau Transport" styleClass="form-heading-title"/>
+                                    <Label text="Ajout et modification des transports" styleClass="form-heading-sub"/>
+                                </VBox>
+                            </HBox>
+                            <VBox styleClass="form-body" spacing="14">
+                                <padding><Insets top="20" right="20" bottom="16" left="20"/></padding>
+                                <VBox spacing="5"><Label text="Type *" styleClass="form-label"/><TextField fx:id="typeField" styleClass="form-input"/></VBox>
+                                <HBox spacing="12">
+                                    <VBox spacing="5" HBox.hgrow="ALWAYS"><Label text="Capacite *" styleClass="form-label"/><TextField fx:id="capaciteField" styleClass="form-input"/></VBox>
+                                    <VBox spacing="5" HBox.hgrow="ALWAYS"><Label text="Emission CO2 *" styleClass="form-label"/><TextField fx:id="emissionField" styleClass="form-input"/></VBox>
+                                </HBox>
+                                <VBox spacing="5"><Label text="Prix par personne *" styleClass="form-label"/><TextField fx:id="prixField" styleClass="form-input"/></VBox>
+                                <VBox spacing="5">
+                                    <Label text="Image" styleClass="form-label"/>
+                                    <HBox spacing="8">
+                                        <TextField fx:id="imageField" styleClass="form-input" HBox.hgrow="ALWAYS" promptText="Choisir une image..."/>
+                                        <Button text="Choisir..." onAction="#onBrowseImage" styleClass="btn-cancel"/>
+                                    </HBox>
+                                </VBox>
+                                <VBox spacing="5"><Label text="Categorie" styleClass="form-label"/><ComboBox fx:id="categorieCombo" maxWidth="Infinity" styleClass="sort-select"/></VBox>
+                                <VBox spacing="5"><Label text="Chauffeur" styleClass="form-label"/><ComboBox fx:id="chauffeurCombo" maxWidth="Infinity" styleClass="sort-select"/></VBox>
+                                <VBox spacing="5"><Label text="Statut" styleClass="form-label"/><ComboBox fx:id="disponibleCombo" maxWidth="Infinity" styleClass="sort-select"/></VBox>
+                            </VBox>
+                            <HBox styleClass="form-footer" alignment="CENTER_RIGHT" spacing="10">
+                                <Button text="Reinitialiser" styleClass="btn-cancel" onAction="#onReset"/>
+                                <Button fx:id="submitBtn" text="Ajouter" styleClass="btn-submit" onAction="#onSubmit"/>
+                            </HBox>
+                        </VBox>
+
+                        <VBox spacing="14" HBox.hgrow="ALWAYS">
+                            <HBox styleClass="action-bar" alignment="CENTER_LEFT" spacing="12">
+                                <HBox alignment="CENTER_LEFT" spacing="8" HBox.hgrow="ALWAYS">
+                                    <Label text="Liste des transports" styleClass="table-card-title"/>
+                                    <Label fx:id="badgeCount" text="0" styleClass="badge, badge-green"/>
+                                </HBox>
+                                <TextField fx:id="searchField" promptText="Rechercher..." styleClass="search-input" onKeyReleased="#onSearch" prefWidth="220"/>
+                                <ComboBox fx:id="sortCombo" styleClass="sort-select" onAction="#onSort" prefWidth="180"/>
+                            </HBox>
+                            <VBox styleClass="table-card">
+                                <TableView fx:id="tableView" styleClass="main-table" prefHeight="420">
+                                    <columns>
+                                        <TableColumn fx:id="colType" text="Type" minWidth="110"/>
+                                        <TableColumn fx:id="colCapacite" text="Capacite" minWidth="80"/>
+                                        <TableColumn fx:id="colEmission" text="CO2" minWidth="80"/>
+                                        <TableColumn fx:id="colPrix" text="Prix" minWidth="80"/>
+                                        <TableColumn fx:id="colDisponible" text="Statut" minWidth="80"/>
+                                        <TableColumn fx:id="colCategorie" text="Categorie" minWidth="110"/>
+                                        <TableColumn fx:id="colChauffeur" text="Chauffeur" minWidth="120"/>
+                                        <TableColumn fx:id="colActions" text="Actions" minWidth="120"/>
+                                    </columns>
+                                </TableView>
+                            </VBox>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </ScrollPane>
+        </VBox>
+    </center>
+</BorderPane>
