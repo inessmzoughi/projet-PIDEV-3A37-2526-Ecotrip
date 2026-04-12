@@ -3,7 +3,6 @@ package tn.esprit.controller.back.hebergement;
 import tn.esprit.models.Categorie_hebergement;
 import tn.esprit.models.Equipement;
 import tn.esprit.models.Hebergement;
-import tn.esprit.database.Base;
 import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;
 import tn.esprit.services.hebergement.CategorieH_service;
@@ -58,7 +57,6 @@ public class ListHebergementsController implements Initializable {
     @FXML private TableColumn<Hebergement, Void>    colActions;
     @FXML private Label badgeCount, pagInfo;
     @FXML private HBox  pagButtons;
-    @FXML private HBox  paginationBar;
 
     /* ─── State ─── */
     private final Hebergement_service           service              = new Hebergement_service();
@@ -91,22 +89,13 @@ public class ListHebergementsController implements Initializable {
     /* ─── Chargement propriétaires ─── */
     private void loadPropietaires() {
         try {
-            java.sql.Connection conn = Base.getInstance().getConnection();
-            java.sql.ResultSet rs = conn.createStatement().executeQuery("SELECT id, username FROM user");
             propietaireMap.clear();
-            List<String> noms = new ArrayList<>();
-            noms.add("— Aucun —");
-            propietaireMap.put("— Aucun —", 0);
-            while (rs.next()) {
-                String u = rs.getString("username");
-                propietaireMap.put(u, rs.getInt("id"));
-                noms.add(u);
-            }
-            propietaireCombo.setItems(FXCollections.observableArrayList(noms));
+            propietaireMap.putAll(service.getPropietairesMap());
+            propietaireCombo.setItems(
+                    FXCollections.observableArrayList(propietaireMap.keySet()));
             propietaireCombo.getSelectionModel().selectFirst();
         } catch (SQLException e) { showAlert("Erreur", e.getMessage()); }
     }
-
     /* ─── Chargement catégories ─── */
     private void loadCategories() {
         try {
@@ -361,7 +350,7 @@ public class ListHebergementsController implements Initializable {
 
         try {
             List<Equipement> existing    = hebergementEqService.getEquipementsByHebergement(h.getId());
-            List<Integer>    existingIds = existing.stream().map(Equipement::getId).collect(Collectors.toList());
+            List<Integer>    existingIds = existing.stream().map(Equipement::getId).toList();
             equipementCheckboxes.forEach(cb -> cb.setSelected(existingIds.contains((Integer) cb.getUserData())));
         } catch (SQLException e) { showAlert("Erreur", e.getMessage()); }
     }
@@ -375,13 +364,14 @@ public class ListHebergementsController implements Initializable {
     private void refreshAll() { loadData(); updateStats(); renderTable(); }
 
     private void updateStats() {
-        int total = allData.size();
-        statTotal.setText(String.valueOf(total));
-        if (total == 0) { statEtoiles.setText("—"); statActif.setText("—"); return; }
-        statEtoiles.setText(String.format("%.1f ⭐", allData.stream().mapToInt(Hebergement::getNb_etoiles).average().orElse(0)));
-        statActif.setText(allData.stream().filter(h -> h.getActif() == 1).count() + " actifs");
+        try {
+            statTotal.setText(String.valueOf(service.countTotal()));
+            statEtoiles.setText(String.format("%.1f ⭐", service.avgEtoiles()));
+            statActif.setText(service.countActifs() + " actifs");
+        } catch (SQLException e) {
+            statTotal.setText("—"); statEtoiles.setText("—"); statActif.setText("—");
+        }
     }
-
     private void renderTable() {
         String query = searchField.getText().toLowerCase().trim();
         String sort  = sortCombo.getValue();
@@ -473,10 +463,6 @@ public class ListHebergementsController implements Initializable {
     /* ─── Navigation ─── */
     @FXML private void onSearch()          { currentPage = 1; renderTable(); }
     @FXML private void onSort()            { currentPage = 1; renderTable(); }
-    @FXML private void onNavHebergements() { SceneManager.navigateTo(Routes.ADMIN_HEBERGEMENTS); }
-    @FXML private void onNavChambres()     { SceneManager.navigateTo(Routes.ADMIN_CHAMBRES); }
-    @FXML private void onNavEquipements()  { SceneManager.navigateTo(Routes.ADMIN_EQUIPEMENTS); }
-    @FXML private void onNavCategories()   { SceneManager.navigateTo(Routes.ADMIN_CATEGORIES_HEBERGEMENT); }
     @FXML private void onNavDashboard()    { SceneManager.navigateTo(Routes.ADMIN_DASHBOARD); }
 
     /* ─── Helpers ─── */
