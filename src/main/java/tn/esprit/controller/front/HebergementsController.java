@@ -70,7 +70,7 @@ public class HebergementsController implements Initializable {
     /* ─────────────── FILTERS ─────────────── */
 
     private void setupFilters() {
-        filterVille.getItems().add("All Cities");
+        filterVille.getItems().add("villes");
         if (allData != null) {
             allData.stream()
                     .map(Hebergement::getVille)
@@ -81,7 +81,7 @@ public class HebergementsController implements Initializable {
         filterVille.getSelectionModel().selectFirst();
 
         filterEtoiles.getItems().addAll(
-                "All Stars", "★ 1", "★★ 2", "★★★ 3", "★★★★ 4", "★★★★★ 5");
+                "etoiles", "★ 1", "★★ 2", "★★★ 3", "★★★★ 4", "★★★★★ 5");
         filterEtoiles.getSelectionModel().selectFirst();
         sortSelect.getSelectionModel().selectFirst();
 
@@ -102,9 +102,9 @@ public class HebergementsController implements Initializable {
                         || h.getNom().toLowerCase().contains(query)
                         || h.getVille().toLowerCase().contains(query)
                         || (h.getDescription() != null && h.getDescription().toLowerCase().contains(query)))
-                .filter(h -> ville  == null || ville.equals("All Cities")  || h.getVille().equals(ville))
+                .filter(h -> ville  == null || ville.equals("villes")  || h.getVille().equals(ville))
                 .filter(h -> {
-                    if (etoile == null || etoile.equals("All Stars")) return true;
+                    if (etoile == null || etoile.equals("etoiles")) return true;
                     String nb = etoile.replaceAll("[^0-9]", "");
                     return !nb.isEmpty() && h.getNb_etoiles() == Integer.parseInt(nb);
                 })

@@ -97,4 +97,15 @@ public class Hebergement_service {
                 rs.getInt("propietaire_id")
         );
     }
+    // GET top 4 hébergements 5 étoiles actifs
+    public List<Hebergement> getTop5Etoiles() throws SQLException {
+        List<Hebergement> list = new ArrayList<>();
+        String sql = "SELECT * FROM hebergement WHERE nb_etoiles = 5 AND actif = 1 LIMIT 4";
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            list.add(mapResultSet(rs));
+        }
+        return list;
+    }
 }

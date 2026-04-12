@@ -10,23 +10,23 @@
             fitToWidth="true"
             hbarPolicy="NEVER"
             vbarPolicy="AS_NEEDED"
-            styleClass="prod-scroll">
+            styleClass="heb-scroll">
 
     <stylesheets>
         <String fx:value="@/styles/front.css"/>
     </stylesheets>
 
-    <VBox styleClass="prod-page" spacing="0">
+    <VBox styleClass="heb-page" spacing="0">
 
         <!-- ══ HERO ══ -->
-        <VBox styleClass="prod-hero" alignment="CENTER" spacing="14">
+        <VBox styleClass="heb-hero" alignment="CENTER" spacing="14">
             <padding><Insets top="80" bottom="80" left="40" right="40"/></padding>
-            <Label text="Our Products" styleClass="prod-hero-title"/>
-            <Label text="Explore our full catalogue of eco-friendly products" styleClass="prod-hero-sub"/>
+            <Label text="Our Eco-Friendly Products" styleClass="heb-hero-title"/>
+            <Label text="Explore our full catalogue of sustainable products" styleClass="heb-hero-sub"/>
         </VBox>
 
         <!-- ══ FILTRES ══ -->
-        <VBox styleClass="prod-filters-container">
+        <VBox styleClass="heb-filters-container">
             <padding><Insets top="30" bottom="30" left="40" right="40"/></padding>
             <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 0 0 20 0;">
                 <Region styleClass="filters-title-bar"/>
@@ -35,9 +35,9 @@
             <HBox spacing="16" alignment="CENTER_LEFT">
                 <TextField fx:id="searchField"
                            promptText="Search by product name..."
-                           styleClass="prod-filter-input"
+                           styleClass="heb-filter-input"
                            HBox.hgrow="ALWAYS"/>
-                <ComboBox fx:id="sortSelect" styleClass="prod-filter-input" prefWidth="180">
+                <ComboBox fx:id="sortSelect" styleClass="heb-filter-input" prefWidth="180">
                     <items>
                         <javafx.collections.FXCollections fx:factory="observableArrayList">
                             <String fx:value="Sort by"/>
@@ -48,45 +48,53 @@
                         </javafx.collections.FXCollections>
                     </items>
                 </ComboBox>
-                <ComboBox fx:id="filterCategory" styleClass="prod-filter-input" prefWidth="180"/>
-                <Button text="Clear Filters" styleClass="prod-clear-btn" onAction="#onReset" prefWidth="140"/>
+                <ComboBox fx:id="filterCategory" styleClass="heb-filter-input" prefWidth="180"/>
+                <Button text="Clear Filters" styleClass="heb-clear-btn" onAction="#onReset" prefWidth="140"/>
             </HBox>
         </VBox>
 
-        <!-- ══ RÉSULTATS HEADER ══ -->
+        <!-- ══ RÉSULTATS + BOUTON PANIER ══ -->
+        <!-- ✅ SEUL CHANGEMENT : on ajoute le bouton panier à droite du resultCount -->
         <HBox alignment="CENTER_LEFT">
             <padding><Insets top="24" bottom="12" left="40" right="40"/></padding>
-            <Label fx:id="resultCount" text="0 Product(s) Found" styleClass="prod-result-count"/>
+            <Label fx:id="resultCount" text="0 Product(s) Found" styleClass="heb-result-count"
+                   HBox.hgrow="ALWAYS"/>
+            <Button fx:id="btnCart"
+                    text="🛒  Mon Panier (0)"
+                    onAction="#onOpenCart"
+                    style="-fx-background-color: #2d5a1b;
+                           -fx-text-fill: white;
+                           -fx-font-size: 13px;
+                           -fx-font-weight: bold;
+                           -fx-padding: 10 20 10 20;
+                           -fx-background-radius: 8;
+                           -fx-cursor: hand;"/>
         </HBox>
 
         <!-- ══ CARTES ══ -->
-        <FlowPane fx:id="cardsPane" hgap="28" vgap="28" styleClass="prod-cards-pane">
-            <padding><Insets top="0" bottom="20" left="40" right="40"/></padding>
+        <FlowPane fx:id="cardsPane" hgap="28" vgap="28" styleClass="heb-cards-pane">
+            <padding><Insets top="0" bottom="40" left="40" right="40"/></padding>
         </FlowPane>
 
         <!-- ══ EMPTY STATE ══ -->
         <VBox fx:id="emptyState" alignment="CENTER" spacing="16"
-              managed="false" visible="false" styleClass="prod-empty">
+              managed="false" visible="false" styleClass="heb-empty">
             <padding><Insets top="60" bottom="60"/></padding>
-            <Label text="🛒" styleClass="prod-empty-icon"/>
-            <Label text="No Products Found" styleClass="prod-empty-title"/>
-            <Label text="Try adjusting your filters to see more results" styleClass="prod-empty-sub"/>
-            <Button text="↺  Reset Filters" styleClass="prod-clear-btn" onAction="#onReset"/>
+            <Label text="🛒" styleClass="heb-empty-icon"/>
+            <Label text="No Products Found" styleClass="heb-empty-title"/>
+            <Label text="Try adjusting your filters to see more results" styleClass="heb-empty-sub"/>
+            <Button text="↺  Reset Filters" styleClass="heb-clear-btn" onAction="#onReset"/>
         </VBox>
 
         <!-- ══ PAGINATION ══ -->
-        <HBox fx:id="paginationBar"
-              alignment="CENTER" spacing="16"
-              managed="false" visible="false"
-              styleClass="prod-pagination">
+        <HBox fx:id="paginationBar" alignment="CENTER" spacing="16"
+              managed="false" visible="false" styleClass="heb-pagination">
             <padding><Insets top="24" bottom="24" left="40" right="40"/></padding>
-            <Button fx:id="btnPrev" text="← Précédent" styleClass="prod-page-btn" onAction="#onPrev"/>
-            <Label fx:id="pagInfo" text="Page 1 / 1" styleClass="prod-page-info"/>
-            <Button fx:id="btnNext" text="Suivant →" styleClass="prod-page-btn" onAction="#onNext"/>
+            <Button fx:id="btnPrev" text="← Précédent" styleClass="heb-page-btn" onAction="#onPrev"/>
+            <Label fx:id="pagInfo" text="Page 1 / 1" styleClass="heb-page-info"/>
+            <Button fx:id="btnNext" text="Suivant →" styleClass="heb-page-btn" onAction="#onNext"/>
         </HBox>
 
-        <!-- ✅ FOOTER — après les cartes + pagination, dans le scroll -->
-        <fx:include source="../../components/front-footer.fxml"/>
 
     </VBox>
 </ScrollPane>
