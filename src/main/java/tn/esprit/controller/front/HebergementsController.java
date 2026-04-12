@@ -4,11 +4,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import tn.esprit.controller.front.reservation.HebergementReservationController;
+import tn.esprit.controller.front.modals.HebergementReservationController;
 import tn.esprit.models.Categorie_hebergement;
 import tn.esprit.models.Chambre;
 import tn.esprit.models.Equipement;
@@ -26,14 +28,8 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import tn.esprit.utils.CartManager;
-
-import java.io.IOException;
+import javafx.scene.layout.StackPane;
 
 public class HebergementsController implements Initializable {
 
@@ -358,36 +354,45 @@ public class HebergementsController implements Initializable {
     private void onReserver(Hebergement h) {
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/views/front/hebergement/HebergementReservationModal.fxml")
+                    getClass().getResource("/views/front/modals/HebergementReservationModal.fxml")
             );
-            Parent root = loader.load();
+            StackPane modalOverlay = loader.load();
 
             HebergementReservationController ctrl = loader.getController();
             ctrl.setHebergement(h);
+            ctrl.setOverlayRoot(modalOverlay);
 
-            // When cart is updated, refresh the cart badge in the navbar
+            // 🔥 FIX: handle root safely
+            Parent rootNode = cardsPane.getScene().getRoot();
+
+            StackPane overlayContainer;
+
+            if (rootNode instanceof StackPane) {
+                overlayContainer = (StackPane) rootNode;
+            } else {
+                // Wrap existing root inside a StackPane
+                overlayContainer = new StackPane();
+                Scene scene = rootNode.getScene();
+                overlayContainer.getChildren().add(rootNode);
+                scene.setRoot(overlayContainer);
+            }
+
+            overlayContainer.getChildren().add(modalOverlay);
+
+            // Apply blur
+            if (!overlayContainer.getChildren().isEmpty()) {
+                overlayContainer.getChildren().get(0)
+                        .setEffect(new javafx.scene.effect.GaussianBlur(8));
+            }
+
+            // Remove blur on close + keep cart update
             ctrl.setOnCartUpdated(() -> {
-                // Update navbar cart button if you have one in your front-shell
-                // For now just log — wire to your navbar controller later
-                System.out.println("Cart updated: " + CartManager.getInstance().getCount() + " items");
+                System.out.println("Cart: " + CartManager.getInstance().getCount());
+                overlayContainer.getChildren().get(0).setEffect(null);
             });
 
-            Stage modal = new Stage();
-            modal.initModality(Modality.APPLICATION_MODAL);
-            modal.initStyle(StageStyle.UNDECORATED);
-            modal.setTitle("Réserver — " + h.getNom());
-
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(
-                    getClass().getResource("/styles/front.css").toExternalForm());
-            modal.setScene(scene);
-            modal.showAndWait(); // blocks until modal is closed
-
-        } catch (IOException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur");
-            alert.setContentText("Impossible d'ouvrir le formulaire de réservation.");
-            alert.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
