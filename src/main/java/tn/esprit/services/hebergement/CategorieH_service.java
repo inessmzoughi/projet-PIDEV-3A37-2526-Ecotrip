@@ -1,5 +1,6 @@
 package tn.esprit.services.hebergement;
 
+import tn.esprit.interfaces.I_service;
 import tn.esprit.models.Categorie_hebergement;
 import tn.esprit.database.Base;
 
@@ -7,12 +8,12 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CategorieH_service {
+public class CategorieH_service implements I_service<Categorie_hebergement> {
 
+    private final Connection connection;
+    public CategorieH_service() { connection = Base.getInstance().getConnection(); }
 
-    private final Connection connection ;
-    public CategorieH_service (){connection = Base.getInstance().getConnection();}
-
+    @Override
     public void ajouter(Categorie_hebergement c) throws SQLException {
         String sql = "INSERT INTO categorie_hebergement (nom, description) VALUES (?, ?)";
         PreparedStatement ps = connection.prepareStatement(sql);
@@ -21,12 +22,12 @@ public class CategorieH_service {
         ps.executeUpdate();
     }
 
+    @Override
     public List<Categorie_hebergement> getAll() throws SQLException {
         List<Categorie_hebergement> list = new ArrayList<>();
         ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM categorie_hebergement");
-        while (rs.next()) {
+        while (rs.next())
             list.add(new Categorie_hebergement(rs.getInt("id"), rs.getString("nom"), rs.getString("description")));
-        }
         return list;
     }
 
@@ -38,6 +39,7 @@ public class CategorieH_service {
         return null;
     }
 
+    @Override
     public void modifier(Categorie_hebergement c) throws SQLException {
         String sql = "UPDATE categorie_hebergement SET nom=?, description=? WHERE id=?";
         PreparedStatement ps = connection.prepareStatement(sql);
@@ -47,6 +49,7 @@ public class CategorieH_service {
         ps.executeUpdate();
     }
 
+    @Override
     public void supprimer(int id) throws SQLException {
         PreparedStatement ps = connection.prepareStatement("DELETE FROM categorie_hebergement WHERE id = ?");
         ps.setInt(1, id);
