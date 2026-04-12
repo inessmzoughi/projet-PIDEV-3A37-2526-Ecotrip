@@ -128,19 +128,20 @@ public class TransportController implements Initializable {
         emission.getStyleClass().add("heb-card-equipement");
         meta.getChildren().addAll(capacite, emission);
 
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-
         HBox priceRow = new HBox(10);
         priceRow.setAlignment(Pos.CENTER_LEFT);
         Label price = new Label(String.format("%.2f DT / personne", transport.getPrixParPersonne()));
         price.getStyleClass().add("heb-card-price-amount");
-        Button action = new Button(transport.isDisponible() ? "Reserver" : "Indisponible");
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        priceRow.getChildren().addAll(price, spacer);
+
+        Button action = new Button(transport.isDisponible() ? "Ajouter au panier" : "Indisponible");
         action.getStyleClass().add("heb-card-btn");
         action.setDisable(!transport.isDisponible());
-        priceRow.getChildren().addAll(price, spacer, action);
+        action.setMaxWidth(Double.MAX_VALUE);
 
-        body.getChildren().addAll(badge, title, category, chauffeur, meta, priceRow);
+        body.getChildren().addAll(badge, title, category, chauffeur, meta, priceRow, action);
         card.getChildren().add(body);
         return card;
     }
