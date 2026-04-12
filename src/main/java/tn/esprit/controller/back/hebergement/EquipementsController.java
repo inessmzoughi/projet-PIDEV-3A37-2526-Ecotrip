@@ -110,8 +110,8 @@ public class EquipementsController implements Initializable {
         });
 
         colActions.setCellFactory(col -> new TableCell<>() {
-            private final Button editBtn = new Button("✏️ Modifier");
-            private final Button delBtn  = new Button("🗑️ Supprimer");
+            private final Button editBtn = new Button("✏️");
+            private final Button delBtn  = new Button("🗑️");
             private final HBox   box     = new HBox(8, editBtn, delBtn);
             {
                 editBtn.getStyleClass().add("btn-edit");
@@ -202,11 +202,11 @@ public class EquipementsController implements Initializable {
         descLbl.setWrapText(true);
         descLbl.setStyle("-fx-font-size:12;-fx-text-fill:#64748b;");
 
-        Button editBtn = new Button("✏️ Modifier");
+        Button editBtn = new Button("✏️");
         editBtn.getStyleClass().add("btn-edit");
         editBtn.setOnAction(e -> openEdit(eq));
 
-        Button delBtn = new Button("🗑️ Supprimer");
+        Button delBtn = new Button("🗑️");
         delBtn.getStyleClass().add("btn-del");
         delBtn.setOnAction(e -> confirmDelete(eq));
 

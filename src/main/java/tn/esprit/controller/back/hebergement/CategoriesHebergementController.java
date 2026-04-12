@@ -289,35 +289,39 @@ public class CategoriesHebergementController implements Initializable {
         card.getStyleClass().add("cat-card");
         card.setPrefWidth(250);
         card.setPadding(new Insets(18, 20, 16, 20));
-        card.setStyle("-fx-border-color:" + color
-                + " transparent transparent transparent;"
+        // Seul le style dynamique (couleur variable) reste inline
+        card.setStyle("-fx-border-color:" + color + " transparent transparent transparent;"
                 + "-fx-border-width:0 0 0 4;");
 
-        // Icône + Nom
+        // ── Icône + Nom ──
         HBox top = new HBox(12);
         top.setAlignment(Pos.CENTER_LEFT);
 
         Label iconLbl = new Label(icon);
-        iconLbl.setStyle("-fx-background-color:" + color + "33;"
-                + "-fx-background-radius:12; -fx-padding:6; -fx-font-size:22;");
+        iconLbl.getStyleClass().add("cat-card-icon");
+        // Couleur dynamique uniquement
+        iconLbl.setStyle("-fx-background-color:" + color + "55;"
+                + "-fx-border-color:" + color + "bb;");
 
         Label nameLbl = new Label(c.getNom());
-        nameLbl.setStyle("-fx-font-weight:bold; -fx-font-size:14;");
+        nameLbl.getStyleClass().add("cat-card-name");
+
         top.getChildren().addAll(iconLbl, nameLbl);
 
-        // Description
+        // ── Description ──
         String descText = (c.getDescription() == null || c.getDescription().isEmpty())
                 ? "Aucune description." : c.getDescription();
         Label desc = new Label(descText);
+        desc.getStyleClass().add("cat-card-desc");
         desc.setWrapText(true);
-        desc.setStyle("-fx-text-fill:#6b7280; -fx-font-size:12;");
 
-        // ✅ Nb hébergements dans cette catégorie
+        // ── Nb hébergements ──
         int nbHebs = countHebergementsByCategorie(c.getId());
         Label hebCount = new Label("🏨 " + nbHebs + " hébergement(s)");
-        hebCount.setStyle("-fx-font-size:11; -fx-text-fill:" + color + "; -fx-font-weight:bold;");
+        hebCount.getStyleClass().add("cat-card-heb-count");
+        hebCount.setStyle("-fx-text-fill:" + color + ";"); // couleur dynamique uniquement
 
-        // Boutons
+        // ── Boutons ──
         HBox meta = new HBox(6);
         meta.setAlignment(Pos.CENTER_RIGHT);
         Button editBtn = new Button("✏️ Modifier");
@@ -331,7 +335,6 @@ public class CategoriesHebergementController implements Initializable {
         card.getChildren().addAll(top, desc, hebCount, meta);
         return card;
     }
-
     /* ✅ Compte les hébergements d'une catégorie spécifique */
     private int countHebergementsByCategorie(int categorieId) {
         try {

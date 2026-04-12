@@ -14,6 +14,8 @@ public class Routes {
     public static final String BOUTIQUE       = "boutique";
     public static final String CONTACT        = "contact";
     public static final String MES_RESERVATIONS = "mes-reservations";
+    public static final String FRONT_PRODUCTS = "FRONT_PRODUCTS";
+
 
     public static final String FRONT_MON_COMPTE      = "front-mon-compte";
     public static final String FRONT_UPDATE_ACCOUNT  = "front-update-account";
@@ -38,4 +40,12 @@ public class Routes {
     public static final String ADMIN_MON_COMPTE      = "admin-mon-compte";
     public static final String ADMIN_UPDATE_ACCOUNT  = "admin-update-account";
     public static final String ADMIN_CHANGE_PASSWORD = "admin-change-password";
+    public static final String ADMIN_PRODUCT_CATEGORY = "admin_product_category";
+    public static final String ADMIN_PRODUCT = "ADMIN_PRODUCT";
+    public static final String ADMIN_PAIEMENT = "ADMIN_PAIEMENT";
+    public static final String ADMIN_COMMANDE = "ADMIN_COMMANDE";
+    public static final String ADMIN_LIGNE_COMMANDE = "ADMIN_LIGNE_COMMANDE";
+
+
+
 }
