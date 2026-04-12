@@ -14,7 +14,6 @@
                 <VBox styleClass="page-body" spacing="20">
                     <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
 
-                    <!-- Breadcrumb + Title -->
                     <VBox spacing="4">
                         <HBox spacing="4">
                             <Button text="Dashboard"    styleClass="breadcrumb-link" onAction="#onNavDashboard"/>
@@ -26,9 +25,7 @@
                         <Label text="Gestion des Équipements" styleClass="page-title"/>
                     </VBox>
 
-                    <!-- Stat Cards — 3 stats réelles -->
                     <HBox spacing="20">
-                        <!-- Total équipements -->
                         <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
                             <HBox spacing="12" alignment="CENTER_LEFT">
                                 <Label text="🛎️" styleClass="stat-icon, stat-icon-green"/>
@@ -39,7 +36,6 @@
                                 </VBox>
                             </HBox>
                         </VBox>
-                        <!-- Avec description -->
                         <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
                             <HBox spacing="12" alignment="CENTER_LEFT">
                                 <Label text="📝" styleClass="stat-icon, stat-icon-blue"/>
@@ -50,7 +46,6 @@
                                 </VBox>
                             </HBox>
                         </VBox>
-                        <!-- Hébergements liés -->
                         <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
                             <HBox spacing="12" alignment="CENTER_LEFT">
                                 <Label text="🏨" styleClass="stat-icon, stat-icon-orange"/>
@@ -66,31 +61,25 @@
                     <!-- FORM PANEL -->
                     <VBox fx:id="formPanel" styleClass="form-card, inline-form-panel"
                           visible="false" managed="false" spacing="0">
-
                         <HBox styleClass="cat-form-header" alignment="CENTER_LEFT" spacing="10">
                             <Label fx:id="formPanelTitle" text="🛎️ Nouvel Équipement"
                                    styleClass="cat-form-title" HBox.hgrow="ALWAYS"/>
                             <Button text="✕" styleClass="fp-close-btn" onAction="#onCloseForm"/>
                         </HBox>
-
                         <VBox styleClass="form-body" spacing="16">
                             <padding><Insets top="20" right="24" bottom="12" left="24"/></padding>
-
                             <VBox spacing="5" styleClass="form-group">
                                 <Label text="Nom *" styleClass="form-label"/>
                                 <TextField fx:id="nomField" promptText="Ex: Piscine privée"
                                            styleClass="form-input"/>
-                                <Label fx:id="errNom" styleClass="err-msg"
-                                       visible="false" managed="false"/>
+                                <Label fx:id="errNom" styleClass="err-msg" visible="false" managed="false"/>
                             </VBox>
-
                             <VBox spacing="5" styleClass="form-group">
                                 <Label text="Description" styleClass="form-label"/>
                                 <TextArea fx:id="descField" promptText="Courte description…"
                                           styleClass="form-input" prefRowCount="3"/>
                             </VBox>
                         </VBox>
-
                         <HBox styleClass="form-footer" alignment="CENTER_RIGHT" spacing="10">
                             <Button text="Annuler"        styleClass="btn-cancel" onAction="#onCloseForm"/>
                             <Button text="💾 Enregistrer" styleClass="btn-submit" onAction="#onSave"/>
@@ -104,9 +93,8 @@
                         <HBox styleClass="search-wrap" alignment="CENTER_LEFT" spacing="6">
                             <Label text="🔍" styleClass="search-icon"/>
                             <TextField fx:id="searchField" promptText="Rechercher…"
-                                       styleClass="search-input" prefWidth="220"/>
+                                       styleClass="search-input" prefWidth="220" onKeyReleased="#onSearch"/>
                         </HBox>
-                        <!-- Deux boutons séparés pour éviter le bug onToggleView partagé -->
                         <ToggleButton fx:id="toggleCards" text="⊞ Cartes"
                                       styleClass="vt-btn" onAction="#onToggleCards"/>
                         <ToggleButton fx:id="toggleList"  text="☰ Liste"
@@ -116,20 +104,16 @@
 
                     <!-- CARD GRID VIEW -->
                     <FlowPane fx:id="cardGrid" hgap="16" vgap="16"
-                              styleClass="eq-card-grid"
-                              visible="false" managed="false"/>
+                              styleClass="eq-card-grid" visible="false" managed="false"/>
 
                     <!-- TABLE VIEW -->
                     <VBox fx:id="tableCard" styleClass="table-card" spacing="0">
                         <HBox styleClass="table-card-header" alignment="CENTER_LEFT" spacing="8">
-                            <Label text="🛎️ Liste des Équipements" styleClass="table-card-title"
-                                   HBox.hgrow="ALWAYS"/>
+                            <Label text="🛎️ Liste des Équipements" styleClass="table-card-title" HBox.hgrow="ALWAYS"/>
                             <Label fx:id="badgeCount" text="0" styleClass="badge, badge-green"/>
                         </HBox>
-
                         <TableView fx:id="tableView" styleClass="main-table" VBox.vgrow="ALWAYS">
                             <columns>
-                                <!-- Pas de colonne ID — bonne pratique UI -->
                                 <TableColumn fx:id="colNom"     text="Nom"         prefWidth="280"/>
                                 <TableColumn fx:id="colDesc"    text="Description" prefWidth="420"/>
                                 <TableColumn fx:id="colActions" text="Actions"     prefWidth="220"/>
@@ -142,18 +126,12 @@
                             </placeholder>
                         </TableView>
 
-                        <!-- Pagination -->
+                        <!-- Pagination — même design que ListHebergements -->
                         <HBox fx:id="paginationBar" styleClass="pagination-bar"
-                              alignment="CENTER" spacing="12">
-                            <padding><Insets top="12" bottom="12" left="16" right="16"/></padding>
-                            <Button fx:id="btnPrevPage" text="← Précédent"
-                                    styleClass="heb-page-btn" onAction="#onPrevPage"/>
-                            <Label  fx:id="lblPageInfo" text="Page 1 / 1"
-                                    styleClass="heb-page-info"/>
-                            <Button fx:id="btnNextPage" text="Suivant →"
-                                    styleClass="heb-page-btn" onAction="#onNextPage"/>
-                            <Label text="  |  Taille :" styleClass="pag-info"/>
-                            <ComboBox fx:id="pageSizeCombo" prefWidth="80" styleClass="sort-select"/>
+                              alignment="CENTER_LEFT" spacing="8">
+                            <Label fx:id="pagInfo" styleClass="pag-info" HBox.hgrow="ALWAYS"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <HBox fx:id="pagButtons" spacing="4"/>
                         </HBox>
                     </VBox>
 
