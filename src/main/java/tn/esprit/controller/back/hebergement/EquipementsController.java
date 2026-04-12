@@ -6,18 +6,12 @@ import tn.esprit.navigation.SceneManager;
 import tn.esprit.services.hebergement.Equipement_service;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
-import javafx.stage.Stage;
-
-import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.*;
@@ -297,9 +291,6 @@ public class EquipementsController implements Initializable {
        ══════════════════════════════════════════ */
     @FXML private void onSearch()          { currentPage = 1; renderAll(); }
     @FXML private void onNavHebergements() { SceneManager.navigateTo(Routes.ADMIN_HEBERGEMENTS); }
-    @FXML private void onNavChambres()     { SceneManager.navigateTo(Routes.ADMIN_CHAMBRES); }
-    @FXML private void onNavCategories()   { SceneManager.navigateTo(Routes.ADMIN_CATEGORIES_HEBERGEMENT); }
-    @FXML private void onLogout()          { System.exit(0); }
     @FXML private void onNavDashboard()    { SceneManager.navigateTo(Routes.ADMIN_DASHBOARD); }
 
     private void showAlert(Alert.AlertType type, String title, String msg) {

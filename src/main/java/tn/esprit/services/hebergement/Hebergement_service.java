@@ -6,7 +6,9 @@ import tn.esprit.models.Hebergement;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Hebergement_service implements I_service<Hebergement> {
 
@@ -95,12 +97,34 @@ public class Hebergement_service implements I_service<Hebergement> {
         );
     }
 
-    public List<Hebergement> getTop5Etoiles() throws SQLException {
-        List<Hebergement> list = new ArrayList<>();
-        PreparedStatement ps = connection.prepareStatement(
-                "SELECT * FROM hebergement WHERE nb_etoiles = 5 AND actif = 1 LIMIT 4");
-        ResultSet rs = ps.executeQuery();
-        while (rs.next()) list.add(mapResultSet(rs));
-        return list;
+    public int countTotal() throws SQLException {
+        ResultSet rs = connection.createStatement()
+                .executeQuery("SELECT COUNT(*) FROM hebergement");
+        if (rs.next()) return rs.getInt(1);
+        return 0;
+    }
+
+    public double avgEtoiles() throws SQLException {
+        ResultSet rs = connection.createStatement()
+                .executeQuery("SELECT AVG(nb_etoiles) FROM hebergement");
+        if (rs.next()) return rs.getDouble(1);
+        return 0;
+    }
+
+    public int countActifs() throws SQLException {
+        ResultSet rs = connection.createStatement()
+                .executeQuery("SELECT COUNT(*) FROM hebergement WHERE actif = 1");
+        if (rs.next()) return rs.getInt(1);
+        return 0;
+    }
+
+    public Map<String, Integer> getPropietairesMap() throws SQLException {
+        Map<String, Integer> map = new LinkedHashMap<>();
+        map.put("— Aucun —", 0);
+        ResultSet rs = connection.createStatement()
+                .executeQuery("SELECT id, username FROM user");
+        while (rs.next())
+            map.put(rs.getString("username"), rs.getInt("id"));
+        return map;
     }
 }

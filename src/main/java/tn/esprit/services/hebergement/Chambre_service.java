@@ -83,4 +83,31 @@ public class Chambre_service implements I_service<Chambre> {
                 rs.getString("numero")
         );
     }
+    public int countTotal() throws SQLException {
+        ResultSet rs = connection.createStatement()
+                .executeQuery("SELECT COUNT(*) FROM chambre");
+        if (rs.next()) return rs.getInt(1);
+        return 0;
+    }
+
+    public double avgPrix() throws SQLException {
+        ResultSet rs = connection.createStatement()
+                .executeQuery("SELECT AVG(prix_par_nuit) FROM chambre");
+        if (rs.next()) return rs.getDouble(1);
+        return 0;
+    }
+
+    public double avgCapacite() throws SQLException {
+        ResultSet rs = connection.createStatement()
+                .executeQuery("SELECT AVG(capacite) FROM chambre");
+        if (rs.next()) return rs.getDouble(1);
+        return 0;
+    }
+
+    public int countHebergementsDistincts() throws SQLException {
+        ResultSet rs = connection.createStatement()
+                .executeQuery("SELECT COUNT(DISTINCT hebergement_id) FROM chambre");
+        if (rs.next()) return rs.getInt(1);
+        return 0;
+    }
 }
