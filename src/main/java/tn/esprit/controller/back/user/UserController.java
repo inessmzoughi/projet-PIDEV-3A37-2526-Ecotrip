@@ -19,6 +19,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class UserController implements Initializable {
 
@@ -61,11 +63,11 @@ public class UserController implements Initializable {
         sortCombo.getSelectionModel().selectFirst();
 
         roleFilter.setItems(FXCollections.observableArrayList(
-                "Tous les rôles", "USER", "ADMIN"));
+                "Tous les rôles", "ROLE_USER", "ROLE_ADMIN"));
         roleFilter.getSelectionModel().selectFirst();
 
-        roleCombo.setItems(FXCollections.observableArrayList("USER", "ADMIN"));
-        roleCombo.setValue("USER");
+        roleCombo.setItems(FXCollections.observableArrayList("ROLE_USER", "ROLE_ADMIN"));
+        roleCombo.setValue("ROLE_USER");
 
         setupColumns();
         loadData();
@@ -116,38 +118,35 @@ public class UserController implements Initializable {
 
         try {
             if (userEnEdition == null) {
-                // CREATE
-                User user = new User();
-                user.setUsername(usernameField.getText().trim());
-                user.setEmail(emailField.getText().trim());
-                user.setPassword(PasswordUtil.hash(passwordField.getText()));
-                user.setAddress(addressField.getText().trim());
-                user.setTelephone(telephoneField.getText().trim());
-                user.setRoles(Role.valueOf(roleCombo.getValue()));
-                user.setIsVerified(isVerifiedCheck.isSelected());
-                service.ajouter(user);
+                service.createUser(
+                        usernameField.getText().trim(),
+                        emailField.getText().trim(),
+                        passwordField.getText(),
+                        addressField.getText().trim(),
+                        telephoneField.getText().trim(),
+                        roleCombo.getValue(),
+                        isVerifiedCheck.isSelected()
+                );
                 showToast("✅ Utilisateur créé !");
             } else {
-                // UPDATE
-                userEnEdition.setUsername(usernameField.getText().trim());
-                userEnEdition.setEmail(emailField.getText().trim());
-                userEnEdition.setAddress(addressField.getText().trim());
-                userEnEdition.setTelephone(telephoneField.getText().trim());
-                userEnEdition.setRoles(Role.valueOf(roleCombo.getValue()));
-                userEnEdition.setIsVerified(isVerifiedCheck.isSelected());
-                service.modifier(userEnEdition);
-
-                // Update password only if entered
-                String newPass = passwordField.getText();
-                if (!newPass.isEmpty()) {
-                    service.modifierMotDePasse(userEnEdition.getId(), PasswordUtil.hash(newPass));
-                }
+                service.updateUser(
+                        userEnEdition.getId(),
+                        usernameField.getText().trim(),
+                        emailField.getText().trim(),
+                        addressField.getText().trim(),
+                        telephoneField.getText().trim(),
+                        roleCombo.getValue(),
+                        isVerifiedCheck.isSelected(),
+                        passwordField.getText()
+                );
                 showToast("💾 Utilisateur modifié !");
             }
+
             onReset();
             refreshAll();
-        } catch (SQLException e) {
-            showAlert("Erreur SQL", e.getMessage());
+
+        } catch (RuntimeException e) {
+            showAlert("Erreur", e.getMessage());
         }
     }
 
@@ -160,7 +159,7 @@ public class UserController implements Initializable {
         passwordField.clear();
         addressField.clear();
         telephoneField.clear();
-        roleCombo.setValue("USER");
+        roleCombo.setValue("ROLE_USER");
         isVerifiedCheck.setSelected(false);
 
         setFieldError(usernameField, errUsername, false);
@@ -197,8 +196,12 @@ public class UserController implements Initializable {
 
     /* ─── Data ─── */
     private void loadData() {
-        try { allData = service.getAll(); }
-        catch (SQLException e) { allData = List.of(); showAlert("Erreur", e.getMessage()); }
+        try {
+            allData = service.getAllUsers();
+        } catch (Exception e) {
+            allData = List.of();
+            showAlert("Erreur", e.getMessage());
+        }
     }
 
     private void refreshAll() {
@@ -208,14 +211,10 @@ public class UserController implements Initializable {
     }
 
     private void updateStats() {
-        try {
-            statTotal.setText(String.valueOf(service.count()));
-            statAdmins.setText(String.valueOf(service.countByRole(Role.ROLE_ADMIN)));
-            statUsers.setText(String.valueOf(service.countByRole(Role.ROLE_USER)));
-            statVerified.setText(String.valueOf(service.countVerified()));
-        } catch (SQLException e) {
-            showAlert("Erreur stats", e.getMessage());
-        }
+        statTotal.setText(String.valueOf(service.countUsers()));
+        statAdmins.setText(String.valueOf(service.countByRole(Role.ROLE_ADMIN)));
+        statUsers.setText(String.valueOf(service.countByRole(Role.ROLE_USER)));
+        statVerified.setText(String.valueOf(service.countVerifiedUsers()));
     }
 
     private void renderTable() {
@@ -295,8 +294,8 @@ public class UserController implements Initializable {
             @Override protected void updateItem(String role, boolean empty) {
                 super.updateItem(role, empty);
                 if (empty || role == null) { setGraphic(null); return; }
-                Label badge = new Label(role.equals("ADMIN") ? "Admin" : "User");
-                badge.getStyleClass().add(role.equals("ADMIN") ? "badge-admin" : "badge-user");
+                Label badge = new Label(role.equals("ROLE_ADMIN") ? "Admin" : "User");
+                badge.getStyleClass().add(role.equals("ROLE_ADMIN") ? "badge-admin" : "badge-user");
                 setGraphic(badge); setText(null);
             }
         });
@@ -346,11 +345,9 @@ public class UserController implements Initializable {
         ButtonType confirm = new ButtonType("Supprimer", ButtonBar.ButtonData.OK_DONE);
         alert.getButtonTypes().setAll(cancel, confirm);
         alert.showAndWait().filter(r -> r == confirm).ifPresent(r -> {
-            try {
-                service.supprimer(u.getId());
-                if (userEnEdition != null && userEnEdition.getId() == u.getId()) onReset();
-                refreshAll();
-            } catch (SQLException e) { showAlert("Erreur", e.getMessage()); }
+            service.deleteUser(u.getId());
+            if (userEnEdition != null && userEnEdition.getId() == u.getId()) onReset();
+            refreshAll();
         });
     }
 
@@ -358,6 +355,57 @@ public class UserController implements Initializable {
     @FXML private void onSearch() { currentPage = 1; renderTable(); }
     @FXML private void onSort()   { currentPage = 1; renderTable(); }
     @FXML private void onFilter() { currentPage = 1; renderTable(); }
+    /* ─── Export CSV ─── */
+    @FXML
+    private void onExportCsv() {
+        javafx.stage.FileChooser chooser = new javafx.stage.FileChooser();
+        chooser.setTitle("Exporter les utilisateurs");
+        chooser.setInitialFileName("users_" + java.time.LocalDate.now() + ".csv");
+        chooser.getExtensionFilters().add(
+                new javafx.stage.FileChooser.ExtensionFilter("Fichier CSV", "*.csv"));
+
+        java.io.File file = chooser.showSaveDialog(tableView.getScene().getWindow());
+        if (file == null) return;
+
+        // Build the same filtered+sorted list that's currently displayed
+        String query  = searchField.getText().toLowerCase().trim();
+        String sort   = sortCombo.getValue();
+        String filter = roleFilter.getValue();
+
+        List<User> toExport = allData.stream()
+                .filter(u -> query.isEmpty()
+                        || u.getUsername().toLowerCase().contains(query)
+                        || u.getEmail().toLowerCase().contains(query)
+                        || (u.getTelephone() != null && u.getTelephone().contains(query)))
+                .filter(u -> filter == null
+                        || filter.equals("Tous les rôles")
+                        || u.getRoles().name().equals(filter))
+                .collect(Collectors.toList());
+
+        if ("Nom (A→Z)".equals(sort))
+            toExport.sort(Comparator.comparing(User::getUsername));
+        else if ("Email (A→Z)".equals(sort))
+            toExport.sort(Comparator.comparing(User::getEmail));
+
+        try (FileWriter fw = new FileWriter(file)) {
+            fw.write("ID;Username;Email;Adresse;Téléphone;Rôle;Vérifié\n");
+            for (User u : toExport) {
+                fw.write(String.join(";",
+                        String.valueOf(u.getId()),
+                        u.getUsername(),
+                        u.getEmail(),
+                        u.getAddress()    != null ? u.getAddress()    : "",
+                        u.getTelephone()  != null ? u.getTelephone()  : "",
+                        u.getRoles().name(),
+                        u.isVerified() ? "Oui" : "Non"
+                ) + "\n");
+            }
+            showToast("📥 Export CSV : " + file.getName()
+                    + " (" + toExport.size() + " lignes)");
+        } catch (IOException e) {
+            showAlert("Erreur export", e.getMessage());
+        }
+    }
     @FXML private void onNavDashboard() { SceneManager.navigateTo(Routes.ADMIN_DASHBOARD); }
     @FXML private void onNavUsers()     { SceneManager.navigateTo(Routes.ADMIN_USERS); }
 

@@ -17,8 +17,8 @@ public class Routes {
 
     //gestion profile
     public static final String FRONT_MON_COMPTE      = "front-mon-compte";
-    public static final String FRONT_UPDATE_ACCOUNT  = "front-update-account";
-    public static final String FRONT_CHANGE_PASSWORD = "front-change-password";
+//    public static final String FRONT_UPDATE_ACCOUNT  = "front-update-account";
+//    public static final String FRONT_CHANGE_PASSWORD = "front-change-password";
 
 
     // ── Back Office (ADMIN role) ─────────────────────────────
@@ -40,8 +40,6 @@ public class Routes {
 
     //gestion profile
     public static final String ADMIN_MON_COMPTE      = "admin-mon-compte";
-    public static final String ADMIN_UPDATE_ACCOUNT  = "admin-update-account";
-    public static final String ADMIN_CHANGE_PASSWORD = "admin-change-password";
 
     // gestion user
     public static final String ADMIN_USERS      = "admin-users";
