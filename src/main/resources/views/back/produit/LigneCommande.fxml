@@ -6,8 +6,7 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="tn.esprit.controller.back.produit.LigneCommandeController"
-            styleClass="root-pane"
-            stylesheets="@../css/ecotrip.css">
+            styleClass="root-pane">
 
 
     <!-- ═══ CENTER ═══ -->

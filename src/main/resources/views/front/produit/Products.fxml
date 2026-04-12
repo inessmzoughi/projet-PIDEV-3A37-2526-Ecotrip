@@ -85,8 +85,8 @@
             <Button fx:id="btnNext" text="Suivant →" styleClass="prod-page-btn" onAction="#onNext"/>
         </HBox>
 
-        <!-- ══ FOOTER ══ -->
-        <fx:include source="../components/front-footer.fxml"/>
+        <!-- ✅ FOOTER — après les cartes + pagination, dans le scroll -->
+        <fx:include source="../../components/front-footer.fxml"/>
 
     </VBox>
 </ScrollPane>
