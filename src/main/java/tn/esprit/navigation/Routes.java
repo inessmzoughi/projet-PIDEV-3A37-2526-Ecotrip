@@ -26,8 +26,9 @@ public class Routes {
     //public static final String ADMIN_ADD_HEBERGEMENT     = "admin-add-hebergement";
     public static final String ADMIN_DASHBOARD    = "admin-dashboard";
     public static final String ADMIN_ACTIVITES    = "admin-activites";
-    //public static final String ADMIN_HEBERGEMENTS = "admin-hebergements";
     public static final String ADMIN_TRANSPORT    = "admin-transport";
+    public static final String ADMIN_CHAUFFEURS   = "admin-chauffeurs";
+    public static final String ADMIN_TRANSPORT_CATEGORIES = "admin-transport-categories";
     public static final String ADMIN_BOUTIQUE     = "admin-boutique";
     public static final String ADMIN_RESERVATIONS = "admin-reservations";
     public static final String ADMIN_USERS        = "admin-users";

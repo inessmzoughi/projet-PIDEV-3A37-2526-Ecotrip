@@ -49,7 +49,9 @@ public class SceneManager {
 //*****************back
         backRoutes.put(Routes.ADMIN_DASHBOARD,    "/views/back/dashboard.fxml");
         backRoutes.put(Routes.ADMIN_ACTIVITES,    "/views/back/activites.fxml");
-        backRoutes.put(Routes.ADMIN_TRANSPORT,    "/views/back/transport.fxml");
+        backRoutes.put(Routes.ADMIN_TRANSPORT,    "/views/back/transport/Transports.fxml");
+        backRoutes.put(Routes.ADMIN_CHAUFFEURS,   "/views/back/transport/Chauffeurs.fxml");
+        backRoutes.put(Routes.ADMIN_TRANSPORT_CATEGORIES, "/views/back/transport/TransportCategories.fxml");
         backRoutes.put(Routes.ADMIN_RESERVATIONS, "/views/back/reservations.fxml");
 
         backRoutes.put(Routes.ADMIN_USERS,        "/views/back/users.fxml");
