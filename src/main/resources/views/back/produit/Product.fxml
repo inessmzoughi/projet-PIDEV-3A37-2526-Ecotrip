@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane styleClass="root-pane" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.esprit.controller.back.produit.ProductController">
+
+
+
+    <!-- ═══ CENTER ═══ -->
+    <center>
+        <VBox styleClass="main-content">
+
+            <!-- Topbar -->
+            <HBox alignment="CENTER_LEFT" spacing="16" styleClass="topbar">
+                <Label styleClass="topbar-title" text="📦 Produits" HBox.hgrow="ALWAYS" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Label styleClass="topbar-email" text="admin@ecotrip.tn" />
+                <Button onAction="#onLogout" styleClass="btn-logout" text="Déconnexion" />
+            </HBox>
+
+            <!-- Page Body -->
+            <ScrollPane fitToWidth="true" styleClass="scroll-pane" VBox.vgrow="ALWAYS">
+                <VBox spacing="20" styleClass="page-body">
+                    <padding><Insets bottom="32" left="32" right="32" top="32" /></padding>
+
+                    <!-- Breadcrumb + Title -->
+                    <VBox spacing="4">
+                        <HBox spacing="4">
+                            <Label styleClass="breadcrumb-link" text="Dashboard" />
+                            <Label styleClass="breadcrumb-sep" text=" › " />
+                            <Label styleClass="breadcrumb-link" text="Gestion" />
+                            <Label styleClass="breadcrumb-sep" text=" › " />
+                            <Label styleClass="breadcrumb-active" text="Produits" />
+                        </HBox>
+                        <Label styleClass="page-title" text="Gestion des Produits" />
+                    </VBox>
+
+                    <!-- Stat Cards -->
+                    <HBox spacing="16">
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT" spacing="12">
+                                <Label styleClass="stat-icon stat-icon-green" text="📦" />
+                                <VBox spacing="2">
+                                    <Label styleClass="stat-label" text="Total Produits" />
+                                    <Label fx:id="statTotal" styleClass="stat-value" text="0" />
+                                    <Label styleClass="stat-sub" text="enregistrés" />
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT" spacing="12">
+                                <Label styleClass="stat-icon stat-icon-blue" text="💰" />
+                                <VBox spacing="2">
+                                    <Label styleClass="stat-label" text="Valeur du Stock" />
+                                    <Label fx:id="statValeurStock" styleClass="stat-value" text="—" />
+                                    <Label styleClass="stat-sub" text="DT total estimé" />
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT" spacing="12">
+                                <Label styleClass="stat-icon stat-icon-purple" text="🏷" />
+                                <VBox spacing="2">
+                                    <Label styleClass="stat-label" text="Prix Moyen" />
+                                    <Label fx:id="statPrixMoyen" styleClass="stat-value" text="—" />
+                                    <Label styleClass="stat-sub" text="par produit" />
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT" spacing="12">
+                                <Label styleClass="stat-icon stat-icon-orange" text="🗂" />
+                                <VBox spacing="2">
+                                    <Label styleClass="stat-label" text="Catégories" />
+                                    <Label fx:id="statCategories" styleClass="stat-value" text="0" />
+                                    <Label styleClass="stat-sub" text="catégories actives" />
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                    </HBox>
+
+                    <!-- FORM PANEL -->
+                    <VBox fx:id="formPanel" managed="false" spacing="0" styleClass="form-card inline-form-panel" visible="false">
+
+                        <HBox alignment="CENTER_LEFT" spacing="10" styleClass="cat-form-header">
+                            <Label fx:id="formPanelTitle" styleClass="cat-form-title" text="📦 Nouveau Produit" HBox.hgrow="ALWAYS" />
+                            <Button onAction="#onCloseForm" styleClass="fp-close-btn" text="✕" />
+                        </HBox>
+
+                        <VBox spacing="16" styleClass="form-body">
+                            <padding><Insets bottom="12" left="24" right="24" top="20" /></padding>
+
+                            <!-- Row 1 : Nom + Catégorie -->
+                            <HBox spacing="16">
+                                <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                    <Label styleClass="form-label" text="Nom du produit *" />
+                                    <TextField fx:id="nomField" promptText="Ex: Tente Bivouac" styleClass="form-input" />
+                                </VBox>
+                                <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                    <Label styleClass="form-label" text="Catégorie *" />
+                                    <ComboBox fx:id="categoryCombo" maxWidth="Infinity" promptText="-- Sélectionner --" styleClass="sort-select" />
+                                </VBox>
+                            </HBox>
+
+                            <!-- Row 2 : Prix + Stock -->
+                            <HBox spacing="16">
+                                <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                    <Label styleClass="form-label" text="Prix (DT) *" />
+                                    <TextField fx:id="prixField" promptText="Ex: 49.99" styleClass="form-input" />
+                                </VBox>
+                                <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                    <Label styleClass="form-label" text="Stock *" />
+                                    <TextField fx:id="stockField" promptText="Ex: 100" styleClass="form-input" />
+                                </VBox>
+                            </HBox>
+
+                            <!-- Row 3 : Image -->
+                            <HBox spacing="16">
+                                <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                    <Label styleClass="form-label" text="Chemin de l'image" />
+                                    <TextField fx:id="imageField" promptText="Ex: /images/produit.png" styleClass="form-input" />
+                                </VBox>
+                                <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                    <!-- espace réservé pour équilibrer -->
+                                </VBox>
+                            </HBox>
+                        </VBox>
+
+                        <HBox alignment="CENTER_RIGHT" spacing="10" styleClass="form-footer">
+                            <Button onAction="#onCloseForm" styleClass="btn-cancel" text="Annuler" />
+                            <Button onAction="#onSave" styleClass="btn-submit" text="💾 Enregistrer" />
+                        </HBox>
+                    </VBox>
+
+                    <!-- Action Bar -->
+                    <HBox alignment="CENTER_LEFT" spacing="12" styleClass="action-bar">
+                        <Button onAction="#onOpenForm" styleClass="btn-primary" text="＋ Ajouter un produit" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <HBox alignment="CENTER_LEFT" spacing="6" styleClass="search-wrap">
+                            <Label styleClass="search-icon" text="🔍" />
+                            <TextField fx:id="searchField" onKeyReleased="#onSearch" prefWidth="220" promptText="Rechercher…" styleClass="search-input" />
+                        </HBox>
+                        <ComboBox fx:id="filterCategory" onAction="#onSearch" prefWidth="190" promptText="Toutes les catégories" styleClass="sort-select" />
+                        <ComboBox fx:id="sortCombo" onAction="#onSearch" prefWidth="160" promptText="Trier par…" styleClass="sort-select" />
+                    </HBox>
+
+                    <!-- Table Card -->
+                    <VBox spacing="0" styleClass="table-card">
+                        <HBox alignment="CENTER_LEFT" spacing="8" styleClass="table-card-header">
+                            <Label styleClass="table-card-title" text="📦 Liste des Produits" HBox.hgrow="ALWAYS" />
+                            <Label fx:id="badgeCount" styleClass="badge badge-green" text="0" />
+                        </HBox>
+
+                        <TableView fx:id="tableView" styleClass="main-table" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="colIndex" prefWidth="50" text="#" />
+                                <TableColumn fx:id="colNom" prefWidth="200" text="Nom" />
+                                <TableColumn fx:id="colPrix" prefWidth="120" text="Prix (DT)" />
+                                <TableColumn fx:id="colStock" prefWidth="120" text="Stock" />
+                                <TableColumn fx:id="colCategory" prefWidth="130" text="Catégorie" />
+                                <TableColumn fx:id="colImage" prefWidth="160" text="Image" />
+                                <TableColumn fx:id="colActions" prefWidth="180" text="Actions" />
+                            </columns>
+                            <placeholder>
+                                <VBox alignment="CENTER" spacing="8" styleClass="empty-state">
+                                    <Label styleClass="empty-icon" text="🔍" />
+                                    <Label styleClass="empty-label" text="Aucun produit trouvé." />
+                                </VBox>
+                            </placeholder>
+                        </TableView>
+                    </VBox>
+
+                </VBox>
+            </ScrollPane>
+        </VBox>
+    </center>
+
+</BorderPane>

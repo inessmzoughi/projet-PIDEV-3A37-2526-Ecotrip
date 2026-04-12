@@ -32,7 +32,7 @@ public class AuthService {
         user.setUsername(username);
         user.setEmail(email);
         user.setPassword(PasswordUtil.hash(password)); // NEVER store plain text
-        user.setRoles(Role.User);
+        user.setRoles(Role.ROLE_USER);
 
         return userRepository.save(user);
     }

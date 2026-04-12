@@ -40,26 +40,31 @@ public class SceneManager {
         frontRoutes.put(Routes.HEBERGEMENTS,      "/views/front/hebergements.fxml");
         frontRoutes.put(Routes.ACTIVITES,         "/views/front/activites.fxml");
         frontRoutes.put(Routes.TRANSPORT,         "/views/front/transport.fxml");
-        frontRoutes.put(Routes.BOUTIQUE,          "/views/front/boutique.fxml");
+        frontRoutes.put(Routes.FRONT_PRODUCTS, "/views/front/produit/Products.fxml");
         frontRoutes.put(Routes.CONTACT,           "/views/front/contact.fxml");
         frontRoutes.put(Routes.MES_RESERVATIONS,  "/views/front/mes-reservations.fxml");
         frontRoutes.put(Routes.FRONT_MON_COMPTE,      "/views/compte/mon-compte.fxml");
-        frontRoutes.put(Routes.FRONT_UPDATE_ACCOUNT,  "/views/compte/update-account.fxml");
-        frontRoutes.put(Routes.FRONT_CHANGE_PASSWORD, "/views/compte/change-password.fxml");
 //*****************back
         backRoutes.put(Routes.ADMIN_DASHBOARD,    "/views/back/dashboard.fxml");
         backRoutes.put(Routes.ADMIN_ACTIVITES,    "/views/back/activites.fxml");
         backRoutes.put(Routes.ADMIN_TRANSPORT,    "/views/back/transport.fxml");
-        backRoutes.put(Routes.ADMIN_BOUTIQUE,     "/views/back/boutique.fxml");
         backRoutes.put(Routes.ADMIN_RESERVATIONS, "/views/back/reservations.fxml");
+
         backRoutes.put(Routes.ADMIN_USERS,        "/views/back/users.fxml");
+
         backRoutes.put(Routes.ADMIN_HEBERGEMENTS,           "/views/back/hebergement/ListHebergements.fxml");
         backRoutes.put(Routes.ADMIN_CATEGORIES_HEBERGEMENT, "/views/back/hebergement/CategoriesHebergement.fxml");
         backRoutes.put(Routes.ADMIN_CHAMBRES,               "/views/back/hebergement/Chambres.fxml");
         backRoutes.put(Routes.ADMIN_EQUIPEMENTS,            "/views/back/hebergement/Equipements.fxml");
+
         backRoutes.put(Routes.ADMIN_MON_COMPTE,       "/views/compte/mon-compte.fxml");
-        backRoutes.put(Routes.ADMIN_UPDATE_ACCOUNT,   "/views/compte/update-account.fxml");
-        backRoutes.put(Routes.ADMIN_CHANGE_PASSWORD,  "/views/compte/change-password.fxml");
+        //back produit*
+        backRoutes.put(Routes.ADMIN_COMMANDE,  "/views/back/produit/Commande.fxml");
+        backRoutes.put(Routes.ADMIN_LIGNE_COMMANDE,  "/views/back/produit/LigneCommande.fxml");
+        backRoutes.put(Routes.ADMIN_PAIEMENT,  "/views/back/produit/Payment.fxml");
+        backRoutes.put(Routes.ADMIN_PRODUCT,  "/views/back/produit/Product.fxml");
+        backRoutes.put(Routes.ADMIN_PRODUCT_CATEGORY,  "/views/back/produit/ProductCategory.fxml");
+
     }
 
     public static void initialize(Stage stage) {
