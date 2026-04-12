@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="tn.esprit.controller.back.transport.ChauffeursController"
+            styleClass="root-pane">
+    <center>
+        <VBox styleClass="main-content">
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane">
+                <VBox styleClass="page-body" spacing="24">
+                    <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
+                    <VBox spacing="4">
+                        <HBox spacing="4">
+                            <Button text="Dashboard" styleClass="breadcrumb-link" onAction="#onNavDashboard"/>
+                            <Label text=" > " styleClass="breadcrumb-sep"/>
+                            <Label text="Chauffeurs" styleClass="breadcrumb-active"/>
+                        </HBox>
+                        <Label text="Chauffeurs" styleClass="page-title"/>
+                    </VBox>
+
+                    <HBox spacing="20">
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS"><Label text="Total" styleClass="stat-label"/><Label fx:id="statTotal" text="0" styleClass="stat-value"/></VBox>
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS"><Label text="Experience moyenne" styleClass="stat-label"/><Label fx:id="statExperience" text="—" styleClass="stat-value"/></VBox>
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS"><Label text="Note moyenne" styleClass="stat-label"/><Label fx:id="statNote" text="—" styleClass="stat-value"/></VBox>
+                    </HBox>
+
+                    <HBox spacing="12">
+                        <Button text="Transports" styleClass="btn-cancel" onAction="#onNavTransports"/>
+                        <Button text="Chauffeurs" styleClass="btn-primary" onAction="#onNavChauffeurs"/>
+                        <Button text="Categories" styleClass="btn-cancel" onAction="#onNavCategories"/>
+                    </HBox>
+
+                    <HBox spacing="24">
+                        <VBox minWidth="360" maxWidth="360" styleClass="form-card">
+                            <HBox styleClass="form-card-header" alignment="CENTER_LEFT" spacing="14">
+                                <VBox spacing="4">
+                                    <Label fx:id="formTitle" text="Nouveau Chauffeur" styleClass="form-heading-title"/>
+                                    <Label text="Ajout et modification des chauffeurs" styleClass="form-heading-sub"/>
+                                </VBox>
+                            </HBox>
+                            <VBox styleClass="form-body" spacing="14">
+                                <padding><Insets top="20" right="20" bottom="16" left="20"/></padding>
+                                <HBox spacing="12">
+                                    <VBox spacing="5" HBox.hgrow="ALWAYS"><Label text="Prenom *" styleClass="form-label"/><TextField fx:id="firstNameField" styleClass="form-input"/></VBox>
+                                    <VBox spacing="5" HBox.hgrow="ALWAYS"><Label text="Nom *" styleClass="form-label"/><TextField fx:id="lastNameField" styleClass="form-input"/></VBox>
+                                </HBox>
+                                <VBox spacing="5"><Label text="Telephone *" styleClass="form-label"/><TextField fx:id="phoneField" styleClass="form-input"/></VBox>
+                                <VBox spacing="5"><Label text="Permis *" styleClass="form-label"/><TextField fx:id="licenseField" styleClass="form-input"/></VBox>
+                                <HBox spacing="12">
+                                    <VBox spacing="5" HBox.hgrow="ALWAYS"><Label text="Experience *" styleClass="form-label"/><TextField fx:id="experienceField" styleClass="form-input"/></VBox>
+                                    <VBox spacing="5" HBox.hgrow="ALWAYS"><Label text="Note *" styleClass="form-label"/><TextField fx:id="ratingField" styleClass="form-input"/></VBox>
+                                </HBox>
+                            </VBox>
+                            <HBox styleClass="form-footer" alignment="CENTER_RIGHT" spacing="10">
+                                <Button text="Reinitialiser" styleClass="btn-cancel" onAction="#onReset"/>
+                                <Button fx:id="submitBtn" text="Ajouter" styleClass="btn-submit" onAction="#onSubmit"/>
+                            </HBox>
+                        </VBox>
+
+                        <VBox spacing="14" HBox.hgrow="ALWAYS">
+                            <HBox styleClass="action-bar" alignment="CENTER_LEFT" spacing="12">
+                                <HBox alignment="CENTER_LEFT" spacing="8" HBox.hgrow="ALWAYS">
+                                    <Label text="Liste des chauffeurs" styleClass="table-card-title"/>
+                                    <Label fx:id="badgeCount" text="0" styleClass="badge, badge-green"/>
+                                </HBox>
+                                <TextField fx:id="searchField" promptText="Rechercher..." styleClass="search-input" onKeyReleased="#onSearch" prefWidth="220"/>
+                                <ComboBox fx:id="sortCombo" styleClass="sort-select" onAction="#onSort" prefWidth="180"/>
+                            </HBox>
+                            <VBox styleClass="table-card">
+                                <TableView fx:id="tableView" styleClass="main-table" prefHeight="420">
+                                    <columns>
+                                        <TableColumn fx:id="colNom" text="Nom" minWidth="140"/>
+                                        <TableColumn fx:id="colPhone" text="Telephone" minWidth="110"/>
+                                        <TableColumn fx:id="colLicense" text="Permis" minWidth="100"/>
+                                        <TableColumn fx:id="colExperience" text="Experience" minWidth="90"/>
+                                        <TableColumn fx:id="colRating" text="Note" minWidth="80"/>
+                                        <TableColumn fx:id="colActions" text="Actions" minWidth="120"/>
+                                    </columns>
+                                </TableView>
+                            </VBox>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </ScrollPane>
+        </VBox>
+    </center>
+</BorderPane>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="tn.esprit.controller.front.TransportController"
+            fitToWidth="true"
+            hbarPolicy="NEVER"
+            vbarPolicy="AS_NEEDED"
+            styleClass="front-scroll">
+
+    <VBox spacing="0">
+
+        <VBox styleClass="act-hero" alignment="CENTER" spacing="16">
+            <Label text="TRANSPORT ECO" styleClass="banner-sub"/>
+            <Label text="Choisissez Votre Transport" styleClass="banner-title"/>
+            <Label text="Bus, vans et solutions de mobilite disponibles selon vos besoins." styleClass="banner-desc" wrapText="true"/>
+            <HBox styleClass="act-search-bar" alignment="CENTER" spacing="12">
+                <TextField fx:id="searchField" promptText="Rechercher un transport..." styleClass="act-search-input" HBox.hgrow="ALWAYS"/>
+                <ComboBox fx:id="availabilityCombo" styleClass="act-sort-combo" prefWidth="170"/>
+                <ComboBox fx:id="sortCombo" styleClass="act-sort-combo" prefWidth="170"/>
+                <Button text="Reset" onAction="#onReset" styleClass="btn-theme-outline"/>
+            </HBox>
+        </VBox>
+
+        <HBox styleClass="act-results-bar" alignment="CENTER_LEFT" spacing="12">
+            <Label fx:id="resultCount" text="0 transport(s) trouve(s)" styleClass="act-results-count"/>
+        </HBox>
+
+        <VBox styleClass="page-body" spacing="20">
+            <padding><Insets top="24" right="24" bottom="24" left="24"/></padding>
+
+            <VBox fx:id="emptyState" alignment="CENTER" spacing="16" styleClass="act-empty-state" visible="false" managed="false">
+                <Label text="Aucun transport disponible" styleClass="act-empty-title"/>
+                <Label text="Les transports ajoutes en back office apparaitront ici." styleClass="act-empty-sub" wrapText="true"/>
+            </VBox>
+
+            <FlowPane fx:id="cardsPane" hgap="18" vgap="18"/>
+        </VBox>
+    </VBox>
+</ScrollPane>
