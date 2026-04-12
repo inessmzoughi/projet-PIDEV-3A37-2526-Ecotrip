@@ -11,10 +11,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.example.models.activity.Guide;
-import org.example.navigation.Routes;
-import org.example.navigation.SceneManager;
-import org.example.services.activity.GuideService;
+import tn.esprit.models.activity.Guide;
+import tn.esprit.navigation.Routes;
+import tn.esprit.navigation.SceneManager;
+import tn.esprit.services.activity.GuideService;
 
 import java.io.File;
 import java.net.URL;

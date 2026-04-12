@@ -9,10 +9,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import org.example.models.activity.ActivityCategory;
-import org.example.navigation.Routes;
-import org.example.navigation.SceneManager;
-import org.example.services.activity.ActivityCategoryService;
+import tn.esprit.models.activity.ActivityCategory;
+import tn.esprit.navigation.Routes;
+import tn.esprit.navigation.SceneManager;
+import tn.esprit.services.activity.ActivityCategoryService;
 
 import java.net.URL;
 import java.sql.SQLException;
