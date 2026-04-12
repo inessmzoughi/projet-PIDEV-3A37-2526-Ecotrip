@@ -39,6 +39,8 @@ public class SceneManager {
         frontRoutes.put(Routes.ABOUT,             "/views/front/about.fxml");
         frontRoutes.put(Routes.HEBERGEMENTS, "/views/front/hebergement/hebergements.fxml");
         frontRoutes.put(Routes.ACTIVITES,         "/views/front/activites.fxml");
+        frontRoutes.put(Routes.HEBERGEMENTS,      "/views/front/hebergements.fxml");
+        frontRoutes.put(Routes.ACTIVITES,         "/views/front/activities.fxml");
         frontRoutes.put(Routes.TRANSPORT,         "/views/front/transport.fxml");
         frontRoutes.put(Routes.FRONT_PRODUCTS, "/views/front/produit/Products.fxml");
         frontRoutes.put(Routes.CONTACT,           "/views/front/produit/Cart.fxml");
@@ -65,6 +67,10 @@ public class SceneManager {
         backRoutes.put(Routes.ADMIN_PRODUCT,  "/views/back/produit/Product.fxml");
         backRoutes.put(Routes.ADMIN_PRODUCT_CATEGORY,  "/views/back/produit/ProductCategory.fxml");
 
+        backRoutes.put(Routes.ADMIN_ACTIVITIES,          "/views/back/activity/ListActivities.fxml");
+        backRoutes.put(Routes.ADMIN_ACTIVITY_CATEGORIES, "/views/back/activity/Categories.fxml");
+        backRoutes.put(Routes.ADMIN_GUIDES,              "/views/back/activity/Guides.fxml");
+        backRoutes.put(Routes.ADMIN_SCHEDULES,           "/views/back/activity/Schedules.fxml");
     }
 
     public static void initialize(Stage stage) {
