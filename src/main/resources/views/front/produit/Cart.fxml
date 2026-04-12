@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.String?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="tn.esprit.controller.front.CartController"
+            fitToWidth="true"
+            hbarPolicy="NEVER"
+            vbarPolicy="AS_NEEDED"
+            styleClass="heb-scroll">
+
+    <stylesheets>
+        <String fx:value="@/styles/front.css"/>
+    </stylesheets>
+
+    <VBox styleClass="heb-page" spacing="0">
+
+        <!-- HERO -->
+        <VBox styleClass="heb-hero" alignment="CENTER" spacing="14">
+            <padding><Insets top="60" bottom="60" left="40" right="40"/></padding>
+            <Label text="🛒  Mon Panier" styleClass="heb-hero-title"/>
+            <Label text="Vérifiez vos articles avant de procéder au paiement"
+                   styleClass="heb-hero-sub"/>
+        </VBox>
+
+        <!-- CONTENU : articles + récapitulatif -->
+        <HBox fx:id="contentBox" spacing="24" alignment="TOP_CENTER">
+            <padding><Insets top="32" bottom="32" left="40" right="40"/></padding>
+
+            <!-- Liste des articles -->
+            <VBox fx:id="itemsContainer" spacing="16" HBox.hgrow="ALWAYS"/>
+
+            <!-- Récapitulatif -->
+            <VBox fx:id="summaryBox" spacing="14" prefWidth="320"
+                  style="-fx-background-color: white;
+                         -fx-background-radius: 14;
+                         -fx-border-radius: 14;
+                         -fx-border-color: #e0e0e0;
+                         -fx-border-width: 1;
+                         -fx-padding: 24;">
+
+                <Label text="Récapitulatif"
+                       style="-fx-font-size: 18px; -fx-font-weight: bold;
+                              -fx-text-fill: #2d5a1b;"/>
+                <Separator/>
+
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="Nombre d'articles :"
+                           style="-fx-text-fill: #666; -fx-font-size: 13px;"/>
+                    <Label fx:id="labelCount" text="0"
+                           style="-fx-font-weight: bold; -fx-text-fill: #2d5a1b;"/>
+                </HBox>
+
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="Total :"
+                           style="-fx-font-size: 16px; -fx-font-weight: bold;
+                                  -fx-text-fill: #2d5a1b;"/>
+                    <Label fx:id="labelTotal" text="0.00 TND"
+                           style="-fx-font-size: 18px; -fx-font-weight: bold;
+                                  -fx-text-fill: #4a7c3f;"/>
+                </HBox>
+
+                <Separator/>
+
+                <!-- Mode de paiement -->
+                <Label text="Mode de paiement"
+                       style="-fx-font-weight: bold; -fx-text-fill: #2d5a1b;
+                              -fx-font-size: 14px;"/>
+
+                <RadioButton fx:id="rbCarte"  text="💳  Carte bancaire"/>
+                <RadioButton fx:id="rbPaypal" text="🅿️  PayPal"/>
+                <RadioButton fx:id="rbCash"   text="💵  Cash"/>
+
+                <Separator/>
+
+                <Button fx:id="btnPayer"
+                        text="✅  Confirmer la commande"
+                        maxWidth="Infinity"
+                        onAction="#onConfirmer"
+                        style="-fx-background-color: #2d5a1b;
+                               -fx-text-fill: white;
+                               -fx-font-size: 14px;
+                               -fx-font-weight: bold;
+                               -fx-padding: 12 0 12 0;
+                               -fx-background-radius: 8;
+                               -fx-cursor: hand;"/>
+
+                <Button text="🗑  Vider le panier"
+                        maxWidth="Infinity"
+                        onAction="#onVider"
+                        style="-fx-background-color: #f5f5f5;
+                               -fx-text-fill: #666;
+                               -fx-font-size: 13px;
+                               -fx-padding: 10 0 10 0;
+                               -fx-background-radius: 8;
+                               -fx-cursor: hand;"/>
+            </VBox>
+        </HBox>
+
+        <!-- EMPTY STATE -->
+        <VBox fx:id="emptyState" alignment="CENTER" spacing="16"
+              managed="false" visible="false">
+            <padding><Insets top="80" bottom="80"/></padding>
+            <Label text="🛒" style="-fx-font-size: 64px;"/>
+            <Label text="Votre panier est vide"
+                   style="-fx-font-size: 22px; -fx-font-weight: bold;
+                          -fx-text-fill: #2d5a1b;"/>
+            <Label text="Retournez à la boutique pour ajouter des produits"
+                   style="-fx-font-size: 14px; -fx-text-fill: #666;"/>
+        </VBox>
+
+    </VBox>
+</ScrollPane>
