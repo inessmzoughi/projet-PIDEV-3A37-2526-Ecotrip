@@ -31,13 +31,13 @@ public class Routes {
     public static final String ADMIN_BOUTIQUE     = "admin-boutique";
     public static final String ADMIN_RESERVATIONS = "admin-reservations";
     public static final String ADMIN_USERS        = "admin-users";
+    public static final String ADMIN_MON_COMPTE   = "admin-mon-compte";
     public static final String ADMIN_HEBERGEMENTS          = "admin-hebergements";
     public static final String ADMIN_ADD_HEBERGEMENT       = "admin-add-hebergement";
     public static final String ADMIN_EDIT_HEBERGEMENT      = "admin-edit-hebergement";
     public static final String ADMIN_CATEGORIES_HEBERGEMENT = "admin-categories-hebergement";
     public static final String ADMIN_CHAMBRES              = "admin-chambres";
     public static final String ADMIN_EQUIPEMENTS           = "admin-equipements";
-    public static final String ADMIN_MON_COMPTE      = "admin-mon-compte";
     public static final String ADMIN_UPDATE_ACCOUNT  = "admin-update-account";
     public static final String ADMIN_CHANGE_PASSWORD = "admin-change-password";
     public static final String ADMIN_PRODUCT_CATEGORY = "admin_product_category";
@@ -48,4 +48,9 @@ public class Routes {
 
 
 
+    // ── Activity (ADMIN) ─────────────────────────────────────
+    public static final String ADMIN_ACTIVITIES           = "admin-activities";
+    public static final String ADMIN_ACTIVITY_CATEGORIES  = "admin-activity-categories";
+    public static final String ADMIN_GUIDES               = "admin-guides";
+    public static final String ADMIN_SCHEDULES            = "admin-schedules";
 }
