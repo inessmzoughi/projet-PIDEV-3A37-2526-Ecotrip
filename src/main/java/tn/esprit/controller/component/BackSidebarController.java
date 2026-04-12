@@ -12,13 +12,12 @@ public class BackSidebarController {
 
     @FXML private Button dashboardBtn;
     @FXML private Button activitesBtn;
-    @FXML private Button hebergementsBtn;
+    // hebergementsBtn supprimé — remplacé par un Label non-cliquable dans le FXML
     @FXML private Button listHebergementsBtn;
     @FXML private Button chambresBtn;
     @FXML private Button equipementsBtn;
     @FXML private Button categoriesBtn;
     @FXML private Button transportBtn;
-    @FXML private Button boutiqueBtn;
     @FXML private Button reservationsBtn;
     @FXML private Button usersBtn;
     @FXML private Button monCompteBtn;
@@ -33,48 +32,54 @@ public class BackSidebarController {
     @FXML
     public void initialize() {
         routeMap = Map.ofEntries(
-                Map.entry(dashboardBtn,         Routes.ADMIN_DASHBOARD),
-                Map.entry(activitesBtn,         Routes.ADMIN_ACTIVITES),
-                Map.entry(hebergementsBtn,      Routes.ADMIN_HEBERGEMENTS),
-                Map.entry(listHebergementsBtn,  Routes.ADMIN_HEBERGEMENTS),
-                Map.entry(chambresBtn,          Routes.ADMIN_CHAMBRES),
-                Map.entry(equipementsBtn,       Routes.ADMIN_EQUIPEMENTS),
-                Map.entry(categoriesBtn,        Routes.ADMIN_CATEGORIES_HEBERGEMENT),
-                Map.entry(transportBtn,         Routes.ADMIN_TRANSPORT),
-                Map.entry(boutiqueBtn1,          Routes.ADMIN_COMMANDE),
-                Map.entry(boutiqueBtn3,          Routes.ADMIN_LIGNE_COMMANDE),
-                Map.entry(boutiqueBtn31,          Routes.ADMIN_PAIEMENT),
-                Map.entry(boutiqueBtn2,          Routes.ADMIN_PRODUCT),
-                Map.entry(boutiqueBtn321,          Routes.ADMIN_PRODUCT_CATEGORY),
-                Map.entry(reservationsBtn,      Routes.ADMIN_RESERVATIONS),
-                Map.entry(usersBtn,             Routes.ADMIN_USERS),
-                Map.entry(monCompteBtn,         Routes.ADMIN_MON_COMPTE)
+                Map.entry(dashboardBtn,        Routes.ADMIN_DASHBOARD),
+                Map.entry(activitesBtn,        Routes.ADMIN_ACTIVITES),
+                Map.entry(listHebergementsBtn, Routes.ADMIN_HEBERGEMENTS),
+                Map.entry(chambresBtn,         Routes.ADMIN_CHAMBRES),
+                Map.entry(equipementsBtn,      Routes.ADMIN_EQUIPEMENTS),
+                Map.entry(categoriesBtn,       Routes.ADMIN_CATEGORIES_HEBERGEMENT),
+                Map.entry(transportBtn,        Routes.ADMIN_TRANSPORT),
+                Map.entry(boutiqueBtn1,        Routes.ADMIN_COMMANDE),
+                Map.entry(boutiqueBtn2,        Routes.ADMIN_PRODUCT),
+                Map.entry(boutiqueBtn3,        Routes.ADMIN_LIGNE_COMMANDE),
+                Map.entry(boutiqueBtn31,       Routes.ADMIN_PAIEMENT),
+                Map.entry(boutiqueBtn321,      Routes.ADMIN_PRODUCT_CATEGORY),
+                Map.entry(reservationsBtn,     Routes.ADMIN_RESERVATIONS),
+                Map.entry(usersBtn,            Routes.ADMIN_USERS),
+                Map.entry(monCompteBtn,        Routes.ADMIN_MON_COMPTE)
         );
     }
 
     public void setActiveRoute(String routeName) {
         routeMap.forEach((btn, route) -> {
-            btn.getStyleClass().remove("sidebar-btn-active");
-            if (route.equals(routeName)) btn.getStyleClass().add("sidebar-btn-active");
+            btn.getStyleClass().removeAll("sidebar-btn-active", "sidebar-sub-btn-active");
+            if (route.equals(routeName)) {
+                // sous-éléments hébergement → style sub-actif
+                if (btn == listHebergementsBtn || btn == chambresBtn
+                        || btn == equipementsBtn || btn == categoriesBtn) {
+                    btn.getStyleClass().add("sidebar-sub-btn-active");
+                } else {
+                    btn.getStyleClass().add("sidebar-btn-active");
+                }
+            }
         });
     }
 
-    @FXML private void handleDashboard()    { SceneManager.navigateTo(Routes.ADMIN_DASHBOARD); }
-    @FXML private void handleActivites()    { SceneManager.navigateTo(Routes.ADMIN_ACTIVITES); }
-    @FXML private void handleHebergements() { SceneManager.navigateTo(Routes.ADMIN_HEBERGEMENTS); }
+    @FXML private void handleDashboard()        { SceneManager.navigateTo(Routes.ADMIN_DASHBOARD); }
+    @FXML private void handleActivites()        { SceneManager.navigateTo(Routes.ADMIN_ACTIVITES); }
     @FXML private void handleListHebergements() { SceneManager.navigateTo(Routes.ADMIN_HEBERGEMENTS); }
-    @FXML private void handleChambres()     { SceneManager.navigateTo(Routes.ADMIN_CHAMBRES); }
-    @FXML private void handleEquipements()  { SceneManager.navigateTo(Routes.ADMIN_EQUIPEMENTS); }
-    @FXML private void handleCategories()   { SceneManager.navigateTo(Routes.ADMIN_CATEGORIES_HEBERGEMENT); }
-    @FXML private void handleTransport()    { SceneManager.navigateTo(Routes.ADMIN_TRANSPORT); }
-    @FXML private void handleCommandes()     { SceneManager.navigateTo(Routes.ADMIN_COMMANDE); }
-    @FXML private void handleLignesCommande()     { SceneManager.navigateTo(Routes.ADMIN_LIGNE_COMMANDE); }
-    @FXML private void handlePaiements()     { SceneManager.navigateTo(Routes.ADMIN_PAIEMENT); }
-    @FXML private void handleProduits()     { SceneManager.navigateTo(Routes.ADMIN_PRODUCT); }
-    @FXML private void handleProductsCategory()     { SceneManager.navigateTo(Routes.ADMIN_PRODUCT_CATEGORY); }
-    @FXML private void handleReservations() { SceneManager.navigateTo(Routes.ADMIN_RESERVATIONS); }
-    @FXML private void handleUsers()        { SceneManager.navigateTo(Routes.ADMIN_USERS); }
-    @FXML private void handleViewSite()     { SceneManager.navigateTo(Routes.HOME); }
-    @FXML private void handleMonCompte()    { SceneManager.navigateTo(Routes.ADMIN_MON_COMPTE); }
-    @FXML private void handleLogout()       { SessionManager.getInstance().logout(); }
+    @FXML private void handleChambres()         { SceneManager.navigateTo(Routes.ADMIN_CHAMBRES); }
+    @FXML private void handleEquipements()      { SceneManager.navigateTo(Routes.ADMIN_EQUIPEMENTS); }
+    @FXML private void handleCategories()       { SceneManager.navigateTo(Routes.ADMIN_CATEGORIES_HEBERGEMENT); }
+    @FXML private void handleTransport()        { SceneManager.navigateTo(Routes.ADMIN_TRANSPORT); }
+    @FXML private void handleCommandes()        { SceneManager.navigateTo(Routes.ADMIN_COMMANDE); }
+    @FXML private void handleLignesCommande()   { SceneManager.navigateTo(Routes.ADMIN_LIGNE_COMMANDE); }
+    @FXML private void handlePaiements()        { SceneManager.navigateTo(Routes.ADMIN_PAIEMENT); }
+    @FXML private void handleProduits()         { SceneManager.navigateTo(Routes.ADMIN_PRODUCT); }
+    @FXML private void handleProductsCategory() { SceneManager.navigateTo(Routes.ADMIN_PRODUCT_CATEGORY); }
+    @FXML private void handleReservations()     { SceneManager.navigateTo(Routes.ADMIN_RESERVATIONS); }
+    @FXML private void handleUsers()            { SceneManager.navigateTo(Routes.ADMIN_USERS); }
+    @FXML private void handleViewSite()         { SceneManager.navigateTo(Routes.HOME); }
+    @FXML private void handleMonCompte()        { SceneManager.navigateTo(Routes.ADMIN_MON_COMPTE); }
+    @FXML private void handleLogout()           { SessionManager.getInstance().logout(); }
 }
