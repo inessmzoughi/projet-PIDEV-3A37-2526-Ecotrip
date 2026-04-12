@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="tn.esprit.controller.back.user.UserController"
+            styleClass="root-pane">
+
+    <center>
+        <VBox styleClass="main-content">
+            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane">
+                <VBox styleClass="page-body" spacing="24">
+                    <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
+
+                    <!-- Breadcrumb + Title -->
+                    <VBox spacing="4">
+                        <HBox spacing="4">
+                            <Button text="Dashboard" styleClass="breadcrumb-link" onAction="#onNavDashboard"/>
+                            <Label text=" › " styleClass="breadcrumb-sep"/>
+                            <Label text="Utilisateurs" styleClass="breadcrumb-active"/>
+                        </HBox>
+                        <Label text="Gestion des Utilisateurs" styleClass="page-title"/>
+                    </VBox>
+
+                    <!-- Stat Cards -->
+                    <HBox spacing="20">
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
+                            <HBox spacing="12" alignment="CENTER_LEFT">
+                                <Label text="👥" styleClass="stat-icon"/>
+                                <VBox spacing="2">
+                                    <Label text="Total Utilisateurs" styleClass="stat-label"/>
+                                    <Label fx:id="statTotal" text="0" styleClass="stat-value"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
+                            <HBox spacing="12" alignment="CENTER_LEFT">
+                                <Label text="🛡" styleClass="stat-icon"/>
+                                <VBox spacing="2">
+                                    <Label text="Administrateurs" styleClass="stat-label"/>
+                                    <Label fx:id="statAdmins" text="0" styleClass="stat-value"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
+                            <HBox spacing="12" alignment="CENTER_LEFT">
+                                <Label text="👤" styleClass="stat-icon"/>
+                                <VBox spacing="2">
+                                    <Label text="Utilisateurs" styleClass="stat-label"/>
+                                    <Label fx:id="statUsers" text="0" styleClass="stat-value"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
+                            <HBox spacing="12" alignment="CENTER_LEFT">
+                                <Label text="✅" styleClass="stat-icon"/>
+                                <VBox spacing="2">
+                                    <Label text="Emails Vérifiés" styleClass="stat-label"/>
+                                    <Label fx:id="statVerified" text="0" styleClass="stat-value"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                    </HBox>
+
+                    <HBox spacing="24">
+
+                        <!-- ── FORM ── -->
+                        <VBox minWidth="360" maxWidth="360" styleClass="form-card">
+                            <HBox styleClass="form-card-header" alignment="CENTER_LEFT" spacing="14">
+                                <Label fx:id="formIcon" text="👤" styleClass="form-icon"/>
+                                <VBox spacing="4">
+                                    <Label fx:id="formTitle" text="Nouvel Utilisateur" styleClass="form-heading-title"/>
+                                    <Label fx:id="formSubtitle" text="Remplissez les informations ci-dessous." styleClass="form-heading-sub"/>
+                                </VBox>
+                            </HBox>
+
+                            <VBox styleClass="form-body" spacing="14">
+                                <padding><Insets top="20" right="20" bottom="16" left="20"/></padding>
+
+                                <!-- Username -->
+                                <VBox spacing="5" styleClass="form-group">
+                                    <Label text="👤 Nom d'utilisateur *" styleClass="form-label"/>
+                                    <TextField fx:id="usernameField" promptText="Ex: john_doe"
+                                               styleClass="form-input" onKeyReleased="#validateUsername"/>
+                                    <Label fx:id="errUsername" text="Le nom est requis."
+                                           styleClass="err-msg" managed="false" visible="false"/>
+                                </VBox>
+
+                                <!-- Email -->
+                                <VBox spacing="5" styleClass="form-group">
+                                    <Label text="✉ Email *" styleClass="form-label"/>
+                                    <TextField fx:id="emailField" promptText="ex@email.com"
+                                               styleClass="form-input" onKeyReleased="#validateEmail"/>
+                                    <Label fx:id="errEmail" text="Email invalide."
+                                           styleClass="err-msg" managed="false" visible="false"/>
+                                </VBox>
+
+                                <!-- Password -->
+                                <VBox spacing="5" styleClass="form-group">
+                                    <Label text="🔒 Mot de passe *" styleClass="form-label"/>
+                                    <PasswordField fx:id="passwordField" promptText="••••••••"
+                                                   styleClass="form-input" onKeyReleased="#validatePassword"/>
+                                    <Label fx:id="passwordHint"
+                                           text="Laisser vide pour conserver le mot de passe actuel."
+                                           styleClass="char-count" managed="false" visible="false"/>
+                                    <Label fx:id="errPassword" text="Minimum 6 caractères."
+                                           styleClass="err-msg" managed="false" visible="false"/>
+                                </VBox>
+
+                                <!-- Address -->
+                                <VBox spacing="5" styleClass="form-group">
+                                    <Label text="📍 Adresse" styleClass="form-label"/>
+                                    <TextField fx:id="addressField" promptText="Ex: 12 rue de la paix"
+                                               styleClass="form-input"/>
+                                </VBox>
+
+                                <!-- Telephone -->
+                                <VBox spacing="5" styleClass="form-group">
+                                    <Label text="📞 Téléphone" styleClass="form-label"/>
+                                    <TextField fx:id="telephoneField" promptText="+216 XX XXX XXX"
+                                               styleClass="form-input"/>
+                                </VBox>
+
+                                <!-- Role + Verified -->
+                                <HBox spacing="12">
+                                    <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                        <Label text="🛡 Rôle" styleClass="form-label"/>
+                                        <ComboBox fx:id="roleCombo" styleClass="sort-select" maxWidth="Infinity"/>
+                                    </VBox>
+                                    <VBox spacing="5" styleClass="form-group" alignment="BOTTOM_LEFT">
+                                        <CheckBox fx:id="isVerifiedCheck" text="Email vérifié"
+                                                  styleClass="eq-checkbox"/>
+                                    </VBox>
+                                </HBox>
+
+                            </VBox>
+
+                            <HBox styleClass="form-footer" alignment="CENTER_RIGHT" spacing="10">
+                                <Button text="↺ Réinitialiser" styleClass="btn-cancel" onAction="#onReset"/>
+                                <Button fx:id="submitBtn" text="➕ Ajouter" styleClass="btn-submit" onAction="#onSubmit"/>
+                            </HBox>
+                        </VBox>
+
+                        <!-- ── TABLE ── -->
+                        <VBox spacing="14" HBox.hgrow="ALWAYS">
+                            <HBox styleClass="action-bar" alignment="CENTER_LEFT" spacing="12">
+                                <HBox alignment="CENTER_LEFT" spacing="8" HBox.hgrow="ALWAYS">
+                                    <Label text="👥 Tous les utilisateurs" styleClass="table-card-title"/>
+                                    <Label fx:id="badgeCount" text="0" styleClass="badge badge-green"/>
+                                </HBox>
+                                <HBox styleClass="search-wrap" alignment="CENTER_LEFT" spacing="6">
+                                    <Label text="🔍" styleClass="search-icon"/>
+                                    <TextField fx:id="searchField" promptText="Rechercher…"
+                                               styleClass="search-input" onKeyReleased="#onSearch" prefWidth="180"/>
+                                </HBox>
+                                <ComboBox fx:id="roleFilter" styleClass="sort-select"
+                                          onAction="#onFilter" prefWidth="140"/>
+                                <ComboBox fx:id="sortCombo" styleClass="sort-select"
+                                          onAction="#onSort" prefWidth="140"/>
+                                <Button text="📥 CSV"
+                                        styleClass="btn-export-csv"
+                                        onAction="#onExportCsv"/>
+                            </HBox>
+
+                            <VBox styleClass="table-card" VBox.vgrow="ALWAYS">
+                                <TableView fx:id="tableView" styleClass="main-table" VBox.vgrow="ALWAYS">
+                                    <columns>
+                                        <TableColumn fx:id="colIndex"    text="#"           prefWidth="45"/>
+                                        <TableColumn fx:id="colUsername" text="Utilisateur" prefWidth="140"/>
+                                        <TableColumn fx:id="colEmail"    text="Email"       prefWidth="190"/>
+                                        <TableColumn fx:id="colTelephone" text="Téléphone"  prefWidth="120"/>
+                                        <TableColumn fx:id="colRole"     text="Rôle"        prefWidth="90"/>
+                                        <TableColumn fx:id="colVerified" text="Vérifié"     prefWidth="80"/>
+                                        <TableColumn fx:id="colActions"  text="Actions"     prefWidth="160"/>
+                                    </columns>
+                                    <placeholder>
+                                        <VBox alignment="CENTER" spacing="8" styleClass="empty-state">
+                                            <Label text="🔍" styleClass="empty-icon"/>
+                                            <Label text="Aucun utilisateur trouvé." styleClass="empty-label"/>
+                                        </VBox>
+                                    </placeholder>
+                                </TableView>
+                                <HBox fx:id="paginationBar" styleClass="pagination-bar"
+                                      alignment="CENTER_LEFT" spacing="8">
+                                    <Label fx:id="pagInfo" styleClass="pag-info" HBox.hgrow="ALWAYS"/>
+                                    <Region HBox.hgrow="ALWAYS"/>
+                                    <HBox fx:id="pagButtons" spacing="4"/>
+                                </HBox>
+                            </VBox>
+                        </VBox>
+
+                    </HBox>
+                </VBox>
+            </ScrollPane>
+        </VBox>
+    </center>
+</BorderPane>

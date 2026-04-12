@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.controller.auth.RegisterController"
+      fx:controller="tn.esprit.controller.auth.RegisterController"
       alignment="CENTER" spacing="16"
       styleClass="auth-container">
 

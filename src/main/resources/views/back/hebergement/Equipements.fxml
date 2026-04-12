@@ -1,199 +1,130 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
+
 <?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.controller.back.hebergement.EquipementsController"
-            styleClass="root-pane"
-            stylesheets="@../../../styles/ecotrip.css">
+<BorderPane styleClass="root-pane" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.esprit.controller.back.hebergement.EquipementsController">
 
-    <!-- ═══ SIDEBAR ═══ -->
-    <!--<left>
-        <VBox styleClass="sidebar" minWidth="240" maxWidth="240">
-            <HBox styleClass="sidebar-logo" alignment="CENTER_LEFT" spacing="12">
-                <Label text="🌿" styleClass="sidebar-logo-icon"/>
-                <VBox spacing="2">
-                    <Label text="EcoTrip" styleClass="brand-name"/>
-                    <Label text="Admin Panel" styleClass="brand-sub"/>
-                </VBox>
-            </HBox>
-            <VBox styleClass="nav-section" VBox.vgrow="ALWAYS">
-                <Label text="PRINCIPAL" styleClass="nav-label"/>
-                <Button text="  📊  Dashboard"     styleClass="nav-item" maxWidth="Infinity"/>
-                <Label text="CONTENU" styleClass="nav-label"/>
-                <Button text="  🏨  Hébergements"  styleClass="nav-item" maxWidth="Infinity" onAction="#onNavHebergements"/>
-                <Button text="      📋  Liste"       styleClass="nav-item nav-sub-item" maxWidth="Infinity" onAction="#onNavHebergements"/>
-                <Button text="      🛏  Chambres"    styleClass="nav-item nav-sub-item" maxWidth="Infinity" onAction="#onNavChambres"/>
-                <Button text="      🔧  Équipements" styleClass="nav-item nav-sub-item nav-item-active" maxWidth="Infinity"/>
-                <Button text="      🏷  Catégories"  styleClass="nav-item nav-sub-item" maxWidth="Infinity" onAction="#onNavCategories"/>
-                <Label text="GESTION" styleClass="nav-label"/>
-                <Button text="  📋  Réservations"  styleClass="nav-item" maxWidth="Infinity"/>
-                <Button text="  👥  Utilisateurs"  styleClass="nav-item" maxWidth="Infinity"/>
-            </VBox>
-            <VBox styleClass="sidebar-footer">
-                <Separator styleClass="sidebar-sep"/>
-                <HBox styleClass="sidebar-user" alignment="CENTER_LEFT" spacing="10">
-                    <Label text="IN" styleClass="avatar"/>
-                    <VBox>
-                        <Label text="Ines Mzoughi" styleClass="user-name"/>
-                        <Label text="Administrateur" styleClass="user-role"/>
-                    </VBox>
-                </HBox>
-            </VBox>
-        </VBox>
-    </left>
-    -->
-
-    <!-- ═══ CENTER ═══ -->
     <center>
         <VBox styleClass="main-content">
+            <ScrollPane fitToWidth="true" styleClass="scroll-pane" VBox.vgrow="ALWAYS">
+                <VBox spacing="20" styleClass="page-body">
+                    <padding><Insets bottom="32" left="32" right="32" top="32" /></padding>
 
-            <!-- Topbar -->
-           <!-- <HBox styleClass="topbar" alignment="CENTER_LEFT" spacing="16">
-                <Label text="🛎️ Équipements" styleClass="topbar-title" HBox.hgrow="ALWAYS"/>
-                <Region HBox.hgrow="ALWAYS"/>
-                <Label text="admin@ecotrip.tn" styleClass="topbar-email"/>
-                <Button text="Déconnexion" styleClass="btn-logout" onAction="#onLogout"/>
-            </HBox>
--->
-            <!-- Page Body -->
-            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane">
-                <VBox styleClass="page-body" spacing="20">
-                    <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
-
-                    <!-- Breadcrumb + Title -->
                     <VBox spacing="4">
                         <HBox spacing="4">
-                            <Button text="Dashboard" styleClass="breadcrumb-link" onAction="#onNavDashboard"/>
-                            <Label text=" › " styleClass="breadcrumb-sep"/>
-                            <Button text="Hébergements" styleClass="breadcrumb-link" onAction="#onNavHebergements"/>
-                            <Label text=" › " styleClass="breadcrumb-sep"/>
-                            <Label text="Équipements" styleClass="breadcrumb-active"/>
+                            <Button onAction="#onNavDashboard" styleClass="breadcrumb-link" text="Dashboard" />
+                            <Label styleClass="breadcrumb-sep" text=" › " />
+                            <Button onAction="#onNavHebergements" styleClass="breadcrumb-link" text="Hébergements" />
+                            <Label styleClass="breadcrumb-sep" text=" › " />
+                            <Label styleClass="breadcrumb-active" text="Équipements" />
                         </HBox>
-                        <Label text="Gestion des Équipements" styleClass="page-title"/>
+                        <Label styleClass="page-title" text="Gestion des Équipements" />
                     </VBox>
 
-                    <!-- Stat Cards -->
                     <HBox spacing="20">
                         <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
-                            <HBox spacing="12" alignment="CENTER_LEFT">
-                                <Label text="🛎️" styleClass="stat-icon stat-icon-green"/>
+                            <HBox alignment="CENTER_LEFT" spacing="12">
+                                <Label styleClass="stat-icon, stat-icon-green" text="🛎️" />
                                 <VBox spacing="2">
-                                    <Label text="Total Équipements" styleClass="stat-label"/>
-                                    <Label fx:id="statTotal" text="0" styleClass="stat-value"/>
-                                    <Label text="disponibles" styleClass="stat-sub"/>
+                                    <Label styleClass="stat-label" text="Total Équipements" />
+                                    <Label fx:id="statTotal" styleClass="stat-value" text="0" />
+                                    <Label styleClass="stat-sub" text="enregistrés" />
                                 </VBox>
                             </HBox>
                         </VBox>
                         <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
-                            <HBox spacing="12" alignment="CENTER_LEFT">
-                                <Label text="📂" styleClass="stat-icon stat-icon-blue"/>
+                            <HBox alignment="CENTER_LEFT" spacing="12">
+                                <Label styleClass="stat-icon, stat-icon-blue" text="📝" />
                                 <VBox spacing="2">
-                                    <Label text="Catégories" styleClass="stat-label"/>
-                                    <Label fx:id="statCats" text="—" styleClass="stat-value"/>
-                                    <Label text="de types" styleClass="stat-sub"/>
+                                    <Label styleClass="stat-label" text="Avec description" />
+                                    <Label fx:id="statAvecDesc" styleClass="stat-value" text="0" />
+                                    <Label styleClass="stat-sub" text="équipements décrits" />
                                 </VBox>
                             </HBox>
                         </VBox>
                         <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
-                            <HBox spacing="12" alignment="CENTER_LEFT">
-                                <Label text="⭐" styleClass="stat-icon stat-icon-orange"/>
+                            <HBox alignment="CENTER_LEFT" spacing="12">
+                                <Label styleClass="stat-icon, stat-icon-orange" text="🏨" />
                                 <VBox spacing="2">
-                                    <Label text="Premium" styleClass="stat-label"/>
-                                    <Label fx:id="statPremium" text="—" styleClass="stat-value"/>
-                                    <Label text="équipements" styleClass="stat-sub"/>
+                                    <Label styleClass="stat-label" text="Hébergements liés" />
+                                    <Label fx:id="statHebLies" styleClass="stat-value" text="0" />
+                                    <Label styleClass="stat-sub" text="utilisent ces équip." />
                                 </VBox>
                             </HBox>
                         </VBox>
                     </HBox>
 
-                    <!-- Category Filter Tabs -->
-                    <HBox fx:id="catTabsPane" spacing="8" alignment="CENTER_LEFT"/>
-
                     <!-- FORM PANEL -->
-                    <VBox fx:id="formPanel" styleClass="form-card inline-form-panel"
-                          visible="false" managed="false" spacing="0">
-
-                        <HBox styleClass="cat-form-header" alignment="CENTER_LEFT" spacing="10">
-                            <Label fx:id="formPanelTitle" text="🛎️ Nouvel Équipement"
-                                   styleClass="cat-form-title" HBox.hgrow="ALWAYS"/>
-                            <Button text="✕" styleClass="fp-close-btn" onAction="#onCloseForm"/>
+                    <VBox fx:id="formPanel" managed="false" spacing="0" styleClass="form-card, inline-form-panel" visible="false">
+                        <HBox alignment="CENTER_LEFT" spacing="10" styleClass="cat-form-header">
+                            <Label fx:id="formPanelTitle" styleClass="cat-form-title" text="🛎️ Nouvel Équipement" HBox.hgrow="ALWAYS" />
+                            <Button onAction="#onCloseForm" styleClass="fp-close-btn" text="✕" />
                         </HBox>
-
-                        <VBox styleClass="form-body" spacing="16">
-                            <padding><Insets top="20" right="24" bottom="12" left="24"/></padding>
-
-                            <!-- Row 1: Nom -->
+                        <VBox spacing="16" styleClass="form-body">
+                            <padding><Insets bottom="12" left="24" right="24" top="20" /></padding>
                             <VBox spacing="5" styleClass="form-group">
-                                <Label text="Nom *" styleClass="form-label"/>
-                                <TextField fx:id="nomField" promptText="Ex: Piscine privée"
-                                           styleClass="form-input"/>
+                                <Label styleClass="form-label" text="Nom *" />
+                                <TextField fx:id="nomField" promptText="Ex: Piscine privée" styleClass="form-input" />
+                                <Label fx:id="errNom" managed="false" styleClass="err-msg" visible="false" />
                             </VBox>
-
-                            <!-- Row 2: Description -->
                             <VBox spacing="5" styleClass="form-group">
-                                <Label text="Description" styleClass="form-label"/>
-                                <TextArea fx:id="descField" promptText="Courte description…"
-                                          styleClass="form-input" prefRowCount="3"/>
+                                <Label styleClass="form-label" text="Description" />
+                                <TextArea fx:id="descField" prefRowCount="3" promptText="Courte description…" styleClass="form-input" />
                             </VBox>
                         </VBox>
-
-                        <HBox styleClass="form-footer" alignment="CENTER_RIGHT" spacing="10">
-                            <Button text="Annuler"         styleClass="btn-cancel" onAction="#onCloseForm"/>
-                            <Button text="💾 Enregistrer" styleClass="btn-submit" onAction="#onSave"/>
+                        <HBox alignment="CENTER_RIGHT" spacing="10" styleClass="form-footer">
+                            <Button onAction="#onCloseForm" styleClass="btn-cancel" text="Annuler" />
+                            <Button onAction="#onSave" styleClass="btn-submit" text="💾 Enregistrer" />
                         </HBox>
                     </VBox>
 
                     <!-- Action Bar -->
-                    <HBox styleClass="action-bar" alignment="CENTER_LEFT" spacing="12">
-                        <Button text="＋ Ajouter un équipement" styleClass="btn-primary" onAction="#onOpenForm"/>
-                        <Region HBox.hgrow="ALWAYS"/>
-                        <HBox styleClass="search-wrap" alignment="CENTER_LEFT" spacing="6">
-                            <Label text="🔍" styleClass="search-icon"/>
-                            <TextField fx:id="searchField" promptText="Rechercher…"
-                                       styleClass="search-input" prefWidth="220"
-                                       onKeyReleased="#onSearch"/>
+                    <HBox alignment="CENTER_LEFT" spacing="12" styleClass="action-bar">
+                        <Button onAction="#onOpenForm" styleClass="btn-primary" text="＋ Ajouter un équipement" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <HBox alignment="CENTER_LEFT" spacing="6" styleClass="search-wrap">
+                            <Label styleClass="search-icon" text="🔍" />
+                            <TextField fx:id="searchField" onKeyReleased="#onSearch" prefWidth="220" promptText="Rechercher…" styleClass="search-input" />
                         </HBox>
-                        <ToggleButton fx:id="toggleCards" text="⊞ Cartes"
-                                      styleClass="vt-btn" onAction="#onToggleView"/>
-                        <ToggleButton fx:id="toggleList"  text="☰ Liste"
-                                      styleClass="vt-btn vt-btn-active" selected="true"
-                                      onAction="#onToggleView"/>
+                        <ToggleButton fx:id="toggleCards" onAction="#onToggleCards" styleClass="vt-btn" text="⊞ Cartes" />
+                        <ToggleButton fx:id="toggleList" onAction="#onToggleList" selected="true" styleClass="vt-btn, vt-btn-active" text="☰ Liste" />
                     </HBox>
 
                     <!-- CARD GRID VIEW -->
-                    <FlowPane fx:id="cardGrid" hgap="16" vgap="16"
-                              styleClass="eq-card-grid"
-                              visible="false" managed="false"/>
+                    <FlowPane fx:id="cardGrid" hgap="16" managed="false" styleClass="eq-card-grid" vgap="16" visible="false" />
 
                     <!-- TABLE VIEW -->
-                    <VBox fx:id="tableCard" styleClass="table-card" spacing="0">
-                        <HBox styleClass="table-card-header" alignment="CENTER_LEFT" spacing="8">
-                            <Label text="🛎️ Liste des Équipements" styleClass="table-card-title" HBox.hgrow="ALWAYS"/>
-                            <Label fx:id="badgeCount" text="0" styleClass="badge badge-green"/>
+                    <VBox fx:id="tableCard" spacing="0" styleClass="table-card">
+                        <HBox alignment="CENTER_LEFT" spacing="8" styleClass="table-card-header">
+                            <Label styleClass="table-card-title" text="🛎️ Liste des Équipements" HBox.hgrow="ALWAYS" />
+                            <Label fx:id="badgeCount" styleClass="badge, badge-green" text="0" />
                         </HBox>
-
                         <TableView fx:id="tableView" styleClass="main-table" VBox.vgrow="ALWAYS">
                             <columns>
-                                <TableColumn fx:id="colIndex"   text="#"           prefWidth="50"/>
-                                <TableColumn fx:id="colNom"     text="Nom"         prefWidth="250"/>
-                                <TableColumn fx:id="colDesc"    text="Description" prefWidth="350"/>
-                                <TableColumn fx:id="colActions" text="Actions"     prefWidth="160"/>
+                                <TableColumn fx:id="colNom" prefWidth="280" text="Nom" />
+                                <TableColumn fx:id="colDesc" prefWidth="420" text="Description" />
+                                <TableColumn fx:id="colActions" prefWidth="222.39995117187505" text="Actions" />
                             </columns>
                             <placeholder>
                                 <VBox alignment="CENTER" spacing="8" styleClass="empty-state">
-                                    <Label text="🔍" styleClass="empty-icon"/>
-                                    <Label text="Aucun équipement trouvé." styleClass="empty-label"/>
+                                    <Label styleClass="empty-icon" text="🔍" />
+                                    <Label styleClass="empty-label" text="Aucun équipement trouvé." />
                                 </VBox>
                             </placeholder>
                         </TableView>
+
+                        <!-- Pagination — même design que ListHebergements -->
+                        <HBox fx:id="paginationBar" alignment="CENTER_LEFT" spacing="8" styleClass="pagination-bar">
+                            <Label fx:id="pagInfo" styleClass="pag-info" HBox.hgrow="ALWAYS" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <HBox fx:id="pagButtons" spacing="4" />
+                        </HBox>
                     </VBox>
 
                 </VBox>
             </ScrollPane>
         </VBox>
     </center>
-
 </BorderPane>

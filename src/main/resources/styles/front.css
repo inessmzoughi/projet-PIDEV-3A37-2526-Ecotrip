@@ -46,11 +46,36 @@
 /* ── Banner ─────────────────────────────────────────── */
 .banner-area {
     -fx-background-color: #1a2e1a;
-    -fx-min-height: 420;
+    -fx-min-height: 560;
 }
+
 .banner-content {
-    -fx-padding: 80 60 40 60;
+    -fx-padding: 130 60 80 60;
+    -fx-max-width: 900;
+    -fx-alignment: CENTER;
+}
+
+.banner-sub {
+    -fx-font-size: 15px;
+    -fx-text-fill: #7ecba1;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.99), 16, 0, 0, 2);
+}
+
+.banner-title {
+    -fx-font-size: 64px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.99), 28, 0.5, 0, 6);
+}
+
+.banner-desc {
+    -fx-font-size: 18px;
+    -fx-text-fill: white;
     -fx-max-width: 700;
+    -fx-text-alignment: CENTER;
+    -fx-line-spacing: 6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.99), 18, 0.5, 0, 3);
 }
 .banner-sub   { -fx-font-size: 13px; -fx-text-fill: #7ecba1; -fx-font-weight: bold; }
 .banner-title { -fx-font-size: 40px; -fx-font-weight: bold; -fx-text-fill: white; }
@@ -58,90 +83,159 @@
 
 /* ── Booking bar ─────────────────────────────────────── */
 .booking-bar {
-    -fx-background-color: white;
-    -fx-padding: 24 40 24 40;
-    -fx-border-color: #e8ecef;
-    -fx-border-width: 1 0 0 0;
+    -fx-background-color: rgba(10, 20, 10, 0.97);
+    -fx-padding: 28 48 28 48;
 }
-.booking-title  { -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2d5016; }
-.booking-label  { -fx-font-size: 12px; -fx-text-fill: #64748b; }
-.booking-date   { -fx-pref-width: 150; }
-.booking-combo  { -fx-pref-width: 130; }
-.btn-book       { -fx-padding: 14 24 14 24; -fx-font-size: 13px; }
+
+.booking-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.booking-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: rgba(255,255,255,0.65);
+    -fx-font-weight: bold;
+}
+
+.booking-date  { -fx-pref-width: 160; }
+.booking-combo { -fx-pref-width: 150; }
+.btn-book      { -fx-padding: 18 32 18 32; }
 
 /* ── Theme buttons ───────────────────────────────────── */
 .btn-theme {
     -fx-background-color: #2d5016;
     -fx-text-fill: white;
     -fx-font-weight: bold;
-    -fx-background-radius: 6;
-    -fx-padding: 12 24 12 24;
+    -fx-font-size: 16px;
+    -fx-background-radius: 8;
+    -fx-padding: 16 40 16 40;
     -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 12, 0, 0, 4);
 }
-.btn-theme:hover { -fx-background-color: #1e4620; }
-
-.btn-theme-outline {
-    -fx-background-color: transparent;
-    -fx-text-fill: #2d5016;
-    -fx-border-color: #2d5016;
-    -fx-border-width: 2;
-    -fx-border-radius: 6;
-    -fx-background-radius: 6;
-    -fx-padding: 10 24 10 24;
-    -fx-font-weight: bold;
-    -fx-cursor: hand;
+.btn-theme:hover {
+    -fx-background-color: #1e4620;
+    -fx-translate-y: -2;
 }
-.btn-theme-outline:hover { -fx-background-color: #f0f7ed; }
 
 /* ── Section shared ──────────────────────────────────── */
-.section-gap      { -fx-padding: 60 60 60 60; }
-.section-title    { -fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2d5016; }
-.section-sub      { -fx-font-size: 14px; -fx-text-fill: #64748b; }
-.section-title-white { -fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: white; }
-.section-sub-white   { -fx-font-size: 14px; -fx-text-fill: rgba(255,255,255,0.75); -fx-max-width: 500; -fx-text-alignment: CENTER; }
+.section-gap { -fx-padding: 70 80 70 80; }
+
+.section-title {
+    -fx-font-size: 38px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1a2e1a;
+}
+.section-sub { -fx-font-size: 16px; -fx-text-fill: #64748b; }
+
+.section-title-white {
+    -fx-font-size: 38px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+.section-sub-white {
+    -fx-font-size: 16px;
+    -fx-text-fill: rgba(255,255,255,0.85);
+    -fx-max-width: 560;
+    -fx-text-alignment: CENTER;
+}
+
+/* ── Facilities ──────────────────────────────────────── */
+.facilities-area { -fx-background-color: #1a2e1a; }
+
+.facility-item {
+    -fx-background-color: rgba(255,255,255,0.07);
+    -fx-background-radius: 14;
+    -fx-padding: 28;
+    -fx-border-color: rgba(255,255,255,0.14);
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+}
+.facility-icon  { -fx-font-size: 36px; }
+.facility-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+.facility-desc {
+    -fx-font-size: 14px;
+    -fx-text-fill: rgba(255,255,255,0.75);
+    -fx-line-spacing: 4;
+}
+
+/* ── About ───────────────────────────────────────────── */
+.about-area      { -fx-background-color: #f8faf5; }
+.about-overtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #2d5016;
+    -fx-font-weight: bold;
+}
+.about-title {
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1a2e1a;
+    -fx-line-spacing: 5;
+}
+.about-desc {
+    -fx-font-size: 15px;
+    -fx-text-fill: #4a5568;
+    -fx-line-spacing: 6;
+}
 
 /* ── Room cards ──────────────────────────────────────── */
 .room-card {
     -fx-background-color: white;
-    -fx-background-radius: 10;
-    -fx-border-radius: 10;
-    -fx-border-color: #e8ecef;
-    -fx-border-width: 1;
-    -fx-padding: 0 0 16 0;
-    -fx-pref-width: 220;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 24, 0, 0, 6);
+    -fx-cursor: hand;
+    -fx-pref-width: 260;
 }
-.room-img-placeholder { -fx-fill: #c0dd97; }
-.room-name  { -fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1a2e1a; -fx-padding: 8 12 0 12; }
-.room-price { -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2d5016; -fx-padding: 0 12 0 12; }
-
-/* ── Facilities ──────────────────────────────────────── */
-.facilities-area { -fx-background-color: #1a2e1a; }
-.facility-item   { -fx-padding: 20; }
-.facility-icon   { -fx-font-size: 28px; }
-.facility-title  { -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white; }
-.facility-desc   { -fx-font-size: 13px; -fx-text-fill: rgba(255,255,255,0.7); }
-
-/* ── About ───────────────────────────────────────────── */
-.about-area      { -fx-background-color: #f8faf5; -fx-padding: 60; }
-.about-overtitle { -fx-font-size: 14px; -fx-text-fill: #2d5016; -fx-font-weight: bold; }
-.about-title     { -fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #1a2e1a; }
-.about-desc      { -fx-font-size: 14px; -fx-text-fill: #4a5568; -fx-line-spacing: 4; }
-.about-image-placeholder { -fx-fill: #c0dd97; }
+.room-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(45,80,22,0.30), 40, 0, 0, 14);
+    -fx-translate-y: -6;
+}
+.room-name {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1a1a1a;
+    -fx-padding: 10 14 0 14;
+}
+.room-price {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d5016;
+    -fx-padding: 2 14 0 14;
+}
 
 /* ── Testimonials ────────────────────────────────────── */
 .testimonial-card {
     -fx-background-color: white;
-    -fx-background-radius: 12;
-    -fx-border-radius: 12;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
     -fx-border-color: #e8ecef;
     -fx-border-width: 1;
-    -fx-padding: 24;
-    -fx-pref-width: 280;
+    -fx-padding: 28;
+    -fx-pref-width: 300;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 20, 0, 0, 4);
 }
-.testimonial-text   { -fx-font-size: 13px; -fx-text-fill: #4a5568; -fx-font-style: italic; }
-.testimonial-author { -fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2d5016; }
-.star-filled        { -fx-font-size: 16px; -fx-text-fill: #f59e0b; }
-/* ROOT FOOTER */
+.testimonial-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(45,80,22,0.20), 30, 0, 0, 8);
+    -fx-translate-y: -3;
+}
+.testimonial-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: #4a5568;
+    -fx-font-style: italic;
+    -fx-line-spacing: 5;
+}
+.testimonial-author {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e4620;
+}
+.star-filled { -fx-font-size: 20px; -fx-text-fill: #f59e0b; }
 .footer-area {
     -fx-background-color: #1f2a1f; /* dark green */
     -fx-padding: 30;
@@ -367,3 +461,614 @@
     -fx-border-width: 0;
 }
 .act-cta-btn:hover { -fx-background-color: #f0f7ed; }
+/* ── Profile page wrapper ───────────────────────── */
+.profile-page { -fx-padding: 28; -fx-background-color: transparent; }
+
+/* ── Hero ───────────────────────────────────────── */
+.profile-hero {
+    -fx-background-color: #0d3d18;
+    -fx-background-radius: 16;
+    -fx-padding: 32 40 32 40;
+}
+.avatar-circle    { -fx-fill: #2d5a3e; }
+.avatar-initials  { -fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #7ecba1; }
+.profile-greeting { -fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: white; }
+.profile-sub      { -fx-font-size: 13px; -fx-text-fill: rgba(255,255,255,0.8); }
+
+/* ── Info card ──────────────────────────────────── */
+.info-card {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1;
+}
+.info-card-header {
+    -fx-padding: 18 22 18 22;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 0 0 1 0;
+}
+.info-card-title { -fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #0f172a; }
+.info-item       { -fx-padding: 18 22 18 22; }
+.info-item-odd   { -fx-background-color: #f8faf9; }
+.info-item-even  { -fx-background-color: white; }
+.info-icon       {
+    -fx-background-color: #f0fdf4;
+    -fx-background-radius: 10;
+    -fx-min-width: 40; -fx-min-height: 40;
+}
+.info-label { -fx-font-size: 11px; -fx-text-fill: #94a3b8; -fx-font-weight: bold; }
+.info-value { -fx-font-size: 14px; -fx-text-fill: #0f172a; -fx-font-weight: bold; }
+
+/* ── Action cards ───────────────────────────────── */
+.action-card {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1;
+    -fx-padding: 24;
+    -fx-cursor: hand;
+}
+.action-card:hover { -fx-border-color: #2d5016; -fx-background-color: #f8faf9; }
+.action-icon-box  {
+    -fx-min-width: 52; -fx-min-height: 52;
+    -fx-background-radius: 12;
+    -fx-alignment: CENTER;
+}
+.action-icon-green  { -fx-background-color: #dcfce7; }
+.action-icon-blue   { -fx-background-color: #dbeafe; }
+.action-icon-amber  { -fx-background-color: #fef3c7; }
+.action-card-title  { -fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #0f172a; }
+.action-card-sub    { -fx-font-size: 13px; -fx-text-fill: #64748b; }
+.action-card-coming-soon { -fx-font-size: 12px; -fx-text-fill: #94a3b8; -fx-font-style: italic; }
+
+/* ── Form panels ────────────────────────────────── */
+.form-panel {
+    -fx-background-color: white;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1;
+}
+.form-panel-header {
+    -fx-background-color: #0d3d18;
+    -fx-background-radius: 18 18 0 0;
+    -fx-padding: 24 32 24 32;
+}
+.form-panel-title    { -fx-font-size: 17px; -fx-font-weight: bold; -fx-text-fill: white; }
+.form-panel-subtitle { -fx-font-size: 13px; -fx-text-fill: rgba(255,255,255,0.85); }
+.form-panel-body     { -fx-padding: 32; }
+
+/* ── Password panel ─────────────────────────────── */
+.password-panel { -fx-background-color: white; -fx-background-radius: 18; -fx-border-color: #e2e8f0; -fx-border-width: 1; }
+.password-panel-header {
+    -fx-background-color: #1e3a5f;
+    -fx-background-radius: 18 18 0 0;
+    -fx-padding: 28 32 28 32;
+}
+.password-icon-wrap  { -fx-background-color: rgba(255,255,255,0.2); -fx-background-radius: 14; -fx-min-width: 60; -fx-min-height: 60; }
+.password-panel-title    { -fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white; }
+.password-panel-subtitle { -fx-font-size: 13px; -fx-text-fill: rgba(255,255,255,0.85); -fx-text-alignment: CENTER; }
+
+/* ── Security tip ───────────────────────────────── */
+.security-tip      { -fx-background-color: #f0f9ff; -fx-background-radius: 10; -fx-border-color: #bae6fd; -fx-border-width: 1; -fx-border-radius: 10; -fx-padding: 14; }
+.security-tip-text { -fx-font-size: 13px; -fx-text-fill: #0c4a6e; }
+
+/* ── Form inputs ────────────────────────────────── */
+.form-group       { }
+.form-field-label { -fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #374151; }
+.form-input {
+    -fx-background-color: white;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 12 16 12 16;
+    -fx-font-size: 14px;
+}
+.form-input:focused { -fx-border-color: #1a5f2a; }
+.field-error { -fx-font-size: 12px; -fx-text-fill: #ef4444; }
+
+/* ── File upload ────────────────────────────────── */
+.file-upload-box {
+    -fx-background-color: #f8faf9;
+    -fx-border-color: #d1ddc8;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 16;
+}
+.file-upload-hint { -fx-font-size: 12px; -fx-text-fill: #94a3b8; }
+
+/* ── Buttons ────────────────────────────────────── */
+.btn-primary-modern {
+    -fx-background-color: #1a5f2a;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-padding: 13 24 13 24;
+    -fx-cursor: hand;
+}
+.btn-primary-modern:hover { -fx-background-color: #0d3d18; }
+
+.btn-primary-blue {
+    -fx-background-color: #2563eb;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-padding: 13 24 13 24;
+    -fx-cursor: hand;
+}
+.btn-primary-blue:hover { -fx-background-color: #1d4ed8; }
+
+.btn-outline-modern {
+    -fx-background-color: white;
+    -fx-text-fill: #374151;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 13 24 13 24;
+    -fx-cursor: hand;
+}
+.btn-outline-modern:hover { -fx-border-color: #2d5016; -fx-text-fill: #2d5016; }
+
+/* ── Alerts ─────────────────────────────────────── */
+.alert-success {
+    -fx-background-color: #dcfce7;
+    -fx-text-fill: #166534;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-padding: 14 18 14 18;
+    -fx-font-size: 13px;
+}
+/* ═══════════════════════════════════════════════════════
+   hebergements.css  –  EcoTrip JavaFX Front
+   Palette principale : vert forêt #2d5016 / #1e4620
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Page ── */
+.heb-page {
+    -fx-background-color: #f5f7f2;
+}
+
+/* ── HERO ── */
+.heb-hero {
+    -fx-background-color: linear-gradient(to bottom right, #2d5016, #1e4620);
+}
+
+.heb-hero-title {
+    -fx-text-fill: white;
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+}
+
+.heb-hero-sub {
+    -fx-text-fill: rgba(255,255,255,0.92);
+    -fx-font-size: 16px;
+}
+
+/* ── FILTRES container ── */
+.heb-filters-container {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 30, 0, 0, 8);
+    -fx-translate-y: -40;
+    -fx-margin: 0 40 0 40;
+}
+
+.filters-title-bar {
+    -fx-min-width: 4;
+    -fx-pref-width: 4;
+    -fx-pref-height: 22;
+    -fx-background-color: #2d5016;
+    -fx-background-radius: 2;
+}
+
+.filters-section-title {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d5016;
+    -fx-letter-spacing: 1;
+}
+
+/* ── Inputs & Combos ── */
+.heb-filter-input {
+    -fx-background-color: #fafafa;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 2;
+    -fx-border-radius: 14;
+    -fx-background-radius: 14;
+    -fx-padding: 12 16 12 16;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+    -fx-prompt-text-fill: #999;
+    -fx-pref-height: 46;
+}
+
+.heb-filter-input:focused {
+    -fx-border-color: #2d5016;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(45,80,22,0.15), 8, 0, 0, 0);
+}
+
+.heb-filter-input .combo-box-popup .list-cell {
+    -fx-font-weight: 600;
+    -fx-padding: 8 12 8 12;
+}
+
+/* ── Bouton Clear ── */
+.heb-clear-btn {
+    -fx-background-color: white;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 2;
+    -fx-border-radius: 14;
+    -fx-background-radius: 14;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #666;
+    -fx-cursor: hand;
+    -fx-pref-height: 46;
+}
+
+.heb-clear-btn:hover {
+    -fx-border-color: #2d5016;
+    -fx-text-fill: #2d5016;
+}
+
+/* ── Résultats bar ── */
+.heb-results-bar {
+    -fx-background-color: transparent;
+    -fx-translate-y: -20;
+}
+
+.heb-result-count {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d5016;
+}
+
+/* ── ScrollPane ── */
+.heb-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
+    -fx-translate-y: -20;
+}
+
+.heb-scroll > .viewport {
+    -fx-background-color: transparent;
+}
+
+/* ── FlowPane (grille de cartes) ── */
+.heb-cards-pane {
+    -fx-background-color: transparent;
+    -fx-pref-wrap-length: 1000;
+}
+
+/* ═══════════════════════════════════════════════════════
+   CARTE HÉBERGEMENT
+   ═══════════════════════════════════════════════════════ */
+.heb-card {
+    -fx-background-color: white;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.09), 24, 0, 0, 6);
+    -fx-cursor: hand;
+    -fx-pref-width: 320;
+    -fx-max-width: 340;
+}
+
+.heb-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(45,80,22,0.28), 50, 0, 0, 16);
+    -fx-translate-y: -6;
+}
+
+/* Zone image */
+.heb-card-img {
+    -fx-background-color: linear-gradient(to bottom right, #e8f5e9, #c8e6c9);
+    -fx-background-radius: 18 18 0 0;
+    -fx-border-radius: 18 18 0 0;
+    -fx-min-height: 200;
+    -fx-pref-height: 200;
+}
+
+/* Badge éco (label en haut à droite) */
+.heb-card-eco-badge {
+    -fx-background-color: rgba(45,80,22,0.92);
+    -fx-background-radius: 20;
+    -fx-text-fill: white;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 5 14 5 14;
+}
+
+/* Étoiles */
+.heb-card-stars {
+    -fx-text-fill: #ffc107;
+    -fx-font-size: 16px;
+    -fx-padding: 0 0 2 0;
+}
+
+/* Catégorie pill */
+.heb-card-category {
+    -fx-background-color: linear-gradient(to right, #e8f5e9, #c8e6c9);
+    -fx-background-radius: 14;
+    -fx-text-fill: #2d5016;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 5 12 5 12;
+}
+
+/* Nom */
+.heb-card-nom {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1a1a1a;
+    -fx-wrap-text: true;
+}
+
+/* Ville */
+.heb-card-ville {
+    -fx-font-size: 13px;
+    -fx-text-fill: #777;
+}
+
+/* Description */
+.heb-card-desc {
+    -fx-font-size: 13px;
+    -fx-text-fill: #888;
+    -fx-wrap-text: true;
+    -fx-line-spacing: 3;
+}
+
+/* Badge équipement */
+.heb-card-equipement {
+    -fx-background-color: #f8f9fa;
+    -fx-background-radius: 7;
+    -fx-text-fill: #666;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 4 10 4 10;
+}
+
+.heb-card-equipement:hover {
+    -fx-background-color: #e8f5e9;
+    -fx-text-fill: #2d5016;
+}
+
+/* Zone prix */
+.heb-card-price-box {
+    -fx-background-color: linear-gradient(to right, #e8f5e9, #c8e6c9);
+    -fx-background-radius: 12;
+    -fx-padding: 14 18 14 18;
+    -fx-alignment: center;
+}
+
+.heb-card-price-amount {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d5016;
+}
+
+.heb-card-price-currency {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d5016;
+}
+
+.heb-card-price-unit {
+    -fx-font-size: 13px;
+    -fx-text-fill: #666;
+}
+
+.heb-card-price-request {
+    -fx-font-size: 14px;
+    -fx-text-fill: #2d5016;
+    -fx-font-weight: bold;
+}
+
+/* Bouton Réserver */
+.heb-card-btn {
+    -fx-background-color: linear-gradient(to bottom right, #2d5016, #1e4620);
+    -fx-background-radius: 13;
+    -fx-border-radius: 13;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 14 20 14 20;
+    -fx-cursor: hand;
+    -fx-max-width: infinity;
+    -fx-alignment: center;
+}
+
+.heb-card-btn:hover {
+    -fx-background-color: #3a6620;
+    -fx-effect: dropshadow(gaussian, rgba(45,80,22,0.40), 20, 0, 0, 6);
+    -fx-translate-y: -2;
+}
+
+.heb-card-btn:pressed {
+    -fx-translate-y: 0;
+    -fx-effect: none;
+}
+
+/* ── Empty state ── */
+.heb-empty {
+    -fx-alignment: center;
+}
+
+.heb-empty-icon {
+    -fx-font-size: 60px;
+    -fx-text-fill: #cccccc;
+}
+
+.heb-empty-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #888;
+}
+
+.heb-empty-sub {
+    -fx-font-size: 15px;
+    -fx-text-fill: #aaa;
+}
+/* ═══════════════════════════════════════
+   front-footer.css  –  EcoTrip Footer
+   ═══════════════════════════════════════ */
+
+.footer-area {
+    -fx-background-color: #1e4620;
+}
+
+/* Titres */
+.footer-title {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* Texte courant */
+.footer-text {
+    -fx-text-fill: rgba(255, 255, 255, 0.75);
+    -fx-font-size: 12px;
+}
+
+/* Liens navigation */
+.footer-link {
+    -fx-text-fill: rgba(255, 255, 255, 0.75);
+    -fx-border-color: transparent;
+    -fx-font-size: 12px;
+    -fx-padding: 0;
+}
+
+.footer-link:hover {
+    -fx-text-fill: white;
+}
+
+/* Lien auth (connexion/déconnexion) */
+.footer-link-auth {
+    -fx-text-fill: #a5d6a7;
+    -fx-border-color: transparent;
+    -fx-font-size: 12px;
+    -fx-padding: 0;
+}
+
+/* Input newsletter */
+.footer-input {
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-padding: 8 12 8 12;
+    -fx-font-size: 12px;
+}
+
+/* Bouton envoyer */
+.footer-btn-send {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-font-weight: bold;
+    -fx-padding: 8 14 8 14;
+    -fx-cursor: hand;
+}
+
+.footer-btn-send:hover {
+    -fx-background-color: #43A047;
+}
+
+/* Label info newsletter */
+.footer-info-label {
+    -fx-text-fill: #a5d6a7;
+    -fx-font-size: 11px;
+}
+
+/* Boutons réseaux sociaux */
+.footer-btn-fb {
+    -fx-background-color: #3b5998;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-font-size: 11px;
+    -fx-padding: 6 10 6 10;
+    -fx-cursor: hand;
+}
+
+.footer-btn-ig {
+    -fx-background-color: #C13584;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-font-size: 11px;
+    -fx-padding: 6 10 6 10;
+    -fx-cursor: hand;
+}
+
+.footer-btn-tw {
+    -fx-background-color: #1DA1F2;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-font-size: 11px;
+    -fx-padding: 6 10 6 10;
+    -fx-cursor: hand;
+}
+
+.footer-btn-yt {
+    -fx-background-color: #FF0000;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-font-size: 11px;
+    -fx-padding: 6 10 6 10;
+    -fx-cursor: hand;
+}
+
+/* Séparateur */
+.footer-separator {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+    -fx-border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Copyright */
+.footer-copyright {
+    -fx-text-fill: rgba(255, 255, 255, 0.6);
+    -fx-font-size: 12px;
+}
+/* ─── À AJOUTER dans front.css ─── */
+
+/* Pagination bar */
+.heb-pagination {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1 0 0 0;
+}
+
+.heb-page-btn {
+    -fx-background-color: white;
+    -fx-text-fill: #1a3a2a;
+    -fx-border-color: #c6f6d5;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-border-width: 1.5;
+    -fx-font-size: 13.5px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 10 24 10 24;
+}
+
+.heb-page-btn:hover {
+    -fx-background-color: #f0fff4;
+    -fx-border-color: #38a169;
+}
+
+.heb-page-btn:disabled {
+    -fx-opacity: 0.4;
+    -fx-cursor: default;
+}
+
+.heb-page-info {
+    -fx-font-size: 14px;
+    -fx-text-fill: #475569;
+    -fx-font-weight: bold;
+    -fx-min-width: 100px;
+    -fx-alignment: CENTER;
+}
