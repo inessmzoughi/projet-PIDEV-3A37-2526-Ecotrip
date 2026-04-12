@@ -31,6 +31,8 @@ public class BackOfficeShellController {
             case "admin-dashboard"              -> "Dashboard — Vue d'ensemble";
             case "admin-activites"              -> "Module Activités";
             case "admin-transport"              -> "Module Transport";
+            case "admin-chauffeurs"             -> "Chauffeurs";
+            case "admin-transport-categories"   -> "Categories Transport";
             case "admin-boutique"               -> "Module Boutique";
             case "admin-reservations"           -> "Réservations";
             case "admin-users"                  -> "Gestion Utilisateurs";
