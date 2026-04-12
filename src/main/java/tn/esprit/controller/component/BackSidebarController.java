@@ -38,7 +38,6 @@ public class BackSidebarController {
     public void initialize() {
         routeMap = Map.ofEntries(
                 Map.entry(dashboardBtn,        Routes.ADMIN_DASHBOARD),
-                Map.entry(activitesBtn,        Routes.ADMIN_ACTIVITES),
                 Map.entry(listHebergementsBtn, Routes.ADMIN_HEBERGEMENTS),
                 Map.entry(chambresBtn,         Routes.ADMIN_CHAMBRES),
                 Map.entry(equipementsBtn,      Routes.ADMIN_EQUIPEMENTS),
@@ -75,22 +74,27 @@ public class BackSidebarController {
     }
 
     @FXML private void handleDashboard()        { SceneManager.navigateTo(Routes.ADMIN_DASHBOARD); }
-    @FXML private void handleActivites()        { SceneManager.navigateTo(Routes.ADMIN_ACTIVITES); }
+
     @FXML private void handleListHebergements() { SceneManager.navigateTo(Routes.ADMIN_HEBERGEMENTS); }
     @FXML private void handleChambres()         { SceneManager.navigateTo(Routes.ADMIN_CHAMBRES); }
     @FXML private void handleEquipements()      { SceneManager.navigateTo(Routes.ADMIN_EQUIPEMENTS); }
     @FXML private void handleCategories()       { SceneManager.navigateTo(Routes.ADMIN_CATEGORIES_HEBERGEMENT); }
     @FXML private void handleTransport()        { SceneManager.navigateTo(Routes.ADMIN_TRANSPORT); }
+
     @FXML private void handleCommandes()        { SceneManager.navigateTo(Routes.ADMIN_COMMANDE); }
     @FXML private void handleLignesCommande()   { SceneManager.navigateTo(Routes.ADMIN_LIGNE_COMMANDE); }
     @FXML private void handlePaiements()        { SceneManager.navigateTo(Routes.ADMIN_PAIEMENT); }
     @FXML private void handleProduits()         { SceneManager.navigateTo(Routes.ADMIN_PRODUCT); }
-    @FXML private void handleProductsCategory() { SceneManager.navigateTo(Routes.ADMIN_PRODUCT_CATEGORY); }
+    @FXML private void handleProductsCategory() { SceneManager.navigateTo(Routes.ADMIN_PRODUCT_CATEGORY);}
+
     @FXML private void handleReservations()     { SceneManager.navigateTo(Routes.ADMIN_RESERVATIONS); }
     @FXML private void handleUsers()            { SceneManager.navigateTo(Routes.ADMIN_USERS); }
     @FXML private void handleViewSite()         { SceneManager.navigateTo(Routes.HOME); }
+
     @FXML private void handleMonCompte()        { SceneManager.navigateTo(Routes.ADMIN_MON_COMPTE); }
+
     @FXML private void handleLogout()           { SessionManager.getInstance().logout(); }
+
     @FXML private void handleActivities()         { SceneManager.navigateTo(Routes.ADMIN_ACTIVITIES); }
     @FXML private void handleActivityCategories() { SceneManager.navigateTo(Routes.ADMIN_ACTIVITY_CATEGORIES); }
     @FXML private void handleGuides()             { SceneManager.navigateTo(Routes.ADMIN_GUIDES); }
