@@ -270,7 +270,7 @@ public class ListHebergementsController implements Initializable {
         try {
             int hebergementId;
             if (hebergementEnEdition == null) {
-                hebergementId = service.ajouter(new Hebergement(0,
+                hebergementId = service.ajouterAvecId(new Hebergement(0,   // ← ici
                         nomField.getText().trim(),
                         descriptionField.getText().trim(),
                         adresseField.getText().trim(),
