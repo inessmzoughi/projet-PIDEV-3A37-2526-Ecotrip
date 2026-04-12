@@ -4,6 +4,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import tn.esprit.navigation.Routes;
+import tn.esprit.navigation.SceneManager;
 
 import java.awt.Desktop;
 import java.net.URI;
@@ -51,21 +53,14 @@ public class FrontFooterController {
     // =======================
     // NAVIGATION
     // =======================
-    @FXML private void goHome() { navigate("HOME"); }
-    @FXML private void goHebergement() { navigate("HEBERGEMENT"); }
-    @FXML private void goActivites() { navigate("ACTIVITES"); }
-    @FXML private void goTransport() { navigate("TRANSPORT"); }
-    @FXML private void goBoutique() { navigate("BOUTIQUE"); }
-    @FXML private void goAbout() { navigate("ABOUT"); }
-    @FXML private void goContact() { navigate("CONTACT"); }
+    @FXML private void goHome() { SceneManager.navigateTo(Routes.HOME); }
+    @FXML private void goHebergement() { SceneManager.navigateTo(Routes.HEBERGEMENTS); }
+    @FXML private void goActivites() { SceneManager.navigateTo(Routes.ACTIVITES); }
+    @FXML private void goTransport() { SceneManager.navigateTo(Routes.TRANSPORT); }
+    @FXML private void goBoutique() { SceneManager.navigateTo(Routes.FRONT_PRODUCTS); }
+    @FXML private void goAbout() { SceneManager.navigateTo(Routes.ABOUT); }
+    @FXML private void goContact() { SceneManager.navigateTo(Routes.CONTACT); }
 
-    private void navigate(String page) {
-        System.out.println("Navigate to: " + page);
-
-        // TODO: integrate with your JavaFX navigation system
-        // Example:
-        // SceneManager.switchScene("/views/home.fxml");
-    }
 
     // =======================
     // NEWSLETTER
