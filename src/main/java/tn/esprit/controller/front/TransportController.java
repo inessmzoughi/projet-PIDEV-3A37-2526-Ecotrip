@@ -1,13 +1,17 @@
 package tn.esprit.controller.front;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
@@ -16,6 +20,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import tn.esprit.controller.front.modals.TransportReservationController;
 import tn.esprit.models.transport.Transport;
 import tn.esprit.services.transport.TransportService;
 
@@ -140,12 +145,55 @@ public class TransportController implements Initializable {
         action.getStyleClass().add("heb-card-btn");
         action.setDisable(!transport.isDisponible());
         action.setMaxWidth(Double.MAX_VALUE);
+        action.setOnAction(e -> openTransportModal(transport));
+
 
         body.getChildren().addAll(badge, title, category, chauffeur, meta, priceRow, action);
         card.getChildren().add(body);
         return card;
     }
+    private void openTransportModal(Transport transport) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/views/front/modals/TransportReservationModal.fxml")
+            );
+            StackPane modalOverlay = loader.load();
 
+            TransportReservationController ctrl = loader.getController();
+            ctrl.setTransport(transport);
+            ctrl.setOverlayRoot(modalOverlay);
+
+            // 🔥 FIX: handle root safely
+            Parent rootNode = cardsPane.getScene().getRoot();
+
+            StackPane overlayContainer;
+
+            if (rootNode instanceof StackPane) {
+                overlayContainer = (StackPane) rootNode;
+            } else {
+                overlayContainer = new StackPane();
+                Scene scene = rootNode.getScene();
+                overlayContainer.getChildren().add(rootNode);
+                scene.setRoot(overlayContainer);
+            }
+
+            overlayContainer.getChildren().add(modalOverlay);
+
+            // Blur
+            if (!overlayContainer.getChildren().isEmpty()) {
+                overlayContainer.getChildren().get(0)
+                        .setEffect(new GaussianBlur(8));
+            }
+
+            // Remove blur
+            ctrl.setOnCartUpdated(() -> {
+                overlayContainer.getChildren().get(0).setEffect(null);
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     private StackPane buildImageZone(Transport transport) {
         VBox imgBox = new VBox();
         imgBox.getStyleClass().add("heb-card-img");
