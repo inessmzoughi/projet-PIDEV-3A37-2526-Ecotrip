@@ -1,5 +1,6 @@
 package tn.esprit.controller.back.user;
 
+import javafx.scene.chart.PieChart;
 import tn.esprit.models.User;
 import tn.esprit.models.enums.Role;
 import tn.esprit.navigation.Routes;
@@ -26,6 +27,9 @@ public class UserController implements Initializable {
 
     /* ─── Stats ─── */
     @FXML private Label statTotal, statAdmins, statUsers, statVerified;
+    // Charts
+    @FXML private PieChart chartRoles;
+    @FXML private PieChart chartVerified;
 
     /* ─── Form ─── */
     @FXML private Label    formIcon, formTitle, formSubtitle;
@@ -215,6 +219,15 @@ public class UserController implements Initializable {
         statAdmins.setText(String.valueOf(service.countByRole(Role.ROLE_ADMIN)));
         statUsers.setText(String.valueOf(service.countByRole(Role.ROLE_USER)));
         statVerified.setText(String.valueOf(service.countVerifiedUsers()));
+
+        chartRoles.getData().setAll(
+                new PieChart.Data("Utilisateurs", service.countByRole(Role.ROLE_USER)),
+                new PieChart.Data("Administrateurs", service.countByRole(Role.ROLE_ADMIN))
+        );
+        chartVerified.getData().setAll(
+                new PieChart.Data("Vérifiés", service.countVerifiedUsers()),
+                new PieChart.Data("Non vérifiés", service.countUsers() - service.countVerifiedUsers())
+        );
     }
 
     private void renderTable() {

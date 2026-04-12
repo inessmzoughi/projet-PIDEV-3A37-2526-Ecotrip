@@ -1,0 +1,186 @@
+/* ── ACTIVITY MODULE EXTRA STYLES ─────────────────── */
+
+/* Card grid for table replacement */
+.card-grid {
+    -fx-background-color: transparent;
+    -fx-hgap: 14;
+    -fx-vgap: 14;
+    -fx-padding: 4;
+}
+
+.entity-card {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: #e8f5ee;
+    -fx-border-width: 1.5;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);
+    -fx-cursor: hand;
+}
+
+.entity-card:hover {
+    -fx-border-color: #38a169;
+    -fx-effect: dropshadow(gaussian, rgba(56,161,105,0.15), 12, 0, 0, 4);
+}
+
+.entity-card-selected {
+    -fx-border-color: #38a169;
+    -fx-border-width: 2;
+    -fx-background-color: #f0fff4;
+}
+
+.card-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e293b;
+}
+
+.card-subtitle {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+}
+
+.card-tag {
+    -fx-background-color: #f0fff4;
+    -fx-text-fill: #2d7a50;
+    -fx-background-radius: 20;
+    -fx-padding: 3 10 3 10;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.card-tag-blue {
+    -fx-background-color: #eff6ff;
+    -fx-text-fill: #1d4ed8;
+    -fx-background-radius: 20;
+    -fx-padding: 3 10 3 10;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.card-tag-orange {
+    -fx-background-color: #fff7ed;
+    -fx-text-fill: #c2410c;
+    -fx-background-radius: 20;
+    -fx-padding: 3 10 3 10;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.btn-card-edit {
+    -fx-background-color: #f0fff4;
+    -fx-text-fill: #2d7a50;
+    -fx-background-radius: 8;
+    -fx-border-color: #c6f6d5;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 6 14 6 14;
+}
+
+.btn-card-edit:hover { -fx-background-color: #c6f6d5; }
+
+.btn-card-del {
+    -fx-background-color: #fef2f2;
+    -fx-text-fill: #ef4444;
+    -fx-background-radius: 8;
+    -fx-border-color: #fecaca;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 6 14 6 14;
+}
+
+.btn-card-del:hover { -fx-background-color: #fecaca; }
+
+/* Icon picker */
+.icon-picker-btn {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-border-width: 1.5;
+    -fx-font-size: 22px;
+    -fx-cursor: hand;
+    -fx-min-width: 48px;
+    -fx-min-height: 48px;
+    -fx-padding: 4;
+}
+
+.icon-picker-btn:hover {
+    -fx-border-color: #38a169;
+    -fx-background-color: #f0fff4;
+}
+
+.icon-option-btn {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: transparent;
+    -fx-background-radius: 8;
+    -fx-font-size: 20px;
+    -fx-cursor: hand;
+    -fx-min-width: 42px;
+    -fx-min-height: 42px;
+    -fx-padding: 4;
+}
+
+.icon-option-btn:hover {
+    -fx-background-color: #f0fff4;
+    -fx-border-color: #38a169;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 8;
+}
+
+/* Photo upload */
+.photo-upload-btn {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #38a169;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-border-width: 1.5;
+    -fx-border-style: dashed;
+    -fx-text-fill: #38a169;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 12 20 12 20;
+}
+
+.photo-upload-btn:hover {
+    -fx-background-color: #f0fff4;
+}
+
+.photo-preview {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1;
+}
+
+/* Badge active/inactive */
+.badge-actif {
+    -fx-background-color: #dcfce7;
+    -fx-text-fill: #166534;
+    -fx-background-radius: 20;
+    -fx-padding: 3 10 3 10;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.badge-inactif {
+    -fx-background-color: #fee2e2;
+    -fx-text-fill: #991b1b;
+    -fx-background-radius: 20;
+    -fx-padding: 3 10 3 10;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+/* Rating stars */
+.rating-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #f59e0b;
+}
