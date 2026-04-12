@@ -16,6 +16,13 @@ import org.example.services.activity.ActivityCategoryService;
 import org.example.services.activity.ActivityService;
 import org.example.services.activity.GuideService;
 
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.*;
@@ -36,6 +43,9 @@ public class ListActivitiesController implements Initializable {
     @FXML private Label     errTitle, errPrice, errDuration, errLocation,
             errCategory, errDescription, charCount;
     @FXML private Button submitBtn;
+    @FXML private ImageView photoPreview;
+    @FXML private Label photoLabel;
+    private String selectedPhotoPath = null;
 
     /* ─── Table ─── */
     @FXML private TextField searchField;
@@ -242,6 +252,22 @@ public class ListActivitiesController implements Initializable {
                 setGraphic(empty ? null : box);
             }
         });
+    }
+
+    @FXML private void onChoosePhoto() {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Choisir une photo");
+        chooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Images", "*.jpg", "*.jpeg", "*.png", "*.webp")
+        );
+        Stage stage = (Stage) titleField.getScene().getWindow();
+        File file = chooser.showOpenDialog(stage);
+        if (file != null) {
+            selectedPhotoPath = file.toURI().toString();
+            imageField.setText(file.getAbsolutePath());
+            photoPreview.setImage(new Image(selectedPhotoPath, 80, 80, true, true));
+            photoLabel.setText("✅ " + file.getName());
+        }
     }
 
     /* ─── Validation ─── */

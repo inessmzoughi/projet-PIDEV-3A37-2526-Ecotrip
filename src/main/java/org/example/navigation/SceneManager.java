@@ -38,7 +38,7 @@ public class SceneManager {
         frontRoutes.put(Routes.HOME,              "/views/front/home.fxml");
         frontRoutes.put(Routes.ABOUT,             "/views/front/about.fxml");
         frontRoutes.put(Routes.HEBERGEMENTS,      "/views/front/hebergements.fxml");
-        frontRoutes.put(Routes.ACTIVITES,         "/views/front/activites.fxml");
+        frontRoutes.put(Routes.ACTIVITES,         "/views/front/activities.fxml");
         frontRoutes.put(Routes.TRANSPORT,         "/views/front/transport.fxml");
         frontRoutes.put(Routes.BOUTIQUE,          "/views/front/boutique.fxml");
         frontRoutes.put(Routes.CONTACT,           "/views/front/contact.fxml");

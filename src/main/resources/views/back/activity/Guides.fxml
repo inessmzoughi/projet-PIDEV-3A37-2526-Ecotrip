@@ -2,6 +2,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.*?>
+<?import javafx.scene.image.ImageView?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
@@ -14,7 +15,7 @@
                 <VBox styleClass="page-body" spacing="24">
                     <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
 
-                    <!-- Breadcrumb + Title -->
+                    <!-- Breadcrumb -->
                     <VBox spacing="4">
                         <HBox spacing="4">
                             <Button text="Dashboard" styleClass="breadcrumb-link" onAction="#onNavDashboard"/>
@@ -26,7 +27,7 @@
                         <Label text="Gestion des Guides" styleClass="page-title"/>
                     </VBox>
 
-                    <!-- Stat Cards -->
+                    <!-- Stats -->
                     <HBox spacing="20">
                         <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
                             <HBox spacing="12" alignment="CENTER_LEFT">
@@ -74,7 +75,7 @@
                             <VBox styleClass="form-body" spacing="14">
                                 <padding><Insets top="20" right="20" bottom="16" left="20"/></padding>
 
-                                <!-- First + Last name -->
+                                <!-- Prénom + Nom -->
                                 <HBox spacing="12">
                                     <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
                                         <Label text="👤 Prénom *" styleClass="form-label"/>
@@ -128,10 +129,22 @@
                                     <Label fx:id="charCount" text="0 / 5000 caractères" styleClass="char-count"/>
                                 </VBox>
 
-                                <!-- Photo -->
-                                <VBox spacing="5" styleClass="form-group">
-                                    <Label text="🖼️ Photo (URL)" styleClass="form-label"/>
-                                    <TextField fx:id="photoField" promptText="Ex: https://…"
+                                <!-- Photo Upload -->
+                                <VBox spacing="8" styleClass="form-group">
+                                    <Label text="🖼️ Photo du guide" styleClass="form-label"/>
+                                    <HBox spacing="12" alignment="CENTER_LEFT">
+                                        <ImageView fx:id="photoPreview"
+                                                   fitWidth="60" fitHeight="60"
+                                                   preserveRatio="true"/>
+                                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                            <Button text="📁 Choisir une photo"
+                                                    styleClass="photo-upload-btn"
+                                                    onAction="#onChoosePhoto" maxWidth="Infinity"/>
+                                            <Label fx:id="photoLabel" text="Aucune photo sélectionnée"
+                                                   styleClass="card-subtitle"/>
+                                        </VBox>
+                                    </HBox>
+                                    <TextField fx:id="photoField" promptText="Ou coller une URL image"
                                                styleClass="form-input"/>
                                 </VBox>
 
@@ -163,7 +176,7 @@
                                         <TableColumn fx:id="colName"   text="Nom complet" prefWidth="160"/>
                                         <TableColumn fx:id="colEmail"  text="Email"       prefWidth="180"/>
                                         <TableColumn fx:id="colPhone"  text="Téléphone"   prefWidth="120"/>
-                                        <TableColumn fx:id="colRating" text="Note"        prefWidth="70"/>
+                                        <TableColumn fx:id="colRating" text="Note"        prefWidth="80"/>
                                         <TableColumn fx:id="colActions" text="Actions"    prefWidth="160"/>
                                     </columns>
                                     <placeholder>
