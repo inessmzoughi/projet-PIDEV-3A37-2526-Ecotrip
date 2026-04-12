@@ -53,7 +53,7 @@ public class FrontNavbarController {
     @FXML private void handleHeberg()       { SceneManager.navigateTo(Routes.HEBERGEMENTS); }
     @FXML private void handleActivites()    { SceneManager.navigateTo(Routes.ACTIVITES); }
     @FXML private void handleTransport()    { SceneManager.navigateTo(Routes.TRANSPORT); }
-    @FXML private void handleBoutique()     { SceneManager.navigateTo(Routes.BOUTIQUE); }
+    @FXML private void handleBoutique()     { SceneManager.navigateTo(Routes.FRONT_PRODUCTS); }
     @FXML private void handleContact()      { SceneManager.navigateTo(Routes.CONTACT); }
     @FXML private void handleReservations() { SceneManager.navigateTo(Routes.MES_RESERVATIONS); }
     @FXML private void handleMonCompte()    {
