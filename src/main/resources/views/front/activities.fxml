@@ -5,7 +5,7 @@
 
 <!-- Front-shell injects this into the scrollable content area -->
 <VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.controller.front.ActivitiesController"
+      fx:controller="tn.esprit.controller.front.ActivitiesController"
       spacing="0">
 
     <!-- ══ HERO BANNER ══════════════════════════════════════════ -->

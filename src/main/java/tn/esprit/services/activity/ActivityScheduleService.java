@@ -1,7 +1,7 @@
 package tn.esprit.services.activity;
 
-import org.example.models.activity.ActivitySchedule;
-import org.example.repository.activity.ActivityScheduleRepository;
+import tn.esprit.models.activity.ActivitySchedule;
+import tn.esprit.repository.activity.ActivityScheduleRepository;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;

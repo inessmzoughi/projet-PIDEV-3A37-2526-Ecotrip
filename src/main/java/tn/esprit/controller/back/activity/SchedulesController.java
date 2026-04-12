@@ -7,12 +7,12 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
-import org.example.models.activity.Activity;
-import org.example.models.activity.ActivitySchedule;
-import org.example.navigation.Routes;
-import org.example.navigation.SceneManager;
-import org.example.services.activity.ActivityScheduleService;
-import org.example.services.activity.ActivityService;
+import tn.esprit.models.activity.Activity;
+import tn.esprit.models.activity.ActivitySchedule;
+import tn.esprit.navigation.Routes;
+import tn.esprit.navigation.SceneManager;
+import tn.esprit.services.activity.ActivityScheduleService;
+import tn.esprit.services.activity.ActivityService;
 
 import java.net.URL;
 import java.sql.SQLException;
