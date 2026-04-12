@@ -1,5 +1,6 @@
 package tn.esprit.services.hebergement;
 
+import tn.esprit.interfaces.I_service;
 import tn.esprit.models.Chambre;
 import tn.esprit.database.Base;
 
@@ -7,9 +8,10 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Chambre_service {
+public class Chambre_service implements I_service<Chambre> {
 
     private final Connection connection = Base.getInstance().getConnection();
+
     private void setChambreParams(PreparedStatement ps, Chambre c, boolean withId) throws SQLException {
         ps.setString(1, c.getNumero());
         ps.setString(2, c.getType());
@@ -18,26 +20,22 @@ public class Chambre_service {
         ps.setString(5, c.getDescription());
         ps.setInt(6, c.getDisponible());
         ps.setInt(7, c.getHebergement_id());
-
-        if (withId) {
-            ps.setInt(8, c.getId());
-        }
+        if (withId) ps.setInt(8, c.getId());
     }
 
+    @Override
     public void ajouter(Chambre c) throws SQLException {
         String sql = "INSERT INTO chambre (numero, type, capacite, prix_par_nuit, description, disponible, hebergement_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
-
         PreparedStatement ps = connection.prepareStatement(sql);
         setChambreParams(ps, c, false);
-
         ps.executeUpdate();
     }
+
+    @Override
     public List<Chambre> getAll() throws SQLException {
         List<Chambre> list = new ArrayList<>();
         ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM chambre");
-        while (rs.next()) {
-            list.add(mapResultSet(rs));
-        }
+        while (rs.next()) list.add(mapResultSet(rs));
         return list;
     }
 
@@ -49,7 +47,7 @@ public class Chambre_service {
         while (rs.next()) list.add(mapResultSet(rs));
         return list;
     }
-    @SuppressWarnings("unused")
+
     public Chambre getById(int id) throws SQLException {
         PreparedStatement ps = connection.prepareStatement("SELECT * FROM chambre WHERE id = ?");
         ps.setInt(1, id);
@@ -58,15 +56,15 @@ public class Chambre_service {
         return null;
     }
 
+    @Override
     public void modifier(Chambre c) throws SQLException {
         String sql = "UPDATE chambre SET numero=?, type=?, capacite=?, prix_par_nuit=?, description=?, disponible=?, hebergement_id=? WHERE id=?";
-
         PreparedStatement ps = connection.prepareStatement(sql);
         setChambreParams(ps, c, true);
-
         ps.executeUpdate();
     }
 
+    @Override
     public void supprimer(int id) throws SQLException {
         PreparedStatement ps = connection.prepareStatement("DELETE FROM chambre WHERE id = ?");
         ps.setInt(1, id);
