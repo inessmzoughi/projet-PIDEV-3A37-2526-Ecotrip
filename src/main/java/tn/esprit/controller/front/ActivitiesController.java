@@ -1,4 +1,4 @@
-package org.example.controller.front;
+package tn.esprit.controller.front;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -6,12 +6,12 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
-import org.example.models.activity.Activity;
-import org.example.models.activity.ActivityCategory;
-import org.example.navigation.SceneManager;
-import org.example.navigation.Routes;
-import org.example.services.activity.ActivityService;
-import org.example.services.activity.ActivityCategoryService;
+import tn.esprit.models.activity.Activity;
+import tn.esprit.models.activity.ActivityCategory;
+import tn.esprit.navigation.SceneManager;
+import tn.esprit.navigation.Routes;
+import tn.esprit.services.activity.ActivityService;
+import tn.esprit.services.activity.ActivityCategoryService;
 
 import java.net.URL;
 import java.util.ArrayList;
