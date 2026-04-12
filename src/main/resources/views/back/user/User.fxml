@@ -3,6 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.*?>
 
+<?import javafx.scene.chart.PieChart?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="tn.esprit.controller.back.user.UserController"
@@ -63,6 +64,24 @@
                             </HBox>
                         </VBox>
                     </HBox>
+
+                    <!-- CHARTS ROW -->
+                    <GridPane hgap="20" vgap="0">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="50"/>
+                        </columnConstraints>
+                        <VBox styleClass="chart-card" GridPane.columnIndex="0" spacing="10">
+                            <Label text="Répartition par rôle" styleClass="chart-title"/>
+                            <PieChart fx:id="chartRoles" prefHeight="200"
+                                      animated="false" labelsVisible="true"/>
+                        </VBox>
+                        <VBox styleClass="chart-card" GridPane.columnIndex="1" spacing="10">
+                            <Label text="Statut de vérification" styleClass="chart-title"/>
+                            <PieChart fx:id="chartVerified" prefHeight="200"
+                                      animated="false" labelsVisible="true"/>
+                        </VBox>
+                    </GridPane>
 
                     <HBox spacing="24">
 
