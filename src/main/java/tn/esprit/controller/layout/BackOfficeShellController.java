@@ -41,6 +41,10 @@ public class BackOfficeShellController {
             case "admin-categories-hebergement" -> "Catégories d'Hébergement";
             case "admin-chambres"               -> "Chambres";
             case "admin-equipements"            -> "Équipements";
+            case "admin-activities"           -> "Activités";
+            case "admin-activity-categories"  -> "Catégories d'Activités";
+            case "admin-guides"               -> "Guides";
+            case "admin-schedules"            -> "Plannings";
             default                             -> "EcoTrip Admin";
         };
     }
