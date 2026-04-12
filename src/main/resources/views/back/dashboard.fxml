@@ -86,7 +86,7 @@
                     <Label text="📅" styleClass="mstat-icon" style="-fx-text-fill:#16a34a;"/>
                     <Label fx:id="mstatTotalActivites" text="0" styleClass="mstat-number"/>
                     <Label text="Total Activités" styleClass="mstat-label"/>
-                    <Button text="Voir tout →" onAction="#handleViewActivites" styleClass="mstat-link"/>
+<!--                    <Button text="Voir tout →" onAction="#handleViewActivites" styleClass="mstat-link"/>-->
                 </VBox>
                 <VBox styleClass="module-stat" GridPane.columnIndex="1" spacing="4">
                     <Label text="✅" styleClass="mstat-icon" style="-fx-text-fill:#2563eb;"/>
@@ -126,10 +126,10 @@
                             <ColumnConstraints percentWidth="50"/>
                             <ColumnConstraints percentWidth="50"/>
                         </columnConstraints>
-                        <Button text="+ Nouvelle Activité"   onAction="#handleNewActivite"   styleClass="action-btn action-primary"   maxWidth="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                        <Button text="+ Nouvelle Catégorie"  onAction="#handleNewCatActivite" styleClass="action-btn action-warning"   maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
-                        <Button text="+ Nouvel Horaire"      onAction="#handleNewHoraire"     styleClass="action-btn action-info"      maxWidth="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                        <Button text="+ Nouveau Guide"       onAction="#handleNewGuide"       styleClass="action-btn action-secondary" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+<!--                        <Button text="+ Nouvelle Activité"   onAction="#handleNewActivite"   styleClass="action-btn action-primary"   maxWidth="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="0"/>-->
+<!--                        <Button text="+ Nouvelle Catégorie"  onAction="#handleNewCatActivite" styleClass="action-btn action-warning"   maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="0"/>-->
+<!--                        <Button text="+ Nouvel Horaire"      onAction="#handleNewHoraire"     styleClass="action-btn action-info"      maxWidth="Infinity" GridPane.columnIndex="0" GridPane.rowIndex="1"/>-->
+<!--                        <Button text="+ Nouveau Guide"       onAction="#handleNewGuide"       styleClass="action-btn action-secondary" maxWidth="Infinity" GridPane.columnIndex="1" GridPane.rowIndex="1"/>-->
                     </GridPane>
                 </VBox>
             </GridPane>
