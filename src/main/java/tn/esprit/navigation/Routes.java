@@ -11,14 +11,11 @@ public class Routes {
     public static final String HEBERGEMENTS   = "hebergements";
     public static final String ACTIVITES      = "activites";
     public static final String TRANSPORT      = "transport";
-    public static final String BOUTIQUE       = "boutique";
     public static final String PANIER       = "panier";
     public static final String CONTACT        = "contact";
     public static final String MES_RESERVATIONS = "mes-reservations";
 
     public static final String FRONT_MON_COMPTE      = "front-mon-compte";
-    public static final String FRONT_UPDATE_ACCOUNT  = "front-update-account";
-    public static final String FRONT_CHANGE_PASSWORD = "front-change-password";
     //frontoffice produit
     public static final String FRONT_PRODUCTS = "front-products";
 

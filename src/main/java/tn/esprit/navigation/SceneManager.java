@@ -40,13 +40,10 @@ public class SceneManager {
         frontRoutes.put(Routes.HEBERGEMENTS,      "/views/front/hebergements.fxml");
         frontRoutes.put(Routes.ACTIVITES,         "/views/front/activites.fxml");
         frontRoutes.put(Routes.TRANSPORT,         "/views/front/transport.fxml");
-        frontRoutes.put(Routes.BOUTIQUE,          "/views/front/boutique.fxml");
+        frontRoutes.put(Routes.FRONT_PRODUCTS, "/views/front/produit/Products.fxml");
         frontRoutes.put(Routes.CONTACT,           "/views/front/contact.fxml");
         frontRoutes.put(Routes.MES_RESERVATIONS,  "/views/front/mes-reservations.fxml");
         frontRoutes.put(Routes.FRONT_MON_COMPTE,      "/views/compte/mon-compte.fxml");
-        frontRoutes.put(Routes.FRONT_UPDATE_ACCOUNT,  "/views/compte/update-account.fxml");
-        frontRoutes.put(Routes.FRONT_CHANGE_PASSWORD, "/views/compte/change-password.fxml");
-        frontRoutes.put(Routes.FRONT_PRODUCTS, "/views/front/produit/Products.fxml");
 //*****************back
         backRoutes.put(Routes.ADMIN_DASHBOARD,    "/views/back/dashboard.fxml");
         backRoutes.put(Routes.ADMIN_ACTIVITES,    "/views/back/activites.fxml");
