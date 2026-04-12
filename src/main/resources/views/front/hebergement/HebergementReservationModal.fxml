@@ -4,7 +4,7 @@
 <?import javafx.geometry.*?>
 
 <VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="tn.esprit.controller.front.HebergementReservationController"
+      fx:controller="tn.esprit.controller.front.reservation.HebergementReservationController"
       styleClass="modal-overlay"
       alignment="CENTER">
 
