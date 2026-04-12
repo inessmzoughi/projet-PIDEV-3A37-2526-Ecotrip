@@ -22,6 +22,11 @@ public class BackSidebarController {
     @FXML private Button reservationsBtn;
     @FXML private Button usersBtn;
     @FXML private Button monCompteBtn;
+    @FXML private Button boutiqueBtn1;
+    @FXML private Button boutiqueBtn2;
+    @FXML private Button boutiqueBtn3;
+    @FXML private Button boutiqueBtn31;
+    @FXML private Button boutiqueBtn321;
 
     private Map<Button, String> routeMap;
 
@@ -36,7 +41,11 @@ public class BackSidebarController {
                 Map.entry(equipementsBtn,       Routes.ADMIN_EQUIPEMENTS),
                 Map.entry(categoriesBtn,        Routes.ADMIN_CATEGORIES_HEBERGEMENT),
                 Map.entry(transportBtn,         Routes.ADMIN_TRANSPORT),
-                Map.entry(boutiqueBtn,          Routes.ADMIN_BOUTIQUE),
+                Map.entry(boutiqueBtn1,          Routes.ADMIN_COMMANDE),
+                Map.entry(boutiqueBtn3,          Routes.ADMIN_LIGNE_COMMANDE),
+                Map.entry(boutiqueBtn31,          Routes.ADMIN_PAIEMENT),
+                Map.entry(boutiqueBtn2,          Routes.ADMIN_PRODUCT),
+                Map.entry(boutiqueBtn321,          Routes.ADMIN_PRODUCT_CATEGORY),
                 Map.entry(reservationsBtn,      Routes.ADMIN_RESERVATIONS),
                 Map.entry(usersBtn,             Routes.ADMIN_USERS),
                 Map.entry(monCompteBtn,         Routes.ADMIN_MON_COMPTE)
@@ -58,7 +67,11 @@ public class BackSidebarController {
     @FXML private void handleEquipements()  { SceneManager.navigateTo(Routes.ADMIN_EQUIPEMENTS); }
     @FXML private void handleCategories()   { SceneManager.navigateTo(Routes.ADMIN_CATEGORIES_HEBERGEMENT); }
     @FXML private void handleTransport()    { SceneManager.navigateTo(Routes.ADMIN_TRANSPORT); }
-    @FXML private void handleBoutique()     { SceneManager.navigateTo(Routes.ADMIN_BOUTIQUE); }
+    @FXML private void handleCommandes()     { SceneManager.navigateTo(Routes.ADMIN_COMMANDE); }
+    @FXML private void handleLignesCommande()     { SceneManager.navigateTo(Routes.ADMIN_LIGNE_COMMANDE); }
+    @FXML private void handlePaiements()     { SceneManager.navigateTo(Routes.ADMIN_PAIEMENT); }
+    @FXML private void handleProduits()     { SceneManager.navigateTo(Routes.ADMIN_PRODUCT); }
+    @FXML private void handleProductsCategory()     { SceneManager.navigateTo(Routes.ADMIN_PRODUCT_CATEGORY); }
     @FXML private void handleReservations() { SceneManager.navigateTo(Routes.ADMIN_RESERVATIONS); }
     @FXML private void handleUsers()        { SceneManager.navigateTo(Routes.ADMIN_USERS); }
     @FXML private void handleViewSite()     { SceneManager.navigateTo(Routes.HOME); }

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane styleClass="root-pane" stylesheets="@../css/ecotrip.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.esprit.controller.back.produit.PaymentController">
+
+
+    <!-- ═══ CENTER ═══ -->
+    <center>
+        <VBox styleClass="main-content">
+
+            <!-- Topbar -->
+            <HBox alignment="CENTER_LEFT" spacing="16" styleClass="topbar">
+                <Label styleClass="topbar-title" text="💳 Paiements" HBox.hgrow="ALWAYS" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Label styleClass="topbar-email" text="admin@ecotrip.tn" />
+                <Button onAction="#onLogout" styleClass="btn-logout" text="Déconnexion" />
+            </HBox>
+
+            <!-- Page Body -->
+            <ScrollPane fitToWidth="true" styleClass="scroll-pane" VBox.vgrow="ALWAYS">
+                <VBox spacing="20" styleClass="page-body">
+                    <padding><Insets bottom="32" left="32" right="32" top="32" /></padding>
+
+                    <!-- Breadcrumb + Title -->
+                    <VBox spacing="4">
+                        <HBox spacing="4">
+                            <Label styleClass="breadcrumb-link" text="Dashboard" />
+                            <Label styleClass="breadcrumb-sep" text=" › " />
+                            <Label styleClass="breadcrumb-link" text="Gestion" />
+                            <Label styleClass="breadcrumb-sep" text=" › " />
+                            <Label styleClass="breadcrumb-active" text="Paiements" />
+                        </HBox>
+                        <Label styleClass="page-title" text="Gestion des Paiements" />
+                    </VBox>
+
+                    <!-- Stat Cards -->
+                    <HBox spacing="16">
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT" spacing="12">
+                                <Label styleClass="stat-icon stat-icon-green" text="💳" />
+                                <VBox spacing="2">
+                                    <Label styleClass="stat-label" text="Total Paiements" />
+                                    <Label fx:id="statTotal" styleClass="stat-value" text="0" />
+                                    <Label styleClass="stat-sub" text="enregistrés" />
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT" spacing="12">
+                                <Label styleClass="stat-icon stat-icon-blue" text="💰" />
+                                <VBox spacing="2">
+                                    <Label styleClass="stat-label" text="Montant Total" />
+                                    <Label fx:id="statCA" styleClass="stat-value" text="—" />
+                                    <Label styleClass="stat-sub" text="DT encaissés" />
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT" spacing="12">
+                                <Label styleClass="stat-icon stat-icon-purple" text="✅" />
+                                <VBox spacing="2">
+                                    <Label styleClass="stat-label" text="Complétés" />
+                                    <Label fx:id="statCompleted" styleClass="stat-value" text="0" />
+                                    <Label styleClass="stat-sub" text="paiements réussis" />
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT" spacing="12">
+                                <Label styleClass="stat-icon stat-icon-orange" text="⏳" />
+                                <VBox spacing="2">
+                                    <Label styleClass="stat-label" text="En attente" />
+                                    <Label fx:id="statPending" styleClass="stat-value" text="0" />
+                                    <Label styleClass="stat-sub" text="paiements pending" />
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                    </HBox>
+
+                    <!-- FORM PANEL -->
+                    <VBox fx:id="formPanel" managed="false" spacing="0" styleClass="form-card inline-form-panel" visible="false">
+
+                        <HBox alignment="CENTER_LEFT" spacing="10" styleClass="cat-form-header">
+                            <Label fx:id="formPanelTitle" styleClass="cat-form-title" text="💳 Nouveau Paiement" HBox.hgrow="ALWAYS" />
+                            <Button onAction="#onCloseForm" styleClass="fp-close-btn" text="✕" />
+                        </HBox>
+
+                        <VBox spacing="16" styleClass="form-body">
+                            <padding><Insets bottom="12" left="24" right="24" top="20" /></padding>
+
+                            <!-- Row 1: Montant + Méthode -->
+                            <HBox spacing="16">
+                                <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                    <Label styleClass="form-label" text="Montant (DT) *" />
+                                    <TextField fx:id="amountField" promptText="Ex: 150.00" styleClass="form-input" />
+                                </VBox>
+                                <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                    <Label styleClass="form-label" text="Méthode de paiement *" />
+                                    <ComboBox fx:id="methodCombo" maxWidth="Infinity" promptText="-- Sélectionner --" styleClass="sort-select" />
+                                </VBox>
+                            </HBox>
+
+                            <!-- Row 2: Statut + Date de paiement -->
+                            <HBox spacing="16">
+                                <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                    <Label styleClass="form-label" text="Statut *" />
+                                    <ComboBox fx:id="statusCombo" maxWidth="Infinity" promptText="-- Sélectionner --" styleClass="sort-select" />
+                                </VBox>
+                                <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                    <Label styleClass="form-label" text="Date de paiement" />
+                                    <DatePicker fx:id="paidAtPicker" maxWidth="Infinity" styleClass="form-input" />
+                                </VBox>
+                            </HBox>
+
+                            <!-- Row 3: Transaction ID + Réservation ID -->
+                            <HBox spacing="16">
+                                <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                    <Label styleClass="form-label" text="Transaction ID *" />
+                                    <TextField fx:id="transactionIdField" promptText="Ex: 98765" styleClass="form-input" />
+                                </VBox>
+                                <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                    <Label styleClass="form-label" text="Réservation ID *" />
+                                    <TextField fx:id="reservationIdField" promptText="Ex: 12" styleClass="form-input" />
+                                </VBox>
+                            </HBox>
+                        </VBox>
+
+                        <HBox alignment="CENTER_RIGHT" spacing="10" styleClass="form-footer">
+                            <Button onAction="#onCloseForm" styleClass="btn-cancel" text="Annuler" />
+                            <Button onAction="#onSave" styleClass="btn-submit" text="💾 Enregistrer" />
+                        </HBox>
+                    </VBox>
+
+                    <!-- Action Bar -->
+                    <HBox alignment="CENTER_LEFT" spacing="12" styleClass="action-bar">
+                        <Button onAction="#onOpenForm" styleClass="btn-primary" text="＋ Ajouter un paiement" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <HBox alignment="CENTER_LEFT" spacing="6" styleClass="search-wrap">
+                            <Label styleClass="search-icon" text="🔍" />
+                            <TextField fx:id="searchField" onKeyReleased="#onSearch" prefWidth="220" promptText="Rechercher…" styleClass="search-input" />
+                        </HBox>
+                        <ComboBox fx:id="filterStatus" onAction="#onSearch" prefWidth="170" promptText="Tous les statuts" styleClass="sort-select" />
+                        <ComboBox fx:id="sortCombo" onAction="#onSearch" prefWidth="170" promptText="Trier par…" styleClass="sort-select" />
+                    </HBox>
+
+                    <!-- Table Card -->
+                    <VBox spacing="0" styleClass="table-card">
+                        <HBox alignment="CENTER_LEFT" spacing="8" styleClass="table-card-header">
+                            <Label styleClass="table-card-title" text="💳 Liste des Paiements" HBox.hgrow="ALWAYS" />
+                            <Label fx:id="badgeCount" styleClass="badge badge-green" text="0" />
+                        </HBox>
+
+                        <TableView fx:id="tableView" styleClass="main-table" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="colIndex" prefWidth="50" text="#" />
+                                <TableColumn fx:id="colAmount" prefWidth="130" text="Montant (DT)" />
+                                <TableColumn fx:id="colMethod" prefWidth="130" text="Méthode" />
+                                <TableColumn fx:id="colStatus" prefWidth="120" text="Statut" />
+                                <TableColumn fx:id="colPaidAt" prefWidth="150" text="Payé le" />
+                                <TableColumn fx:id="colTransactionId" prefWidth="120" text="Transaction ID" />
+                                <TableColumn fx:id="colReservationId" prefWidth="120" text="Réservation" />
+                                <TableColumn fx:id="colCreatedAt" prefWidth="150" text="Créé le" />
+                                <TableColumn fx:id="colActions" prefWidth="180" text="Actions" />
+                            </columns>
+                            <placeholder>
+                                <VBox alignment="CENTER" spacing="8" styleClass="empty-state">
+                                    <Label styleClass="empty-icon" text="💳" />
+                                    <Label styleClass="empty-label" text="Aucun paiement trouvé." />
+                                </VBox>
+                            </placeholder>
+                        </TableView>
+                    </VBox>
+
+                </VBox>
+            </ScrollPane>
+        </VBox>
+    </center>
+
+</BorderPane>
