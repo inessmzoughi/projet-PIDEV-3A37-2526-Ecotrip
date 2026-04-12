@@ -1,4 +1,4 @@
-package tn.esprit.controller.front;
+package tn.esprit.controller.front.reservation;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
