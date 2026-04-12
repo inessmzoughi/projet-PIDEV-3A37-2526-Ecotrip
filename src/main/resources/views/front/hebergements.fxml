@@ -87,7 +87,7 @@
         </HBox>
 
         <!-- ══ FOOTER ══ -->
-        <fx:include source="../../components/front-footer.fxml"/>
+        <fx:include source="../components/front-footer.fxml"/>
 
     </VBox>
 </ScrollPane>

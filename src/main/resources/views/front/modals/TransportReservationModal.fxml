@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="tn.esprit.controller.front.modals.TransportReservationController"
+           styleClass="modal-blur-overlay"
+           alignment="CENTER">
+
+    <VBox styleClass="res-modal-card" maxWidth="480" spacing="0">
+
+        <!-- Orange/brown header -->
+        <HBox styleClass="res-modal-header-orange" spacing="16" alignment="CENTER_LEFT">
+            <StackPane styleClass="res-modal-icon-wrap">
+                <Label text="🚌" style="-fx-font-size:24px;"/>
+            </StackPane>
+            <VBox spacing="3" HBox.hgrow="ALWAYS">
+                <Label text="Réserver le transport" styleClass="res-modal-title"/>
+                <Label fx:id="transportNameLabel" styleClass="res-modal-subtitle" wrapText="true"/>
+            </VBox>
+            <Button text="✕" styleClass="res-modal-close" onAction="#onClose"/>
+        </HBox>
+
+        <!-- Body -->
+        <VBox styleClass="res-modal-body" spacing="16">
+
+            <Label fx:id="errorLabel" styleClass="res-modal-err-msg"
+                   managed="false" visible="false" wrapText="true"
+                   style="-fx-background-color:#fde8e8;-fx-background-radius:8;-fx-padding:10 14;"/>
+
+            <!-- Travel date -->
+            <VBox spacing="6">
+                <Label text="DATE DE VOYAGE" styleClass="res-modal-field-label"/>
+                <DatePicker fx:id="travelDatePicker" styleClass="res-modal-input" maxWidth="Infinity"/>
+                <Label fx:id="errDate" styleClass="res-modal-err-msg" managed="false" visible="false"/>
+            </VBox>
+
+            <!-- Passengers -->
+            <VBox spacing="6">
+                <Label text="NOMBRE DE PASSAGERS" styleClass="res-modal-field-label"/>
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <Spinner fx:id="passengersSpinner" min="1" max="50" initialValue="1"
+                             styleClass="res-modal-input" prefWidth="120" editable="true"/>
+                    <Label fx:id="capacityHint" styleClass="res-modal-price-label"/>
+                </HBox>
+                <Label fx:id="errPassengers" styleClass="res-modal-err-msg" managed="false" visible="false"/>
+            </VBox>
+
+            <!-- Transport info -->
+            <HBox spacing="20" alignment="CENTER_LEFT"
+                  style="-fx-background-color:#fff7ed;-fx-background-radius:10;-fx-padding:12 16;-fx-border-color:#fed7aa;-fx-border-width:1;-fx-border-radius:10;">
+                <VBox spacing="3">
+                    <Label text="TYPE" styleClass="res-modal-field-label"/>
+                    <Label fx:id="typeLabel" styleClass="res-modal-price-label"/>
+                </VBox>
+                <Separator orientation="VERTICAL"/>
+                <VBox spacing="3">
+                    <Label text="CHAUFFEUR" styleClass="res-modal-field-label"/>
+                    <Label fx:id="chauffeurLabel" styleClass="res-modal-price-label"/>
+                </VBox>
+                <Separator orientation="VERTICAL"/>
+                <VBox spacing="3">
+                    <Label text="CO₂" styleClass="res-modal-field-label"/>
+                    <Label fx:id="co2Label" styleClass="res-modal-price-label"/>
+                </VBox>
+            </HBox>
+
+            <!-- Price strip -->
+            <VBox fx:id="priceStrip" styleClass="res-modal-price-strip" spacing="4"
+                  managed="false" visible="false">
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="🚌" style="-fx-font-size:16px;"/>
+                    <Label fx:id="passengersSummary" styleClass="res-modal-price-label"/>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="6">
+                    <Label fx:id="totalLabel" styleClass="res-modal-price-amount"/>
+                    <Label text="TND" styleClass="res-modal-price-sub"/>
+                </HBox>
+            </VBox>
+
+        </VBox>
+
+        <!-- Footer -->
+        <HBox styleClass="res-modal-footer" alignment="CENTER_RIGHT" spacing="12">
+            <Button text="Annuler" styleClass="res-modal-btn-cancel" onAction="#onClose"/>
+            <Button text="🛒  Ajouter au panier" styleClass="res-modal-btn-confirm-orange"
+                    onAction="#onAddToCart"/>
+        </HBox>
+
+    </VBox>
+</StackPane>
