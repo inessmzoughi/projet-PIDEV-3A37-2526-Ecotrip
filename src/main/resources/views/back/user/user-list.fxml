@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.chart.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="tn.esprit.controller.back.user.UserListController"
+      styleClass="user-mgmt" spacing="20">
+
+    <!-- Success message -->
+    <Label fx:id="successLabel" styleClass="alert-success"
+           managed="false" visible="false" wrapText="true"/>
+
+    <!-- STAT BOXES -->
+    <GridPane hgap="16" vgap="0">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="25"/>
+            <ColumnConstraints percentWidth="25"/>
+            <ColumnConstraints percentWidth="25"/>
+            <ColumnConstraints percentWidth="25"/>
+        </columnConstraints>
+        <VBox styleClass="stat-box" GridPane.columnIndex="0" spacing="4">
+            <Label fx:id="statTotal" text="0" styleClass="stat-number"/>
+            <Label text="Total utilisateurs" styleClass="stat-label"/>
+        </VBox>
+        <VBox styleClass="stat-box" GridPane.columnIndex="1" spacing="4">
+            <Label fx:id="statAdmins" text="0" styleClass="stat-number"/>
+            <Label text="Administrateurs" styleClass="stat-label"/>
+        </VBox>
+        <VBox styleClass="stat-box" GridPane.columnIndex="2" spacing="4">
+            <Label fx:id="statUsers" text="0" styleClass="stat-number"/>
+            <Label text="Utilisateurs" styleClass="stat-label"/>
+        </VBox>
+        <VBox styleClass="stat-box" GridPane.columnIndex="3" spacing="4">
+            <Label fx:id="statVerified" text="0" styleClass="stat-number"/>
+            <Label text="Emails vérifiés" styleClass="stat-label"/>
+        </VBox>
+    </GridPane>
+
+    <!-- CHARTS ROW -->
+    <GridPane hgap="20" vgap="0">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="50"/>
+            <ColumnConstraints percentWidth="50"/>
+        </columnConstraints>
+        <VBox styleClass="chart-card" GridPane.columnIndex="0" spacing="10">
+            <Label text="Répartition par rôle" styleClass="chart-title"/>
+            <PieChart fx:id="chartRoles" prefHeight="200"
+                      animated="false" labelsVisible="true"/>
+        </VBox>
+        <VBox styleClass="chart-card" GridPane.columnIndex="1" spacing="10">
+            <Label text="Statut de vérification" styleClass="chart-title"/>
+            <PieChart fx:id="chartVerified" prefHeight="200"
+                      animated="false" labelsVisible="true"/>
+        </VBox>
+    </GridPane>
+
+    <!-- TOOLBAR: search + filter + buttons -->
+    <HBox spacing="12" alignment="CENTER_LEFT">
+        <TextField fx:id="searchField"
+                   promptText="Rechercher par email, nom, téléphone..."
+                   styleClass="search-field"
+                   HBox.hgrow="ALWAYS"/>
+        <ComboBox fx:id="roleFilter" styleClass="role-filter"
+                  promptText="Tous les rôles"/>
+        <Button text="⬇  Exporter CSV" onAction="#handleExportCsv"
+                styleClass="btn-export"/>
+        <Button text="＋  Nouvel utilisateur" onAction="#handleNewUser"
+                styleClass="btn-add-user"/>
+    </HBox>
+
+    <!-- TABLE -->
+    <VBox styleClass="table-card" VBox.vgrow="ALWAYS">
+        <TableView fx:id="userTable" VBox.vgrow="ALWAYS"
+                   styleClass="user-table">
+            <columns>
+                <TableColumn fx:id="colId"       text="ID"          prefWidth="50"/>
+                <TableColumn fx:id="colUsername"  text="Utilisateur" prefWidth="160"/>
+                <TableColumn fx:id="colEmail"     text="Email"       prefWidth="200"/>
+                <TableColumn fx:id="colTelephone" text="Téléphone"   prefWidth="130"/>
+                <TableColumn fx:id="colRole"      text="Rôle"        prefWidth="110"/>
+                <TableColumn fx:id="colVerified"  text="Vérifié"     prefWidth="90"/>
+                <TableColumn fx:id="colActions"   text="Actions"     prefWidth="120"/>
+            </columns>
+        </TableView>
+    </VBox>
+
+</VBox>

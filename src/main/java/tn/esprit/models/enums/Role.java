@@ -1,6 +1,12 @@
 package tn.esprit.models.enums;
 
 public enum Role {
-    User,
-    Admin
+    ROLE_USER,
+    ROLE_ADMIN,
+    ;
+
+    public String getLabel() {
+        return this == Role.ROLE_ADMIN ? "Administrateur" : "Utilisateur";
+    }
+
 }

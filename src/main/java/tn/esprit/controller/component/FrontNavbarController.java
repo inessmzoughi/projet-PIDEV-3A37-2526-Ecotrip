@@ -24,7 +24,7 @@ public class FrontNavbarController {
                 hebergBtn,      Routes.HEBERGEMENTS,
                 activitesBtn,   Routes.ACTIVITES,
                 transportBtn,   Routes.TRANSPORT,
-                boutiqueBtn,    Routes.BOUTIQUE,
+                boutiqueBtn,    Routes.FRONT_PRODUCTS,
                 contactBtn,     Routes.CONTACT
         );
 

@@ -14,16 +14,16 @@ public class BackOfficeShellController {
     @FXML private Label adminNameLabel;
     @FXML private BackSidebarController sidebarController;
 
-    @FXML
-    public void initialize() {
-        String name = SessionManager.getInstance().getCurrentUser().getUsername();
-        adminNameLabel.setText("👤 " + name);
-    }
+//    @FXML
+//    public void initialize() {
+//        String name = SessionManager.getInstance().getCurrentUser().getUsername();
+//        adminNameLabel.setText("👤 " + name);
+//    }
 
     public void loadContent(Node content, String routeName) {
         contentArea.getChildren().setAll(content);
         sidebarController.setActiveRoute(routeName);
-        pageTitle.setText(getPageTitle(routeName));
+//        pageTitle.setText(getPageTitle(routeName));
     }
 
     private String getPageTitle(String routeName) {
