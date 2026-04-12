@@ -159,6 +159,9 @@
                                           onAction="#onFilter" prefWidth="140"/>
                                 <ComboBox fx:id="sortCombo" styleClass="sort-select"
                                           onAction="#onSort" prefWidth="140"/>
+                                <Button text="📥 CSV"
+                                        styleClass="btn-export-csv"
+                                        onAction="#onExportCsv"/>
                             </HBox>
 
                             <VBox styleClass="table-card" VBox.vgrow="ALWAYS">

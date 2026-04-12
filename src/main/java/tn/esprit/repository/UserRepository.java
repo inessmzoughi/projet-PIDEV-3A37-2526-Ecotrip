@@ -11,11 +11,8 @@ import java.util.Optional;
 
 public class UserRepository {
 
-    // ── Find all with optional search + role filter ───────
     public List<User> search(String query, Role roleFilter) {
-        StringBuilder sql = new StringBuilder(
-                "SELECT * FROM user WHERE 1=1"
-        );
+        StringBuilder sql = new StringBuilder("SELECT * FROM user WHERE 1=1");
         List<Object> params = new ArrayList<>();
 
         if (query != null && !query.trim().isEmpty()) {
@@ -23,25 +20,30 @@ public class UserRepository {
             String like = "%" + query.trim() + "%";
             params.add(like); params.add(like); params.add(like);
         }
+
         if (roleFilter != null) {
             sql.append(" AND roles = ?");
             params.add(roleFilter.name());
         }
-        sql.append(" ORDER BY id DESC LIMIT 100");
+
+        sql.append(" ORDER BY id DESC");
 
         List<User> users = new ArrayList<>();
+
         try (Connection conn = Base.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
 
             for (int i = 0; i < params.size(); i++) {
                 stmt.setObject(i + 1, params.get(i));
             }
+
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) users.add(mapRow(rs));
 
         } catch (SQLException e) {
             throw new RuntimeException("DB error searching users", e);
         }
+
         return users;
     }
 
@@ -64,7 +66,6 @@ public class UserRepository {
 
     public Optional<User> findByEmail(String email) {
         String sql = "SELECT * FROM user WHERE email = ?";
-        System.out.println("SQL: " + sql);
         try (Connection conn = Base.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, email);
@@ -76,7 +77,6 @@ public class UserRepository {
         return Optional.empty();
     }
 
-    // ── Stats ─────────────────────────────────────────────
     public int count() {
         return countWhere("1=1", null);
     }
@@ -102,10 +102,9 @@ public class UserRepository {
         return 0;
     }
 
-    // ── Save (insert) ─────────────────────────────────────
     public User save(User user) {
-        String sql = "INSERT INTO user (username, email, password, roles, is_verified, address, telephone) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO user (username, email, password, roles, is_verified, address, telephone) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
         try (Connection conn = Base.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -116,6 +115,7 @@ public class UserRepository {
             stmt.setBoolean(5, user.isVerified());
             stmt.setString(6, user.getAddress());
             stmt.setString(7, user.getTelephone());
+
             stmt.executeUpdate();
 
             ResultSet keys = stmt.getGeneratedKeys();
@@ -124,12 +124,13 @@ public class UserRepository {
         } catch (SQLException e) {
             throw new RuntimeException("DB error saving user", e);
         }
+
         return user;
     }
 
-    // ── Update ────────────────────────────────────────────
     public void update(User user) {
         String sql = "UPDATE user SET username=?, email=?, roles=?, is_verified=?, address=?, telephone=? WHERE id=?";
+
         try (Connection conn = Base.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -140,6 +141,7 @@ public class UserRepository {
             stmt.setString(5, user.getAddress());
             stmt.setString(6, user.getTelephone());
             stmt.setInt(7, user.getId());
+
             stmt.executeUpdate();
 
         } catch (SQLException e) {
@@ -149,29 +151,34 @@ public class UserRepository {
 
     public void updatePassword(User user) {
         String sql = "UPDATE user SET password=? WHERE id=?";
+
         try (Connection conn = Base.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setString(1, user.getPassword());
             stmt.setInt(2, user.getId());
+
             stmt.executeUpdate();
+
         } catch (SQLException e) {
             throw new RuntimeException("DB error updating password", e);
         }
     }
 
-    // ── Delete ────────────────────────────────────────────
     public void delete(int id) {
         String sql = "DELETE FROM user WHERE id=?";
+
         try (Connection conn = Base.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setInt(1, id);
             stmt.executeUpdate();
+
         } catch (SQLException e) {
             throw new RuntimeException("DB error deleting user", e);
         }
     }
 
-    // ── Row mapper ────────────────────────────────────────
     private User mapRow(ResultSet rs) throws SQLException {
         User u = new User();
         u.setId(rs.getInt("id"));
