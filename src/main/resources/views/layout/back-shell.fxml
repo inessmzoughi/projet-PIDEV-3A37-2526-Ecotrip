@@ -4,7 +4,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="org.example.controller.layout.BackOfficeShellController"
+            fx:controller="tn.esprit.controller.layout.BackOfficeShellController"
             styleClass="back-shell">
 
     <!-- LEFT: Sidebar -->
@@ -15,14 +15,14 @@
     <!-- CENTER: contenu dynamique -->
     <center>
         <BorderPane styleClass="back-main">
-            <top>
-                <HBox fx:id="topbar" styleClass="back-topbar"
-                      alignment="CENTER_LEFT" spacing="16">
-                    <Label fx:id="pageTitle" styleClass="back-page-title"/>
-                    <Region HBox.hgrow="ALWAYS"/>
-                    <Label fx:id="adminNameLabel" styleClass="back-admin-name"/>
-                </HBox>
-            </top>
+<!--            <top>-->
+<!--                <HBox fx:id="topbar" styleClass="back-topbar"-->
+<!--                      alignment="CENTER_LEFT" spacing="16">-->
+<!--                    <Label fx:id="pageTitle" styleClass="back-page-title"/>-->
+<!--                    <Region HBox.hgrow="ALWAYS"/>-->
+<!--                    <Label fx:id="adminNameLabel" styleClass="back-admin-name"/>-->
+<!--                </HBox>-->
+<!--            </top>-->
             <center>
                 <ScrollPane fitToWidth="true" styleClass="back-scroll">
                     <StackPane fx:id="contentArea" styleClass="back-content"/>

@@ -3,8 +3,10 @@
 <?import javafx.scene.control.*?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.controller.layout.FrontOfficeShellController"
-            styleClass="front-shell">
+            fx:controller="tn.esprit.controller.layout.FrontOfficeShellController"
+            styleClass="front-shell"
+            minWidth="900"
+            minHeight="600">
 
     <!-- TOP: Navbar (mirrors your navbar.html.twig) -->
     <top>
@@ -13,12 +15,12 @@
 
     <!-- CENTER: page content swaps here -->
     <center>
-        <ScrollPane fx:id="scrollPane" fitToWidth="true" styleClass="front-scroll">
-            <StackPane fx:id="contentArea" styleClass="front-content"/>
-        </ScrollPane>
+        <StackPane fx:id="contentArea"
+                   styleClass="front-content"
+                   BorderPane.alignment="CENTER"/>
     </center>
 
-    <!-- BOTTOM: Footer (mirrors your footer.html.twig) -->
+<!--&lt;!&ndash;     BOTTOM: Footer (mirrors your footer.html.twig) &ndash;&gt;-->
 <!--    <bottom>-->
 <!--        <fx:include fx:id="footer" source="../components/front-footer.fxml"/>-->
 <!--    </bottom>-->
