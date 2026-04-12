@@ -18,6 +18,13 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.paint.Color;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -37,32 +44,30 @@ public class ListHebergementsController implements Initializable {
     @FXML private ComboBox<String> propietaireCombo, actifCombo;
     @FXML private TextArea         descriptionField;
     @FXML private Label            errNom, errVille, errNbEtoiles, errCategorie, charCount;
+    @FXML private Label            errAdresse, errLabelEco, errImage, errLatitude, errLongitude;
     @FXML private Button           submitBtn;
     @FXML private FlowPane         equipementsCheckboxPane;
-    @FXML private Label errPropietaire;
-
+    @FXML private Label            errPropietaire;
 
     /* ─── Table ─── */
     @FXML private TextField              searchField;
     @FXML private ComboBox<String>       sortCombo;
     @FXML private TableView<Hebergement> tableView;
-    @FXML private TableColumn<Hebergement, Integer> colIndex;
     @FXML private TableColumn<Hebergement, String>  colNom, colVille, colLabelEco;
     @FXML private TableColumn<Hebergement, Integer> colNbEtoiles, colActif;
     @FXML private TableColumn<Hebergement, Void>    colActions;
     @FXML private Label badgeCount, pagInfo;
     @FXML private HBox  pagButtons;
-    @FXML
-    private HBox paginationBar;
+    @FXML private HBox  paginationBar;
 
     /* ─── State ─── */
-    private final Hebergement_service            service                    = new Hebergement_service();
-    private final CategorieH_service             categorieService           = new CategorieH_service();
-    private final Equipement_service             equipementService          = new Equipement_service();
-    private final HebergementEquipement_service  hebergementEqService       = new HebergementEquipement_service();
+    private final Hebergement_service           service              = new Hebergement_service();
+    private final CategorieH_service            categorieService     = new CategorieH_service();
+    private final Equipement_service            equipementService    = new Equipement_service();
+    private final HebergementEquipement_service hebergementEqService = new HebergementEquipement_service();
     private List<Hebergement> allData;
-    private List<Equipement>  allEquipements                                = new ArrayList<>();
-    private final List<CheckBox> equipementCheckboxes                       = new ArrayList<>();
+    private List<Equipement>  allEquipements       = new ArrayList<>();
+    private final List<CheckBox> equipementCheckboxes = new ArrayList<>();
     private Hebergement hebergementEnEdition = null;
     private static final int PER_PAGE = 6;
     private int currentPage = 1;
@@ -132,20 +137,114 @@ public class ListHebergementsController implements Initializable {
         } catch (SQLException e) { showAlert("Erreur", e.getMessage()); }
     }
 
-    /* ─── Validation ─── */
-    @FXML private void validateNom()       { setFieldError(nomField, errNom, nomField.getText().trim().isEmpty()); }
-    @FXML private void validateVille()     { setFieldError(villeField, errVille, villeField.getText().trim().isEmpty()); }
-    @FXML private void validateNbEtoiles() { setFieldError(nbEtoilesField, errNbEtoiles, !nbEtoilesField.getText().trim().matches("[1-5]")); }
-    @FXML private void updateCounter()     { charCount.setText(descriptionField.getText().length() + " / 500 caractères"); }
+    /* ─── Validation en temps réel ─── */
+    @FXML private void validateNom()      { setFieldError(nomField,      errNom,      nomField.getText().trim().isEmpty()); }
+    @FXML private void validateVille()    { setFieldError(villeField,    errVille,    villeField.getText().trim().isEmpty()); }
+    @FXML private void validateAdresse()  { setFieldError(adresseField,  errAdresse,  adresseField.getText().trim().isEmpty()); }
+    @FXML private void validateLabelEco() { setFieldError(labelEcoField, errLabelEco, labelEcoField.getText().trim().isEmpty()); }
+    @FXML private void validateImage()    { setFieldError(imagePrincipaleField, errImage, imagePrincipaleField.getText().trim().isEmpty()); }
 
+    @FXML private void validateNbEtoiles() {
+        setFieldError(nbEtoilesField, errNbEtoiles, !nbEtoilesField.getText().trim().matches("[1-5]"));
+    }
+
+    @FXML private void updateCounter() {
+        charCount.setText(descriptionField.getText().length() + " / 500 caractères");
+    }
+
+    @FXML private void validateLatitude() {
+        try {
+            double lat = Double.parseDouble(latitudeField.getText().trim());
+            // Tunisie : latitude entre 30.2 et 37.5
+            setFieldError(latitudeField, errLatitude, lat < 30.2 || lat > 37.5);
+        } catch (NumberFormatException e) {
+            setFieldError(latitudeField, errLatitude, true);
+        }
+    }
+
+    @FXML private void validateLongitude() {
+        try {
+            double lng = Double.parseDouble(longitudeField.getText().trim());
+            // Tunisie : longitude entre 7.5 et 11.6
+            setFieldError(longitudeField, errLongitude, lng < 7.5 || lng > 11.6);
+        } catch (NumberFormatException e) {
+            setFieldError(longitudeField, errLongitude, true);
+        }
+    }
+
+    /* ─── Validation globale ─── */
     private boolean validateAll() {
         boolean ok = true;
-        if (nomField.getText().trim().isEmpty())               { setFieldError(nomField, errNom, true);             ok = false; } else setFieldError(nomField, errNom, false);
-        if (villeField.getText().trim().isEmpty())             { setFieldError(villeField, errVille, true);         ok = false; } else setFieldError(villeField, errVille, false);
-        if (!nbEtoilesField.getText().trim().matches("[1-5]")) { setFieldError(nbEtoilesField, errNbEtoiles, true); ok = false; } else setFieldError(nbEtoilesField, errNbEtoiles, false);
+
+        // Nom
+        if (nomField.getText().trim().isEmpty()) {
+            setFieldError(nomField, errNom, true); ok = false;
+        } else setFieldError(nomField, errNom, false);
+
+        // Ville
+        if (villeField.getText().trim().isEmpty()) {
+            setFieldError(villeField, errVille, true); ok = false;
+        } else setFieldError(villeField, errVille, false);
+
+        // Adresse
+        if (adresseField.getText().trim().isEmpty()) {
+            setFieldError(adresseField, errAdresse, true); ok = false;
+        } else setFieldError(adresseField, errAdresse, false);
+
+        // Nb Étoiles
+        if (!nbEtoilesField.getText().trim().matches("[1-5]")) {
+            setFieldError(nbEtoilesField, errNbEtoiles, true); ok = false;
+        } else setFieldError(nbEtoilesField, errNbEtoiles, false);
+
+        // Catégorie
         if (categorieCombo.getValue() == null || categorieCombo.getValue().isEmpty()) {
             errCategorie.setVisible(true); errCategorie.setManaged(true); ok = false;
         } else { errCategorie.setVisible(false); errCategorie.setManaged(false); }
+
+        // Label Éco
+        if (labelEcoField.getText().trim().isEmpty()) {
+            setFieldError(labelEcoField, errLabelEco, true); ok = false;
+        } else setFieldError(labelEcoField, errLabelEco, false);
+
+        // Image principale
+        if (imagePrincipaleField.getText().trim().isEmpty()) {
+            setFieldError(imagePrincipaleField, errImage, true); ok = false;
+        } else setFieldError(imagePrincipaleField, errImage, false);
+
+        // Propriétaire
+        if (propietaireCombo.getValue() == null || propietaireCombo.getValue().equals("— Aucun —")) {
+            errPropietaire.setVisible(true); errPropietaire.setManaged(true); ok = false;
+        } else { errPropietaire.setVisible(false); errPropietaire.setManaged(false); }
+
+        // Description
+        if (descriptionField.getText().trim().isEmpty()) {
+            if (!descriptionField.getStyleClass().contains("form-input-error"))
+                descriptionField.getStyleClass().add("form-input-error");
+            ok = false;
+        } else {
+            descriptionField.getStyleClass().remove("form-input-error");
+        }
+
+        // Latitude (Tunisie : 30.2 ~ 37.5)
+        try {
+            double lat = Double.parseDouble(latitudeField.getText().trim());
+            if (lat < 30.2 || lat > 37.5) {
+                setFieldError(latitudeField, errLatitude, true); ok = false;
+            } else setFieldError(latitudeField, errLatitude, false);
+        } catch (NumberFormatException e) {
+            setFieldError(latitudeField, errLatitude, true); ok = false;
+        }
+
+        // Longitude (Tunisie : 7.5 ~ 11.6)
+        try {
+            double lng = Double.parseDouble(longitudeField.getText().trim());
+            if (lng < 7.5 || lng > 11.6) {
+                setFieldError(longitudeField, errLongitude, true); ok = false;
+            } else setFieldError(longitudeField, errLongitude, false);
+        } catch (NumberFormatException e) {
+            setFieldError(longitudeField, errLongitude, true); ok = false;
+        }
+
         return ok;
     }
 
@@ -153,17 +252,16 @@ public class ListHebergementsController implements Initializable {
     @FXML
     private void onSubmit() {
         if (!validateAll()) return;
-        String adresse    = adresseField          != null ? adresseField.getText().trim()          : "";
-        String labelEco   = labelEcoField          != null ? labelEcoField.getText().trim()          : "";
-        String imagePrinc = imagePrincipaleField   != null ? imagePrincipaleField.getText().trim()   : "";
+
         double lat = 0.0, lng = 0.0;
         try { lat = Double.parseDouble(latitudeField.getText().trim());  } catch (NumberFormatException ignored) {}
         try { lng = Double.parseDouble(longitudeField.getText().trim()); } catch (NumberFormatException ignored) {}
-        int categorieId   = categorieMap.getOrDefault(categorieCombo.getValue(), 1);
-        int propietaireId = propietaireMap.getOrDefault(propietaireCombo.getValue() != null ? propietaireCombo.getValue() : "— Aucun —", 0);
-        int actif         = "Actif".equals(actifCombo.getValue()) ? 1 : 0;
 
-        // IDs des équipements cochés
+        int categorieId   = categorieMap.getOrDefault(categorieCombo.getValue(), 1);
+        int propietaireId = propietaireMap.getOrDefault(
+                propietaireCombo.getValue() != null ? propietaireCombo.getValue() : "— Aucun —", 0);
+        int actif = "Actif".equals(actifCombo.getValue()) ? 1 : 0;
+
         List<Integer> selectedEqIds = equipementCheckboxes.stream()
                 .filter(CheckBox::isSelected)
                 .map(cb -> (Integer) cb.getUserData())
@@ -173,19 +271,23 @@ public class ListHebergementsController implements Initializable {
             int hebergementId;
             if (hebergementEnEdition == null) {
                 hebergementId = service.ajouter(new Hebergement(0,
-                        nomField.getText().trim(), descriptionField.getText().trim(),
-                        adresse, villeField.getText().trim(),
+                        nomField.getText().trim(),
+                        descriptionField.getText().trim(),
+                        adresseField.getText().trim(),
+                        villeField.getText().trim(),
                         Integer.parseInt(nbEtoilesField.getText().trim()),
-                        imagePrinc, labelEco, lat, lng, actif, categorieId, propietaireId));
-                showToast("✅ Hébergement ajouté !");
+                        imagePrincipaleField.getText().trim(),
+                        labelEcoField.getText().trim(),
+                        lat, lng, actif, categorieId, propietaireId));
+                showSuccessPopup("Hébergement ajouté avec succès !", "✅");
             } else {
                 hebergementEnEdition.setNom(nomField.getText().trim());
                 hebergementEnEdition.setVille(villeField.getText().trim());
-                hebergementEnEdition.setAdresse(adresse);
+                hebergementEnEdition.setAdresse(adresseField.getText().trim());
                 hebergementEnEdition.setNb_etoiles(Integer.parseInt(nbEtoilesField.getText().trim()));
                 hebergementEnEdition.setCategorie_id(categorieId);
-                hebergementEnEdition.setLabel_eco(labelEco);
-                hebergementEnEdition.setImage_principale(imagePrinc);
+                hebergementEnEdition.setLabel_eco(labelEcoField.getText().trim());
+                hebergementEnEdition.setImage_principale(imagePrincipaleField.getText().trim());
                 hebergementEnEdition.setLatitude(lat);
                 hebergementEnEdition.setLongitude(lng);
                 hebergementEnEdition.setActif(actif);
@@ -193,9 +295,8 @@ public class ListHebergementsController implements Initializable {
                 hebergementEnEdition.setPropietaire_id(propietaireId);
                 service.modifier(hebergementEnEdition);
                 hebergementId = hebergementEnEdition.getId();
-                showToast("💾 Hébergement modifié !");
+                showSuccessPopup("Hébergement modifié avec succès !", "💾");
             }
-            // Sauvegarder les équipements
             hebergementEqService.sauvegarder(hebergementId, selectedEqIds);
             onReset();
             refreshAll();
@@ -206,25 +307,32 @@ public class ListHebergementsController implements Initializable {
     @FXML
     private void onReset() {
         hebergementEnEdition = null;
-        nomField.clear(); villeField.clear(); nbEtoilesField.clear(); descriptionField.clear();
-        if (adresseField          != null) adresseField.clear();
-        if (labelEcoField          != null) labelEcoField.clear();
-        if (imagePrincipaleField   != null) imagePrincipaleField.clear();
-        if (latitudeField          != null) latitudeField.clear();
-        if (longitudeField         != null) longitudeField.clear();
+        nomField.clear(); villeField.clear(); adresseField.clear();
+        nbEtoilesField.clear(); descriptionField.clear();
+        labelEcoField.clear(); imagePrincipaleField.clear();
+        latitudeField.clear(); longitudeField.clear();
         categorieCombo.setValue(null);
         propietaireCombo.getSelectionModel().selectFirst();
         actifCombo.getSelectionModel().selectFirst();
-        setFieldError(nomField, errNom, false);
-        setFieldError(villeField, errVille, false);
-        setFieldError(nbEtoilesField, errNbEtoiles, false);
-        errCategorie.setVisible(false); errCategorie.setManaged(false);
+
+        // Reset erreurs
+        setFieldError(nomField,      errNom,      false);
+        setFieldError(villeField,    errVille,    false);
+        setFieldError(adresseField,  errAdresse,  false);
+        setFieldError(nbEtoilesField,errNbEtoiles,false);
+        setFieldError(labelEcoField, errLabelEco, false);
+        setFieldError(imagePrincipaleField, errImage, false);
+        setFieldError(latitudeField, errLatitude, false);
+        setFieldError(longitudeField,errLongitude,false);
+        errCategorie.setVisible(false);   errCategorie.setManaged(false);
+        errPropietaire.setVisible(false); errPropietaire.setManaged(false);
+        descriptionField.getStyleClass().remove("form-input-error");
+
         charCount.setText("0 / 500 caractères");
         formIcon.setText("🏨");
         formTitle.setText("Nouvel Hébergement");
         formSubtitle.setText("Remplissez les informations ci-dessous.");
         submitBtn.setText("➕ Ajouter");
-        // Décocher tous les équipements
         equipementCheckboxes.forEach(cb -> cb.setSelected(false));
     }
 
@@ -233,12 +341,12 @@ public class ListHebergementsController implements Initializable {
         hebergementEnEdition = h;
         nomField.setText(h.getNom());
         villeField.setText(h.getVille());
+        adresseField.setText(h.getAdresse()           != null ? h.getAdresse()           : "");
+        labelEcoField.setText(h.getLabel_eco()         != null ? h.getLabel_eco()         : "");
+        imagePrincipaleField.setText(h.getImage_principale() != null ? h.getImage_principale() : "");
         nbEtoilesField.setText(String.valueOf(h.getNb_etoiles()));
-        if (adresseField          != null) adresseField.setText(h.getAdresse()          != null ? h.getAdresse()          : "");
-        if (labelEcoField          != null) labelEcoField.setText(h.getLabel_eco()        != null ? h.getLabel_eco()        : "");
-        if (imagePrincipaleField   != null) imagePrincipaleField.setText(h.getImage_principale() != null ? h.getImage_principale() : "");
-        if (latitudeField          != null) latitudeField.setText(String.valueOf(h.getLatitude()));
-        if (longitudeField         != null) longitudeField.setText(String.valueOf(h.getLongitude()));
+        latitudeField.setText(String.valueOf(h.getLatitude()));
+        longitudeField.setText(String.valueOf(h.getLongitude()));
         descriptionField.setText(h.getDescription() != null ? h.getDescription() : "");
         categorieMap.forEach((nom, id)   -> { if (id == h.getCategorie_id())   categorieCombo.setValue(nom); });
         propietaireMap.forEach((nom, id) -> { if (id == h.getPropietaire_id()) propietaireCombo.setValue(nom); });
@@ -251,7 +359,6 @@ public class ListHebergementsController implements Initializable {
         submitBtn.setText("💾 Enregistrer");
         nomField.requestFocus();
 
-        // Cocher les équipements existants
         try {
             List<Equipement> existing    = hebergementEqService.getEquipementsByHebergement(h.getId());
             List<Integer>    existingIds = existing.stream().map(Equipement::getId).collect(Collectors.toList());
@@ -302,19 +409,12 @@ public class ListHebergementsController implements Initializable {
     }
 
     private void setupColumns() {
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         colNom.setCellValueFactory(new PropertyValueFactory<>("nom"));
         colVille.setCellValueFactory(new PropertyValueFactory<>("ville"));
         colNbEtoiles.setCellValueFactory(new PropertyValueFactory<>("nb_etoiles"));
         colLabelEco.setCellValueFactory(new PropertyValueFactory<>("label_eco"));
         colActif.setCellValueFactory(new PropertyValueFactory<>("actif"));
-        colIndex.setCellFactory(col -> new TableCell<>() {
-            @Override protected void updateItem(Integer item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) { setText(null); return; }
-                setText(String.valueOf(getTableView().getItems().indexOf(getTableRow().getItem()) + 1 + (currentPage - 1) * PER_PAGE));
-                getStyleClass().add("td-index");
-            }
-        });
         colVille.setCellFactory(col -> new TableCell<>() {
             @Override protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
@@ -390,12 +490,49 @@ public class ListHebergementsController implements Initializable {
         }
     }
 
-    private void showToast(String msg) {
-        pagInfo.setText(msg);
-        new Thread(() -> {
-            try { Thread.sleep(3000); } catch (InterruptedException ignored) {}
-            javafx.application.Platform.runLater(this::renderTable);
-        }).start();
+    private void showSuccessPopup(String message, String iconText) {
+        Stage popup = new Stage();
+        popup.initStyle(StageStyle.UNDECORATED);
+        popup.initModality(Modality.APPLICATION_MODAL);
+        popup.initOwner(submitBtn.getScene().getWindow());
+
+        Label icon = new Label(iconText);
+        icon.setStyle("-fx-font-size:44px;");
+
+        Label msg = new Label(message);
+        msg.setStyle("-fx-font-size:15px; -fx-font-weight:bold; -fx-text-fill:#0f172a;");
+        msg.setWrapText(true);
+        msg.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+
+        Button closeBtn = new Button("OK");
+        closeBtn.setStyle(
+                "-fx-background-color:#38a169; -fx-text-fill:white; -fx-font-weight:bold;"
+                        + "-fx-background-radius:10; -fx-padding:10 40 10 40;"
+                        + "-fx-cursor:hand; -fx-border-width:0; -fx-font-size:14px;");
+        closeBtn.setOnAction(e -> popup.close());
+
+        VBox box = new VBox(16, icon, msg, closeBtn);
+        box.setAlignment(Pos.CENTER);
+        box.setPadding(new Insets(36, 40, 32, 40));
+        box.setStyle(
+                "-fx-background-color:white;"
+                        + "-fx-background-radius:16;"
+                        + "-fx-effect:dropshadow(gaussian,rgba(0,0,0,0.18),24,0,0,6);"
+                        + "-fx-border-color:#e2e8f0;"
+                        + "-fx-border-radius:16;"
+                        + "-fx-border-width:1;");
+
+        Scene scene = new Scene(box, 320, 230);
+        scene.setFill(Color.TRANSPARENT);
+        popup.setScene(scene);
+
+        popup.setOnShown(e -> {
+            Stage owner = (Stage) submitBtn.getScene().getWindow();
+            popup.setX(owner.getX() + (owner.getWidth()  - popup.getWidth())  / 2);
+            popup.setY(owner.getY() + (owner.getHeight() - popup.getHeight()) / 2);
+        });
+
+        popup.showAndWait();
     }
 
     private void showAlert(String title, String msg) {
