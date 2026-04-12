@@ -6,6 +6,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
+import tn.esprit.controller.front.modals.ActivityReservationController;
 import tn.esprit.models.activity.Activity;
 import tn.esprit.models.activity.ActivityCategory;
 import tn.esprit.navigation.SceneManager;
@@ -18,6 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.effect.GaussianBlur;
+import javafx.scene.layout.StackPane;
 
 public class ActivitiesController implements Initializable {
 
@@ -342,7 +346,26 @@ public class ActivitiesController implements Initializable {
     }
 
     private void handleViewActivity(Activity activity) {
-        // Step 3 — detail page (coming next)
-        System.out.println("View activity: " + activity.getTitle());
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/views/front/modals/ActivityReservationModal.fxml")
+            );
+            StackPane modalOverlay = loader.load();
+
+            ActivityReservationController ctrl = loader.getController();
+            ctrl.setActivity(activity);
+            ctrl.setOverlayRoot(modalOverlay);
+
+            StackPane sceneRoot = (StackPane) activitiesGrid.getScene().getRoot();
+            sceneRoot.getChildren().add(modalOverlay);
+            sceneRoot.getChildren().get(0).setEffect(new GaussianBlur(8));
+
+            ctrl.setOnCartUpdated(() -> {
+                sceneRoot.getChildren().get(0).setEffect(null);
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

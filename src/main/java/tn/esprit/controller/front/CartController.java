@@ -16,7 +16,8 @@ import tn.esprit.services.produit.LigneCommandeService;
 import tn.esprit.session.SessionManager;
 import tn.esprit.utils.CartManager;
 import tn.esprit.models.cart.CartItem;
-
+import tn.esprit.services.ReservationService;
+import tn.esprit.models.cart.CartItem;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.Date;
@@ -40,6 +41,7 @@ public class CartController implements Initializable {
     private final CommandeService commandeService      = new CommandeService();
     private final LigneCommandeService ligneCommandeService = new LigneCommandeService();
     private final CartManager cart                 = CartManager.getInstance();
+    private final ReservationService reservationService = new ReservationService();
 
     // Groupe radio pour le mode de paiement
     private final ToggleGroup paymentGroup = new ToggleGroup();
@@ -271,65 +273,39 @@ public class CartController implements Initializable {
     @FXML
     private void onConfirmer() {
         if (cart.getProductItems().isEmpty() && cart.getReservationItems().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING,
-                    "Panier vide", "Ajoutez des produits avant de confirmer.");
+            showAlert(Alert.AlertType.WARNING, "Panier vide", "Ajoutez des articles avant de confirmer.");
             return;
         }
 
-        // Mode de paiement sélectionné
-        String mode = rbCarte.isSelected() ? "CARTE"
-                : rbPaypal.isSelected() ? "PAYPAL"
-                : "CASH";
+        String mode = rbCarte.isSelected() ? "CARTE" : rbPaypal.isSelected() ? "PAYPAL" : "CASH";
 
         try {
-            // ── Pour chaque produit du panier → une Commande + une LigneCommande ──
+            // ── Finalize reservation items → persist to DB ──
+            if (!cart.getReservationItems().isEmpty()) {
+                reservationService.finalizeAllReservations(cart.getReservationItems());
+            }
+
+            // ── Finalize product orders (existing logic) ──
             for (Map.Entry<Product, Integer> entry : cart.getProductItems().entrySet()) {
                 Product p   = entry.getKey();
                 int     qty = entry.getValue();
-                double  sousTotal = p.getPrix() * qty;
-
-                // 1. Créer la Commande
-                Commande commande = new Commande(
-                        SessionManager.getInstance().getCurrentUser().getId(),  // TODO : remplacer par l'ID utilisateur connecté
-                        p.getId(),
-                        qty,
-                        p.getPrix(),
-                        sousTotal,
-                        new Date()
-                );
+                double  st  = p.getPrix() * qty;
+                Commande commande = new Commande(1, p.getId(), qty, p.getPrix(), st, new Date());
                 commandeService.create(commande);
-
-                // 2. Récupérer l'ID généré de la commande
-                // (on lit la dernière insérée pour cet user+produit)
-                int commandeId = getLastInsertedCommandeId(1, p.getId());
-
-                // 3. Créer la LigneCommande
-                LigneCommande ligne = new LigneCommande(
-                        commandeId,
-                        p.getId(),
-                        qty,
-                        p.getPrix(),
-                        sousTotal
-                );
-                ligneCommandeService.create(ligne);
+                int cid = getLastInsertedCommandeId(1, p.getId());
+                ligneCommandeService.create(new LigneCommande(cid, p.getId(), qty, p.getPrix(), st));
             }
 
-            // 4. Vider le panier
             double total = cart.getTotal();
             cart.clear();
 
-            showAlert(Alert.AlertType.INFORMATION,
-                    "Commande confirmée ✅",
-                    "Votre commande a été enregistrée avec succès !\n" +
-                            "Mode de paiement : " + mode + "\n" +
-                            "Total : " + String.format("%.2f TND", total));
-
+            showAlert(Alert.AlertType.INFORMATION, "Commande confirmée ✅",
+                    "Votre commande a été enregistrée !\nMode : " + mode
+                            + "\nTotal : " + String.format("%.2f TND", total));
             refreshCart();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR,
-                    "Erreur", "Une erreur s'est produite : " + e.getMessage());
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Erreur", e.getMessage());
         }
     }
 

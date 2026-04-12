@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="tn.esprit.controller.front.modals.HebergementReservationController"
+           styleClass="modal-blur-overlay"
+           alignment="CENTER">
+
+    <VBox styleClass="res-modal-card" maxWidth="500" spacing="0">
+
+        <!-- Green header -->
+        <HBox styleClass="res-modal-header-green" spacing="16" alignment="CENTER_LEFT">
+            <StackPane styleClass="res-modal-icon-wrap">
+                <Label text="🏨" style="-fx-font-size:24px;"/>
+            </StackPane>
+            <VBox spacing="3" HBox.hgrow="ALWAYS">
+                <Label text="Réserver l'hébergement" styleClass="res-modal-title"/>
+                <Label fx:id="hebergementNameLabel" styleClass="res-modal-subtitle" wrapText="true"/>
+            </VBox>
+            <Button text="✕" styleClass="res-modal-close" onAction="#onClose"/>
+        </HBox>
+
+        <!-- Body -->
+        <VBox styleClass="res-modal-body" spacing="16">
+
+            <Label fx:id="errorLabel" styleClass="res-modal-err-msg"
+                   managed="false" visible="false" wrapText="true"
+                   style="-fx-background-color:#fde8e8;-fx-background-radius:8;-fx-padding:10 14;"/>
+
+            <!-- Check-in / Check-out side by side -->
+            <GridPane hgap="14" vgap="0">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="50"/>
+                    <ColumnConstraints percentWidth="50"/>
+                </columnConstraints>
+                <VBox spacing="6" GridPane.columnIndex="0">
+                    <Label text="CHECK-IN" styleClass="res-modal-field-label"/>
+                    <DatePicker fx:id="checkInPicker" styleClass="res-modal-input" maxWidth="Infinity"/>
+                    <Label fx:id="errCheckIn" styleClass="res-modal-err-msg" managed="false" visible="false"/>
+                </VBox>
+                <VBox spacing="6" GridPane.columnIndex="1">
+                    <Label text="CHECK-OUT" styleClass="res-modal-field-label"/>
+                    <DatePicker fx:id="checkOutPicker" styleClass="res-modal-input" maxWidth="Infinity"/>
+                    <Label fx:id="errCheckOut" styleClass="res-modal-err-msg" managed="false" visible="false"/>
+                </VBox>
+            </GridPane>
+
+            <!-- Guests -->
+            <VBox spacing="6">
+                <Label text="NOMBRE DE PERSONNES" styleClass="res-modal-field-label"/>
+                <Spinner fx:id="guestsSpinner" min="1" max="20" initialValue="1"
+                         styleClass="res-modal-input" maxWidth="Infinity" editable="true"/>
+                <Label fx:id="errGuests" styleClass="res-modal-err-msg" managed="false" visible="false"/>
+            </VBox>
+
+            <!-- Price strip -->
+            <VBox fx:id="priceStrip" styleClass="res-modal-price-strip" spacing="4"
+                  managed="false" visible="false">
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                    <Label text="🌙" style="-fx-font-size:16px;"/>
+                    <Label fx:id="nightsLabel" styleClass="res-modal-price-label"/>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="6">
+                    <Label fx:id="totalLabel" styleClass="res-modal-price-amount"/>
+                    <Label text="TND" styleClass="res-modal-price-sub"/>
+                </HBox>
+            </VBox>
+
+        </VBox>
+
+        <!-- Footer -->
+        <HBox styleClass="res-modal-footer" alignment="CENTER_RIGHT" spacing="12">
+            <Button text="Annuler" styleClass="res-modal-btn-cancel" onAction="#onClose"/>
+            <Button text="🛒  Ajouter au panier" styleClass="res-modal-btn-confirm-green"
+                    onAction="#onAddToCart"/>
+        </HBox>
+
+    </VBox>
+</StackPane>
