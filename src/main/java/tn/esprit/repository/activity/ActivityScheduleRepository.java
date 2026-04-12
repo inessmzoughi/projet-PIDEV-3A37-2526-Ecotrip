@@ -1,8 +1,8 @@
 package tn.esprit.repository.activity;
 
-import org.example.database.Base;
-import org.example.models.activity.Activity;
-import org.example.models.activity.ActivitySchedule;
+import tn.esprit.database.Base;
+import tn.esprit.models.activity.Activity;
+import tn.esprit.models.activity.ActivitySchedule;
 
 import java.sql.*;
 import java.util.ArrayList;

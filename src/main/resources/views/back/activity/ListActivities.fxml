@@ -6,7 +6,7 @@
 <?import javafx.scene.image.ImageView?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.controller.back.activity.ListActivitiesController"
+            fx:controller="tn.esprit.controller.back.activity.ListActivitiesController"
             styleClass="root-pane"
             stylesheets="@../../../styles/ecotrip.css">
     <center>

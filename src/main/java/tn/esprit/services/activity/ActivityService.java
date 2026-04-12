@@ -1,7 +1,7 @@
 package tn.esprit.services.activity;
 
-import org.example.models.activity.Activity;
-import org.example.repository.activity.ActivityRepository;
+import tn.esprit.models.activity.Activity;
+import tn.esprit.repository.activity.ActivityRepository;
 
 import java.sql.SQLException;
 import java.util.List;
