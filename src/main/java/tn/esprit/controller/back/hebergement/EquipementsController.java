@@ -1,6 +1,6 @@
 package tn.esprit.controller.back.hebergement;
 
-import tn.esprit.models.Equipement;
+import tn.esprit.models.hebergements.Equipement;
 import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;
 import tn.esprit.services.hebergement.Equipement_service;
