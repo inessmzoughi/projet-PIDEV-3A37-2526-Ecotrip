@@ -1,8 +1,8 @@
 package tn.esprit.controller.back.hebergement;
 
-import tn.esprit.models.Categorie_hebergement;
-import tn.esprit.models.Equipement;
-import tn.esprit.models.Hebergement;
+import tn.esprit.models.hebergements.Categorie_hebergement;
+import tn.esprit.models.hebergements.Equipement;
+import tn.esprit.models.hebergements.Hebergement;
 import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;
 import tn.esprit.services.hebergement.CategorieH_service;
