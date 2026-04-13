@@ -2,38 +2,112 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.*?>
+<?import java.lang.String?>
 
-<VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="tn.esprit.controller.front.MesReservationsController"
-      spacing="0">
+<ScrollPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="tn.esprit.controller.front.MesReservationsController"
+            fitToWidth="true"
+            hbarPolicy="NEVER"
+            vbarPolicy="AS_NEEDED"
+            styleClass="front-scroll">
 
-    <!-- Hero -->
-    <VBox styleClass="act-hero" alignment="CENTER" spacing="12">
-        <padding><Insets top="60" bottom="60"/></padding>
-        <Label text="📋  Mes Réservations" styleClass="banner-title"/>
-        <Label text="Consultez et gérez vos réservations EcoTrip"
-               styleClass="banner-desc" wrapText="true"/>
-    </VBox>
+    <VBox styleClass="heb-page" spacing="0">
 
-    <VBox styleClass="page-body" spacing="20">
-        <padding><Insets top="32" right="40" bottom="40" left="40"/></padding>
-
-        <!-- Toast -->
-        <Label fx:id="toastLabel" styleClass="toast-success"
-               managed="false" visible="false" wrapText="true"/>
-
-        <!-- Empty state -->
-        <VBox fx:id="emptyState" alignment="CENTER" spacing="16"
-              managed="false" visible="false" styleClass="act-empty-state">
-            <padding><Insets top="60" bottom="60"/></padding>
-            <Label text="📭" styleClass="act-empty-icon"/>
-            <Label text="Aucune réservation" styleClass="act-empty-title"/>
-            <Label text="Vos réservations apparaîtront ici après paiement."
-                   styleClass="act-empty-sub" wrapText="true"/>
+        <!-- ══ HERO ══ -->
+        <VBox styleClass="heb-hero" alignment="CENTER" spacing="14">
+            <padding><Insets top="80" bottom="80" left="40" right="40"/></padding>
+            <Label text="MES VOYAGES" styleClass="banner-sub"/>
+            <Label text="Mes Réservations" styleClass="heb-hero-title"/>
+            <Label text="Retrouvez toutes vos réservations EcoTrip — hébergements, activités et transports."
+                   styleClass="heb-hero-sub" wrapText="true"/>
         </VBox>
 
-        <!-- Cards container -->
-        <VBox fx:id="reservationsContainer" spacing="16"/>
+        <!-- ══ FILTRES ══ -->
+        <VBox styleClass="heb-filters-container">
+            <padding><Insets top="30" bottom="30" left="40" right="40"/></padding>
+            <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 0 0 20 0;">
+                <Region styleClass="filters-title-bar"/>
+                <Label text="FILTRER VOS RÉSERVATIONS" styleClass="filters-section-title"/>
+            </HBox>
+            <HBox spacing="16" alignment="CENTER_LEFT">
+                <ComboBox fx:id="filterType"
+                          styleClass="heb-filter-input" prefWidth="180">
+                    <items>
+                        <javafx.collections.FXCollections fx:factory="observableArrayList">
+                            <String fx:value="Tous les types"/>
+                            <String fx:value="HEBERGEMENT"/>
+                            <String fx:value="ACTIVITY"/>
+                            <String fx:value="TRANSPORT"/>
+                        </javafx.collections.FXCollections>
+                    </items>
+                </ComboBox>
+                <ComboBox fx:id="filterStatus"
+                          styleClass="heb-filter-input" prefWidth="180">
+                    <items>
+                        <javafx.collections.FXCollections fx:factory="observableArrayList">
+                            <String fx:value="Tous les statuts"/>
+                            <String fx:value="PENDING"/>
+                            <String fx:value="CONFIRMED"/>
+                            <String fx:value="CANCELLED"/>
+                        </javafx.collections.FXCollections>
+                    </items>
+                </ComboBox>
+                <ComboBox fx:id="sortSelect"
+                          styleClass="heb-filter-input" prefWidth="200">
+                    <items>
+                        <javafx.collections.FXCollections fx:factory="observableArrayList">
+                            <String fx:value="Trier par"/>
+                            <String fx:value="Plus récentes"/>
+                            <String fx:value="Plus anciennes"/>
+                            <String fx:value="Prix croissant"/>
+                            <String fx:value="Prix décroissant"/>
+                        </javafx.collections.FXCollections>
+                    </items>
+                </ComboBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button text="Réinitialiser" styleClass="heb-clear-btn"
+                        onAction="#onReset" prefWidth="140"/>
+            </HBox>
+        </VBox>
+
+        <!-- ══ RÉSULTATS HEADER ══ -->
+        <HBox alignment="CENTER_LEFT">
+            <padding><Insets top="24" bottom="12" left="40" right="40"/></padding>
+            <Label fx:id="resultCount" text="0 Réservation(s)" styleClass="heb-result-count"/>
+        </HBox>
+
+        <!-- ══ CARDS (FlowPane like hebergements) ══ -->
+        <FlowPane fx:id="cardsPane" hgap="28" vgap="28" styleClass="heb-cards-pane">
+            <padding><Insets top="0" bottom="20" left="40" right="40"/></padding>
+        </FlowPane>
+
+        <!-- ══ EMPTY STATE ══ -->
+        <VBox fx:id="emptyState" alignment="CENTER" spacing="16"
+              managed="false" visible="false" styleClass="heb-empty">
+            <padding><Insets top="60" bottom="60"/></padding>
+            <Label text="📭" styleClass="heb-empty-icon"/>
+            <Label text="Aucune Réservation Trouvée" styleClass="heb-empty-title"/>
+            <Label text="Vos réservations apparaîtront ici après confirmation du panier."
+                   styleClass="heb-empty-sub" wrapText="true"/>
+            <Button text="↺  Réinitialiser les filtres"
+                    styleClass="heb-clear-btn" onAction="#onReset"/>
+        </VBox>
+
+        <!-- ══ PAGINATION ══ -->
+        <HBox fx:id="paginationBar"
+              alignment="CENTER" spacing="16"
+              managed="false" visible="false"
+              styleClass="heb-pagination">
+            <padding><Insets top="24" bottom="24" left="40" right="40"/></padding>
+            <Button fx:id="btnPrev" text="← Précédent"
+                    styleClass="heb-page-btn" onAction="#onPrev"/>
+            <Label fx:id="pagInfo" text="Page 1 / 1" styleClass="heb-page-info"/>
+            <Button fx:id="btnNext" text="Suivant →"
+                    styleClass="heb-page-btn" onAction="#onNext"/>
+        </HBox>
+
+        <!-- ══ FOOTER ══ -->
+        <fx:include source="../components/front-footer.fxml"/>
 
     </VBox>
-</VBox>
+</ScrollPane>

@@ -50,7 +50,7 @@ public class SceneManager {
         backRoutes.put(Routes.ADMIN_TRANSPORT,    "/views/back/transport/Transports.fxml");
         backRoutes.put(Routes.ADMIN_CHAUFFEURS,   "/views/back/transport/Chauffeurs.fxml");
         backRoutes.put(Routes.ADMIN_TRANSPORT_CATEGORIES, "/views/back/transport/TransportCategories.fxml");
-        backRoutes.put(Routes.ADMIN_RESERVATIONS, "/views/back/ListReservations.fxml");
+        backRoutes.put(Routes.ADMIN_RESERVATIONS, "/views/back/reservation/ListReservations.fxml");
 
         backRoutes.put(Routes.ADMIN_USERS,        "/views/back/user/User.fxml");
 

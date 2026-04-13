@@ -10,7 +10,7 @@
             fitToWidth="true"
             hbarPolicy="NEVER"
             vbarPolicy="AS_NEEDED"
-            styleClass="heb-scroll">
+            styleClass="front-scroll">
 
     <VBox spacing="0">
 

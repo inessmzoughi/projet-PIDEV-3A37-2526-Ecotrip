@@ -4,17 +4,12 @@
 <?import javafx.geometry.*?>
 <?import java.lang.String?>
 
-<ScrollPane xmlns="http://javafx.com/javafx/17"
-            xmlns:fx="http://javafx.com/fxml/1"
+<ScrollPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="tn.esprit.controller.front.HebergementsController"
             fitToWidth="true"
             hbarPolicy="NEVER"
             vbarPolicy="AS_NEEDED"
-            styleClass="heb-scroll">
-
-    <stylesheets>
-        <String fx:value="@/styles/front.css"/>
-    </stylesheets>
+            styleClass="front-scroll">
 
     <VBox styleClass="heb-page" spacing="0">
 

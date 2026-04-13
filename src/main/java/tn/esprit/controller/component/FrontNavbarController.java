@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class FrontNavbarController {
 
-    @FXML private Button homeBtn, aboutBtn, hebergBtn, activitesBtn;
+    @FXML private Button homeBtn, hebergBtn, activitesBtn;
     @FXML private Button transportBtn, boutiqueBtn, contactBtn;
     @FXML private Button reservationsBtn, monCompteBtn, logoutBtn, loginBtn;
 
@@ -20,7 +20,6 @@ public class FrontNavbarController {
     public void initialize() {
         routeMap = Map.of(
                 homeBtn,        Routes.HOME,
-                aboutBtn,       Routes.ABOUT,
                 hebergBtn,      Routes.HEBERGEMENTS,
                 activitesBtn,   Routes.ACTIVITES,
                 transportBtn,   Routes.TRANSPORT,
@@ -49,7 +48,6 @@ public class FrontNavbarController {
     }
 
     @FXML private void handleHome()         { SceneManager.navigateTo(Routes.HOME); }
-    @FXML private void handleAbout()        { SceneManager.navigateTo(Routes.ABOUT); }
     @FXML private void handleHeberg()       { SceneManager.navigateTo(Routes.HEBERGEMENTS); }
     @FXML private void handleActivites()    { SceneManager.navigateTo(Routes.ACTIVITES); }
     @FXML private void handleTransport()    { SceneManager.navigateTo(Routes.TRANSPORT); }

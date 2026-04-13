@@ -10,9 +10,6 @@
       fx:controller="tn.esprit.controller.component.FrontFooterController"
       styleClass="footer-area">
 
-    <stylesheets>
-        <String fx:value="@/styles/front.css"/>
-    </stylesheets>
 
     <padding><Insets top="40" bottom="40" left="40" right="40"/></padding>
 
