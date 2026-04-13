@@ -1,148 +1,210 @@
-/* ── Page background ───────────────────────────────── */
+/* ─── Auth Pages ─────────────────────────────────────────── */
+
 .auth-page {
-    -fx-background-color: #f0f4ed;
-    -fx-padding: 40;
+    -fx-background-color: linear-gradient(to bottom right, #1a3a07, #2d5c10, #4a8020);
+    -fx-padding: 28;
 }
 
-/* ── Brand ─────────────────────────────────────────── */
-.brand-circle {
-    -fx-fill: #2d5016;
-}
-.brand-name {
-    -fx-font-size: 22px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #2d5016;
-}
-
-/* ── Card ──────────────────────────────────────────── */
-.auth-card {
-    -fx-background-color: white;
-    -fx-border-color: #dde8d4;
-    -fx-border-width: 1;
-    -fx-border-radius: 12;
-    -fx-background-radius: 12;
-    -fx-padding: 32 36 28 36;
-    -fx-max-width: 420;
-    -fx-min-width: 380;
-}
-
-.auth-title {
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #2d5016;
-    -fx-alignment: CENTER;
-    -fx-max-width: Infinity;
-    -fx-padding: 0 0 22 0;
-}
-
-/* ── Alerts ────────────────────────────────────────── */
-.auth-alert-error {
-    -fx-background-color: #fde8e8;
-    -fx-text-fill: #9b1c1c;
-    -fx-border-color: #fca5a5;
-    -fx-border-width: 1;
-    -fx-border-radius: 8;
-    -fx-background-radius: 8;
-    -fx-padding: 10 14 10 14;
-    -fx-font-size: 13px;
-    -fx-max-width: Infinity;
-    -fx-margin: 0 0 16 0;
-}
-.auth-alert-success {
-    -fx-background-color: #f0fdf4;
-    -fx-text-fill: #166534;
-    -fx-border-color: #86efac;
-    -fx-border-width: 1;
-    -fx-border-radius: 8;
-    -fx-background-radius: 8;
-    -fx-padding: 10 14 10 14;
-    -fx-font-size: 13px;
-    -fx-max-width: Infinity;
-}
-
-/* ── Form fields ───────────────────────────────────── */
-.auth-field {
-    -fx-padding: 0 0 14 0;
-}
-
-.field-label {
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #374151;
-}
-
-.auth-input {
-    -fx-background-color: #fafcf8;
-    -fx-border-color: #d1ddc8;
-    -fx-border-width: 1;
-    -fx-border-radius: 8;
-    -fx-background-radius: 8;
-    -fx-padding: 10 14 10 14;
-    -fx-font-size: 14px;
-    -fx-text-fill: #1a202c;
-}
-.auth-input:focused {
+/* Main card */
+.auth-frame {
+    -fx-max-width: 1080;
+    -fx-pref-height: 620;
+    -fx-background-color: #f9fafb;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
     -fx-border-color: #2d5016;
-    -fx-effect: dropshadow(gaussian, rgba(45,80,22,0.15), 6, 0, 0, 0);
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(10, 30, 5, 0.28), 40, 0.20, 0, 12);
 }
 
-/* ── Checkbox ──────────────────────────────────────── */
+/* ─── Left panel (image + overlay) ─────────────────────── */
+
+.auth-left-panel {
+    -fx-min-width: 420;
+    -fx-pref-width: 420;
+    -fx-background-radius: 18 0 0 18;
+}
+
+.image-overlay {
+    -fx-alignment: top-left;
+    -fx-background-color: linear-gradient(to bottom, rgba(10, 28, 5, 0.62), rgba(18, 44, 8, 0.72));
+    -fx-background-radius: 18 0 0 18;
+}
+
+.overlay-brand-box {
+    -fx-background-color: rgba(255, 255, 255, 0.12);
+    -fx-background-radius: 10;
+    -fx-padding: 8 12 8 12;
+    -fx-alignment: center-left;
+}
+
+.overlay-title {
+    -fx-font-size: 64px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #ffffff;
+    -fx-line-spacing: -10px;
+}
+
+.overlay-subtitle {
+    -fx-font-size: 16px;
+    -fx-text-fill: rgba(255, 255, 255, 0.75);
+    -fx-line-spacing: 2px;
+    -fx-padding: 4 0 0 0;
+}
+
+.overlay-badge {
+    -fx-background-color: rgba(255, 255, 255, 0.10);
+    -fx-border-color: rgba(255, 255, 255, 0.22);
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-border-width: 1;
+    -fx-text-fill: rgba(255, 255, 255, 0.88);
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-padding: 6 14 6 14;
+}
+
+/* ─── Right panel (form) ─────────────────────────────────── */
+
+.auth-right-panel {
+    -fx-background-color: #fafafa;
+    -fx-background-radius: 0 18 18 0;
+}
+
+/* Headings */
+.auth-title-small {
+    -fx-font-size: 26px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #111827;
+}
+
+.auth-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #9ca3af;
+    -fx-padding: 0 0 6 0;
+}
+
+/* Field label above each input */
+.auth-field-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #374151;
+    -fx-padding: 0 0 4 2;
+}
+
+/* Inputs */
+.auth-input-flat {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 11 14 11 14;
+    -fx-font-size: 14px;
+    -fx-text-fill: #111827;
+    -fx-prompt-text-fill: #c4cad3;
+}
+
+.auth-input-flat:focused {
+    -fx-border-color: #2d5016;
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(gaussian, rgba(45, 80, 22, 0.12), 6, 0.1, 0, 0);
+}
+
+/* Checkbox */
 .auth-checkbox {
     -fx-font-size: 13px;
-    -fx-text-fill: #4a5568;
-    -fx-padding: 0 0 18 0;
+    -fx-text-fill: #6b7280;
 }
+
 .auth-checkbox .box {
-    -fx-border-color: #d1ddc8;
-    -fx-border-radius: 4;
-    -fx-background-radius: 4;
+    -fx-border-color: #d1d5db;
+    -fx-background-color: #ffffff;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-border-width: 1.5;
 }
+
 .auth-checkbox:selected .mark {
     -fx-background-color: #2d5016;
 }
 
-/* ── Login button ──────────────────────────────────── */
+/* Divider label */
+.auth-divider-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #9ca3af;
+    -fx-padding: 0 8 0 8;
+}
+
+/* Buttons */
 .btn-login {
-    -fx-background-color: #2d5016;
+    -fx-background-color: #ef3e63;
     -fx-text-fill: white;
     -fx-font-size: 15px;
-    -fx-font-weight: bold;
-    -fx-background-radius: 8;
+    -fx-font-weight: 700;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
     -fx-padding: 12 0 12 0;
     -fx-cursor: hand;
-    -fx-border-width: 0;
-}
-.btn-login:hover   { -fx-background-color: #1e4620; }
-.btn-login:pressed { -fx-background-color: #163515; }
-.btn-login:disabled {
-    -fx-background-color: #9ab88a;
-    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(239, 62, 99, 0.30), 10, 0.2, 0, 4);
 }
 
-/* ── Divider ───────────────────────────────────────── */
-.auth-divider {
-    -fx-padding: 18 0 14 0;
-    -fx-border-color: #e8efe0;
+.btn-login:hover {
+    -fx-background-color: #d63257;
+    -fx-effect: dropshadow(gaussian, rgba(239, 62, 99, 0.40), 14, 0.25, 0, 6);
 }
 
-/* ── Bottom links ──────────────────────────────────── */
-.auth-hint {
-    -fx-font-size: 13px;
-    -fx-text-fill: #4a5568;
+.btn-login:pressed {
+    -fx-background-color: #c02a4b;
+    -fx-effect: none;
 }
-.auth-sep {
-    -fx-font-size: 13px;
-    -fx-text-fill: #cbd5c0;
-}
+
 .btn-link {
     -fx-background-color: transparent;
     -fx-text-fill: #2d5016;
     -fx-font-size: 13px;
-    -fx-font-weight: bold;
+    -fx-font-weight: 600;
     -fx-cursor: hand;
+    -fx-border-width: 0;
     -fx-padding: 0;
+    -fx-underline: true;
+}
+
+.btn-link-accent {
+    -fx-background-color: transparent;
+    -fx-text-fill: #2d5016;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-padding: 2 0 0 0;
+    -fx-cursor: hand;
     -fx-border-width: 0;
 }
-.btn-link:hover {
-    -fx-underline: true;
+
+/* Alerts */
+.auth-alert-error {
+    -fx-background-color: #fef2f2;
+    -fx-border-color: #fecaca;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-text-fill: #b91c1c;
+    -fx-font-size: 13px;
+    -fx-padding: 10 14 10 14;
+}
+
+.auth-alert-success {
+    -fx-background-color: #f0fdf4;
+    -fx-border-color: #bbf7d0;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-text-fill: #15803d;
+    -fx-font-size: 13px;
+    -fx-padding: 10 14 10 14;
+}
+
+/* Image */
+.auth-image-view {
+    -fx-fit-to-width: true;
+    -fx-opacity: 0.92;
 }
