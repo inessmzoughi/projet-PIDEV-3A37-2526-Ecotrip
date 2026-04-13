@@ -1,4 +1,4 @@
-package tn.esprit.models;
+package tn.esprit.models.hebergements;
 
 public class Chambre {
     private int id;
@@ -82,4 +82,9 @@ public class Chambre {
     }
 
 
+    public void setNumero(String s) {this.numero = numero;
+    }
+
+    public void setPrix_par_nuit(double v) {
+    }
 }

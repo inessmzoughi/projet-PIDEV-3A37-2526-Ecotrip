@@ -1,8 +1,8 @@
 package tn.esprit.controller.back.hebergement;
 
 import javafx.scene.layout.VBox;
-import tn.esprit.models.Chambre;
-import tn.esprit.models.Hebergement;
+import tn.esprit.models.hebergements.Chambre;
+import tn.esprit.models.hebergements.Hebergement;
 import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;
 import tn.esprit.services.hebergement.Chambre_service;
