@@ -4,12 +4,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
 import tn.esprit.controller.front.modals.ActivityReservationController;
+import tn.esprit.controller.front.modals.HebergementReservationController;
 import tn.esprit.models.activity.Activity;
 import tn.esprit.models.activity.ActivityCategory;
 import tn.esprit.navigation.Routes;
@@ -28,6 +31,7 @@ import java.util.stream.Collectors;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.StackPane;
+import tn.esprit.utils.CartManager;
 
 public class ActivitiesController implements Initializable {
 
@@ -288,7 +292,7 @@ public class ActivitiesController implements Initializable {
         Region priceSpace = new Region();
         HBox.setHgrow(priceSpace, Priority.ALWAYS);
 
-        Button btn = new Button("Voir →");
+        Button btn = new Button("Ajouter au panier");
         btn.getStyleClass().add("heb-card-btn");
         btn.setPrefWidth(90);
         btn.setOnAction(e -> handleViewActivity(a));
@@ -432,8 +436,7 @@ public class ActivitiesController implements Initializable {
         SceneManager.navigateTo(Routes.CONTACT);
     }
 
-    private void handleViewActivity(Activity activity) {
-        System.out.println("View activity: " + activity.getTitle());
+    private void handleViewActivity(Activity a) {
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/views/front/modals/ActivityReservationModal.fxml")
@@ -441,15 +444,36 @@ public class ActivitiesController implements Initializable {
             StackPane modalOverlay = loader.load();
 
             ActivityReservationController ctrl = loader.getController();
-            ctrl.setActivity(activity);
+            ctrl.setActivity(a);
             ctrl.setOverlayRoot(modalOverlay);
 
-            StackPane sceneRoot = (StackPane) activitiesGrid.getScene().getRoot();
-            sceneRoot.getChildren().add(modalOverlay);
-            sceneRoot.getChildren().get(0).setEffect(new GaussianBlur(8));
+            // 🔥 FIX: handle root safely
+            Parent rootNode = activitiesGrid.getScene().getRoot();
 
+            StackPane overlayContainer;
+
+            if (rootNode instanceof StackPane) {
+                overlayContainer = (StackPane) rootNode;
+            } else {
+                // Wrap existing root inside a StackPane
+                overlayContainer = new StackPane();
+                Scene scene = rootNode.getScene();
+                overlayContainer.getChildren().add(rootNode);
+                scene.setRoot(overlayContainer);
+            }
+
+            overlayContainer.getChildren().add(modalOverlay);
+
+            // Apply blur
+            if (!overlayContainer.getChildren().isEmpty()) {
+                overlayContainer.getChildren().get(0)
+                        .setEffect(new javafx.scene.effect.GaussianBlur(8));
+            }
+
+            // Remove blur on close + keep cart update
             ctrl.setOnCartUpdated(() -> {
-                sceneRoot.getChildren().get(0).setEffect(null);
+                System.out.println("Cart: " + CartManager.getInstance().getCount());
+                overlayContainer.getChildren().get(0).setEffect(null);
             });
 
         } catch (Exception e) {
