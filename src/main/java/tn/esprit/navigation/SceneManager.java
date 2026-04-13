@@ -222,6 +222,13 @@ public class SceneManager {
         scene.getStylesheets().add(
                 SceneManager.class.getResource("/styles/" + cssFile).toExternalForm()
         );
+        // Load activity CSS alongside back.css
+        if (cssFile.equals("back.css")) {
+            scene.getStylesheets().add(
+                    SceneManager.class.getResource("/styles/ecotrip-activity.css").toExternalForm()
+            );
+        }
+        primaryStage.setScene(scene);
         primaryStage.setScene(scene);
     }
 }

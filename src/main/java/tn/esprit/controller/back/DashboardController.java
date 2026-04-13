@@ -211,11 +211,10 @@ public class DashboardController {
     }
 
     // ── Navigation ───────────────────────────────────────────
-//    @FXML private void handleViewActivites()    { SceneManager.navigateTo(Routes.ADMIN_ACTIVITES); }
-//    @FXML private void handleNewActivite()      { SceneManager.navigateTo(Routes.ADMIN_ACTIVITES); }
-//    @FXML private void handleNewCatActivite()   { SceneManager.navigateTo(Routes.ADMIN_ACTIVITES); }
-//    @FXML private void handleNewHoraire()       { SceneManager.navigateTo(Routes.ADMIN_ACTIVITES); }
-//    @FXML private void handleNewGuide()         { SceneManager.navigateTo(Routes.ADMIN_ACTIVITES); }
+    @FXML private void handleNewActivite()      { SceneManager.navigateTo(Routes.ADMIN_ACTIVITIES); }
+    @FXML private void handleNewCatActivite()   { SceneManager.navigateTo(Routes.ADMIN_ACTIVITY_CATEGORIES); }
+    @FXML private void handleNewHoraire()       { SceneManager.navigateTo(Routes.ADMIN_SCHEDULES); }
+    @FXML private void handleNewGuide()         { SceneManager.navigateTo(Routes.ADMIN_GUIDES); }
 
     @FXML private void handleNewHeberg()        { SceneManager.navigateTo(Routes.ADMIN_HEBERGEMENTS); }
     @FXML private void handleNewChambre()       { SceneManager.navigateTo(Routes.ADMIN_HEBERGEMENTS); }

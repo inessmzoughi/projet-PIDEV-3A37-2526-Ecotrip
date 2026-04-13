@@ -3,14 +3,20 @@ package tn.esprit.controller.back.activity;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import tn.esprit.models.activity.Activity;
 import tn.esprit.models.activity.ActivityCategory;
 import tn.esprit.models.activity.Guide;
@@ -31,7 +37,7 @@ public class ListActivitiesController implements Initializable {
     /* ─── Stats ─── */
     @FXML private Label statTotal, statActive, statAvgPrice;
 
-    /* ─── Form ─── */
+    /* ─── Formulaire ─── */
     @FXML private Label    formIcon, formTitle, formSubtitle;
     @FXML private TextField titleField, priceField, durationField,
             locationField, maxParticipantsField,
@@ -55,13 +61,14 @@ public class ListActivitiesController implements Initializable {
     @FXML private TableColumn<Activity, Boolean> colActive;
     @FXML private TableColumn<Activity, Void>    colActions;
     @FXML private Label badgeCount, pagInfo;
-    @FXML private HBox pagButtons;
+    @FXML private HBox  pagButtons;
+    @FXML private HBox  paginationBar;
 
     /* ─── State ─── */
-    private final ActivityService service         = new ActivityService();
+    private final ActivityService         service         = new ActivityService();
     private final ActivityCategoryService categoryService = new ActivityCategoryService();
-    private final GuideService guideService    = new GuideService();
-    private List<Activity> allData      = new ArrayList<>();
+    private final GuideService            guideService    = new GuideService();
+    private List<Activity>         allData       = new ArrayList<>();
     private List<ActivityCategory> allCategories = new ArrayList<>();
     private List<Guide>            allGuides     = new ArrayList<>();
     private final Map<String, Integer> categoryMap = new LinkedHashMap<>();
@@ -125,10 +132,11 @@ public class ListActivitiesController implements Initializable {
     private void updateStats() {
         int total = allData.size();
         statTotal.setText(String.valueOf(total));
+        if (total == 0) { statActive.setText("—"); statAvgPrice.setText("—"); return; }
         long active = allData.stream().filter(Activity::isActive).count();
-        statActive.setText(String.valueOf(active));
+        statActive.setText(active + " actives");
         double avg = allData.stream().mapToDouble(Activity::getPrice).average().orElse(0);
-        statAvgPrice.setText(total == 0 ? "—" : String.format("%.1f TND", avg));
+        statAvgPrice.setText(String.format("%.1f TND", avg));
     }
 
     private void renderTable() {
@@ -171,6 +179,7 @@ public class ListActivitiesController implements Initializable {
 
     /* ─── Columns ─── */
     private void setupColumns() {
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         colTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
         colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
         colDuration.setCellValueFactory(new PropertyValueFactory<>("durationMinutes"));
@@ -252,6 +261,7 @@ public class ListActivitiesController implements Initializable {
         });
     }
 
+    /* ─── Photo chooser ─── */
     @FXML private void onChoosePhoto() {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Choisir une photo");
@@ -268,7 +278,7 @@ public class ListActivitiesController implements Initializable {
         }
     }
 
-    /* ─── Validation ─── */
+    /* ─── Validation en temps réel ─── */
     @FXML private void validateTitle() {
         String t = titleField.getText().trim();
         setFieldError(titleField, errTitle, t.length() < 3 || t.length() > 150);
@@ -292,6 +302,7 @@ public class ListActivitiesController implements Initializable {
         charCount.setText(descriptionField.getText().length() + " / 5000 caractères");
     }
 
+    /* ─── Validation globale ─── */
     private boolean validateAll() {
         boolean ok = true;
         String t = titleField.getText().trim();
@@ -332,7 +343,7 @@ public class ListActivitiesController implements Initializable {
         a.setLongitude(longitudeField.getText().trim());
         a.setActive("Actif".equals(activeCombo.getValue()));
 
-        // Category
+        // Catégorie
         int catId = categoryMap.getOrDefault(categoryCombo.getValue(), 0);
         allCategories.stream().filter(c -> c.getId() == catId).findFirst().ifPresent(a::setCategory);
 
@@ -348,10 +359,10 @@ public class ListActivitiesController implements Initializable {
         try {
             if (activityEnEdition == null) {
                 service.ajouter(a);
-                showToast("✅ Activité ajoutée !");
+                showSuccessPopup("Activité ajoutée avec succès !", "✅");
             } else {
                 service.modifier(a);
-                showToast("💾 Activité modifiée !");
+                showSuccessPopup("Activité modifiée avec succès !", "💾");
             }
             onReset();
             refreshAll();
@@ -368,14 +379,26 @@ public class ListActivitiesController implements Initializable {
         categoryCombo.setValue(null);
         activeCombo.getSelectionModel().selectFirst();
         guideCombo.getSelectionModel().selectFirst();
+
+        // Reset erreurs
+        setFieldError(titleField,    errTitle,    false);
+        setFieldError(priceField,    errPrice,    false);
+        setFieldError(durationField, errDuration, false);
+        setFieldError(locationField, errLocation, false);
+        errCategory.setVisible(false); errCategory.setManaged(false);
+        clearTextAreaError(descriptionField, errDescription);
+
         charCount.setText("0 / 5000 caractères");
+        if (photoPreview != null) photoPreview.setImage(null);
+        if (photoLabel   != null) photoLabel.setText("Aucune photo sélectionnée");
+        selectedPhotoPath = null;
         formIcon.setText("🏃");
         formTitle.setText("Nouvelle Activité");
         formSubtitle.setText("Remplissez les informations.");
         submitBtn.setText("➕ Ajouter");
     }
 
-    /* ─── Load for edit ─── */
+    /* ─── Charger pour édition ─── */
     private void loadForEdit(Activity a) {
         activityEnEdition = a;
         titleField.setText(a.getTitle());
@@ -401,7 +424,7 @@ public class ListActivitiesController implements Initializable {
         titleField.requestFocus();
     }
 
-    /* ─── Delete ─── */
+    /* ─── Supprimer ─── */
     private void confirmDelete(Activity a) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Supprimer ?");
@@ -430,8 +453,7 @@ public class ListActivitiesController implements Initializable {
     /* ─── Helpers ─── */
     private void setFieldError(TextField field, Label errLabel, boolean hasError) {
         if (hasError) {
-            if (!field.getStyleClass().contains("form-input-error"))
-                field.getStyleClass().add("form-input-error");
+            if (!field.getStyleClass().contains("form-input-error")) field.getStyleClass().add("form-input-error");
             errLabel.setVisible(true); errLabel.setManaged(true);
         } else {
             field.getStyleClass().remove("form-input-error");
@@ -450,16 +472,55 @@ public class ListActivitiesController implements Initializable {
         errLabel.setVisible(false); errLabel.setManaged(false);
     }
 
-    private void showToast(String msg) {
-        pagInfo.setText(msg);
-        new Thread(() -> {
-            try { Thread.sleep(3000); } catch (InterruptedException ignored) {}
-            javafx.application.Platform.runLater(this::renderTable);
-        }).start();
+    private void showSuccessPopup(String message, String iconText) {
+        Stage popup = new Stage();
+        popup.initStyle(StageStyle.UNDECORATED);
+        popup.initModality(Modality.APPLICATION_MODAL);
+        popup.initOwner(submitBtn.getScene().getWindow());
+
+        Label icon = new Label(iconText);
+        icon.setStyle("-fx-font-size:44px;");
+
+        Label msg = new Label(message);
+        msg.setStyle("-fx-font-size:15px; -fx-font-weight:bold; -fx-text-fill:#0f172a;");
+        msg.setWrapText(true);
+        msg.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+
+        Button closeBtn = new Button("OK");
+        closeBtn.setStyle(
+                "-fx-background-color:#38a169; -fx-text-fill:white; -fx-font-weight:bold;"
+                        + "-fx-background-radius:10; -fx-padding:10 40 10 40;"
+                        + "-fx-cursor:hand; -fx-border-width:0; -fx-font-size:14px;");
+        closeBtn.setOnAction(e -> popup.close());
+
+        VBox box = new VBox(16, icon, msg, closeBtn);
+        box.setAlignment(Pos.CENTER);
+        box.setPadding(new Insets(36, 40, 32, 40));
+        box.setStyle(
+                "-fx-background-color:white;"
+                        + "-fx-background-radius:16;"
+                        + "-fx-effect:dropshadow(gaussian,rgba(0,0,0,0.18),24,0,0,6);"
+                        + "-fx-border-color:#e2e8f0;"
+                        + "-fx-border-radius:16;"
+                        + "-fx-border-width:1;");
+
+        Scene scene = new Scene(box, 320, 230);
+        scene.setFill(Color.TRANSPARENT);
+        popup.setScene(scene);
+
+        popup.setOnShown(e -> {
+            Stage owner = (Stage) submitBtn.getScene().getWindow();
+            popup.setX(owner.getX() + (owner.getWidth()  - popup.getWidth())  / 2);
+            popup.setY(owner.getY() + (owner.getHeight() - popup.getHeight()) / 2);
+        });
+
+        popup.showAndWait();
     }
 
     private void showAlert(String title, String msg) {
         Alert a = new Alert(Alert.AlertType.ERROR);
-        a.setTitle(title); a.setContentText(msg); a.showAndWait();
+        a.setTitle(title);
+        a.setContentText(msg);
+        a.showAndWait();
     }
 }
