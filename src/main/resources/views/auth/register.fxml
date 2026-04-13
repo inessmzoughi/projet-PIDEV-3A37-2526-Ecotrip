@@ -1,25 +1,110 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
 
-<VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="tn.esprit.controller.auth.RegisterController"
-      alignment="CENTER" spacing="16"
-      styleClass="auth-container">
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="tn.esprit.controller.auth.RegisterController"
+           styleClass="auth-page">
 
-    <Label text="🌿 EcoTrip" styleClass="auth-logo"/>
-    <Label text="Create your account" styleClass="auth-subtitle"/>
+    <HBox styleClass="auth-frame">
 
-    <VBox styleClass="auth-form" spacing="12">
-        <TextField fx:id="usernameField" promptText="username"/>
-        <TextField fx:id="emailField"     promptText="Email address"/>
-        <PasswordField fx:id="passwordField"        promptText="Password"/>
-        <PasswordField fx:id="confirmPasswordField" promptText="Confirm password"/>
-        <Label fx:id="errorLabel" styleClass="error-label"/>
-        <Button text="Register" onAction="#handleRegister"
-                styleClass="btn-primary" maxWidth="Infinity"/>
-        <Button text="Already have an account? Login"
-                onAction="#handleLogin"
-                styleClass="btn-link" maxWidth="Infinity"/>
-    </VBox>
-</VBox>
+        <!-- ── Left panel ─────────────────────────────── -->
+        <StackPane styleClass="auth-left-panel">
+            <ImageView fitWidth="420" fitHeight="620" preserveRatio="false" styleClass="auth-image-view">
+                <image><Image url="@/images/auth/nature.png"/></image>
+            </ImageView>
+
+            <VBox styleClass="image-overlay" spacing="0">
+                <padding><Insets top="44" right="32" bottom="36" left="32"/></padding>
+
+                <!-- Brand badge -->
+                <HBox styleClass="overlay-brand-box" spacing="6" maxWidth="130">
+                    <Label text="🌿" style="-fx-font-size:16px;"/>
+                    <Label text="EcoTrip" style="-fx-font-size:13px;-fx-font-weight:700;-fx-text-fill:rgba(255,255,255,0.92);"/>
+                </HBox>
+
+                <VBox.margin><Insets top="28"/></VBox.margin>
+
+                <Label text="Bonjour," styleClass="overlay-title"/>
+                <Label text="Monde." styleClass="overlay-title"/>
+                <Label text="Commencez votre aventure eco&#10;aujourd'hui. C'est gratuit." styleClass="overlay-subtitle" wrapText="true"/>
+
+                <Region VBox.vgrow="ALWAYS"/>
+
+                <!-- Bottom badges -->
+                <HBox spacing="10">
+                    <Label text="🌿 Neutre en carbone" styleClass="overlay-badge"/>
+                    <Label text="🔒 Securise" styleClass="overlay-badge"/>
+                </HBox>
+            </VBox>
+        </StackPane>
+
+        <!-- ── Right panel ────────────────────────────── -->
+        <VBox styleClass="auth-right-panel" spacing="0" HBox.hgrow="ALWAYS">
+            <padding><Insets top="0" right="48" bottom="0" left="48"/></padding>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <Label text="Creer un compte" styleClass="auth-title-small"/>
+            <Label text="Cela prend moins d'une minute" styleClass="auth-subtitle"/>
+
+            <VBox.margin><Insets top="6"/></VBox.margin>
+
+            <!-- Error alert -->
+            <Label fx:id="errorLabel"
+                   styleClass="auth-alert-error"
+                   managed="false" visible="false"
+                   wrapText="true"/>
+
+            <!-- Full name -->
+            <VBox spacing="4">
+                <VBox.margin><Insets top="14"/></VBox.margin>
+                <Label text="NOM COMPLET" styleClass="auth-field-label"/>
+                <TextField fx:id="usernameField" promptText="Jean Dupont" styleClass="auth-input-flat"/>
+            </VBox>
+
+            <!-- Email -->
+            <VBox spacing="4">
+                <VBox.margin><Insets top="12"/></VBox.margin>
+                <Label text="E-MAIL" styleClass="auth-field-label"/>
+                <TextField fx:id="emailField" promptText="vous@exemple.com" styleClass="auth-input-flat"/>
+            </VBox>
+
+            <!-- Password -->
+            <VBox spacing="4">
+                <VBox.margin><Insets top="12"/></VBox.margin>
+                <Label text="MOT DE PASSE" styleClass="auth-field-label"/>
+                <PasswordField fx:id="passwordField" promptText="Min. 8 caracteres" styleClass="auth-input-flat"/>
+            </VBox>
+
+            <!-- Confirm password -->
+            <VBox spacing="4">
+                <VBox.margin><Insets top="12"/></VBox.margin>
+                <Label text="CONFIRMER LE MOT DE PASSE" styleClass="auth-field-label"/>
+                <PasswordField fx:id="confirmPasswordField" promptText="Repetez le mot de passe" styleClass="auth-input-flat"/>
+            </VBox>
+
+            <!-- Register button -->
+            <Button text="Creer un compte"
+                    onAction="#handleRegister"
+                    styleClass="btn-login"
+                    maxWidth="Infinity">
+                <VBox.margin><Insets top="22"/></VBox.margin>
+            </Button>
+
+            <!-- Back to login -->
+            <Button text="Vous avez deja un compte ? Connectez-vous →"
+                    onAction="#handleLogin"
+                    styleClass="btn-link-accent"
+                    maxWidth="Infinity"
+                    style="-fx-alignment:center;">
+                <VBox.margin><Insets top="12"/></VBox.margin>
+            </Button>
+
+            <Region VBox.vgrow="ALWAYS"/>
+        </VBox>
+    </HBox>
+</StackPane>

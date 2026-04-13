@@ -11,47 +11,64 @@ import tn.esprit.navigation.SceneManager;
 import tn.esprit.services.Auth_User.AuthService;
 import tn.esprit.session.SessionManager;
 
+import java.util.regex.Pattern;
+
 public class RegisterController {
 
-    @FXML private TextField usernameField;
-    @FXML private TextField emailField;
+    @FXML private TextField     usernameField;
+    @FXML private TextField     emailField;
     @FXML private PasswordField passwordField;
     @FXML private PasswordField confirmPasswordField;
-    @FXML private Label errorLabel;
+    @FXML private Label         errorLabel;
 
     private final AuthService authService = new AuthService();
 
+    // RFC 5322-inspired pattern — catches the vast majority of invalid addresses
+    private static final Pattern EMAIL_PATTERN = Pattern.compile(
+            "^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$"
+    );
+
     @FXML
     private void handleRegister() {
-        String username  = usernameField.getText().trim();
-        String email     = emailField.getText().trim();
-        String password  = passwordField.getText();
-        String confirm   = confirmPasswordField.getText();
+        String username = usernameField.getText().trim();
+        String email    = emailField.getText().trim();
+        String password = passwordField.getText();
+        String confirm  = confirmPasswordField.getText();
 
+        // 1. Empty field check
         if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
             showError("Please fill in all fields.");
-            errorLabel.setText("Username or Email address is required.");
             return;
         }
 
-        if (!password.equals(confirm)) {
-            showError("Passwords do not match.");
-            errorLabel.setText("Passwords do not match.");
+        // 2. Email format check
+        if (!EMAIL_PATTERN.matcher(email).matches()) {
+            showError("Please enter a valid email address (e.g. name@example.com).");
             return;
         }
 
+        // 3. Password length check
         if (password.length() < 8) {
             showError("Password must be at least 8 characters.");
-            errorLabel.setText("Password must be at least 8 characters.");
             return;
         }
+        if (username.length() < 8) {
+            showError("Username must be at least 3 characters.");
+            return;
+        }
+        // 4. Password match check
+        if (!password.equals(confirm)) {
+            showError("Passwords do not match.");
+            return;
+        }
+
 
         try {
             User user = authService.register(username, email, password);
             SessionManager.getInstance().setCurrentUser(user);
             SceneManager.navigateTo(Routes.ADMIN_DASHBOARD);
         } catch (EmailAlreadyExistsException e) {
-            showError(e.getMessage());
+            showError("An account with this email already exists.");
         }
     }
 

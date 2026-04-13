@@ -10,11 +10,7 @@
             fitToWidth="true"
             hbarPolicy="NEVER"
             vbarPolicy="AS_NEEDED"
-            styleClass="heb-scroll">
-
-    <stylesheets>
-        <String fx:value="@/styles/front.css"/>
-    </stylesheets>
+            styleClass="front-scroll">
 
     <VBox styleClass="heb-page" spacing="0">
 

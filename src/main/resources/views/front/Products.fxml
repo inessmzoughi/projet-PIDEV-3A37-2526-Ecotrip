@@ -12,10 +12,6 @@
             vbarPolicy="AS_NEEDED"
             styleClass="front-scroll">
 
-    <stylesheets>
-        <String fx:value="@/styles/front.css"/>
-    </stylesheets>
-
     <VBox styleClass="heb-page" spacing="0">
 
         <!-- ══ HERO ══ -->
