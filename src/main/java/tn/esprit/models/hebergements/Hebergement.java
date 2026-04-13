@@ -1,4 +1,4 @@
-package tn.esprit.models;
+package tn.esprit.models.hebergements;
 
 public class Hebergement {
     private int id;
