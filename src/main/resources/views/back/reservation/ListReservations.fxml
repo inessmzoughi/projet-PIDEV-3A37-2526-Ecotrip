@@ -5,7 +5,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="tn.esprit.controller.back.ListReservationsController"
+            fx:controller="tn.esprit.controller.back.reservation.ListReservationsController"
             styleClass="root-pane">
 
     <center>

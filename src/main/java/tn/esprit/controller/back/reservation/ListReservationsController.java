@@ -1,4 +1,4 @@
-package tn.esprit.controller.back;
+package tn.esprit.controller.back.reservation;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -124,7 +124,7 @@ public class ListReservationsController implements Initializable {
                 new SimpleStringProperty("#" + c.getValue().getId()));
 
         colUser.setCellValueFactory(c ->
-                new SimpleStringProperty("User #" + c.getValue().getUserId()));
+                new SimpleStringProperty(c.getValue().getUsername(c.getValue().getUserId())));
 
         colType.setCellValueFactory(c ->
                 new SimpleStringProperty(c.getValue().getReservationType().name()));

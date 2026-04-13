@@ -2,6 +2,7 @@ package tn.esprit.models;
 
 import tn.esprit.models.enums.ReservationStatus;
 import tn.esprit.models.enums.ReservationType;
+import tn.esprit.repository.UserRepository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,6 +33,11 @@ public class Reservation {
     // ── Getters ────────────────────────────────────────
     public int getId()                        { return id; }
     public int getUserId()                    { return userId; }
+    public String getUsername(int id)                {
+        UserRepository repo = new UserRepository();
+        User u = repo.findById(id).get();
+        return u.getUsername();
+    }
     public ReservationType getReservationType() { return reservationType; }
     public int getReservationId()             { return reservationId; }
     public double getTotalPrice()             { return totalPrice; }

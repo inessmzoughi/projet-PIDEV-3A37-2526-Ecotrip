@@ -17,7 +17,6 @@
     <!-- Nav links -->
     <HBox styleClass="nav-links" spacing="4" alignment="CENTER">
         <Button fx:id="homeBtn"        text="Home"            onAction="#handleHome"       styleClass="nav-btn"/>
-        <Button fx:id="aboutBtn"       text="À propos"        onAction="#handleAbout"      styleClass="nav-btn"/>
         <Button fx:id="hebergBtn"      text="Hébergement"     onAction="#handleHeberg"     styleClass="nav-btn"/>
         <Button fx:id="activitesBtn"   text="Activités"       onAction="#handleActivites"  styleClass="nav-btn"/>
         <Button fx:id="transportBtn"   text="Transport"       onAction="#handleTransport"  styleClass="nav-btn"/>

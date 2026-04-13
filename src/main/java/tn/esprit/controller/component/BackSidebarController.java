@@ -2,6 +2,7 @@ package tn.esprit.controller.component;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.layout.VBox;
 import tn.esprit.navigation.Routes;
 import tn.esprit.session.SessionManager;
 import tn.esprit.navigation.SceneManager;
@@ -30,6 +31,9 @@ public class BackSidebarController {
     @FXML private Button activityCategoriesBtn;
     @FXML private Button guidesBtn;
     @FXML private Button schedulesBtn;
+    @FXML private VBox activitiesBox;
+    @FXML private VBox hebergementsBox;
+    @FXML private VBox boutiqueBox;
 
 
     private Map<Button, String> routeMap;
@@ -55,6 +59,7 @@ public class BackSidebarController {
                 Map.entry(activityCategoriesBtn,  Routes.ADMIN_ACTIVITY_CATEGORIES),
                 Map.entry(guidesBtn,              Routes.ADMIN_GUIDES),
                 Map.entry(schedulesBtn,           Routes.ADMIN_SCHEDULES)
+
         );
     }
 
@@ -71,6 +76,22 @@ public class BackSidebarController {
                 }
             }
         });
+    }
+    private void toggleBox(VBox box) {
+        boolean isVisible = box.isVisible();
+        box.setVisible(!isVisible);
+        box.setManaged(!isVisible);
+    }
+    @FXML private void toggleActivities() {
+        toggleBox(activitiesBox);
+    }
+
+    @FXML private void toggleHebergements() {
+        toggleBox(hebergementsBox);
+    }
+
+    @FXML private void toggleBoutique() {
+        toggleBox(boutiqueBox);
     }
 
     @FXML private void handleDashboard()        { SceneManager.navigateTo(Routes.ADMIN_DASHBOARD); }
