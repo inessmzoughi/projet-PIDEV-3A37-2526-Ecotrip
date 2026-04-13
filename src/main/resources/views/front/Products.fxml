@@ -10,7 +10,7 @@
             fitToWidth="true"
             hbarPolicy="NEVER"
             vbarPolicy="AS_NEEDED"
-            styleClass="heb-scroll">
+            styleClass="front-scroll">
 
     <stylesheets>
         <String fx:value="@/styles/front.css"/>
@@ -95,6 +95,9 @@
             <Button fx:id="btnNext" text="Suivant →" styleClass="heb-page-btn" onAction="#onNext"/>
         </HBox>
 
+
+        <!-- ══ FOOTER ══ -->
+        <fx:include source="../components/front-footer.fxml"/>
 
     </VBox>
 </ScrollPane>

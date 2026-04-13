@@ -20,9 +20,9 @@
                    BorderPane.alignment="CENTER"/>
     </center>
 
-<!--&lt;!&ndash;     BOTTOM: Footer (mirrors your footer.html.twig) &ndash;&gt;-->
+<!--    &lt;!&ndash;     BOTTOM: Footer (mirrors your footer.html.twig) &ndash;&gt;-->
 <!--    <bottom>-->
-<!--        <fx:include fx:id="footer" source="../components/front-footer.fxml"/>-->
+<!--        <fx:include source="../components/front-footer.fxml"/>-->
 <!--    </bottom>-->
 
 </BorderPane>
