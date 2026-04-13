@@ -1173,3 +1173,156 @@
     -fx-font-weight: bold; -fx-background-radius: 10;
     -fx-font-size: 13px; -fx-padding: 10 20; -fx-cursor: hand; -fx-border-width: 0;
 }
+
+/* ===== Home rebuild v2 ===== */
+.home2-page {
+    -fx-background-color: #f6faf6;
+}
+
+.home2-hero {
+    -fx-background-color: linear-gradient(to right, #0f3b1a, #1f5d2d);
+    -fx-padding: 56 70 50 70;
+}
+
+.home2-chip {
+    -fx-background-color: rgba(255,255,255,0.16);
+    -fx-text-fill: #d4f5de;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 5 10 5 10;
+    -fx-background-radius: 20;
+}
+
+.home2-title {
+    -fx-font-size: 44px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.home2-subtitle {
+    -fx-font-size: 16px;
+    -fx-text-fill: rgba(255,255,255,0.9);
+    -fx-line-spacing: 4;
+}
+
+.home2-badges {
+    -fx-padding: 8 0 0 0;
+}
+
+.home2-badge {
+    -fx-background-color: rgba(255,255,255,0.14);
+    -fx-text-fill: #ecfdf3;
+    -fx-background-radius: 20;
+    -fx-padding: 5 11 5 11;
+    -fx-font-size: 12px;
+}
+
+.home2-booking-card {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 18, 0, 0, 4);
+}
+
+.home2-booking-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0f172a;
+}
+
+.home2-booking-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #334155;
+}
+
+.home2-section {
+    -fx-padding: 54 70 54 70;
+}
+
+.home2-service-card {
+    -fx-background-color: white;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1;
+    -fx-border-radius: 14;
+    -fx-background-radius: 14;
+    -fx-padding: 18;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 10, 0, 0, 2);
+}
+
+.home2-service-card:hover {
+    -fx-border-color: #86efac;
+    -fx-effect: dropshadow(gaussian, rgba(56,161,105,0.16), 13, 0, 0, 3);
+}
+
+.home2-service-icon { -fx-font-size: 24px; }
+
+.home2-service-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0f172a;
+}
+
+.home2-service-desc {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+}
+
+.home2-values {
+    -fx-background-color: #102d1b;
+    -fx-padding: 42 70 42 70;
+}
+
+.home2-value-card {
+    -fx-background-color: rgba(255,255,255,0.08);
+    -fx-border-color: rgba(255,255,255,0.14);
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 16;
+}
+
+.home2-value-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.home2-value-desc {
+    -fx-font-size: 13px;
+    -fx-text-fill: rgba(255,255,255,0.84);
+}
+
+.home2-about {
+    -fx-padding: 54 70 54 70;
+    -fx-background-color: #eef7ef;
+}
+
+/* ══ MES RÉSERVATIONS CARDS ══════════════════════════ */
+.res-front-card {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 20, 0, 0, 4);
+    -fx-cursor: hand;
+    -fx-pref-width: 340;
+}
+.res-front-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(45,80,22,0.22), 32, 0, 0, 10);
+    -fx-translate-y: -6;
+}
+
+.res-cancel-btn {
+    -fx-background-color: #fee2e2;
+    -fx-text-fill: #991b1b;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-padding: 10 0 10 0;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+.res-cancel-btn:hover {
+    -fx-background-color: #fca5a5;
+}

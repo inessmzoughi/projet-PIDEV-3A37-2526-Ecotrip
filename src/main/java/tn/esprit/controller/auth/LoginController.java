@@ -56,7 +56,7 @@ public class LoginController {
     @FXML
     private void handleForgotPassword() {
         // You can implement this later
-        showError("Fonctionnalité à venir.");
+        showError("Fonctionnalité à venir. veuillez contacter l'administrateur du site");
     }
 
     // Called from RegisterController after successful registration

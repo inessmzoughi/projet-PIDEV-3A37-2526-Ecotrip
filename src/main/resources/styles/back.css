@@ -17,47 +17,133 @@
 .page-body   { -fx-background-color: transparent; }
 
 /* ══ SIDEBAR ══════════════════════════════════════════ */
-.admin-sidebar { -fx-background-color: #0d2b1a; }
-.sidebar       { -fx-background-color: #0d2b1a; -fx-min-width: 240px; -fx-max-width: 240px; }
+.admin-sidebar {
+    -fx-background-color: #0f2f22;
+    -fx-padding: 0;
+}
 
-.sidebar-scroll { -fx-background: transparent; -fx-background-color: transparent; }
-.sidebar-scroll .viewport { -fx-background-color: transparent; }
-.sidebar-nav    { -fx-background-color: transparent; }
-
+/* ===== LOGO ===== */
 .sidebar-logo-wrap {
-    -fx-padding: 24 16 20 16;
-    -fx-border-color: #1e4620;
-    -fx-border-width: 0 0 1 0;
+    -fx-padding: 24 16;
+    -fx-alignment: center-left;
 }
-.sidebar-logo { -fx-padding: 28 24 20 24; -fx-border-color: rgba(255,255,255,0.08); -fx-border-width: 0 0 1 0; }
-.sidebar-logo-text { -fx-text-fill: #7ecba1; -fx-font-size: 18px; -fx-font-weight: bold; }
-.sidebar-logo-icon { -fx-font-size: 22px; -fx-background-color: #38a169; -fx-background-radius: 10; -fx-padding: 6; -fx-text-fill: white; }
 
-.brand-name   { -fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: white; }
-.brand-accent { -fx-text-fill: #48bb78; }
-.brand-sub    { -fx-font-size: 10px; -fx-text-fill: rgba(255,255,255,0.45); }
-
-.sidebar-section-label {
-    -fx-text-fill: #4a7a55;
-    -fx-font-size: 11px;
+.sidebar-logo-text {
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
     -fx-font-weight: bold;
-    -fx-padding: 14 20 4 20;
 }
+
+/* ===== SCROLL ===== */
+.sidebar-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.sidebar-nav {
+    -fx-padding: 10 8;
+}
+
+/* ===== SECTION LABEL ===== */
+.sidebar-section-label {
+    -fx-text-fill: #8fb3a3;
+    -fx-font-size: 11px;
+    -fx-padding: 14 10 6 10;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 1px;
+}
+
+/* ===== MAIN BUTTON ===== */
+.sidebar-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #d6e5dc;
+    -fx-font-size: 13px;
+    -fx-padding: 10 12;
+    -fx-alignment: center-left;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+.sidebar-level-1 {
+    -fx-background-color: transparent;
+    -fx-text-fill: #d6e5dc;
+    -fx-font-size: 13px;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-padding: 10 12 10 24; }
+/* Hover */
+.sidebar-btn:hover {
+    -fx-background-color: #1c4a36;
+    -fx-text-fill: white;
+}
+
+/* Active */
+.sidebar-btn-active {
+    -fx-background-color: #2e7d5b;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* ===== SUB BUTTON ===== */
+.sidebar-btn-sub, .sidebar-sub-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #b8ccc2;
+    -fx-font-size: 12px;
+    -fx-padding: 8 12 8 28; /* indentation */
+    -fx-alignment: center-left;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+/* Hover */
+.sidebar-btn-sub:hover, .sidebar-sub-btn:hover {
+    -fx-background-color: #1c4a36;
+    -fx-text-fill: white;
+}
+
+/* Active */
+.sidebar-sub-btn-active {
+    -fx-background-color: #245c44;
+    -fx-text-fill: white;
+}
+
+/* ===== FOOTER ===== */
+.sidebar-footer {
+    -fx-padding: 12;
+    -fx-border-color: #1c4a36 transparent transparent transparent;
+    -fx-border-width: 1;
+}
+
+/* Logout button */
+.sidebar-btn-logout {
+    -fx-background-color: #7a1f1f;
+    -fx-text-fill: white;
+    -fx-padding: 10;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.sidebar-btn-logout:hover {
+    -fx-background-color: #a52a2a;
+}
+/* Section button (clickable header) */
+.sidebar-section-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #8fb3a3;
+    -fx-font-size: 12px;
+    -fx-padding: 12 10;
+    -fx-alignment: center-left;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.sidebar-section-btn:hover {
+    -fx-background-color: #1c4a36;
+    -fx-text-fill: white;
+}
+
 .nav-section { -fx-padding: 16 0 4 0; }
 .nav-label   { -fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: rgba(255,255,255,0.35); -fx-padding: 12 20 6 20; }
 
-/* Boutons nav — TON design */
-.sidebar-btn {
-    -fx-background-color: transparent;
-    -fx-text-fill: #b8d4c0;
-    -fx-font-size: 13px;
-    -fx-alignment: CENTER_LEFT;
-    -fx-padding: 10 20 10 20;
-    -fx-cursor: hand;
-    -fx-background-radius: 0;
-    -fx-border-width: 0;
-}
-.sidebar-btn:hover { -fx-background-color: #1e4620; -fx-text-fill: white; }
 .nav-item {
     -fx-background-color: transparent;
     -fx-text-fill: rgba(255,255,255,0.65);
@@ -71,14 +157,7 @@
 .nav-item:hover { -fx-background-color: rgba(255,255,255,0.07); -fx-text-fill: white; }
 .nav-sub-item   { -fx-padding: 9 20 9 36; -fx-font-size: 12px; }
 
-/* Actif — TON design */
-.sidebar-btn-active {
-    -fx-background-color: rgba(56,161,105,0.25);
-    -fx-text-fill: white;
-    -fx-font-weight: bold;
-    -fx-border-color: #48bb78;
-    -fx-border-width: 0 0 0 3;
-}
+
 .nav-item-active {
     -fx-background-color: rgba(56,161,105,0.25);
     -fx-text-fill: white;
@@ -86,16 +165,6 @@
     -fx-border-color: #48bb78;
     -fx-border-width: 0 0 0 3;
 }
-
-.sidebar-footer {
-    -fx-padding: 12 8 16 8;
-    -fx-border-color: #1e4620;
-    -fx-border-width: 1 0 0 0;
-}
-.sidebar-sep { -fx-border-color: rgba(255,255,255,0.08); -fx-padding: 0 0 8 0; }
-
-.sidebar-user       { -fx-padding: 10 12 10 12; -fx-background-radius: 10; -fx-cursor: hand; }
-.sidebar-user:hover { -fx-background-color: rgba(255,255,255,0.07); }
 
 .avatar {
     -fx-min-width: 34px; -fx-min-height: 34px;
@@ -109,15 +178,6 @@
 }
 .user-name { -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: white; }
 .user-role { -fx-font-size: 11px; -fx-text-fill: rgba(255,255,255,0.45); }
-
-.sidebar-btn-logout {
-    -fx-background-color: #7b2020;
-    -fx-text-fill: white;
-    -fx-background-radius: 8;
-    -fx-padding: 10 20 10 20;
-    -fx-cursor: hand;
-}
-.sidebar-btn-logout:hover { -fx-background-color: #a02828; }
 
 /* ══ TOP BAR ══════════════════════════════════════════ */
 .back-topbar {
@@ -571,27 +631,12 @@
 /* ══ FILE UPLOAD ══════════════════════════════════════ */
 .file-upload-box  { -fx-background-color: #f8faf9; -fx-border-color: #d1ddc8; -fx-border-width: 2; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 16; }
 .file-upload-hint { -fx-font-size: 12px; -fx-text-fill: #94a3b8; }
-.sidebar-sub-btn {
-    -fx-background-color: transparent;
-    -fx-text-fill: rgba(255, 255, 255, 0.55);
-    -fx-font-size: 12px;
-    -fx-alignment: CENTER_LEFT;
-    -fx-padding: 8 20 8 36;
-    -fx-cursor: hand;
-    -fx-background-radius: 0;
-    -fx-border-width: 0;
-}
+
 .sidebar-sub-btn:hover {
     -fx-background-color: rgba(255, 255, 255, 0.07);
     -fx-text-fill: white;
 }
-.sidebar-sub-btn-active {
-    -fx-background-color: rgba(56, 161, 105, 0.18);
-    -fx-text-fill: #7ecba1;
-    -fx-font-weight: bold;
-    -fx-border-color: #48bb78;
-    -fx-border-width: 0 0 0 3;
-}
+
 .cat-card-icon {
     -fx-background-radius: 12;
     -fx-border-radius: 12;
@@ -615,11 +660,4 @@
 .cat-card-heb-count {
     -fx-font-size: 11px;
     -fx-font-weight: bold;
-}
-/* Ajouter dans back.css */
-.sidebar-parent-label {
-    -fx-text-fill: #b8d4c0;
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
-    -fx-padding: 10 20 4 20;
 }
