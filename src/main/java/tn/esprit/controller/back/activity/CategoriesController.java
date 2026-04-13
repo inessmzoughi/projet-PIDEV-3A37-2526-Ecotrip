@@ -1,11 +1,10 @@
 package tn.esprit.controller.back.activity;
 
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -17,7 +16,6 @@ import tn.esprit.services.activity.ActivityCategoryService;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
@@ -28,31 +26,20 @@ public class CategoriesController implements Initializable {
     @FXML private Label statTotal, statActivities, statAvg;
 
     /* ─── Form ─── */
-    @FXML private Label    formIcon, formTitle, formSubtitle;
-    @FXML private TextField nameField, iconField;
+    @FXML private Label     formPreviewIcon, formTitle;
+    @FXML private TextField nameField;
     @FXML private TextArea  descriptionField;
     @FXML private Label     errName, charCount;
-    @FXML private Button    submitBtn, iconPickerBtn;
-    @FXML private FlowPane  iconOptionsPane;
-    @FXML private VBox      iconPickerBox;
+    @FXML private Button    submitBtn;
+    @FXML private FlowPane  iconGrid, colorGrid;
 
-    /* ─── Table ─── */
+    /* ─── Cards list ─── */
     @FXML private TextField searchField;
-    @FXML private TableView<ActivityCategory> tableView;
-    @FXML private TableColumn<ActivityCategory, Integer> colIndex;
-    @FXML private TableColumn<ActivityCategory, String>  colIcon, colName, colDesc;
-    @FXML private TableColumn<ActivityCategory, Void>    colActions;
-    @FXML private Label badgeCount, pagInfo;
-    @FXML private HBox  pagButtons;
+    @FXML private Label     badgeCount;
+    @FXML private FlowPane  catCardsPane;
+    @FXML private VBox      emptyState;
 
-    /* ─── State ─── */
-    private final ActivityCategoryService service = new ActivityCategoryService();
-    private List<ActivityCategory> allData = new ArrayList<>();
-    private ActivityCategory categoryEnEdition = null;
-    private static final int PER_PAGE = 8;
-    private int currentPage = 1;
-    private boolean iconPickerVisible = false;
-
+    /* ─── Palettes ─── */
     private static final String[] ICONS = {
             "🏕️","🏖️","🏄","🚣","🧗","🏊","🎣","🤿","🛶","⛺",
             "🌊","🏔️","🌋","🗻","🏞️","🌲","🌴","🌿","🍃","🦋",
@@ -63,44 +50,111 @@ public class CategoriesController implements Initializable {
             "🌅","🌄","🌠","🌌","🌈","❄️","🔥","💧","🌪️","⛩️"
     };
 
+    private static final String[] COLORS = {
+            "#3b82f6", "#38a169", "#8b5cf6", "#f59e0b",
+            "#ef4444", "#0d9488", "#ec4899", "#6366f1",
+            "#14b8a6", "#f97316", "#84cc16", "#06b6d4"
+    };
+
+    /* ─── State ─── */
+    private final ActivityCategoryService service = new ActivityCategoryService();
+    private List<ActivityCategory> allData = new ArrayList<>();
+    private ActivityCategory categoryEnEdition = null;
+    private String selectedIcon  = ICONS[0];
+    private String selectedColor = COLORS[0];
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        setupIconPicker();
-        setupColumns();
+        buildIconPicker();
+        buildColorPicker();
         refreshAll();
     }
 
-    /* ─── Icon Picker ─── */
-    private void setupIconPicker() {
-        iconOptionsPane.getChildren().clear();
+    /* ══════════════════════════════════════════
+       PICKERS
+       ══════════════════════════════════════════ */
+
+    private void buildIconPicker() {
+        iconGrid.getChildren().clear();
         for (String icon : ICONS) {
             Button btn = new Button(icon);
-            btn.setStyle("-fx-font-size: 20px; -fx-background-color: #f8fafc; " +
-                    "-fx-background-radius: 8; -fx-cursor: hand; " +
-                    "-fx-min-width: 40px; -fx-min-height: 40px; -fx-padding: 4;");
+            btn.setStyle("-fx-font-size:20; -fx-background-radius:8; -fx-cursor:hand;"
+                    + "-fx-background-color:transparent; -fx-border-radius:8;"
+                    + "-fx-border-color:transparent; -fx-border-width:2;");
+            if (icon.equals(selectedIcon)) highlightIconBtn(btn);
             btn.setOnAction(e -> {
-                iconField.setText(icon);
-                iconPickerBtn.setText(icon);
-                iconPickerBox.setVisible(false);
-                iconPickerBox.setManaged(false);
-                iconPickerVisible = false;
+                selectedIcon = icon;
+                formPreviewIcon.setText(icon);
+                iconGrid.getChildren().forEach(n -> {
+                    if (n instanceof Button b)
+                        b.setStyle("-fx-font-size:20; -fx-background-radius:8;"
+                                + "-fx-cursor:hand; -fx-background-color:transparent;"
+                                + "-fx-border-radius:8; -fx-border-color:transparent;"
+                                + "-fx-border-width:2;");
+                });
+                highlightIconBtn(btn);
             });
-            iconOptionsPane.getChildren().add(btn);
+            iconGrid.getChildren().add(btn);
         }
     }
 
-    @FXML private void toggleIconPicker() {
-        iconPickerVisible = !iconPickerVisible;
-        iconPickerBox.setVisible(iconPickerVisible);
-        iconPickerBox.setManaged(iconPickerVisible);
+    private void highlightIconBtn(Button btn) {
+        btn.setStyle("-fx-font-size:20; -fx-background-radius:8; -fx-cursor:hand;"
+                + "-fx-background-color:" + selectedColor + "33;"
+                + "-fx-border-color:" + selectedColor + ";"
+                + "-fx-border-radius:8; -fx-border-width:2;");
     }
 
-    /* ─── Data ─── */
+    private void buildColorPicker() {
+        colorGrid.getChildren().clear();
+        for (String color : COLORS) {
+            Button btn = new Button();
+            btn.setPrefSize(28, 28);
+            btn.setUserData(color);
+            btn.setStyle("-fx-background-color:" + color
+                    + "; -fx-background-radius:50; -fx-cursor:hand;"
+                    + "-fx-border-color:transparent; -fx-border-width:2;"
+                    + "-fx-border-radius:50;");
+            if (color.equals(selectedColor)) highlightColorBtn(btn, color);
+            btn.setOnAction(e -> {
+                selectedColor = color;
+                colorGrid.getChildren().forEach(n -> {
+                    if (n instanceof Button b && b.getUserData() instanceof String c)
+                        b.setStyle("-fx-background-color:" + c
+                                + "; -fx-background-radius:50; -fx-cursor:hand;"
+                                + "-fx-border-color:transparent; -fx-border-width:2;"
+                                + "-fx-border-radius:50;");
+                });
+                highlightColorBtn(btn, color);
+                buildIconPicker();
+                iconGrid.getChildren().stream()
+                        .filter(n -> n instanceof Button)
+                        .map(n -> (Button) n)
+                        .filter(b -> b.getText().equals(selectedIcon))
+                        .findFirst()
+                        .ifPresent(this::highlightIconBtn);
+            });
+            colorGrid.getChildren().add(btn);
+        }
+    }
+
+    private void highlightColorBtn(Button btn, String color) {
+        btn.setStyle("-fx-background-color:" + color
+                + "; -fx-background-radius:50; -fx-cursor:hand;"
+                + "-fx-border-color:white; -fx-border-width:2;"
+                + "-fx-border-radius:50;"
+                + "-fx-effect:dropshadow(gaussian," + color + ",6,0.6,0,0);");
+    }
+
+    /* ══════════════════════════════════════════
+       DATA
+       ══════════════════════════════════════════ */
+
     private void refreshAll() {
         try { allData = service.afficherAll(); }
         catch (SQLException e) { allData = new ArrayList<>(); showAlert("Erreur", e.getMessage()); }
         updateStats();
-        renderTable();
+        renderCards();
     }
 
     private void updateStats() {
@@ -109,87 +163,89 @@ public class CategoriesController implements Initializable {
         statAvg.setText("—");
     }
 
-    private void renderTable() {
-        String query = searchField.getText().toLowerCase().trim();
+    /* ══════════════════════════════════════════
+       CARDS RENDERING
+       ══════════════════════════════════════════ */
+
+    @FXML private void onSearch() { renderCards(); }
+
+    private void renderCards() {
+        String q = searchField.getText().toLowerCase().trim();
+
         List<ActivityCategory> filtered = allData.stream()
-                .filter(c -> query.isEmpty() || c.getName().toLowerCase().contains(query))
-                .sorted(Comparator.comparing(ActivityCategory::getName))
+                .filter(c -> q.isEmpty()
+                        || c.getName().toLowerCase().contains(q)
+                        || (c.getDescription() != null
+                        && c.getDescription().toLowerCase().contains(q)))
                 .collect(Collectors.toList());
 
         badgeCount.setText(String.valueOf(filtered.size()));
-        int total = filtered.size();
-        int totalPages = Math.max(1, (int) Math.ceil((double) total / PER_PAGE));
-        if (currentPage > totalPages) currentPage = 1;
-        int from = (currentPage - 1) * PER_PAGE;
-        int to   = Math.min(from + PER_PAGE, total);
-        tableView.setItems(FXCollections.observableArrayList(filtered.subList(from, to)));
-        pagInfo.setText(total == 0 ? "" : "Affichage " + (from + 1) + "–" + to + " sur " + total);
+        catCardsPane.getChildren().clear();
 
-        pagButtons.getChildren().clear();
-        for (int p = 1; p <= totalPages; p++) {
-            final int pn = p;
-            Button b = new Button(String.valueOf(p));
-            b.getStyleClass().add("page-btn");
-            if (p == currentPage) b.getStyleClass().add("page-btn-active");
-            b.setOnAction(e -> { currentPage = pn; renderTable(); });
-            pagButtons.getChildren().add(b);
+        if (filtered.isEmpty()) {
+            emptyState.setVisible(true);
+            emptyState.setManaged(true);
+            return;
         }
+        emptyState.setVisible(false);
+        emptyState.setManaged(false);
+
+        for (int i = 0; i < filtered.size(); i++)
+            catCardsPane.getChildren().add(buildCatCard(filtered.get(i), i));
     }
 
-    /* ─── Columns ─── */
-    private void setupColumns() {
-        colName.setCellValueFactory(new PropertyValueFactory<>("name"));
-        colDesc.setCellValueFactory(new PropertyValueFactory<>("description"));
+    private VBox buildCatCard(ActivityCategory c, int index) {
+        String color = COLORS[index % COLORS.length];
+        String icon  = (c.getIcon() != null && !c.getIcon().isBlank())
+                ? c.getIcon() : ICONS[index % ICONS.length];
 
-        colIndex.setCellFactory(col -> new TableCell<>() {
-            @Override protected void updateItem(Integer item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) { setText(null); return; }
-                setText(String.valueOf(getIndex() + 1 + (currentPage - 1) * PER_PAGE));
-                getStyleClass().add("td-index");
-            }
-        });
+        VBox card = new VBox(10);
+        card.getStyleClass().add("cat-card");
+        card.setPrefWidth(250);
+        card.setPadding(new Insets(18, 20, 16, 20));
+        card.setStyle("-fx-border-color:" + color + " transparent transparent transparent;"
+                + "-fx-border-width:0 0 0 4;");
 
-        colIcon.setCellFactory(col -> new TableCell<>() {
-            @Override protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) { setText(null); setGraphic(null); return; }
-                ActivityCategory c = getTableView().getItems().get(getIndex());
-                String ico = c.getIcon() != null && !c.getIcon().isBlank() ? c.getIcon() : "🏷️";
-                Label l = new Label(ico);
-                l.setStyle("-fx-font-size: 22px; -fx-background-color: #f0fff4; " +
-                        "-fx-background-radius: 10; -fx-padding: 6 10 6 10;");
-                setGraphic(l); setText(null);
-            }
-        });
+        // ── Icon + Name ──
+        HBox top = new HBox(12);
+        top.setAlignment(Pos.CENTER_LEFT);
 
-        colDesc.setCellFactory(col -> new TableCell<>() {
-            @Override protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) { setText(null); return; }
-                setText(item.length() > 60 ? item.substring(0, 60) + "…" : item);
-            }
-        });
+        Label iconLbl = new Label(icon);
+        iconLbl.getStyleClass().add("cat-card-icon");
+        iconLbl.setStyle("-fx-background-color:" + color + "55;"
+                + "-fx-border-color:" + color + "bb;");
 
-        colActions.setCellFactory(col -> new TableCell<>() {
-            private final Button editBtn = new Button("✏️ Modifier");
-            private final Button delBtn  = new Button("🗑️");
-            private final HBox   box     = new HBox(8, editBtn, delBtn);
-            {
-                editBtn.getStyleClass().add("btn-edit");
-                delBtn.getStyleClass().add("btn-del");
-                box.setAlignment(Pos.CENTER_LEFT);
-                editBtn.setOnAction(e -> loadForEdit(getTableView().getItems().get(getIndex())));
-                delBtn.setOnAction(e  -> confirmDelete(getTableView().getItems().get(getIndex())));
-            }
-            @Override protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                setGraphic(empty ? null : box);
-            }
-        });
+        Label nameLbl = new Label(c.getName());
+        nameLbl.getStyleClass().add("cat-card-name");
+
+        top.getChildren().addAll(iconLbl, nameLbl);
+
+        // ── Description ──
+        String descText = (c.getDescription() == null || c.getDescription().isEmpty())
+                ? "Aucune description." : c.getDescription();
+        Label desc = new Label(descText);
+        desc.getStyleClass().add("cat-card-desc");
+        desc.setWrapText(true);
+
+        // ── Buttons ──
+        HBox meta = new HBox(6);
+        meta.setAlignment(Pos.CENTER_RIGHT);
+        Button editBtn = new Button("✏️ Modifier");
+        editBtn.getStyleClass().add("btn-edit");
+        Button delBtn = new Button("🗑️");
+        delBtn.getStyleClass().add("btn-del");
+        editBtn.setOnAction(e -> loadForEdit(c));
+        delBtn.setOnAction(e  -> confirmDelete(c));
+        meta.getChildren().addAll(editBtn, delBtn);
+
+        card.getChildren().addAll(top, desc, meta);
+        return card;
     }
 
-    /* ─── Validation ─── */
+    /* ══════════════════════════════════════════
+       FORM — VALIDATION
+       ══════════════════════════════════════════ */
+
     @FXML private void validateName() {
         setFieldError(nameField, errName, nameField.getText().trim().length() < 3);
     }
@@ -206,53 +262,56 @@ public class CategoriesController implements Initializable {
         return ok;
     }
 
-    /* ─── Submit ─── */
+    /* ══════════════════════════════════════════
+       SUBMIT / RESET / EDIT / DELETE
+       ══════════════════════════════════════════ */
+
     @FXML private void onSubmit() {
         if (!validateAll()) return;
         ActivityCategory c = categoryEnEdition != null ? categoryEnEdition : new ActivityCategory();
         c.setName(nameField.getText().trim());
         c.setDescription(descriptionField.getText().trim());
-        c.setIcon(iconField.getText().trim());
+        c.setIcon(selectedIcon);
         try {
-            if (categoryEnEdition == null) {
-                service.ajouter(c);
-                showToast("✅ Catégorie ajoutée !");
-            } else {
-                service.modifier(c);
-                showToast("💾 Catégorie modifiée !");
-            }
+            if (categoryEnEdition == null) service.ajouter(c);
+            else                           service.modifier(c);
             onReset();
             refreshAll();
         } catch (Exception e) { showAlert("Erreur", e.getMessage()); }
     }
 
-    /* ─── Reset ─── */
     @FXML private void onReset() {
         categoryEnEdition = null;
-        nameField.clear(); descriptionField.clear(); iconField.clear();
-        iconPickerBtn.setText("🏷️");
-        setFieldError(nameField, errName, false);
+        selectedIcon  = ICONS[0];
+        selectedColor = COLORS[0];
+        nameField.clear();
+        descriptionField.clear();
         charCount.setText("0 / 1000 caractères");
-        formIcon.setText("🏷️");
+        setFieldError(nameField, errName, false);
+        formPreviewIcon.setText(selectedIcon);
         formTitle.setText("Nouvelle Catégorie");
-        formSubtitle.setText("Remplissez les informations.");
-        submitBtn.setText("➕ Ajouter");
-        iconPickerBox.setVisible(false);
-        iconPickerBox.setManaged(false);
-        iconPickerVisible = false;
+        submitBtn.setText("💾 Enregistrer");
+        buildIconPicker();
+        buildColorPicker();
     }
 
     private void loadForEdit(ActivityCategory c) {
         categoryEnEdition = c;
         nameField.setText(c.getName());
         descriptionField.setText(c.getDescription() != null ? c.getDescription() : "");
-        iconField.setText(c.getIcon() != null ? c.getIcon() : "");
-        iconPickerBtn.setText(c.getIcon() != null && !c.getIcon().isEmpty() ? c.getIcon() : "🏷️");
-        updateCounter();
-        formIcon.setText("✏️");
+        selectedIcon = (c.getIcon() != null && !c.getIcon().isBlank()) ? c.getIcon() : ICONS[0];
+        formPreviewIcon.setText(selectedIcon);
         formTitle.setText("Modifier la Catégorie");
-        formSubtitle.setText("Mettez à jour les informations.");
         submitBtn.setText("💾 Enregistrer");
+        updateCounter();
+        setFieldError(nameField, errName, false);
+        buildIconPicker();
+        iconGrid.getChildren().stream()
+                .filter(n -> n instanceof Button)
+                .map(n -> (Button) n)
+                .filter(b -> b.getText().equals(selectedIcon))
+                .findFirst()
+                .ifPresent(this::highlightIconBtn);
         nameField.requestFocus();
     }
 
@@ -273,8 +332,10 @@ public class CategoriesController implements Initializable {
         });
     }
 
-    /* ─── Navigation ─── */
-    @FXML private void onSearch()        { currentPage = 1; renderTable(); }
+    /* ══════════════════════════════════════════
+       NAVIGATION + HELPERS
+       ══════════════════════════════════════════ */
+
     @FXML private void onNavDashboard()  { SceneManager.navigateTo(Routes.ADMIN_DASHBOARD); }
     @FXML private void onNavActivities() { SceneManager.navigateTo(Routes.ADMIN_ACTIVITIES); }
 
@@ -287,14 +348,6 @@ public class CategoriesController implements Initializable {
             field.getStyleClass().remove("form-input-error");
             errLabel.setVisible(false); errLabel.setManaged(false);
         }
-    }
-
-    private void showToast(String msg) {
-        pagInfo.setText(msg);
-        new Thread(() -> {
-            try { Thread.sleep(3000); } catch (InterruptedException ignored) {}
-            javafx.application.Platform.runLater(this::renderTable);
-        }).start();
     }
 
     private void showAlert(String title, String msg) {
