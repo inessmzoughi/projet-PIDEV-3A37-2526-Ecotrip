@@ -119,3 +119,187 @@
 .chart-title { -fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #0f172a; }
 
 .table-card  { -fx-background-color: white; -fx-background-radius: 18; -fx-border-color: rgba(0,0,0,0.05); -fx-border-width: 1; -fx-border-radius: 18; }
+
+/* ── Mon compte (front + back shells) ───────────────── */
+.moncompte-page {
+    -fx-background-color: transparent;
+}
+
+/* Hero: depth, soft highlight, eco gradient */
+.moncompte-hero {
+    -fx-background-color: linear-gradient(from 0% 0% to 105% 100%, #0f2410, #0d3d18 38%, #1a4d20 72%, #2d5016);
+    -fx-background-radius: 20;
+    -fx-border-color: rgba(255, 255, 255, 0.14);
+    -fx-border-radius: 20;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(8, 28, 12, 0.45), 32, 0.22, 0, 12);
+}
+.moncompte-hero-kicker {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: rgba(190, 230, 180, 0.95);
+    -fx-letter-spacing: 0.12em;
+    -fx-padding: 0 0 2 0;
+}
+.moncompte-hero-title {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+    -fx-wrap-text: true;
+    -fx-line-spacing: 4px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 8, 0.2, 0, 1);
+}
+.moncompte-hero-sub {
+    -fx-font-size: 14px;
+    -fx-text-fill: rgba(255, 255, 255, 0.88);
+    -fx-max-width: 640;
+    -fx-wrap-text: true;
+    -fx-line-spacing: 2px;
+}
+
+/* Content zone under hero */
+.moncompte-below-hero {
+    -fx-background-color: transparent;
+    -fx-padding: 0 4 0 4;
+}
+.moncompte-columns {
+    -fx-alignment: top-left;
+    -fx-padding: 8 0 0 0;
+}
+
+/* Sidebar: breathing room + soft divider from forms */
+.moncompte-sidebar {
+    -fx-padding: 0 24 0 0;
+    -fx-border-color: transparent #d8e8d4 transparent transparent;
+    -fx-border-width: 0 1 0 0;
+}
+
+/* Profile card: clean white shell, stronger but soft shadow */
+.form-card.moncompte-profile-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 18;
+    -fx-border-color: #e3ebe0;
+    -fx-border-radius: 18;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(26, 46, 26, 0.12), 28, 0.18, 0, 6);
+}
+.form-card.moncompte-profile-card .profile-avatar-section {
+    -fx-background-color: linear-gradient(to bottom, #153a1a, #0d3d18 55%, #0f3314);
+    -fx-background-radius: 18 18 0 0;
+    -fx-border-color: transparent transparent rgba(255, 255, 255, 0.08) transparent;
+    -fx-border-width: 0 0 1 0;
+}
+.form-card.moncompte-profile-card .profile-info-rows {
+    -fx-background-color: #fafdfb;
+    -fx-background-radius: 0 0 18 18;
+}
+.form-card.moncompte-profile-card .profile-info-row {
+    -fx-padding: 16 22 16 22;
+    -fx-border-color: #ecf4ef;
+}
+
+/* Avatar ring */
+.moncompte-avatar-wrap {
+    -fx-padding: 5;
+    -fx-background-color: rgba(255, 255, 255, 0.12);
+    -fx-background-radius: 60;
+    -fx-border-color: rgba(255, 255, 255, 0.35);
+    -fx-border-radius: 60;
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.35), 12, 0.2, 0, 2);
+}
+
+/* Quick actions card */
+.form-card.moncompte-actions-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 16;
+    -fx-border-color: #e3ebe0;
+    -fx-border-radius: 16;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.07), 18, 0.14, 0, 4);
+}
+.form-card.moncompte-actions-card .profile-section-title {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #5a7a5c;
+    -fx-letter-spacing: 0.08em;
+    -fx-padding: 18 22 12 22;
+    -fx-border-color: transparent transparent #ecf4ef transparent;
+    -fx-border-width: 0 0 1 0;
+}
+.form-card.moncompte-actions-card .profile-action-btn {
+    -fx-padding: 16 22 16 22;
+    -fx-font-size: 13px;
+    -fx-background-radius: 0;
+}
+.form-card.moncompte-actions-card .profile-action-btn:hover {
+    -fx-background-color: #f0faf2;
+    -fx-text-fill: #1e4620;
+}
+
+/* Form panels on the right */
+.form-card.moncompte-form-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 18;
+    -fx-border-color: #e3ebe0;
+    -fx-border-radius: 18;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(26, 46, 26, 0.1), 26, 0.16, 0, 5);
+}
+.form-card.moncompte-form-card .form-card-header {
+    -fx-background-color: linear-gradient(to right, #f6fbf7, #eef6ef);
+    -fx-border-color: transparent transparent #e3ebe0 transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 22 26 20 26;
+}
+.form-card.moncompte-form-card .form-card-header-blue {
+    -fx-background-color: linear-gradient(to bottom right, #1a3350, #1e3a5f 60%, #243d5c);
+    -fx-border-color: transparent transparent rgba(255, 255, 255, 0.12) transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 22 26 20 26;
+}
+.form-card.moncompte-form-card .form-card-header-blue .form-heading-title,
+.form-card.moncompte-form-card .form-card-header-blue .form-heading-sub {
+    -fx-text-fill: rgba(255, 255, 255, 0.98);
+}
+.form-card.moncompte-form-card .form-card-header-blue .form-heading-sub {
+    -fx-text-fill: rgba(255, 255, 255, 0.78);
+}
+.form-card.moncompte-form-card .form-heading-title {
+    -fx-font-size: 17px;
+    -fx-text-fill: #142818;
+}
+.form-card.moncompte-form-card .form-heading-sub {
+    -fx-font-size: 13px;
+    -fx-text-fill: #5c7260;
+}
+.form-card.moncompte-form-card .form-body {
+    -fx-background-color: #fcfdfc;
+}
+.form-card.moncompte-form-card .form-footer {
+    -fx-background-color: #f8faf9;
+    -fx-border-color: #e3ebe0 transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 16 26 18 26;
+}
+.form-card.moncompte-form-card .form-input:focused {
+    -fx-border-color: #2d5016;
+    -fx-effect: dropshadow(gaussian, rgba(45, 80, 22, 0.12), 6, 0, 0, 0);
+}
+
+/* Photo picker strip */
+.moncompte-photo-row {
+    -fx-background-color: linear-gradient(to bottom, #f4faf5, #eef6ef);
+    -fx-background-radius: 14;
+    -fx-border-color: #cfe5d4;
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+    -fx-padding: 14 18 14 18;
+}
+.moncompte-photo-row .photo-preview {
+    -fx-effect: dropshadow(gaussian, rgba(26, 46, 26, 0.15), 6, 0.2, 0, 1);
+}
+
+.profile-info-row-last {
+    -fx-border-width: 0;
+}

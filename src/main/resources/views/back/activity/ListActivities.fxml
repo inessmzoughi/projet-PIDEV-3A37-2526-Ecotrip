@@ -139,9 +139,9 @@
                                     </VBox>
                                 </HBox>
 
-                                <!-- Photo du guide -->
+                                <!-- Photo de l'activité -->
                                 <VBox spacing="8" styleClass="form-group">
-                                    <Label text="🖼️ Photo du guide" styleClass="form-label"/>
+                                    <Label text="🖼️ Photo de l'activité" styleClass="form-label"/>
                                     <HBox spacing="10" alignment="CENTER_LEFT">
                                         <ImageView fx:id="photoPreview"
                                                    fitWidth="60" fitHeight="60"

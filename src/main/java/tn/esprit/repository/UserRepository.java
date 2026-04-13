@@ -103,7 +103,7 @@ public class UserRepository {
     }
 
     public User save(User user) {
-        String sql = "INSERT INTO user (username, email, password, roles, is_verified, address, telephone) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO user (username, email, password, roles, is_verified, address, telephone, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = Base.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -115,6 +115,7 @@ public class UserRepository {
             stmt.setBoolean(5, user.isVerified());
             stmt.setString(6, user.getAddress());
             stmt.setString(7, user.getTelephone());
+            stmt.setString(8, user.getImage());
 
             stmt.executeUpdate();
 
@@ -129,7 +130,7 @@ public class UserRepository {
     }
 
     public void update(User user) {
-        String sql = "UPDATE user SET username=?, email=?, roles=?, is_verified=?, address=?, telephone=? WHERE id=?";
+        String sql = "UPDATE user SET username=?, email=?, roles=?, is_verified=?, address=?, telephone=?, image=?  WHERE id=?";
 
         try (Connection conn = Base.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -140,7 +141,8 @@ public class UserRepository {
             stmt.setBoolean(4, user.isVerified());
             stmt.setString(5, user.getAddress());
             stmt.setString(6, user.getTelephone());
-            stmt.setInt(7, user.getId());
+            stmt.setString(7, user.getImage());
+            stmt.setInt(8, user.getId());
 
             stmt.executeUpdate();
 

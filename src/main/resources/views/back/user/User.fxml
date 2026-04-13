@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.geometry.*?>
 
 <?import javafx.scene.chart.PieChart?>
@@ -98,6 +99,26 @@
                             <VBox styleClass="form-body" spacing="14">
                                 <padding><Insets top="20" right="20" bottom="16" left="20"/></padding>
 
+                                <!-- Photo de profil -->
+                                <VBox spacing="8" styleClass="form-group">
+                                    <Label text="🖼 Photo de profil" styleClass="form-label"/>
+                                    <HBox spacing="12" alignment="CENTER_LEFT">
+                                        <StackPane styleClass="photo-preview-wrap">
+                                            <ImageView fx:id="photoPreview"
+                                                       fitWidth="72" fitHeight="72"
+                                                       preserveRatio="true" smooth="true"
+                                                       style="-fx-background-radius:8;"/>
+                                        </StackPane>
+                                        <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                            <Label fx:id="photoLabel" text="Aucune photo sélectionnée"
+                                                   styleClass="char-count" wrapText="true"/>
+                                            <Button text="📂 Choisir une photo"
+                                                    styleClass="btn-choose-photo"
+                                                    onAction="#onChoosePhoto"/>
+                                        </VBox>
+                                    </HBox>
+                                </VBox>
+
                                 <!-- Username -->
                                 <VBox spacing="5" styleClass="form-group">
                                     <Label text="👤 Nom d'utilisateur *" styleClass="form-label"/>
@@ -187,9 +208,10 @@
                                 <TableView fx:id="tableView" styleClass="main-table" VBox.vgrow="ALWAYS">
                                     <columns>
                                         <TableColumn fx:id="colIndex"    text="#"           prefWidth="45"/>
-                                        <TableColumn fx:id="colUsername" text="Utilisateur" prefWidth="140"/>
-                                        <TableColumn fx:id="colEmail"    text="Email"       prefWidth="190"/>
-                                        <TableColumn fx:id="colTelephone" text="Téléphone"  prefWidth="120"/>
+                                        <TableColumn fx:id="colPhoto"    text="Photo"       prefWidth="60"/>
+                                        <TableColumn fx:id="colUsername" text="Utilisateur" prefWidth="120"/>
+                                        <TableColumn fx:id="colEmail"    text="Email"       prefWidth="170"/>
+                                        <TableColumn fx:id="colTelephone" text="Téléphone"  prefWidth="110"/>
                                         <TableColumn fx:id="colRole"     text="Rôle"        prefWidth="90"/>
                                         <TableColumn fx:id="colVerified" text="Vérifié"     prefWidth="80"/>
                                         <TableColumn fx:id="colActions"  text="Actions"     prefWidth="160"/>

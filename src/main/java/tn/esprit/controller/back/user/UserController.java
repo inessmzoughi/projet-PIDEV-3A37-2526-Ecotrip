@@ -1,6 +1,10 @@
 package tn.esprit.controller.back.user;
 
 import javafx.scene.chart.PieChart;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import tn.esprit.models.User;
 import tn.esprit.models.enums.Role;
 import tn.esprit.navigation.Routes;
@@ -14,6 +18,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 
+import java.io.File;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.Comparator;
@@ -41,11 +46,17 @@ public class UserController implements Initializable {
     @FXML private Button   submitBtn;
     @FXML private Label    passwordHint;
 
+    /* ─── Photo ─── */
+    @FXML private ImageView photoPreview;
+    @FXML private Label     photoLabel;
+    private String selectedPhotoPath = null;
+
     /* ─── Table ─── */
     @FXML private TextField          searchField;
     @FXML private ComboBox<String>   sortCombo, roleFilter;
     @FXML private TableView<User>    tableView;
     @FXML private TableColumn<User, Integer> colIndex;
+    @FXML private TableColumn<User, Void>    colPhoto;
     @FXML private TableColumn<User, String>  colUsername, colEmail, colTelephone;
     @FXML private TableColumn<User, String>  colRole, colVerified;
     @FXML private TableColumn<User, Void>    colActions;
@@ -76,6 +87,23 @@ public class UserController implements Initializable {
         setupColumns();
         loadData();
         refreshAll();
+    }
+
+    /* ─── Photo chooser ─── */
+    @FXML
+    private void onChoosePhoto() {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Choisir une photo de profil");
+        chooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Images", "*.jpg", "*.jpeg", "*.png", "*.webp")
+        );
+        Stage stage = (Stage) usernameField.getScene().getWindow();
+        File file = chooser.showOpenDialog(stage);
+        if (file != null) {
+            selectedPhotoPath = file.getAbsolutePath();
+            photoPreview.setImage(new Image(file.toURI().toString(), 72, 72, true, true));
+            photoLabel.setText("✅ " + file.getName());
+        }
     }
 
     /* ─── Validation ─── */
@@ -129,7 +157,8 @@ public class UserController implements Initializable {
                         addressField.getText().trim(),
                         telephoneField.getText().trim(),
                         roleCombo.getValue(),
-                        isVerifiedCheck.isSelected()
+                        isVerifiedCheck.isSelected(),
+                        selectedPhotoPath
                 );
                 showToast("✅ Utilisateur créé !");
             } else {
@@ -141,7 +170,8 @@ public class UserController implements Initializable {
                         telephoneField.getText().trim(),
                         roleCombo.getValue(),
                         isVerifiedCheck.isSelected(),
-                        passwordField.getText()
+                        passwordField.getText(),
+                        selectedPhotoPath
                 );
                 showToast("💾 Utilisateur modifié !");
             }
@@ -166,6 +196,11 @@ public class UserController implements Initializable {
         roleCombo.setValue("ROLE_USER");
         isVerifiedCheck.setSelected(false);
 
+        // Reset photo
+        selectedPhotoPath = null;
+        if (photoPreview != null) photoPreview.setImage(null);
+        if (photoLabel   != null) photoLabel.setText("Aucune photo sélectionnée");
+
         setFieldError(usernameField, errUsername, false);
         setFieldError(emailField, errEmail, false);
         setFieldError(passwordField, errPassword, false);
@@ -188,6 +223,27 @@ public class UserController implements Initializable {
         telephoneField.setText(u.getTelephone() != null ? u.getTelephone() : "");
         roleCombo.setValue(u.getRoles().name());
         isVerifiedCheck.setSelected(u.isVerified());
+
+        // Load existing photo
+        selectedPhotoPath = u.getImage();
+        if (selectedPhotoPath != null && !selectedPhotoPath.isEmpty()) {
+            try {
+                File f = new File(selectedPhotoPath);
+                if (f.exists()) {
+                    photoPreview.setImage(new Image(f.toURI().toString(), 72, 72, true, true));
+                    photoLabel.setText("✅ " + f.getName());
+                } else {
+                    photoPreview.setImage(null);
+                    photoLabel.setText("Photo introuvable sur le disque");
+                }
+            } catch (Exception ex) {
+                photoPreview.setImage(null);
+                photoLabel.setText("Aucune photo sélectionnée");
+            }
+        } else {
+            photoPreview.setImage(null);
+            photoLabel.setText("Aucune photo sélectionnée");
+        }
 
         formIcon.setText("✏️");
         formTitle.setText("Modifier l'Utilisateur");
@@ -287,6 +343,45 @@ public class UserController implements Initializable {
             }
         });
 
+        // Photo thumbnail column
+        colPhoto.setCellFactory(col -> new TableCell<>() {
+            private final ImageView iv = new ImageView();
+            {
+                iv.setFitWidth(36);
+                iv.setFitHeight(36);
+                iv.setPreserveRatio(true);
+                iv.setSmooth(true);
+                iv.setStyle("-fx-background-radius:50%;");
+            }
+            @Override protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) { setGraphic(null); return; }
+                User u = getTableView().getItems().get(getIndex());
+                String path = u.getImage();
+                if (path != null && !path.isEmpty()) {
+                    try {
+                        File f = new File(path);
+                        if (f.exists()) {
+                            iv.setImage(new Image(f.toURI().toString(), 36, 36, true, true));
+                            setGraphic(iv);
+                            return;
+                        }
+                    } catch (Exception ignored) {}
+                }
+                // Fallback: initials label
+                String name = u.getUsername();
+                String initials = name.length() >= 2 ? name.substring(0, 2).toUpperCase()
+                        : name.toUpperCase();
+                Label lbl = new Label(initials);
+                lbl.setStyle(
+                        "-fx-background-color:#6366f1; -fx-text-fill:white;"
+                                + "-fx-font-size:12px; -fx-font-weight:bold;"
+                                + "-fx-background-radius:18; -fx-min-width:36; -fx-min-height:36;"
+                                + "-fx-alignment:center;");
+                setGraphic(lbl);
+            }
+        });
+
         // Username
         colUsername.setCellValueFactory(c ->
                 new javafx.beans.property.SimpleStringProperty(c.getValue().getUsername()));
@@ -368,6 +463,7 @@ public class UserController implements Initializable {
     @FXML private void onSearch() { currentPage = 1; renderTable(); }
     @FXML private void onSort()   { currentPage = 1; renderTable(); }
     @FXML private void onFilter() { currentPage = 1; renderTable(); }
+
     /* ─── Export CSV ─── */
     @FXML
     private void onExportCsv() {
@@ -380,7 +476,6 @@ public class UserController implements Initializable {
         java.io.File file = chooser.showSaveDialog(tableView.getScene().getWindow());
         if (file == null) return;
 
-        // Build the same filtered+sorted list that's currently displayed
         String query  = searchField.getText().toLowerCase().trim();
         String sort   = sortCombo.getValue();
         String filter = roleFilter.getValue();
@@ -401,7 +496,7 @@ public class UserController implements Initializable {
             toExport.sort(Comparator.comparing(User::getEmail));
 
         try (FileWriter fw = new FileWriter(file)) {
-            fw.write("ID;Username;Email;Adresse;Téléphone;Rôle;Vérifié\n");
+            fw.write("ID;Username;Email;Adresse;Téléphone;Rôle;Vérifié;Photo\n");
             for (User u : toExport) {
                 fw.write(String.join(";",
                         String.valueOf(u.getId()),
@@ -410,7 +505,8 @@ public class UserController implements Initializable {
                         u.getAddress()    != null ? u.getAddress()    : "",
                         u.getTelephone()  != null ? u.getTelephone()  : "",
                         u.getRoles().name(),
-                        u.isVerified() ? "Oui" : "Non"
+                        u.isVerified() ? "Oui" : "Non",
+                        u.getImage()  != null ? u.getImage()  : ""
                 ) + "\n");
             }
             showToast("📥 Export CSV : " + file.getName()
@@ -419,6 +515,7 @@ public class UserController implements Initializable {
             showAlert("Erreur export", e.getMessage());
         }
     }
+
     @FXML private void onNavDashboard() { SceneManager.navigateTo(Routes.ADMIN_DASHBOARD); }
     @FXML private void onNavUsers()     { SceneManager.navigateTo(Routes.ADMIN_USERS); }
 
