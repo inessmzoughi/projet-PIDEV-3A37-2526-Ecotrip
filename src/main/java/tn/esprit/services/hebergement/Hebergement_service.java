@@ -2,7 +2,7 @@ package tn.esprit.services.hebergement;
 
 import tn.esprit.database.Base;
 import tn.esprit.interfaces.I_service;
-import tn.esprit.models.Hebergement;
+import tn.esprit.models.hebergements.Hebergement;
 
 import java.sql.*;
 import java.util.ArrayList;

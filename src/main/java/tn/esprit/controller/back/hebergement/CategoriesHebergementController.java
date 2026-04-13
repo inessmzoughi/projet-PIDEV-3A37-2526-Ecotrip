@@ -6,7 +6,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import tn.esprit.models.Categorie_hebergement;
+import tn.esprit.models.hebergements.Categorie_hebergement;
 import tn.esprit.database.Base;
 import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;

@@ -6,7 +6,7 @@ import javafx.scene.chart.*;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
-import tn.esprit.models.Hebergement;
+import tn.esprit.models.hebergements.Hebergement;
 import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;
 import tn.esprit.services.hebergement.CategorieH_service;

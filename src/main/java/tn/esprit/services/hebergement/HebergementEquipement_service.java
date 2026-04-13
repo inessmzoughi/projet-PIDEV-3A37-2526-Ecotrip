@@ -1,7 +1,7 @@
 package tn.esprit.services.hebergement;
 
 import tn.esprit.database.Base;
-import tn.esprit.models.Equipement;
+import tn.esprit.models.hebergements.Equipement;
 
 import java.sql.*;
 import java.util.ArrayList;
