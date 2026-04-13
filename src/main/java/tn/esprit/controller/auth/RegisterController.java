@@ -53,7 +53,7 @@ public class RegisterController {
             return;
         }
         if (username.length() < 8) {
-            showError("Username must be at least 3 characters.");
+            showError("Username must be at least 8 characters.");
             return;
         }
         // 4. Password match check

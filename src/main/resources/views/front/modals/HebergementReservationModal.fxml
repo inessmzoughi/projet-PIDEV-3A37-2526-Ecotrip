@@ -8,7 +8,7 @@
            styleClass="modal-blur-overlay"
            alignment="CENTER">
 
-    <VBox styleClass="res-modal-card" maxWidth="500" spacing="0">
+    <VBox styleClass="res-modal-card" maxWidth="500" maxHeight="650" spacing="0">
 
         <!-- Green header -->
         <HBox styleClass="res-modal-header-green" spacing="16" alignment="CENTER_LEFT">
