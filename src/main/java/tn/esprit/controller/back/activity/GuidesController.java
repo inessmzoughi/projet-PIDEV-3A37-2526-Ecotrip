@@ -9,6 +9,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import tn.esprit.models.activity.Guide;
@@ -30,8 +31,11 @@ public class GuidesController implements Initializable {
     /* ─── Stats ─── */
     @FXML private Label statTotal, statRating, statAssigned;
 
-    /* ─── Form ─── */
-    @FXML private Label    formIcon, formTitle, formSubtitle;
+    /* ─── Inline Form Panel (Chambres-style) ─── */
+    @FXML private VBox  formPanel;
+    @FXML private Label formPanelTitle;
+
+    /* ─── Form Fields ─── */
     @FXML private TextField firstNameField, lastNameField, emailField,
             phoneField, ratingField, photoField;
     @FXML private TextArea  bioField;
@@ -43,6 +47,7 @@ public class GuidesController implements Initializable {
 
     /* ─── Table ─── */
     @FXML private TextField searchField;
+    @FXML private ComboBox<String> sortCombo;
     @FXML private TableView<Guide> tableView;
     @FXML private TableColumn<Guide, Integer> colIndex;
     @FXML private TableColumn<Guide, String>  colName, colEmail, colPhone;
@@ -61,6 +66,9 @@ public class GuidesController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        sortCombo.setItems(FXCollections.observableArrayList(
+                "Trier par…", "Nom (A→Z)", "Note (croissante)", "Note (décroissante)"));
+        sortCombo.getSelectionModel().selectFirst();
         setupColumns();
         refreshAll();
     }
@@ -82,22 +90,116 @@ public class GuidesController implements Initializable {
         statAssigned.setText("—");
     }
 
+    /* ══════════════════════════════════════════════
+       FORM PANEL — open / close  (Chambres pattern)
+       ══════════════════════════════════════════════ */
+
+    @FXML private void onOpenForm() {
+        guideEnEdition = null;
+        formPanelTitle.setText("🧭 Nouveau Guide");
+        submitBtn.setText("➕ Ajouter");
+        firstNameField.clear(); lastNameField.clear(); emailField.clear();
+        phoneField.clear(); ratingField.clear(); bioField.clear(); photoField.clear();
+        photoPreview.setImage(null);
+        photoLabel.setText("Aucune photo sélectionnée");
+        charCount.setText("0 / 5000 caractères");
+        resetAllErrors();
+        formPanel.setVisible(true);
+        formPanel.setManaged(true);
+        firstNameField.requestFocus();
+    }
+
+    @FXML private void onCloseForm() {
+        formPanel.setVisible(false);
+        formPanel.setManaged(false);
+        guideEnEdition = null;
+        resetAllErrors();
+    }
+
+    private void loadForEdit(Guide g) {
+        guideEnEdition = g;
+        formPanelTitle.setText("✏️ Modifier le Guide");
+        submitBtn.setText("💾 Enregistrer");
+        firstNameField.setText(g.getFirstName());
+        lastNameField.setText(g.getLastName());
+        emailField.setText(g.getEmail());
+        phoneField.setText(g.getPhone());
+        bioField.setText(g.getBio() != null ? g.getBio() : "");
+        photoField.setText(g.getPhoto() != null ? g.getPhoto() : "");
+        ratingField.setText(g.getRating() != null ? String.valueOf(g.getRating()) : "");
+        if (g.getPhoto() != null && !g.getPhoto().isBlank()) {
+            try { photoPreview.setImage(new Image(g.getPhoto(), 80, 80, true, true)); }
+            catch (Exception ignored) {}
+        } else {
+            photoPreview.setImage(null);
+        }
+        photoLabel.setText("Aucune photo sélectionnée");
+        updateCounter();
+        resetAllErrors();
+        formPanel.setVisible(true);
+        formPanel.setManaged(true);
+        firstNameField.requestFocus();
+    }
+
+    /* ══════════════════════════════════════════════
+       SAVE
+       ══════════════════════════════════════════════ */
+
+    @FXML private void onSubmit() {
+        if (!validateAll()) return;
+        Guide g = guideEnEdition != null ? guideEnEdition : new Guide();
+        g.setFirstName(firstNameField.getText().trim());
+        g.setLastName(lastNameField.getText().trim());
+        g.setEmail(emailField.getText().trim());
+        g.setPhone(phoneField.getText().trim());
+        g.setBio(bioField.getText().trim());
+        g.setPhoto(photoField.getText().trim());
+        String ratingTxt = ratingField.getText().trim();
+        g.setRating(ratingTxt.isEmpty() ? null : Float.parseFloat(ratingTxt));
+        try {
+            if (guideEnEdition == null) service.ajouter(g);
+            else                        service.modifier(g);
+            onCloseForm();
+            refreshAll();
+        } catch (Exception e) { showAlert("Erreur", e.getMessage()); }
+    }
+
+    @FXML private void onReset() {
+        onOpenForm();
+    }
+
+    /* ══════════════════════════════════════════════
+       TABLE + PAGINATION
+       ══════════════════════════════════════════════ */
+
     private void renderTable() {
         String query = searchField.getText().toLowerCase().trim();
+        String sort  = sortCombo.getValue();
+
         List<Guide> filtered = allData.stream()
                 .filter(g -> query.isEmpty()
                         || g.getFirstName().toLowerCase().contains(query)
                         || g.getLastName().toLowerCase().contains(query)
                         || g.getEmail().toLowerCase().contains(query))
-                .sorted(Comparator.comparing(Guide::getLastName))
                 .collect(Collectors.toList());
 
+        if ("Nom (A→Z)".equals(sort))
+            filtered.sort(Comparator.comparing(Guide::getLastName));
+        else if ("Note (croissante)".equals(sort))
+            filtered.sort(Comparator.comparing(g -> g.getRating() == null ? 0f : g.getRating()));
+        else if ("Note (décroissante)".equals(sort))
+            filtered.sort((a, b) -> Float.compare(
+                    b.getRating() == null ? 0f : b.getRating(),
+                    a.getRating() == null ? 0f : a.getRating()));
+
         badgeCount.setText(String.valueOf(filtered.size()));
-        int total = filtered.size();
+
+        int total      = filtered.size();
         int totalPages = Math.max(1, (int) Math.ceil((double) total / PER_PAGE));
         if (currentPage > totalPages) currentPage = 1;
         int from = (currentPage - 1) * PER_PAGE;
         int to   = Math.min(from + PER_PAGE, total);
+
         tableView.setItems(FXCollections.observableArrayList(filtered.subList(from, to)));
         pagInfo.setText(total == 0 ? "" : "Affichage " + (from + 1) + "–" + to + " sur " + total);
 
@@ -131,7 +233,6 @@ public class GuidesController implements Initializable {
                 super.updateItem(item, empty);
                 if (empty) { setText(null); setGraphic(null); return; }
                 Guide g = getTableView().getItems().get(getIndex());
-                // Show photo thumbnail if available
                 HBox box = new HBox(8);
                 box.setAlignment(Pos.CENTER_LEFT);
                 Label avatar = new Label();
@@ -139,7 +240,6 @@ public class GuidesController implements Initializable {
                     try {
                         ImageView iv = new ImageView(new Image(g.getPhoto(), 32, 32, true, true));
                         iv.setFitWidth(32); iv.setFitHeight(32);
-                        iv.setStyle("-fx-background-radius: 16;");
                         avatar.setGraphic(iv);
                     } catch (Exception ex) {
                         avatar.setText("🧭");
@@ -161,7 +261,7 @@ public class GuidesController implements Initializable {
         colRating.setCellFactory(col -> new TableCell<>() {
             @Override protected void updateItem(Float item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null) { setText("—"); return; }
+                if (empty || item == null) { setText("—"); setGraphic(null); return; }
                 Label l = new Label(String.format("%.1f ⭐", item));
                 l.setStyle("-fx-text-fill: #f59e0b; -fx-font-weight: bold;");
                 setGraphic(l); setText(null);
@@ -169,7 +269,7 @@ public class GuidesController implements Initializable {
         });
 
         colActions.setCellFactory(col -> new TableCell<>() {
-            private final Button editBtn = new Button("✏️ Modifier");
+            private final Button editBtn = new Button("✏️");
             private final Button delBtn  = new Button("🗑️");
             private final HBox   box     = new HBox(8, editBtn, delBtn);
             {
@@ -186,12 +286,15 @@ public class GuidesController implements Initializable {
         });
     }
 
+    /* ══════════════════════════════════════════════
+       PHOTO
+       ══════════════════════════════════════════════ */
+
     @FXML private void onChoosePhoto() {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Choisir une photo");
         chooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Images", "*.jpg", "*.jpeg", "*.png", "*.webp")
-        );
+                new FileChooser.ExtensionFilter("Images", "*.jpg", "*.jpeg", "*.png", "*.webp"));
         Stage stage = (Stage) firstNameField.getScene().getWindow();
         File file = chooser.showOpenDialog(stage);
         if (file != null) {
@@ -201,6 +304,31 @@ public class GuidesController implements Initializable {
             photoLabel.setText("✅ " + file.getName());
         }
     }
+
+    /* ══════════════════════════════════════════════
+       DELETE
+       ══════════════════════════════════════════════ */
+
+    private void confirmDelete(Guide g) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Supprimer ?");
+        alert.setHeaderText("Supprimer « " + g.getFirstName() + " " + g.getLastName() + " » ?");
+        alert.setContentText("Cette action est irréversible.");
+        ButtonType cancel  = new ButtonType("Annuler",   ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType confirm = new ButtonType("Supprimer", ButtonBar.ButtonData.OK_DONE);
+        alert.getButtonTypes().setAll(cancel, confirm);
+        alert.showAndWait().filter(r -> r == confirm).ifPresent(r -> {
+            try {
+                service.supprimer(g.getId());
+                if (guideEnEdition != null && guideEnEdition.getId() == g.getId()) onCloseForm();
+                refreshAll();
+            } catch (SQLException e) { showAlert("Erreur", e.getMessage()); }
+        });
+    }
+
+    /* ══════════════════════════════════════════════
+       VALIDATION
+       ══════════════════════════════════════════════ */
 
     @FXML private void validateFirstName() {
         setFieldError(firstNameField, errFirstName, firstNameField.getText().trim().length() < 2);
@@ -244,80 +372,13 @@ public class GuidesController implements Initializable {
         return ok;
     }
 
-    @FXML private void onSubmit() {
-        if (!validateAll()) return;
-        Guide g = guideEnEdition != null ? guideEnEdition : new Guide();
-        g.setFirstName(firstNameField.getText().trim());
-        g.setLastName(lastNameField.getText().trim());
-        g.setEmail(emailField.getText().trim());
-        g.setPhone(phoneField.getText().trim());
-        g.setBio(bioField.getText().trim());
-        g.setPhoto(photoField.getText().trim());
-        String ratingTxt = ratingField.getText().trim();
-        g.setRating(ratingTxt.isEmpty() ? null : Float.parseFloat(ratingTxt));
-        try {
-            if (guideEnEdition == null) { service.ajouter(g); showToast("✅ Guide ajouté !"); }
-            else { service.modifier(g); showToast("💾 Guide modifié !"); }
-            onReset(); refreshAll();
-        } catch (Exception e) { showAlert("Erreur", e.getMessage()); }
-    }
-
-    @FXML private void onReset() {
-        guideEnEdition = null; selectedPhotoPath = null;
-        firstNameField.clear(); lastNameField.clear(); emailField.clear();
-        phoneField.clear(); ratingField.clear(); bioField.clear(); photoField.clear();
-        photoPreview.setImage(null);
-        photoLabel.setText("Aucune photo sélectionnée");
-        setFieldError(firstNameField, errFirstName, false);
-        setFieldError(lastNameField,  errLastName,  false);
-        setFieldError(emailField,     errEmail,     false);
-        setFieldError(phoneField,     errPhone,     false);
-        charCount.setText("0 / 5000 caractères");
-        formIcon.setText("🧭"); formTitle.setText("Nouveau Guide");
-        formSubtitle.setText("Remplissez les informations.");
-        submitBtn.setText("➕ Ajouter");
-    }
-
-    private void loadForEdit(Guide g) {
-        guideEnEdition = g;
-        firstNameField.setText(g.getFirstName());
-        lastNameField.setText(g.getLastName());
-        emailField.setText(g.getEmail());
-        phoneField.setText(g.getPhone());
-        bioField.setText(g.getBio() != null ? g.getBio() : "");
-        photoField.setText(g.getPhoto() != null ? g.getPhoto() : "");
-        ratingField.setText(g.getRating() != null ? String.valueOf(g.getRating()) : "");
-        if (g.getPhoto() != null && !g.getPhoto().isBlank()) {
-            try { photoPreview.setImage(new Image(g.getPhoto(), 80, 80, true, true)); }
-            catch (Exception ignored) {}
-        }
-        updateCounter();
-        formIcon.setText("✏️"); formTitle.setText("Modifier le Guide");
-        formSubtitle.setText("Mettez à jour les informations.");
-        submitBtn.setText("💾 Enregistrer");
-        firstNameField.requestFocus();
-    }
-
-    private void confirmDelete(Guide g) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Supprimer ?");
-        alert.setHeaderText("Supprimer « " + g.getFirstName() + " " + g.getLastName() + " » ?");
-        alert.setContentText("Cette action est irréversible.");
-        ButtonType cancel  = new ButtonType("Annuler",   ButtonBar.ButtonData.CANCEL_CLOSE);
-        ButtonType confirm = new ButtonType("Supprimer", ButtonBar.ButtonData.OK_DONE);
-        alert.getButtonTypes().setAll(cancel, confirm);
-        alert.showAndWait().filter(r -> r == confirm).ifPresent(r -> {
-            try {
-                service.supprimer(g.getId());
-                if (guideEnEdition != null && guideEnEdition.getId() == g.getId()) onReset();
-                refreshAll();
-            } catch (SQLException e) { showAlert("Erreur", e.getMessage()); }
-        });
-    }
+    /* ══════════════════════════════════════════════
+       NAVIGATION + HELPERS
+       ══════════════════════════════════════════════ */
 
     @FXML private void onSearch()        { currentPage = 1; renderTable(); }
-    @FXML private void onNavDashboard()  { SceneManager.navigateTo(Routes.ADMIN_DASHBOARD); }
-    @FXML private void onNavActivities() { SceneManager.navigateTo(Routes.ADMIN_ACTIVITIES); }
+    @FXML private void onNavDashboard()  { onCloseForm(); SceneManager.navigateTo(Routes.ADMIN_DASHBOARD); }
+    @FXML private void onNavActivities() { onCloseForm(); SceneManager.navigateTo(Routes.ADMIN_ACTIVITIES); }
 
     private void setFieldError(TextField field, Label errLabel, boolean hasError) {
         if (hasError) {
@@ -330,12 +391,12 @@ public class GuidesController implements Initializable {
         }
     }
 
-    private void showToast(String msg) {
-        pagInfo.setText(msg);
-        new Thread(() -> {
-            try { Thread.sleep(3000); } catch (InterruptedException ignored) {}
-            javafx.application.Platform.runLater(this::renderTable);
-        }).start();
+    private void resetAllErrors() {
+        setFieldError(firstNameField, errFirstName, false);
+        setFieldError(lastNameField,  errLastName,  false);
+        setFieldError(emailField,     errEmail,     false);
+        setFieldError(phoneField,     errPhone,     false);
+        if (errRating != null) setFieldError(ratingField, errRating, false);
     }
 
     private void showAlert(String title, String msg) {

@@ -1,145 +1,153 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.shape.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.String?>
 
-<!-- Front-shell injects this into the scrollable content area -->
-<VBox xmlns:fx="http://javafx.com/fxml"
-      fx:controller="tn.esprit.controller.front.ActivitiesController"
-      spacing="0">
+<ScrollPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="tn.esprit.controller.front.ActivitiesController"
+            fitToWidth="true"
+            hbarPolicy="NEVER"
+            vbarPolicy="AS_NEEDED"
+            styleClass="heb-scroll">
 
-    <!-- ══ HERO BANNER ══════════════════════════════════════════ -->
-    <VBox styleClass="act-hero" alignment="CENTER" spacing="16">
-        <Label text="EXPLOREZ LA TUNISIE" styleClass="banner-sub"/>
-        <Label text="Activités &amp; Aventures" styleClass="banner-title"/>
-        <Label text="Randonnées, plongée, désert, culture — des expériences inoubliables avec des guides locaux certifiés."
-               styleClass="banner-desc" wrapText="true"/>
+    <VBox spacing="0">
 
-        <!-- Search bar -->
-        <HBox styleClass="act-search-bar" alignment="CENTER" spacing="12">
-            <TextField fx:id="searchField"
-                       promptText="🔍  Rechercher une activité..."
-                       styleClass="act-search-input"
-                       HBox.hgrow="ALWAYS"/>
-            <ComboBox fx:id="sortCombo"
-                      promptText="Trier par"
-                      styleClass="act-sort-combo"/>
-            <Button text="Rechercher"
-                    onAction="#handleSearch"
-                    styleClass="btn-theme"/>
+        <!-- ══ HERO ══ -->
+        <VBox styleClass="heb-hero" alignment="CENTER" spacing="14">
+            <padding><Insets top="80" bottom="80" left="40" right="40"/></padding>
+            <Label text="Activités &amp; Aventures" styleClass="heb-hero-title"/>
+            <Label text="Randonnées, plongée, désert, culture — des expériences inoubliables avec des guides locaux certifiés."
+                   styleClass="heb-hero-sub" wrapText="true"/>
+        </VBox>
+
+        <!-- ══ CATEGORY FILTER TABS ══ -->
+        <HBox styleClass="act-tab-bar" alignment="CENTER_LEFT" spacing="8">
+            <padding><Insets top="16" bottom="16" left="40" right="40"/></padding>
+            <Button fx:id="tabAll"
+                    text="🌿  Toutes"
+                    onAction="#handleTabAll"
+                    styleClass="act-tab act-tab-active"/>
+            <HBox fx:id="categoryTabsBox" spacing="8" alignment="CENTER_LEFT"/>
         </HBox>
-    </VBox>
 
-    <!-- ══ CATEGORY FILTER TABS ════════════════════════════════ -->
-    <HBox styleClass="act-tab-bar" alignment="CENTER_LEFT" spacing="8">
-        <Button fx:id="tabAll"
-                text="🌿  Toutes"
-                onAction="#handleTabAll"
-                styleClass="act-tab act-tab-active"/>
-        <!-- Category tabs built dynamically in controller -->
-        <HBox fx:id="categoryTabsBox" spacing="8" alignment="CENTER_LEFT"/>
-    </HBox>
+        <!-- ══ FILTRES (identical to hebergement) ══ -->
+        <VBox styleClass="heb-filters-container">
+            <padding><Insets top="30" bottom="30" left="40" right="40"/></padding>
+            <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 0 0 20 0;">
+                <Region styleClass="filters-title-bar"/>
+                <Label text="RECHERCHER ET FILTRER LES ACTIVITÉS" styleClass="filters-section-title"/>
+            </HBox>
+            <HBox spacing="16" alignment="CENTER_LEFT">
 
-    <!-- ══ RESULTS COUNT + ACTIVE FILTER INFO ══════════════════ -->
-    <HBox styleClass="act-results-bar" alignment="CENTER_LEFT" spacing="12">
-        <Label fx:id="resultsCountLabel" text="Chargement..." styleClass="act-results-count"/>
-        <Region HBox.hgrow="ALWAYS"/>
-        <Label fx:id="activeFilterLabel" text="" styleClass="act-filter-badge" visible="false" managed="false"/>
-        <Button fx:id="clearFilterBtn" text="✕  Effacer filtre"
-                onAction="#handleClearFilter"
-                styleClass="act-clear-btn" visible="false" managed="false"/>
-    </HBox>
+                <!-- Search -->
+                <TextField fx:id="searchField"
+                           promptText="Rechercher par titre ou lieu..."
+                           styleClass="heb-filter-input"
+                           HBox.hgrow="ALWAYS"/>
 
-    <!-- ══ MAIN CONTENT AREA ═══════════════════════════════════ -->
-    <HBox styleClass="act-main" spacing="24" VBox.vgrow="ALWAYS">
+                <!-- Sort -->
+                <ComboBox fx:id="sortCombo"
+                          promptText="Trier par"
+                          styleClass="heb-filter-input"
+                          prefWidth="180">
+                    <items>
+                        <javafx.collections.FXCollections fx:factory="observableArrayList">
+                            <String fx:value="Trier par"/>
+                            <String fx:value="Prix croissant"/>
+                            <String fx:value="Prix décroissant"/>
+                            <String fx:value="Durée croissante"/>
+                            <String fx:value="Alphabétique"/>
+                        </javafx.collections.FXCollections>
+                    </items>
+                </ComboBox>
 
-        <!-- ── Sidebar filters ──────────────────────────────── -->
-        <VBox styleClass="act-sidebar" spacing="20" minWidth="220" maxWidth="220">
-
-            <!-- Price range -->
-            <VBox spacing="10">
-                <Label text="💰  Prix maximum" styleClass="act-filter-title"/>
-                <Slider fx:id="priceSlider"
-                        min="0" max="500" value="500"
-                        showTickLabels="true" showTickMarks="true"
-                        majorTickUnit="100"
-                        styleClass="act-slider"/>
-                <HBox alignment="CENTER" spacing="8">
-                    <Label text="0 TND" styleClass="act-filter-hint"/>
-                    <Label fx:id="priceLabel" text="500 TND" styleClass="act-filter-value"/>
-                </HBox>
-            </VBox>
-
-            <Separator styleClass="act-separator"/>
-
-            <!-- Duration -->
-            <VBox spacing="10">
-                <Label text="⏱  Durée" styleClass="act-filter-title"/>
-                <VBox fx:id="durationBox" spacing="8">
-                    <RadioButton fx:id="durAll"   text="Toutes durées"   styleClass="act-radio" selected="true"/>
-                    <RadioButton fx:id="durShort" text="Moins de 2h"     styleClass="act-radio"/>
-                    <RadioButton fx:id="durMed"   text="2h – 4h"         styleClass="act-radio"/>
-                    <RadioButton fx:id="durLong"  text="Plus de 4h"      styleClass="act-radio"/>
+                <!-- Price slider -->
+                <VBox spacing="4" minWidth="160">
+                    <Label text="💰 Prix max" styleClass="act-filter-hint"/>
+                    <Slider fx:id="priceSlider" min="0" max="500" value="500"
+                            styleClass="act-slider" prefWidth="160"/>
+                    <HBox spacing="6">
+                        <Label text="0 TND" styleClass="act-filter-hint"/>
+                        <Label fx:id="priceLabel" text="500 TND" styleClass="act-filter-value"/>
+                    </HBox>
                 </VBox>
-            </VBox>
 
-            <Separator styleClass="act-separator"/>
+                <!-- Duration -->
+                <VBox spacing="4">
+                    <Label text="⏱ Durée" styleClass="act-filter-hint"/>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <RadioButton fx:id="durAll"   text="Toutes"  styleClass="act-radio" selected="true"/>
+                        <RadioButton fx:id="durShort" text="&lt; 2h" styleClass="act-radio"/>
+                        <RadioButton fx:id="durMed"   text="2h–4h"   styleClass="act-radio"/>
+                        <RadioButton fx:id="durLong"  text="&gt; 4h" styleClass="act-radio"/>
+                    </HBox>
+                </VBox>
 
-            <!-- Participants -->
-            <VBox spacing="10">
-                <Label text="👥  Participants" styleClass="act-filter-title"/>
-                <HBox alignment="CENTER_LEFT" spacing="8">
-                    <Label text="Min :" styleClass="act-filter-hint"/>
-                    <Spinner fx:id="participantsSpinner"
-                             min="1" max="50" initialValue="1"
-                             editable="true"
-                             styleClass="act-spinner"
-                             prefWidth="80"/>
-                </HBox>
-            </VBox>
+                <!-- Participants -->
+                <VBox spacing="4">
+                    <Label text="👥 Participants min" styleClass="act-filter-hint"/>
+                    <Spinner fx:id="participantsSpinner" min="1" max="50" initialValue="1"
+                             editable="true" styleClass="act-spinner" prefWidth="80"/>
+                </VBox>
 
-            <Separator styleClass="act-separator"/>
+                <!-- Reset button -->
+                <Button text="Réinitialiser" styleClass="heb-clear-btn"
+                        onAction="#handleResetFilters" prefWidth="130"/>
 
-            <!-- Apply filters button -->
-            <Button text="Appliquer les filtres"
-                    onAction="#handleApplyFilters"
-                    styleClass="btn-theme"
-                    maxWidth="Infinity"/>
-            <Button text="Réinitialiser"
-                    onAction="#handleResetFilters"
-                    styleClass="btn-theme-outline"
-                    maxWidth="Infinity"/>
+            </HBox>
         </VBox>
 
-        <!-- ── Activity cards grid ──────────────────────────── -->
-        <VBox HBox.hgrow="ALWAYS" spacing="0">
+        <!-- ══ RÉSULTATS HEADER ══ -->
+        <HBox alignment="CENTER_LEFT">
+            <padding><Insets top="24" bottom="12" left="40" right="40"/></padding>
+            <Label fx:id="resultsCountLabel" text="0 Activité(s) Trouvée(s)" styleClass="heb-result-count"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="activeFilterLabel" text="" styleClass="act-filter-badge"
+                   visible="false" managed="false"/>
+            <Button fx:id="clearFilterBtn" text="✕  Effacer filtre"
+                    onAction="#handleClearFilter"
+                    styleClass="act-clear-btn" visible="false" managed="false"/>
+        </HBox>
 
-            <!-- Empty state (hidden by default) -->
-            <VBox fx:id="emptyState" alignment="CENTER" spacing="16"
-                  styleClass="act-empty-state" visible="false" managed="false">
-                <Label text="🌵" styleClass="act-empty-icon"/>
-                <Label text="Aucune activité trouvée" styleClass="act-empty-title"/>
-                <Label text="Essayez de modifier vos filtres ou votre recherche."
-                       styleClass="act-empty-sub" wrapText="true"/>
-                <Button text="Voir toutes les activités"
-                        onAction="#handleClearFilter"
-                        styleClass="btn-theme-outline"/>
-            </VBox>
+        <!-- ══ CARTES ══ -->
+        <FlowPane fx:id="activitiesGrid" hgap="28" vgap="28" styleClass="heb-cards-pane">
+            <padding><Insets top="0" bottom="20" left="40" right="40"/></padding>
+        </FlowPane>
 
-            <!-- Cards grid — populated by controller -->
-            <FlowPane fx:id="activitiesGrid"
-                      styleClass="act-cards-grid"
-                      hgap="20" vgap="20"
-                      VBox.vgrow="ALWAYS"/>
+        <!-- ══ EMPTY STATE ══ -->
+        <VBox fx:id="emptyState" alignment="CENTER" spacing="16"
+              managed="false" visible="false" styleClass="heb-empty">
+            <padding><Insets top="60" bottom="60"/></padding>
+            <Label text="🌵" styleClass="heb-empty-icon"/>
+            <Label text="Aucune Activité Trouvée" styleClass="heb-empty-title"/>
+            <Label text="Essayez de modifier vos filtres pour voir plus de résultats"
+                   styleClass="heb-empty-sub" wrapText="true"/>
+            <Button text="↺  Réinitialiser les filtres" styleClass="heb-clear-btn"
+                    onAction="#handleResetFilters"/>
         </VBox>
-    </HBox>
 
-    <!-- ══ CTA SECTION ═════════════════════════════════════════ -->
-    <VBox styleClass="act-cta-section" alignment="CENTER" spacing="16">
-        <Label text="Vous ne trouvez pas ce que vous cherchez ?" styleClass="section-title-white"/>
-        <Label text="Contactez-nous et nous créerons une expérience sur mesure pour vous."
-               styleClass="section-sub-white" wrapText="true"/>
-        <Button text="Nous contacter" onAction="#handleContact" styleClass="act-cta-btn"/>
+        <!-- ══ PAGINATION ══ -->
+        <HBox fx:id="paginationBar" alignment="CENTER" spacing="16"
+              managed="false" visible="false" styleClass="heb-pagination">
+            <padding><Insets top="24" bottom="24" left="40" right="40"/></padding>
+            <Button fx:id="btnPrev" text="← Précédent" styleClass="heb-page-btn" onAction="#onPrev"/>
+            <Label fx:id="pagInfo" text="Page 1 / 1" styleClass="heb-page-info"/>
+            <Button fx:id="btnNext" text="Suivant →" styleClass="heb-page-btn" onAction="#onNext"/>
+        </HBox>
+
+        <!-- ══ CTA ══ -->
+        <VBox styleClass="act-cta-section" alignment="CENTER" spacing="16">
+            <padding><Insets top="60" bottom="60" left="40" right="40"/></padding>
+            <Label text="Vous ne trouvez pas ce que vous cherchez ?" styleClass="section-title-white"/>
+            <Label text="Contactez-nous et nous créerons une expérience sur mesure pour vous."
+                   styleClass="section-sub-white" wrapText="true"/>
+            <Button text="Nous contacter" onAction="#handleContact" styleClass="act-cta-btn"/>
+        </VBox>
+
+        <!-- ══ FOOTER ══ -->
+        <fx:include source="../components/front-footer.fxml"/>
+
     </VBox>
-
-</VBox>
+</ScrollPane>

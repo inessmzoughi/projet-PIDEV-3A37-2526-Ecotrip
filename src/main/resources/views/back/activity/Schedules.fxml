@@ -1,161 +1,162 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.geometry.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="tn.esprit.controller.back.activity.SchedulesController"
-            styleClass="root-pane"
-            stylesheets="@../../../styles/ecotrip.css">
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane styleClass="root-pane" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="tn.esprit.controller.back.activity.SchedulesController">
+
     <center>
         <VBox styleClass="main-content">
-            <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane">
-                <VBox styleClass="page-body" spacing="24">
-                    <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
+            <ScrollPane fitToWidth="true" styleClass="scroll-pane" VBox.vgrow="ALWAYS">
+                <VBox spacing="20" styleClass="page-body">
+                    <padding><Insets bottom="32" left="32" right="32" top="32"/></padding>
 
                     <!-- Breadcrumb + Title -->
                     <VBox spacing="4">
                         <HBox spacing="4">
-                            <Button text="Dashboard" styleClass="breadcrumb-link" onAction="#onNavDashboard"/>
-                            <Label text=" › " styleClass="breadcrumb-sep"/>
-                            <Button text="Activités" styleClass="breadcrumb-link" onAction="#onNavActivities"/>
-                            <Label text=" › " styleClass="breadcrumb-sep"/>
-                            <Label text="Plannings" styleClass="breadcrumb-active"/>
+                            <Button onAction="#onNavDashboard" styleClass="breadcrumb-link" text="Dashboard"/>
+                            <Label styleClass="breadcrumb-sep" text=" › "/>
+                            <Button onAction="#onNavActivities" styleClass="breadcrumb-link" text="Activités"/>
+                            <Label styleClass="breadcrumb-sep" text=" › "/>
+                            <Label styleClass="breadcrumb-active" text="Plannings"/>
                         </HBox>
-                        <Label text="Gestion des Plannings" styleClass="page-title"/>
+                        <Label styleClass="page-title" text="Gestion des Plannings"/>
                     </VBox>
 
                     <!-- Stat Cards -->
                     <HBox spacing="20">
-                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
-                            <HBox spacing="12" alignment="CENTER_LEFT">
-                                <Label text="📅" styleClass="stat-icon stat-icon-green"/>
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT" spacing="12">
+                                <Label styleClass="stat-icon, stat-icon-green" text="📅"/>
                                 <VBox spacing="2">
-                                    <Label text="Total Plannings" styleClass="stat-label"/>
-                                    <Label fx:id="statTotal" text="0" styleClass="stat-value"/>
-                                    <Label text="plannings enregistrés" styleClass="stat-sub"/>
+                                    <Label styleClass="stat-label" text="Total Plannings"/>
+                                    <Label fx:id="statTotal" styleClass="stat-value" text="0"/>
+                                    <Label styleClass="stat-sub" text="plannings enregistrés"/>
                                 </VBox>
                             </HBox>
                         </VBox>
-                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
-                            <HBox spacing="12" alignment="CENTER_LEFT">
-                                <Label text="🎯" styleClass="stat-icon stat-icon-blue"/>
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT" spacing="12">
+                                <Label styleClass="stat-icon, stat-icon-blue" text="🎯"/>
                                 <VBox spacing="2">
-                                    <Label text="Places Disponibles" styleClass="stat-label"/>
-                                    <Label fx:id="statSpots" text="0" styleClass="stat-value"/>
-                                    <Label text="places au total" styleClass="stat-sub"/>
+                                    <Label styleClass="stat-label" text="Places Disponibles"/>
+                                    <Label fx:id="statSpots" styleClass="stat-value" text="0"/>
+                                    <Label styleClass="stat-sub" text="places au total"/>
                                 </VBox>
                             </HBox>
                         </VBox>
-                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
-                            <HBox spacing="12" alignment="CENTER_LEFT">
-                                <Label text="🏃" styleClass="stat-icon stat-icon-orange"/>
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
+                            <HBox alignment="CENTER_LEFT" spacing="12">
+                                <Label styleClass="stat-icon, stat-icon-orange" text="🏃"/>
                                 <VBox spacing="2">
-                                    <Label text="Activités Planifiées" styleClass="stat-label"/>
-                                    <Label fx:id="statActivities" text="0" styleClass="stat-value"/>
-                                    <Label text="activités distinctes" styleClass="stat-sub"/>
+                                    <Label styleClass="stat-label" text="Activités Planifiées"/>
+                                    <Label fx:id="statActivities" styleClass="stat-value" text="0"/>
+                                    <Label styleClass="stat-sub" text="activités distinctes"/>
                                 </VBox>
                             </HBox>
                         </VBox>
                     </HBox>
 
-                    <HBox alignment="TOP_LEFT" spacing="24">
+                    <!-- FORM PANEL (inline, collapsible) -->
+                    <VBox fx:id="formPanel" managed="false" spacing="0" styleClass="form-card, inline-form-panel" visible="false">
+                        <HBox alignment="CENTER_LEFT" spacing="10" styleClass="cat-form-header">
+                            <Label fx:id="formPanelTitle" styleClass="cat-form-title" text="📅 Nouveau Planning" HBox.hgrow="ALWAYS"/>
+                            <Button onAction="#onCloseForm" styleClass="fp-close-btn" text="✕"/>
+                        </HBox>
+                        <VBox spacing="16" styleClass="form-body">
+                            <padding><Insets bottom="12" left="24" right="24" top="20"/></padding>
 
-                        <!-- FORM -->
-                        <VBox minWidth="360" maxWidth="360" spacing="0" styleClass="form-card">
-                            <HBox styleClass="form-card-header" alignment="CENTER_LEFT" spacing="14">
-                                <Label fx:id="formIcon" text="📅" styleClass="form-icon"/>
-                                <VBox spacing="4">
-                                    <Label fx:id="formTitle" text="Nouveau Planning" styleClass="form-heading-title"/>
-                                    <Label fx:id="formSubtitle" text="Remplissez les informations." styleClass="form-heading-sub"/>
+                            <!-- Row 1: Activity + Spots -->
+                            <HBox spacing="16">
+                                <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                    <Label styleClass="form-label" text="🏃 Activité *"/>
+                                    <ComboBox fx:id="activityCombo" maxWidth="Infinity"
+                                              promptText="Choisir une activité…" styleClass="sort-select"/>
+                                    <Label fx:id="errActivity" managed="false" styleClass="err-msg"
+                                           text="Activité requise." visible="false"/>
+                                </VBox>
+                                <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                    <Label styleClass="form-label" text="🎯 Places disponibles *"/>
+                                    <TextField fx:id="spotsField" onKeyReleased="#validateSpots"
+                                               promptText="Ex: 15" styleClass="form-input"/>
+                                    <Label fx:id="errSpots" managed="false" styleClass="err-msg"
+                                           text="Places disponibles (min 1)." visible="false"/>
                                 </VBox>
                             </HBox>
-                            <VBox styleClass="form-body" spacing="14">
-                                <padding><Insets top="20" right="20" bottom="16" left="20"/></padding>
 
-                                <!-- Activity -->
-                                <VBox spacing="5" styleClass="form-group">
-                                    <Label text="🏃 Activité *" styleClass="form-label"/>
-                                    <ComboBox fx:id="activityCombo" promptText="Choisir une activité…"
-                                              styleClass="sort-select" maxWidth="Infinity"/>
-                                    <Label fx:id="errActivity" text="Activité requise."
-                                           styleClass="err-msg" managed="false" visible="false"/>
+                            <!-- Row 2: Start + End -->
+                            <HBox spacing="16">
+                                <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                    <Label styleClass="form-label" text="📅 Date de début *"/>
+                                    <TextField fx:id="startAtField" onKeyReleased="#validateStartAt"
+                                               promptText="Ex: 2025-06-15 09:00" styleClass="form-input"/>
+                                    <Label fx:id="errStartAt" managed="false" styleClass="err-msg"
+                                           text="Format: yyyy-MM-dd HH:mm (date future)." visible="false"/>
                                 </VBox>
-
-                                <!-- Start date -->
-                                <VBox spacing="5" styleClass="form-group">
-                                    <Label text="📅 Date de début *" styleClass="form-label"/>
-                                    <TextField fx:id="startAtField" promptText="Ex: 2025-06-15 09:00"
-                                               styleClass="form-input" onKeyReleased="#validateStartAt"/>
-                                    <Label fx:id="errStartAt" text="Format: yyyy-MM-dd HH:mm (date future)."
-                                           styleClass="err-msg" managed="false" visible="false"/>
+                                <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                    <Label styleClass="form-label" text="📅 Date de fin *"/>
+                                    <TextField fx:id="endAtField" onKeyReleased="#validateEndAt"
+                                               promptText="Ex: 2025-06-15 17:00" styleClass="form-input"/>
+                                    <Label fx:id="errEndAt" managed="false" styleClass="err-msg"
+                                           text="Format: yyyy-MM-dd HH:mm (après début)." visible="false"/>
                                 </VBox>
-
-                                <!-- End date -->
-                                <VBox spacing="5" styleClass="form-group">
-                                    <Label text="📅 Date de fin *" styleClass="form-label"/>
-                                    <TextField fx:id="endAtField" promptText="Ex: 2025-06-15 17:00"
-                                               styleClass="form-input" onKeyReleased="#validateEndAt"/>
-                                    <Label fx:id="errEndAt" text="Format: yyyy-MM-dd HH:mm (après début)."
-                                           styleClass="err-msg" managed="false" visible="false"/>
-                                </VBox>
-
-                                <!-- Available spots -->
-                                <VBox spacing="5" styleClass="form-group">
-                                    <Label text="🎯 Places disponibles *" styleClass="form-label"/>
-                                    <TextField fx:id="spotsField" promptText="Ex: 15"
-                                               styleClass="form-input" onKeyReleased="#validateSpots"/>
-                                    <Label fx:id="errSpots" text="Places disponibles (min 1)."
-                                           styleClass="err-msg" managed="false" visible="false"/>
-                                </VBox>
-
-                            </VBox>
-                            <HBox styleClass="form-footer" alignment="CENTER_RIGHT" spacing="10">
-                                <Button text="↺ Réinitialiser" styleClass="btn-cancel" onAction="#onReset"/>
-                                <Button fx:id="submitBtn" text="➕ Ajouter" styleClass="btn-submit" onAction="#onSubmit"/>
                             </HBox>
                         </VBox>
+                        <HBox alignment="CENTER_RIGHT" spacing="10" styleClass="form-footer">
+                            <Button onAction="#onCloseForm" styleClass="btn-cancel" text="Annuler"/>
+                            <Button onAction="#onSave" styleClass="btn-submit" text="💾 Enregistrer"/>
+                        </HBox>
+                    </VBox>
 
-                        <!-- TABLE -->
-                        <VBox spacing="14" HBox.hgrow="ALWAYS">
-                            <HBox styleClass="action-bar" alignment="CENTER_LEFT" spacing="12">
-                                <HBox alignment="CENTER_LEFT" spacing="8" HBox.hgrow="ALWAYS">
-                                    <Label text="📅 Tous les plannings" styleClass="table-card-title"/>
-                                    <Label fx:id="badgeCount" text="0" styleClass="badge badge-green"/>
-                                </HBox>
-                                <HBox styleClass="search-wrap" alignment="CENTER_LEFT" spacing="6">
-                                    <Label text="🔍" styleClass="search-icon"/>
-                                    <TextField fx:id="searchField" promptText="Rechercher activité…"
-                                               styleClass="search-input" onKeyReleased="#onSearch" prefWidth="200"/>
-                                </HBox>
-                            </HBox>
-
-                            <VBox styleClass="table-card" spacing="0" VBox.vgrow="ALWAYS">
-                                <TableView fx:id="tableView" styleClass="main-table" VBox.vgrow="ALWAYS">
-                                    <columns>
-                                        <TableColumn fx:id="colIndex"    text="#"           prefWidth="45"/>
-                                        <TableColumn fx:id="colActivity" text="Activité"    prefWidth="160"/>
-                                        <TableColumn fx:id="colStart"    text="Début"       prefWidth="140"/>
-                                        <TableColumn fx:id="colEnd"      text="Fin"         prefWidth="140"/>
-                                        <TableColumn fx:id="colSpots"    text="Places"      prefWidth="70"/>
-                                        <TableColumn fx:id="colActions"  text="Actions"     prefWidth="160"/>
-                                    </columns>
-                                    <placeholder>
-                                        <VBox alignment="CENTER" spacing="8" styleClass="empty-state">
-                                            <Label text="📅" styleClass="empty-icon"/>
-                                            <Label text="Aucun planning trouvé." styleClass="empty-label"/>
-                                        </VBox>
-                                    </placeholder>
-                                </TableView>
-                                <HBox styleClass="pagination-bar" alignment="CENTER_LEFT" spacing="8">
-                                    <Label fx:id="pagInfo" text="" styleClass="pag-info" HBox.hgrow="ALWAYS"/>
-                                    <Region HBox.hgrow="ALWAYS"/>
-                                    <HBox fx:id="pagButtons" spacing="4"/>
-                                </HBox>
-                            </VBox>
-                        </VBox>
+                    <!-- Action Bar -->
+                    <HBox alignment="CENTER_LEFT" spacing="12" styleClass="action-bar">
+                        <Button onAction="#onOpenForm" styleClass="btn-primary" text="＋ Ajouter un planning"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <HBox alignment="CENTER_LEFT" spacing="6" styleClass="search-wrap">
+                            <Label styleClass="search-icon" text="🔍"/>
+                            <TextField fx:id="searchField" onKeyReleased="#onSearch" prefWidth="220"
+                                       promptText="Rechercher activité…" styleClass="search-input"/>
+                        </HBox>
+                        <ToggleButton fx:id="toggleCards" onAction="#onToggleCards" styleClass="vt-btn" text="⊞ Cartes"/>
+                        <ToggleButton fx:id="toggleList"  onAction="#onToggleList" selected="true" styleClass="vt-btn, vt-btn-active" text="☰ Liste"/>
                     </HBox>
+
+                    <!-- CARD GRID VIEW -->
+                    <FlowPane fx:id="cardGrid" hgap="16" managed="false" styleClass="eq-card-grid" vgap="16" visible="false"/>
+
+                    <!-- TABLE VIEW -->
+                    <VBox fx:id="tableCard" spacing="0" styleClass="table-card">
+                        <HBox alignment="CENTER_LEFT" spacing="8" styleClass="table-card-header">
+                            <Label styleClass="table-card-title" text="📅 Liste des Plannings" HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="badgeCount" styleClass="badge, badge-green" text="0"/>
+                        </HBox>
+                        <TableView fx:id="tableView" styleClass="main-table" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="colIndex"    prefWidth="50"  text="#"/>
+                                <TableColumn fx:id="colActivity" prefWidth="200" text="Activité"/>
+                                <TableColumn fx:id="colStart"    prefWidth="150" text="Début"/>
+                                <TableColumn fx:id="colEnd"      prefWidth="150" text="Fin"/>
+                                <TableColumn fx:id="colSpots"    prefWidth="80"  text="Places"/>
+                                <TableColumn fx:id="colActions"  prefWidth="160" text="Actions"/>
+                            </columns>
+                            <placeholder>
+                                <VBox alignment="CENTER" spacing="8" styleClass="empty-state">
+                                    <Label styleClass="empty-icon" text="📅"/>
+                                    <Label styleClass="empty-label" text="Aucun planning trouvé."/>
+                                </VBox>
+                            </placeholder>
+                        </TableView>
+
+                        <!-- Pagination -->
+                        <HBox fx:id="paginationBar" alignment="CENTER_LEFT" spacing="8" styleClass="pagination-bar">
+                            <Label fx:id="pagInfo" styleClass="pag-info" HBox.hgrow="ALWAYS"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <HBox fx:id="pagButtons" spacing="4"/>
+                        </HBox>
+                    </VBox>
+
                 </VBox>
             </ScrollPane>
         </VBox>

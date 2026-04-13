@@ -4,7 +4,9 @@ import tn.esprit.models.activity.Activity;
 import tn.esprit.repository.activity.ActivityRepository;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ActivityService {
 
