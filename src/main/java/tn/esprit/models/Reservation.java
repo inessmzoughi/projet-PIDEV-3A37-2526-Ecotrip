@@ -3,6 +3,7 @@ package tn.esprit.models;
 import tn.esprit.models.enums.ReservationStatus;
 import tn.esprit.models.enums.ReservationType;
 import tn.esprit.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -46,6 +47,15 @@ public class Reservation {
     public LocalDate getDateTo()              { return dateTo; }
     public int getNumberOfPersons()           { return numberOfPersons; }
     public Map<String, Object> getDetails()   { return details; }
+    public String getDetailsAsJson() {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.writeValueAsString(details);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{}";
+        }
+    }
     public LocalDateTime getCreatedAt()       { return createdAt; }
     public LocalDateTime getUpdatedAt()       { return updatedAt; }
 

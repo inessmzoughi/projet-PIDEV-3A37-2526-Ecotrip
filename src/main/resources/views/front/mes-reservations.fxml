@@ -30,8 +30,7 @@
                 <Label text="FILTRER VOS RÉSERVATIONS" styleClass="filters-section-title"/>
             </HBox>
             <HBox spacing="16" alignment="CENTER_LEFT">
-                <ComboBox fx:id="filterType"
-                          styleClass="heb-filter-input" prefWidth="180">
+                <ComboBox fx:id="filterType" styleClass="heb-filter-input" prefWidth="180">
                     <items>
                         <javafx.collections.FXCollections fx:factory="observableArrayList">
                             <String fx:value="Tous les types"/>
@@ -41,8 +40,7 @@
                         </javafx.collections.FXCollections>
                     </items>
                 </ComboBox>
-                <ComboBox fx:id="filterStatus"
-                          styleClass="heb-filter-input" prefWidth="180">
+                <ComboBox fx:id="filterStatus" styleClass="heb-filter-input" prefWidth="180">
                     <items>
                         <javafx.collections.FXCollections fx:factory="observableArrayList">
                             <String fx:value="Tous les statuts"/>
@@ -52,8 +50,7 @@
                         </javafx.collections.FXCollections>
                     </items>
                 </ComboBox>
-                <ComboBox fx:id="sortSelect"
-                          styleClass="heb-filter-input" prefWidth="200">
+                <ComboBox fx:id="sortSelect" styleClass="heb-filter-input" prefWidth="200">
                     <items>
                         <javafx.collections.FXCollections fx:factory="observableArrayList">
                             <String fx:value="Trier par"/>
@@ -70,16 +67,162 @@
             </HBox>
         </VBox>
 
-        <!-- ══ RÉSULTATS HEADER ══ -->
+        <!-- ══ RÉSULTATS COUNT ══ -->
         <HBox alignment="CENTER_LEFT">
             <padding><Insets top="24" bottom="12" left="40" right="40"/></padding>
             <Label fx:id="resultCount" text="0 Réservation(s)" styleClass="heb-result-count"/>
         </HBox>
 
-        <!-- ══ CARDS (FlowPane like hebergements) ══ -->
-        <FlowPane fx:id="cardsPane" hgap="28" vgap="28" styleClass="heb-cards-pane">
-            <padding><Insets top="0" bottom="20" left="40" right="40"/></padding>
-        </FlowPane>
+        <!-- ══ MAIN CONTENT — cart layout ══ -->
+        <HBox fx:id="contentBox" spacing="24" alignment="TOP_LEFT"
+              managed="false" visible="false">
+            <padding><Insets top="8" bottom="32" left="40" right="40"/></padding>
+
+            <!-- LEFT: reservation rows (like cart itemsContainer) + edit panel -->
+            <VBox HBox.hgrow="ALWAYS" spacing="20">
+
+                <!-- Reservation rows built programmatically -->
+                <VBox fx:id="itemsContainer" spacing="12"/>
+
+                <!-- Inline edit panel — shown when user clicks ✏ on PENDING -->
+                <VBox fx:id="editPanel" styleClass="res-edit-panel" spacing="0"
+                      managed="false" visible="false">
+
+                    <!-- Edit header -->
+                    <HBox styleClass="res-edit-header" alignment="CENTER_LEFT" spacing="14">
+                        <Label text="✏️" style="-fx-font-size:18px;"/>
+                        <VBox spacing="3" HBox.hgrow="ALWAYS">
+                            <Label text="Modifier la réservation" styleClass="res-edit-title"/>
+                            <Label fx:id="editPanelSubtitle" styleClass="res-edit-subtitle"/>
+                        </VBox>
+                        <Button text="✕" styleClass="res-edit-close"
+                                onAction="#onCloseEdit"/>
+                    </HBox>
+
+                    <!-- Edit form body -->
+                    <VBox styleClass="res-edit-body" spacing="16">
+
+                        <!-- Success / error -->
+                        <Label fx:id="editSuccessLabel" styleClass="toast-success"
+                               managed="false" visible="false" wrapText="true"/>
+                        <Label fx:id="editErrorLabel"
+                               style="-fx-background-color:#fde8e8;-fx-background-radius:8;
+                                      -fx-padding:10 14;-fx-font-size:13px;-fx-text-fill:#9b1c1c;"
+                               managed="false" visible="false" wrapText="true"/>
+
+                        <!-- Date fields — shown for all types -->
+                        <GridPane hgap="20" vgap="0">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="50"/>
+                                <ColumnConstraints percentWidth="50"/>
+                            </columnConstraints>
+                            <VBox spacing="6" GridPane.columnIndex="0">
+                                <Label text="DATE DE DÉBUT" styleClass="res-modal-field-label"/>
+                                <DatePicker fx:id="editDateFrom" styleClass="res-modal-input"
+                                            maxWidth="Infinity"/>
+                                <Label fx:id="errEditDateFrom" styleClass="res-modal-err-msg"
+                                       managed="false" visible="false"/>
+                            </VBox>
+                            <VBox spacing="6" GridPane.columnIndex="1">
+                                <Label fx:id="editDateToLabel" text="DATE DE FIN"
+                                       styleClass="res-modal-field-label"/>
+                                <DatePicker fx:id="editDateTo" styleClass="res-modal-input"
+                                            maxWidth="Infinity"/>
+                                <Label fx:id="errEditDateTo" styleClass="res-modal-err-msg"
+                                       managed="false" visible="false"/>
+                            </VBox>
+                        </GridPane>
+
+                        <!-- Number of persons -->
+                        <VBox spacing="6">
+                            <Label text="NOMBRE DE PERSONNES" styleClass="res-modal-field-label"/>
+                            <Spinner fx:id="editPersonsSpinner" min="1" max="50" initialValue="1"
+                                     styleClass="res-modal-input" prefWidth="160" editable="true"/>
+                            <Label fx:id="errEditPersons" styleClass="res-modal-err-msg"
+                                   managed="false" visible="false"/>
+                        </VBox>
+
+                        <!-- Recalculated price preview -->
+                        <VBox fx:id="editPricePreview" styleClass="res-modal-price-strip"
+                              spacing="4" managed="false" visible="false">
+                            <HBox alignment="CENTER_LEFT" spacing="8">
+                                <Label text="💰" style="-fx-font-size:16px;"/>
+                                <Label fx:id="editPriceBreakdown" styleClass="res-modal-price-label"/>
+                            </HBox>
+                            <HBox alignment="CENTER_LEFT" spacing="6">
+                                <Label fx:id="editNewTotal" styleClass="res-modal-price-amount"/>
+                                <Label text="TND" styleClass="res-modal-price-sub"/>
+                            </HBox>
+                        </VBox>
+
+                    </VBox>
+
+                    <!-- Edit footer -->
+                    <HBox styleClass="res-edit-footer" alignment="CENTER_RIGHT" spacing="12">
+                        <Button text="Annuler" styleClass="res-modal-btn-cancel"
+                                onAction="#onCloseEdit"/>
+                        <Button text="💾  Enregistrer les modifications"
+                                styleClass="res-modal-btn-confirm-green"
+                                onAction="#onSaveEdit"/>
+                    </HBox>
+                </VBox>
+
+            </VBox>
+
+            <!-- RIGHT: summary panel (identical to Cart summaryBox) -->
+            <VBox fx:id="summaryBox" spacing="14" prefWidth="300"
+                  style="-fx-background-color: white;
+                         -fx-background-radius: 16;
+                         -fx-border-radius: 16;
+                         -fx-border-color: #e0e0e0;
+                         -fx-border-width: 1;
+                         -fx-padding: 24;">
+
+                <Label text="Récapitulatif"
+                       style="-fx-font-size:18px;-fx-font-weight:bold;-fx-text-fill:#2d5a1b;"/>
+                <Separator/>
+
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="Réservations :"
+                           style="-fx-text-fill:#666;-fx-font-size:13px;"/>
+                    <Label fx:id="summaryCount" text="0"
+                           style="-fx-font-weight:bold;-fx-text-fill:#2d5a1b;"/>
+                </HBox>
+
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="Total dépensé :"
+                           style="-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:#2d5a1b;"/>
+                    <Label fx:id="summaryTotal" text="0.00 TND"
+                           style="-fx-font-size:17px;-fx-font-weight:bold;-fx-text-fill:#4a7c3f;"/>
+                </HBox>
+
+                <Separator/>
+
+                <!-- Status breakdown -->
+                <Label text="Par statut"
+                       style="-fx-font-weight:bold;-fx-text-fill:#2d5a1b;-fx-font-size:13px;"/>
+
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="⏳" style="-fx-font-size:14px;"/>
+                    <Label text="En attente :" style="-fx-text-fill:#666;-fx-font-size:13px;"/>
+                    <Label fx:id="summaryPending" text="0"
+                           style="-fx-font-weight:bold;-fx-text-fill:#92400e;"/>
+                </HBox>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="✅" style="-fx-font-size:14px;"/>
+                    <Label text="Confirmées :" style="-fx-text-fill:#666;-fx-font-size:13px;"/>
+                    <Label fx:id="summaryConfirmed" text="0"
+                           style="-fx-font-weight:bold;-fx-text-fill:#166534;"/>
+                </HBox>
+                <HBox spacing="8" alignment="CENTER_LEFT">
+                    <Label text="❌" style="-fx-font-size:14px;"/>
+                    <Label text="Annulées :" style="-fx-text-fill:#666;-fx-font-size:13px;"/>
+                    <Label fx:id="summaryCancelled" text="0"
+                           style="-fx-font-weight:bold;-fx-text-fill:#991b1b;"/>
+                </HBox>
+
+            </VBox>
+        </HBox>
 
         <!-- ══ EMPTY STATE ══ -->
         <VBox fx:id="emptyState" alignment="CENTER" spacing="16"
@@ -94,16 +237,12 @@
         </VBox>
 
         <!-- ══ PAGINATION ══ -->
-        <HBox fx:id="paginationBar"
-              alignment="CENTER" spacing="16"
-              managed="false" visible="false"
-              styleClass="heb-pagination">
+        <HBox fx:id="paginationBar" alignment="CENTER" spacing="16"
+              managed="false" visible="false" styleClass="heb-pagination">
             <padding><Insets top="24" bottom="24" left="40" right="40"/></padding>
-            <Button fx:id="btnPrev" text="← Précédent"
-                    styleClass="heb-page-btn" onAction="#onPrev"/>
+            <Button fx:id="btnPrev" text="← Précédent" styleClass="heb-page-btn" onAction="#onPrev"/>
             <Label fx:id="pagInfo" text="Page 1 / 1" styleClass="heb-page-info"/>
-            <Button fx:id="btnNext" text="Suivant →"
-                    styleClass="heb-page-btn" onAction="#onNext"/>
+            <Button fx:id="btnNext" text="Suivant →" styleClass="heb-page-btn" onAction="#onNext"/>
         </HBox>
 
         <!-- ══ FOOTER ══ -->

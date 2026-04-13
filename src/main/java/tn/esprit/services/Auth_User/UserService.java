@@ -6,6 +6,7 @@ import tn.esprit.repository.UserRepository;
 import tn.esprit.utils.PasswordUtil;
 
 import java.util.List;
+import java.util.Optional;
 
 public class UserService {
 
@@ -14,7 +15,7 @@ public class UserService {
     // 🔹 Only adds value: validation + hashing
     public void createUser(String username, String email, String password,
                            String address, String telephone,
-                           String role, boolean isVerified) {
+                           String role, boolean isVerified, String image) {
 
         if (username.isEmpty()) throw new RuntimeException("Username required");
         if (email.isEmpty() || !email.contains("@")) throw new RuntimeException("Invalid email");
@@ -32,6 +33,7 @@ public class UserService {
         user.setTelephone(telephone);
         user.setRoles(Role.valueOf(role));
         user.setIsVerified(isVerified);
+        user.setImage(image);
 
         userRepository.save(user);
     }
@@ -39,10 +41,15 @@ public class UserService {
     public void updateUser(int id, String username, String email,
                            String address, String telephone,
                            String role, boolean isVerified,
-                           String newPassword) {
+                           String newPassword, String photo) {
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("Utilisateur introuvable."));
+
+        Optional<User> sameEmail = userRepository.findByEmail(email);
+        if (sameEmail.isPresent() && sameEmail.get().getId() != id) {
+            throw new RuntimeException("Cet e-mail est déjà utilisé.");
+        }
 
         user.setUsername(username);
         user.setEmail(email);
@@ -50,6 +57,7 @@ public class UserService {
         user.setTelephone(telephone);
         user.setRoles(Role.valueOf(role));
         user.setIsVerified(isVerified);
+        user.setImage(photo);
 
         userRepository.update(user);
 
