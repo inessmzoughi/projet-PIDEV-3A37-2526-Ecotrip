@@ -9,17 +9,11 @@ import tn.esprit.services.hebergement.Chambre_service;
 import tn.esprit.services.hebergement.Hebergement_service;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
-
-import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.*;
@@ -277,7 +271,7 @@ public class ChambresController implements Initializable {
                 .filter(c -> type == null || type.isEmpty() || c.getType().equals(type))
                 .collect(Collectors.toList());
 
-        if ("Numéro (A→Z)".equals(sort))         filteredData.sort(Comparator.comparing(Chambre::getNumero));
+        if ("Numéro".equals(sort))         filteredData.sort(Comparator.comparing(Chambre::getNumero));
         else if ("Prix (croissant)".equals(sort)) filteredData.sort(Comparator.comparingDouble(Chambre::getPrix_par_nuit));
         else if ("Capacité (croissante)".equals(sort)) filteredData.sort(Comparator.comparingInt(Chambre::getCapacite));
 
@@ -306,12 +300,15 @@ public class ChambresController implements Initializable {
     }
 
     private void updateStats() {
-        statTotal.setText(String.valueOf(allData.size()));
-        statPrix.setText(allData.isEmpty() ? "—" :
-                (int) Math.round(allData.stream().mapToDouble(Chambre::getPrix_par_nuit).average().orElse(0)) + " DT");
-        statCap.setText(allData.isEmpty() ? "—" :
-                String.valueOf((int) Math.round(allData.stream().mapToInt(Chambre::getCapacite).average().orElse(0))));
-        statHeb.setText(String.valueOf(allData.stream().map(Chambre::getHebergement_id).distinct().count()));
+        try {
+            statTotal.setText(String.valueOf(service.countTotal()));
+            statPrix.setText((int) Math.round(service.avgPrix()) + " DT");
+            statCap.setText(String.valueOf((int) Math.round(service.avgCapacite())));
+            statHeb.setText(String.valueOf(service.countHebergementsDistincts()));
+        } catch (SQLException e) {
+            statTotal.setText("—"); statPrix.setText("—");
+            statCap.setText("—");   statHeb.setText("—");
+        }
     }
 
     private String hebName(int hebId) {
@@ -320,9 +317,6 @@ public class ChambresController implements Initializable {
 
     @FXML private void onSearch() { currentPage = 1; renderTable(); }
     @FXML private void onNavHebergements() { onCloseForm(); SceneManager.navigateTo(Routes.ADMIN_HEBERGEMENTS); }
-    @FXML private void onNavEquipements()  { onCloseForm(); SceneManager.navigateTo(Routes.ADMIN_EQUIPEMENTS); }
-    @FXML private void onNavCategories()   { onCloseForm(); SceneManager.navigateTo(Routes.ADMIN_CATEGORIES_HEBERGEMENT); }
-    @FXML private void onLogout()          { System.exit(0); }
     @FXML private void onNavDashboard()    { onCloseForm(); SceneManager.navigateTo(Routes.ADMIN_DASHBOARD); }
 
     private void setFieldError(TextField f, Label l, String msg) {

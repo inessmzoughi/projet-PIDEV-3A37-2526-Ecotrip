@@ -8,12 +8,15 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Rectangle;
+import tn.esprit.controller.front.modals.ActivityReservationController;
 import tn.esprit.models.activity.Activity;
 import tn.esprit.models.activity.ActivityCategory;
 import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;
 import tn.esprit.services.activity.ActivityCategoryService;
 import tn.esprit.services.activity.ActivityService;
+import tn.esprit.services.activity.ActivityCategoryService;
 
 import java.io.File;
 import java.net.URL;
@@ -22,6 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.effect.GaussianBlur;
+import javafx.scene.layout.StackPane;
 
 public class ActivitiesController implements Initializable {
 
@@ -55,8 +61,17 @@ public class ActivitiesController implements Initializable {
     private static final int PER_PAGE = 8;
     private int currentPage = 1;
 
+    // ────────────────────────────────────────────────────────
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
+        // Sort options
+        sortCombo.getItems().addAll(
+                "Prix croissant",
+                "Prix décroissant",
+                "Durée croissante",
+                "Alphabétique"
+        );
 
         // Duration toggle group
         durationGroup = new ToggleGroup();
@@ -116,14 +131,19 @@ public class ActivitiesController implements Initializable {
 
         filteredData = allData.stream()
                 .filter(Activity::isActive)
+                // category tab
                 .filter(a -> activeCategoryId == null
                         || a.getCategory().getId() == activeCategoryId)
+                // search text
                 .filter(a -> search.isEmpty()
                         || a.getTitle().toLowerCase().contains(search)
                         || a.getLocation().toLowerCase().contains(search)
                         || a.getDescription().toLowerCase().contains(search))
+                // price
                 .filter(a -> a.getPrice() <= maxPrice)
+                // participants
                 .filter(a -> a.getMaxParticipants() >= minPart)
+                // duration
                 .filter(a -> {
                     if (durShort.isSelected()) return a.getDurationMinutes() < 120;
                     if (durMed.isSelected())   return a.getDurationMinutes() >= 120 && a.getDurationMinutes() <= 240;
@@ -345,10 +365,12 @@ public class ActivitiesController implements Initializable {
     }
 
     private void setActiveTab(Button selected) {
+        // Remove active style from all tabs
         tabAll.getStyleClass().remove("act-tab-active");
         for (var node : categoryTabsBox.getChildren()) {
             if (node instanceof Button b) b.getStyleClass().remove("act-tab-active");
         }
+        // Add to selected
         if (!selected.getStyleClass().contains("act-tab-active"))
             selected.getStyleClass().add("act-tab-active");
     }
@@ -412,5 +434,26 @@ public class ActivitiesController implements Initializable {
 
     private void handleViewActivity(Activity activity) {
         System.out.println("View activity: " + activity.getTitle());
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/views/front/modals/ActivityReservationModal.fxml")
+            );
+            StackPane modalOverlay = loader.load();
+
+            ActivityReservationController ctrl = loader.getController();
+            ctrl.setActivity(activity);
+            ctrl.setOverlayRoot(modalOverlay);
+
+            StackPane sceneRoot = (StackPane) activitiesGrid.getScene().getRoot();
+            sceneRoot.getChildren().add(modalOverlay);
+            sceneRoot.getChildren().get(0).setEffect(new GaussianBlur(8));
+
+            ctrl.setOnCartUpdated(() -> {
+                sceneRoot.getChildren().get(0).setEffect(null);
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

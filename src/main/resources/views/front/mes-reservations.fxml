@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="tn.esprit.controller.front.MesReservationsController"
+      spacing="0">
+
+    <!-- Hero -->
+    <VBox styleClass="act-hero" alignment="CENTER" spacing="12">
+        <padding><Insets top="60" bottom="60"/></padding>
+        <Label text="📋  Mes Réservations" styleClass="banner-title"/>
+        <Label text="Consultez et gérez vos réservations EcoTrip"
+               styleClass="banner-desc" wrapText="true"/>
+    </VBox>
+
+    <VBox styleClass="page-body" spacing="20">
+        <padding><Insets top="32" right="40" bottom="40" left="40"/></padding>
+
+        <!-- Toast -->
+        <Label fx:id="toastLabel" styleClass="toast-success"
+               managed="false" visible="false" wrapText="true"/>
+
+        <!-- Empty state -->
+        <VBox fx:id="emptyState" alignment="CENTER" spacing="16"
+              managed="false" visible="false" styleClass="act-empty-state">
+            <padding><Insets top="60" bottom="60"/></padding>
+            <Label text="📭" styleClass="act-empty-icon"/>
+            <Label text="Aucune réservation" styleClass="act-empty-title"/>
+            <Label text="Vos réservations apparaîtront ici après paiement."
+                   styleClass="act-empty-sub" wrapText="true"/>
+        </VBox>
+
+        <!-- Cards container -->
+        <VBox fx:id="reservationsContainer" spacing="16"/>
+
+    </VBox>
+</VBox>
