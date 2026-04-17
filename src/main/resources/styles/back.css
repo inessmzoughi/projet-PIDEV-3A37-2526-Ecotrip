@@ -575,8 +575,8 @@
 .profile-sub      { -fx-font-size: 13px; -fx-text-fill: rgba(255,255,255,0.8); }
 
 .profile-avatar-section { -fx-background-color: #0d3d18; -fx-background-radius: 16 16 0 0; }
-.profile-name  { -fx-font-size: 17px; -fx-font-weight: bold; -fx-text-fill: white; }
-.profile-email { -fx-font-size: 13px; -fx-text-fill: rgba(255,255,255,0.75); }
+.profile-name  { -fx-font-size: 17px; -fx-font-weight: bold;-fx-text-fill: #374151;}
+.profile-email { -fx-font-size: 13px; -fx-text-fill: #374151;}
 .profile-info-rows    { -fx-background-color: white; -fx-background-radius: 0 0 16 16; }
 .profile-info-row     { -fx-padding: 14 20 14 20; -fx-border-color: #f1f5f9; -fx-border-width: 0 0 1 0; }
 .profile-info-value   { -fx-font-size: 13px; -fx-text-fill: #374151; }

@@ -13,219 +13,294 @@
     <center>
         <VBox styleClass="main-content">
             <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane">
-                <VBox styleClass="page-body moncompte-page" spacing="0">
-                    <padding><Insets top="28" right="32" bottom="36" left="32"/></padding>
+                <VBox styleClass="page-body" spacing="24">
+                    <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
 
-                    <!-- Hero -->
-                    <VBox styleClass="moncompte-hero" spacing="8">
-                        <padding><Insets top="24" right="28" bottom="24" left="28"/></padding>
-                        <Label text="🌿 Votre espace personnel" styleClass="moncompte-hero-kicker"/>
-                        <Label text="Gérez votre profil et la sécurité de votre compte EcoTrip." styleClass="moncompte-hero-title" wrapText="true"/>
-                        <Label text="Les modifications sont enregistrées immédiatement." styleClass="moncompte-hero-sub" wrapText="true"/>
+                    <!-- ── Breadcrumb + Title ── -->
+                    <VBox spacing="4">
+                        <HBox spacing="4" alignment="CENTER_LEFT">
+                            <Button text="Dashboard" styleClass="breadcrumb-link" onAction="#onNavDashboard"/>
+                            <Label text=" › " styleClass="breadcrumb-sep"/>
+                            <Label text="Mon Compte" styleClass="breadcrumb-active"/>
+                        </HBox>
+                        <Label text="Mon Compte" styleClass="page-title"/>
                     </VBox>
 
-                    <VBox spacing="20" styleClass="moncompte-below-hero">
-                        <VBox.margin><Insets top="24"/></VBox.margin>
+                    <!-- ── Global toast ── -->
+                    <Label fx:id="toastLabel" styleClass="toast-success"
+                           managed="false" visible="false" wrapText="true"/>
 
-                        <!-- Breadcrumb -->
-                        <HBox spacing="4" alignment="CENTER_LEFT">
-                            <Button text="Tableau de bord" styleClass="breadcrumb-link" onAction="#onNavDashboard"/>
-                            <Label text=" › " styleClass="breadcrumb-sep"/>
-                            <Label text="Mon compte" styleClass="breadcrumb-active"/>
-                        </HBox>
+                    <HBox spacing="20" alignment="TOP_LEFT">
 
-                        <!-- Toast -->
-                        <Label fx:id="toastLabel" styleClass="toast-success"
-                               managed="false" visible="false" wrapText="true"/>
+                        <!-- ══════════════════════════════════
+                             LEFT SIDEBAR  (280 px)
+                        ══════════════════════════════════ -->
+                        <VBox minWidth="280" maxWidth="280" spacing="14">
 
-                        <HBox spacing="28" alignment="TOP_LEFT" styleClass="moncompte-columns">
+                            <!-- ── Avatar card with banner ── -->
+                            <VBox styleClass="profile-card" spacing="0">
 
-                            <!-- LEFT: profile + actions -->
-                            <VBox minWidth="300" maxWidth="320" spacing="18" styleClass="moncompte-sidebar">
+                                <!-- Coloured banner -->
+                                <Rectangle styleClass="profile-banner"
+                                           width="280" height="64"
+                                           arcWidth="16" arcHeight="16"/>
 
-                                <VBox styleClass="form-card moncompte-profile-card" spacing="0" alignment="CENTER">
-                                    <VBox styleClass="profile-avatar-section" spacing="12" alignment="CENTER">
-                                        <padding><Insets top="28" right="20" bottom="20" left="20"/></padding>
-
-                                        <StackPane alignment="CENTER" styleClass="moncompte-avatar-wrap">
-                                            <Circle fx:id="avatarCircle" radius="52" styleClass="avatar-circle"/>
-                                            <Label fx:id="avatarInitials" styleClass="avatar-initials"/>
-                                            <ImageView fx:id="avatarPhoto"
-                                                       fitWidth="104" fitHeight="104"
-                                                       preserveRatio="true" smooth="true"
-                                                       managed="true" visible="false"
-                                                       style="-fx-background-radius:52;">
-                                                <clip>
-                                                    <Circle centerX="52" centerY="52" radius="52"/>
-                                                </clip>
-                                            </ImageView>
-                                        </StackPane>
-
-                                        <VBox spacing="6" alignment="CENTER">
-                                            <Label fx:id="profileUsername" styleClass="profile-name"/>
-                                            <Label fx:id="profileEmail" styleClass="profile-email"/>
-                                            <HBox spacing="8" alignment="CENTER">
-                                                <Label fx:id="roleValue" styleClass="badge-user"/>
-                                                <Label fx:id="verifiedValue" styleClass="badge-actif"/>
-                                            </HBox>
-                                        </VBox>
-                                    </VBox>
-
-                                    <VBox styleClass="profile-info-rows" spacing="0">
-                                        <HBox styleClass="profile-info-row" spacing="12" alignment="CENTER_LEFT">
-                                            <Label text="📍" style="-fx-font-size:14px;"/>
-                                            <Label fx:id="addressValue" styleClass="profile-info-value" wrapText="true"/>
-                                        </HBox>
-                                        <HBox styleClass="profile-info-row profile-info-row-last" spacing="12" alignment="CENTER_LEFT">
-                                            <Label text="📞" style="-fx-font-size:14px;"/>
-                                            <Label fx:id="phoneValue" styleClass="profile-info-value"/>
-                                        </HBox>
-                                    </VBox>
+                                <!-- Avatar overlapping the banner -->
+                                <VBox alignment="CENTER">
+                                    <padding><Insets top="-36"/></padding>
+                                    <StackPane alignment="CENTER">
+                                        <!-- Photo (visible when set) -->
+                                        <ImageView fx:id="avatarPhoto"
+                                                   fitWidth="72" fitHeight="72"
+                                                   preserveRatio="true" smooth="true"
+                                                   visible="false" managed="false">
+                                            <clip>
+                                                <Circle centerX="36" centerY="36" radius="36"/>
+                                            </clip>
+                                        </ImageView>
+                                        <!-- Initials fallback -->
+                                        <Circle fx:id="avatarCircle" radius="36" styleClass="avatar-circle"/>
+                                        <Label  fx:id="avatarInitials" styleClass="avatar-initials"/>
+                                        <!-- White border ring -->
+                                        <Circle radius="39" styleClass="avatar-ring"
+                                                mouseTransparent="true"/>
+                                    </StackPane>
                                 </VBox>
 
-                                <VBox styleClass="form-card moncompte-actions-card" spacing="0">
-                                    <Label text="Raccourcis" styleClass="profile-section-title"/>
-                                    <VBox spacing="0">
-                                        <Button text="✏  Modifier le profil"
-                                                onAction="#showEditForm"
-                                                styleClass="profile-action-btn" maxWidth="Infinity"/>
-                                        <Separator/>
-                                        <Button text="🔒  Changer le mot de passe"
-                                                onAction="#showPasswordForm"
-                                                styleClass="profile-action-btn" maxWidth="Infinity"/>
-                                        <Separator/>
-                                        <Button text="📷  Reconnaissance faciale"
-                                                styleClass="profile-action-btn-disabled" maxWidth="Infinity"
-                                                disable="true"/>
-                                    </VBox>
+                                <!-- Name / email / badges -->
+                                <VBox spacing="6" alignment="CENTER"
+                                      style="-fx-padding: 10 20 16 20;">
+                                    <Label fx:id="profileUsername" styleClass="profile-name"/>
+                                    <Label fx:id="profileEmail"    styleClass="profile-email"/>
+                                    <HBox spacing="8" alignment="CENTER">
+                                        <Label fx:id="roleValue"     styleClass="badge-user"/>
+                                        <Label fx:id="verifiedValue" styleClass="badge-actif"/>
+                                    </HBox>
+                                </VBox>
+
+                                <Separator style="-fx-opacity:0.5;"/>
+
+                                <!-- Address / phone -->
+                                <VBox spacing="0">
+                                    <HBox styleClass="profile-info-row" spacing="12" alignment="CENTER_LEFT">
+                                        <Label text="📍" style="-fx-font-size:13px;"/>
+                                        <VBox spacing="1">
+                                            <Label text="Adresse" styleClass="profile-info-label"/>
+                                            <Label fx:id="addressValue" styleClass="profile-info-value" wrapText="true"/>
+                                        </VBox>
+                                    </HBox>
+                                    <HBox styleClass="profile-info-row" spacing="12" alignment="CENTER_LEFT">
+                                        <Label text="📞" style="-fx-font-size:13px;"/>
+                                        <VBox spacing="1">
+                                            <Label text="Téléphone" styleClass="profile-info-label"/>
+                                            <Label fx:id="phoneValue" styleClass="profile-info-value"/>
+                                        </VBox>
+                                    </HBox>
                                 </VBox>
                             </VBox>
 
-                            <!-- RIGHT: forms -->
-                            <VBox HBox.hgrow="ALWAYS" spacing="18" styleClass="moncompte-forms">
+                            <!-- ── Stats strip ── -->
+                            <VBox styleClass="profile-stats-card" spacing="0">
+                                <Label text="ACTIVITÉ" styleClass="profile-section-label"/>
+                                <HBox styleClass="profile-stat-row" spacing="12" alignment="CENTER_LEFT">
+                                    <Label text="📅" style="-fx-font-size:12px;"/>
+                                    <Label text="Membre depuis"
+                                           styleClass="profile-stat-key" HBox.hgrow="ALWAYS"/>
+                                    <Label text="Jan 2024" styleClass="profile-stat-val"/>
+                                </HBox>
+                                <Separator style="-fx-opacity:0.4;"/>
+                                <HBox styleClass="profile-stat-row" spacing="12" alignment="CENTER_LEFT">
+                                    <Label text="🕐" style="-fx-font-size:12px;"/>
+                                    <Label text="Dernière connexion"
+                                           styleClass="profile-stat-key" HBox.hgrow="ALWAYS"/>
+                                    <Label text="Aujourd'hui" styleClass="profile-stat-val"/>
+                                </HBox>
+                                <Separator style="-fx-opacity:0.4;"/>
+                                <HBox styleClass="profile-stat-row" spacing="12" alignment="CENTER_LEFT">
+                                    <Label text="✅" style="-fx-font-size:12px;"/>
+                                    <Label text="Statut"
+                                           styleClass="profile-stat-key" HBox.hgrow="ALWAYS"/>
+                                    <Label text="Actif" styleClass="profile-stat-active"/>
+                                </HBox>
+                            </VBox>
 
-                                <VBox fx:id="editFormPanel" styleClass="form-card moncompte-form-card" spacing="0"
-                                      managed="true" visible="true">
-                                    <HBox styleClass="form-card-header" alignment="CENTER_LEFT" spacing="14">
-                                        <Label text="✏️" styleClass="form-icon"/>
-                                        <VBox spacing="4">
-                                            <Label text="Modifier le profil" styleClass="form-heading-title"/>
-                                            <Label text="Nom, e-mail, adresse et photo de profil." styleClass="form-heading-sub"/>
-                                        </VBox>
-                                    </HBox>
-                                    <VBox styleClass="form-body" spacing="16">
-                                        <padding><Insets top="22" right="26" bottom="22" left="26"/></padding>
+                            <!-- ── Navigation actions ── -->
+                            <VBox styleClass="profile-nav-card" spacing="0">
+                                <Label text="ACTIONS" styleClass="profile-section-label"/>
+                                <Button text="✏   Modifier le profil"
+                                        onAction="#showEditForm"
+                                        styleClass="profile-nav-btn" maxWidth="Infinity"/>
+                                <Separator style="-fx-opacity:0.4;"/>
+                                <Button text="🔒  Changer le mot de passe"
+                                        onAction="#showPasswordForm"
+                                        styleClass="profile-nav-btn" maxWidth="Infinity"/>
+                                <Separator style="-fx-opacity:0.4;"/>
+                                <Button text="📷  Reconnaissance faciale"
+                                        styleClass="profile-nav-btn-disabled" maxWidth="Infinity"
+                                        disable="true"/>
+                            </VBox>
 
-                                        <Label fx:id="editSuccessLabel" styleClass="toast-success"
-                                               managed="false" visible="false" wrapText="true"/>
+                        </VBox>
 
-                                        <VBox spacing="10" styleClass="form-group">
-                                            <Label text="Photo de profil" styleClass="form-label"/>
-                                            <HBox spacing="14" alignment="CENTER_LEFT" styleClass="moncompte-photo-row">
-                                                <ImageView fx:id="photoPreview"
-                                                           fitWidth="64" fitHeight="64"
-                                                           preserveRatio="true"
-                                                           styleClass="photo-preview"/>
-                                                <VBox spacing="8" HBox.hgrow="ALWAYS">
-                                                    <Button text="Choisir une image"
-                                                            styleClass="photo-upload-btn"
-                                                            onAction="#onChoosePhoto"/>
-                                                    <Label fx:id="photoLabel" text="Aucune photo sélectionnée"
-                                                           styleClass="card-subtitle"/>
-                                                </VBox>
-                                            </HBox>
-                                        </VBox>
+                        <!-- ══════════════════════════════════
+                             RIGHT  –  toggled forms
+                        ══════════════════════════════════ -->
+                        <VBox HBox.hgrow="ALWAYS" spacing="16">
 
-                                        <HBox spacing="18">
-                                            <VBox spacing="6" styleClass="form-group" HBox.hgrow="ALWAYS">
-                                                <Label text="Nom d'utilisateur *" styleClass="form-label"/>
-                                                <TextField fx:id="usernameField" styleClass="form-input"
-                                                           promptText="votre_nom" onKeyReleased="#validateUsername"/>
-                                                <Label fx:id="errUsername" text="Nom requis."
-                                                       styleClass="err-msg" managed="false" visible="false"/>
-                                            </VBox>
-                                            <VBox spacing="6" styleClass="form-group" HBox.hgrow="ALWAYS">
-                                                <Label text="E-mail *" styleClass="form-label"/>
-                                                <TextField fx:id="emailField" styleClass="form-input"
-                                                           promptText="email@exemple.com" onKeyReleased="#validateEmail"/>
-                                                <Label fx:id="errEmail" text="E-mail invalide."
-                                                       styleClass="err-msg" managed="false" visible="false"/>
-                                            </VBox>
-                                        </HBox>
+                            <!-- ── Edit Profile Form ── -->
+                            <VBox fx:id="editFormPanel" styleClass="form-card" spacing="0"
+                                  managed="true" visible="true">
 
-                                        <HBox spacing="18">
-                                            <VBox spacing="6" styleClass="form-group" HBox.hgrow="ALWAYS">
-                                                <Label text="Adresse" styleClass="form-label"/>
-                                                <TextField fx:id="addressField" styleClass="form-input"
-                                                           promptText="Adresse complète"/>
-                                            </VBox>
-                                            <VBox spacing="6" styleClass="form-group" HBox.hgrow="ALWAYS">
-                                                <Label text="Téléphone" styleClass="form-label"/>
-                                                <TextField fx:id="phoneField" styleClass="form-input"
-                                                           promptText="+216 XX XXX XXX"/>
-                                            </VBox>
-                                        </HBox>
+                                <HBox styleClass="form-card-header" alignment="CENTER_LEFT" spacing="14">
+                                    <VBox spacing="3">
+                                        <Label text="Modifier le profil"
+                                               styleClass="form-heading-title"/>
+                                        <Label text="Mettez à jour vos informations personnelles."
+                                               styleClass="form-heading-sub"/>
                                     </VBox>
-                                    <HBox styleClass="form-footer" alignment="CENTER_RIGHT" spacing="12">
-                                        <Button text="Annuler" styleClass="btn-cancel" onAction="#cancelEdit"/>
-                                        <Button text="Enregistrer" styleClass="btn-submit" onAction="#handleSaveProfile"/>
+                                </HBox>
+
+                                <VBox styleClass="form-body" spacing="16">
+                                    <padding><Insets top="20" right="24" bottom="20" left="24"/></padding>
+
+                                    <Label fx:id="editSuccessLabel" styleClass="toast-success"
+                                           managed="false" visible="false" wrapText="true"/>
+
+                                    <!-- Photo upload zone -->
+                                    <HBox styleClass="photo-upload-zone" spacing="16"
+                                          alignment="CENTER_LEFT">
+                                        <StackPane styleClass="photo-upload-thumb">
+                                            <ImageView fx:id="photoPreview"
+                                                       fitWidth="52" fitHeight="52"
+                                                       preserveRatio="true" smooth="true"
+                                                       visible="false" managed="false"/>
+                                            <Label fx:id="photoInitials" text="?"
+                                                   styleClass="photo-upload-initials"/>
+                                        </StackPane>
+                                        <VBox spacing="3" HBox.hgrow="ALWAYS">
+                                            <Label fx:id="photoLabel"
+                                                   text="Aucune photo sélectionnée"
+                                                   styleClass="photo-upload-hint" wrapText="true"/>
+                                            <Label text="JPG, PNG ou WEBP · max 5 Mo"
+                                                   styleClass="photo-upload-sub"/>
+                                        </VBox>
+                                        <Button text="📂  Choisir"
+                                                styleClass="btn-choose-photo"
+                                                onAction="#onChoosePhoto"/>
                                     </HBox>
+
+                                    <!-- Username + Email -->
+                                    <HBox spacing="16">
+                                        <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                            <Label text="Nom d'utilisateur *" styleClass="form-label"/>
+                                            <TextField fx:id="usernameField" styleClass="form-input"
+                                                       promptText="votre_nom"
+                                                       onKeyReleased="#validateUsername"/>
+                                            <Label fx:id="errUsername" text="Nom requis."
+                                                   styleClass="err-msg" managed="false" visible="false"/>
+                                        </VBox>
+                                        <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                            <Label text="Email *" styleClass="form-label"/>
+                                            <TextField fx:id="emailField" styleClass="form-input"
+                                                       promptText="email@exemple.com"
+                                                       onKeyReleased="#validateEmail"/>
+                                            <Label fx:id="errEmail" text="Email invalide."
+                                                   styleClass="err-msg" managed="false" visible="false"/>
+                                        </VBox>
+                                    </HBox>
+
+                                    <!-- Address + Phone -->
+                                    <HBox spacing="16">
+                                        <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                            <Label text="Adresse" styleClass="form-label"/>
+                                            <TextField fx:id="addressField" styleClass="form-input"
+                                                       promptText="Adresse complète"/>
+                                        </VBox>
+                                        <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                            <Label text="Téléphone" styleClass="form-label"/>
+                                            <TextField fx:id="phoneField" styleClass="form-input"
+                                                       promptText="+216 XX XXX XXX"/>
+                                        </VBox>
+                                    </HBox>
+
                                 </VBox>
 
-                                <VBox fx:id="passwordFormPanel" styleClass="form-card moncompte-form-card" spacing="0"
-                                      managed="false" visible="false">
-                                    <HBox styleClass="form-card-header-blue" alignment="CENTER_LEFT" spacing="14">
-                                        <Label text="🔒" styleClass="form-icon"/>
-                                        <VBox spacing="4">
-                                            <Label text="Mot de passe" styleClass="form-heading-title"/>
-                                            <Label text="Utilisez un mot de passe long et unique." styleClass="form-heading-sub"/>
-                                        </VBox>
+                                <HBox styleClass="form-footer" alignment="CENTER_RIGHT" spacing="10">
+                                    <Button text="Annuler"
+                                            styleClass="btn-cancel" onAction="#cancelEdit"/>
+                                    <Button text="💾  Enregistrer"
+                                            styleClass="btn-submit" onAction="#handleSaveProfile"/>
+                                </HBox>
+                            </VBox>
+
+                            <!-- ── Change Password Form ── -->
+                            <VBox fx:id="passwordFormPanel" styleClass="form-card" spacing="0"
+                                  managed="false" visible="false">
+
+                                <HBox styleClass="form-card-header-blue" alignment="CENTER_LEFT" spacing="14">
+                                    <StackPane styleClass="form-header-icon-wrap-blue">
+                                        <Label text="🔒" style="-fx-font-size:15px;"/>
+                                    </StackPane>
+                                    <VBox spacing="3">
+                                        <Label text="Changer le mot de passe"
+                                               styleClass="form-heading-title"/>
+                                        <Label text="Choisissez un mot de passe fort et unique."
+                                               styleClass="form-heading-sub"/>
+                                    </VBox>
+                                </HBox>
+
+                                <VBox styleClass="form-body" spacing="16">
+                                    <padding><Insets top="20" right="24" bottom="20" left="24"/></padding>
+
+                                    <Label fx:id="passSuccessLabel" styleClass="toast-success"
+                                           managed="false" visible="false" wrapText="true"/>
+
+                                    <HBox styleClass="security-tip" spacing="10" alignment="CENTER_LEFT">
+                                        <Label text="ℹ" style="-fx-font-size:14px; -fx-text-fill:#0284c7;"/>
+                                        <Label text="Minimum 6 caractères. Combinez lettres, chiffres et symboles."
+                                               styleClass="security-tip-text" wrapText="true"
+                                               HBox.hgrow="ALWAYS"/>
                                     </HBox>
-                                    <VBox styleClass="form-body" spacing="16">
-                                        <padding><Insets top="22" right="26" bottom="22" left="26"/></padding>
 
-                                        <Label fx:id="passSuccessLabel" styleClass="toast-success"
-                                               managed="false" visible="false" wrapText="true"/>
+                                    <!-- Current password — full width -->
+                                    <VBox spacing="5" styleClass="form-group">
+                                        <Label text="Mot de passe actuel *" styleClass="form-label"/>
+                                        <PasswordField fx:id="currentPasswordField" styleClass="form-input"
+                                                       promptText="••••••••"/>
+                                        <Label fx:id="errCurrentPassword" styleClass="err-msg"
+                                               managed="false" visible="false"/>
+                                    </VBox>
 
-                                        <HBox styleClass="security-tip" spacing="10" alignment="CENTER_LEFT">
-                                            <Label text="ℹ" style="-fx-font-size:14px; -fx-text-fill:#0284c7;"/>
-                                            <Label text="Au moins 6 caractères. Mélangez lettres, chiffres et symboles."
-                                                   styleClass="security-tip-text" wrapText="true" HBox.hgrow="ALWAYS"/>
-                                        </HBox>
-
-                                        <VBox spacing="6" styleClass="form-group">
-                                            <Label text="Mot de passe actuel *" styleClass="form-label"/>
-                                            <PasswordField fx:id="currentPasswordField" styleClass="form-input"
+                                    <!-- New + Confirm side by side -->
+                                    <HBox spacing="16">
+                                        <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                            <Label text="Nouveau mot de passe *" styleClass="form-label"/>
+                                            <PasswordField fx:id="newPasswordField" styleClass="form-input"
                                                            promptText="••••••••"/>
-                                            <Label fx:id="errCurrentPassword" styleClass="err-msg"
+                                            <Label fx:id="errNewPassword" styleClass="err-msg"
                                                    managed="false" visible="false"/>
                                         </VBox>
-                                        <HBox spacing="18">
-                                            <VBox spacing="6" styleClass="form-group" HBox.hgrow="ALWAYS">
-                                                <Label text="Nouveau mot de passe *" styleClass="form-label"/>
-                                                <PasswordField fx:id="newPasswordField" styleClass="form-input"
-                                                               promptText="••••••••"/>
-                                                <Label fx:id="errNewPassword" styleClass="err-msg"
-                                                       managed="false" visible="false"/>
-                                            </VBox>
-                                            <VBox spacing="6" styleClass="form-group" HBox.hgrow="ALWAYS">
-                                                <Label text="Confirmer *" styleClass="form-label"/>
-                                                <PasswordField fx:id="confirmPasswordField" styleClass="form-input"
-                                                               promptText="••••••••"/>
-                                                <Label fx:id="errConfirmPassword" styleClass="err-msg"
-                                                       managed="false" visible="false"/>
-                                            </VBox>
-                                        </HBox>
-                                    </VBox>
-                                    <HBox styleClass="form-footer" alignment="CENTER_RIGHT" spacing="12">
-                                        <Button text="Annuler" styleClass="btn-cancel" onAction="#cancelPassword"/>
-                                        <Button text="Mettre à jour" styleClass="btn-submit-blue" onAction="#handleSavePassword"/>
+                                        <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
+                                            <Label text="Confirmer *" styleClass="form-label"/>
+                                            <PasswordField fx:id="confirmPasswordField" styleClass="form-input"
+                                                           promptText="••••••••"/>
+                                            <Label fx:id="errConfirmPassword" styleClass="err-msg"
+                                                   managed="false" visible="false"/>
+                                        </VBox>
                                     </HBox>
+
                                 </VBox>
 
+                                <HBox styleClass="form-footer" alignment="CENTER_RIGHT" spacing="10">
+                                    <Button text="Annuler"
+                                            styleClass="btn-cancel" onAction="#cancelPassword"/>
+                                    <Button text="🔒  Mettre à jour"
+                                            styleClass="btn-submit-blue" onAction="#handleSavePassword"/>
+                                </HBox>
                             </VBox>
-                        </HBox>
-                    </VBox>
+
+                        </VBox>
+                    </HBox>
                 </VBox>
             </ScrollPane>
         </VBox>

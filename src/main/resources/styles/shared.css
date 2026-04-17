@@ -303,3 +303,191 @@
 .profile-info-row-last {
     -fx-border-width: 0;
 }
+/* ═══════════════════════════════════════════════════════════
+   MON COMPTE — redesigned sidebar + form classes
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Profile card (avatar + banner + info rows) ─────────── */
+.profile-card {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-border-color: #e3ebe0;
+    -fx-border-radius: 16;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(26,46,26,0.10), 24, 0.16, 0, 5);
+}
+
+/* Coloured banner strip at the top of the avatar card */
+.profile-banner {
+    -fx-fill: linear-gradient(to right, #1a3a50, #2d5016 55%, #1e4620);
+    -fx-arc-width: 32;
+    -fx-arc-height: 32;
+}
+
+/* White ring that borders the avatar circle */
+.avatar-ring {
+    -fx-fill: transparent;
+    -fx-stroke: white;
+    -fx-stroke-width: 3;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.20), 8, 0.2, 0, 2);
+}
+
+/* Muted label above address / phone value (e.g. "Adresse") */
+.profile-info-label {
+    -fx-font-size: 11px;
+    -fx-text-fill: #94a3b8;
+    -fx-font-weight: bold;
+}
+
+/* ── Stats strip ────────────────────────────────────────── */
+.profile-stats-card {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-border-color: #e3ebe0;
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.07), 16, 0.12, 0, 4);
+}
+
+.profile-section-label {
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #94a3b8;
+    -fx-letter-spacing: 0.08em;
+    -fx-padding: 12 16 8 16;
+    -fx-border-color: transparent transparent #f1f5f9 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.profile-stat-row {
+    -fx-padding: 11 16 11 16;
+}
+
+.profile-stat-key {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+}
+
+.profile-stat-val {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0f172a;
+}
+
+.profile-stat-active {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #166534;
+    -fx-background-color: #dcfce7;
+    -fx-background-radius: 20;
+    -fx-padding: 3 10 3 10;
+}
+
+/* ── Navigation actions card ────────────────────────────── */
+.profile-nav-card {
+    -fx-background-color: white;
+    -fx-background-radius: 14;
+    -fx-border-color: #e3ebe0;
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(15,23,42,0.07), 16, 0.12, 0, 4);
+}
+
+.profile-nav-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #0f172a;
+    -fx-font-size: 13px;
+    -fx-padding: 13 18 13 18;
+    -fx-background-radius: 0;
+    -fx-border-width: 0;
+    -fx-cursor: hand;
+    -fx-alignment: CENTER_LEFT;
+}
+.profile-nav-btn:hover {
+    -fx-background-color: #f0faf2;
+    -fx-text-fill: #1e4620;
+}
+
+.profile-nav-btn-disabled {
+    -fx-background-color: transparent;
+    -fx-text-fill: #94a3b8;
+    -fx-font-size: 13px;
+    -fx-padding: 13 18 13 18;
+    -fx-background-radius: 0;
+    -fx-border-width: 0;
+    -fx-alignment: CENTER_LEFT;
+}
+
+/* ── Form header icon wraps ─────────────────────────────── */
+.form-header-icon-wrap {
+    -fx-background-color: #eef6ef;
+    -fx-background-radius: 10;
+    -fx-min-width: 36;
+    -fx-min-height: 36;
+    -fx-max-width: 36;
+    -fx-max-height: 36;
+}
+
+.form-header-icon-wrap-blue {
+    -fx-background-color: rgba(255,255,255,0.15);
+    -fx-background-radius: 10;
+    -fx-min-width: 36;
+    -fx-min-height: 36;
+    -fx-max-width: 36;
+    -fx-max-height: 36;
+}
+
+/* ── Photo upload zone ──────────────────────────────────── */
+.photo-upload-zone {
+    -fx-background-color: #f4faf5;
+    -fx-background-radius: 12;
+    -fx-border-color: #cfe5d4;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+    -fx-border-style: dashed;
+    -fx-padding: 14 16 14 16;
+}
+
+.photo-upload-thumb {
+    -fx-background-color: #dbeafe;
+    -fx-background-radius: 50%;
+    -fx-min-width: 52;
+    -fx-min-height: 52;
+    -fx-max-width: 52;
+    -fx-max-height: 52;
+    -fx-effect: dropshadow(gaussian, rgba(26,46,26,0.12), 6, 0.2, 0, 1);
+}
+
+.photo-upload-initials {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e40af;
+}
+
+.photo-upload-hint {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0f172a;
+}
+
+.photo-upload-sub {
+    -fx-font-size: 11px;
+    -fx-text-fill: #94a3b8;
+}
+
+.btn-choose-photo {
+    -fx-background-color: white;
+    -fx-text-fill: #0f172a;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-border-color: #cbd5e1;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-padding: 8 14 8 14;
+    -fx-cursor: hand;
+}
+.btn-choose-photo:hover {
+    -fx-background-color: #f1f5f9;
+    -fx-border-color: #94a3b8;
+}
