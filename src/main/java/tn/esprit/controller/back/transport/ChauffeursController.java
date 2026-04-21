@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-public class ChauffeursController implements Initializable {
+public class    ChauffeursController implements Initializable {
 
     @FXML private Label statTotal;
     @FXML private Label statExperience;
