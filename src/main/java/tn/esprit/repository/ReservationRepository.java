@@ -89,6 +89,18 @@ public class ReservationRepository {
             s.executeUpdate();
         }
     }
+    public void update ( Reservation r) throws SQLException {
+        try (Connection conn = Base.getInstance().getConnection();
+        PreparedStatement s = conn.prepareStatement(
+                "UPDATE reservation SET totalPrice=?, dateFrom=?, dateTo=?, numberOfPersons=?, details=?, updated_at=? WHERE id=?")) {
+            s.setDouble(1, r.getTotalPrice());
+            s.setDate(2, Date.valueOf(r.getDateFrom()));
+            s.setDate(3, r.getDateTo() != null ? Date.valueOf(r.getDateTo()) : null);
+            s.setInt(4, r.getNumberOfPersons());
+            s.setString(5, r.getDetailsAsJson());
+            s.executeUpdate();
+        }
+    }
 
     // Stats for admin dashboard
     public Map<String, Object> getStats() throws SQLException {

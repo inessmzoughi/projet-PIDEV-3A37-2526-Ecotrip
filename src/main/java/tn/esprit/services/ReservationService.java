@@ -23,7 +23,7 @@ public class ReservationService {
         r.setReservationType(item.getType());
         r.setReservationId(item.getItemId());
         r.setTotalPrice(item.getTotalPrice());
-        r.setStatus(ReservationStatus.CONFIRMED);
+        r.setStatus(ReservationStatus.PENDING);
         r.setDateFrom(item.getDateFrom());
         r.setDateTo(item.getDateTo());
         r.setNumberOfPersons(item.getNumberOfPersons());
@@ -62,5 +62,9 @@ public class ReservationService {
 
     public void updateStatus(int id, ReservationStatus status) throws SQLException {
         repo.updateStatus(id, status);
+    }
+
+    public void update(Reservation r) throws SQLException {
+        repo.update(r);
     }
 }

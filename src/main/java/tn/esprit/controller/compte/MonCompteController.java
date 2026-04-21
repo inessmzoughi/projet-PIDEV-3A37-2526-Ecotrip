@@ -4,8 +4,12 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import tn.esprit.models.User;
 import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;
@@ -13,23 +17,30 @@ import tn.esprit.services.Auth_User.UserService;
 import tn.esprit.session.SessionManager;
 import tn.esprit.utils.PasswordUtil;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class MonCompteController implements Initializable {
 
     /* ─── Avatar / info ─── */
-    @FXML private Circle avatarCircle;
-    @FXML private Label  avatarInitials;
-    @FXML private Label  profileUsername, profileEmail;
-    @FXML private Label  roleValue, verifiedValue;
-    @FXML private Label  addressValue, phoneValue;
+    @FXML private Circle    avatarCircle;
+    @FXML private Label     avatarInitials;
+    @FXML private ImageView avatarPhoto;       // overlaid on the circle when a photo exists
+    @FXML private Label     profileUsername, profileEmail;
+    @FXML private Label     roleValue, verifiedValue;
+    @FXML private Label     addressValue, phoneValue;
 
     /* ─── Edit form ─── */
     @FXML private VBox      editFormPanel;
     @FXML private TextField usernameField, emailField, addressField, phoneField;
     @FXML private Label     errUsername, errEmail;
     @FXML private Label     editSuccessLabel;
+
+    /* ─── Photo (edit form) ─── */
+    @FXML private ImageView photoPreview;
+    @FXML private Label     photoLabel;
+    private String selectedPhotoPath = null;
 
     /* ─── Password form ─── */
     @FXML private VBox          passwordFormPanel;
@@ -49,7 +60,6 @@ public class MonCompteController implements Initializable {
             return;
         }
         loadProfile();
-        // Start with edit form visible, password form hidden
         showPanel(editFormPanel);
         hidePanel(passwordFormPanel);
     }
@@ -58,14 +68,29 @@ public class MonCompteController implements Initializable {
     private void loadProfile() {
         User user = SessionManager.getInstance().getCurrentUser();
 
-        // Avatar initials
-        String name = user.getUsername().trim();
-        String[] parts = name.split("\\s+", 2);
-        String initials = parts.length >= 2
-                ? "" + Character.toUpperCase(parts[0].charAt(0)) + Character.toUpperCase(parts[1].charAt(0))
-                : name.length() >= 2 ? name.substring(0, 2).toUpperCase()
-                : name.toUpperCase();
-        avatarInitials.setText(initials);
+        // ── Avatar: try photo first, fall back to initials ──
+        String photoPath = user.getImage();
+        if (photoPath != null && !photoPath.isEmpty()) {
+            try {
+                File f = new File(photoPath);
+                if (f.exists()) {
+                    Image img = new Image(f.toURI().toString(), 104, 104, true, true);
+                    avatarPhoto.setImage(img);
+                    avatarPhoto.setVisible(true);
+                    avatarPhoto.setManaged(true);
+                    avatarInitials.setVisible(false);
+                    avatarInitials.setManaged(false);
+                    avatarCircle.setVisible(false);
+                    avatarCircle.setManaged(false);
+                } else {
+                    showInitialsAvatar(user);
+                }
+            } catch (Exception e) {
+                showInitialsAvatar(user);
+            }
+        } else {
+            showInitialsAvatar(user);
+        }
 
         profileUsername.setText(user.getUsername());
         profileEmail.setText(user.getEmail());
@@ -88,11 +113,67 @@ public class MonCompteController implements Initializable {
         verifiedValue.getStyleClass().removeAll("badge-actif", "badge-inactif");
         verifiedValue.getStyleClass().add(user.isVerified() ? "badge-actif" : "badge-inactif");
 
-        // Pre-fill edit form
+        // Pre-fill edit form fields
         usernameField.setText(user.getUsername());
         emailField.setText(user.getEmail());
         addressField.setText(user.getAddress() != null ? user.getAddress() : "");
         phoneField.setText(user.getTelephone() != null ? user.getTelephone() : "");
+
+        // Pre-fill photo preview in edit form
+        selectedPhotoPath = photoPath;
+        if (photoPath != null && !photoPath.isEmpty()) {
+            try {
+                File f = new File(photoPath);
+                if (f.exists()) {
+                    photoPreview.setImage(new Image(f.toURI().toString(), 72, 72, true, true));
+                    photoLabel.setText("✅ " + f.getName());
+                } else {
+                    photoPreview.setImage(null);
+                    photoLabel.setText("Aucune photo sélectionnée");
+                }
+            } catch (Exception ex) {
+                photoPreview.setImage(null);
+                photoLabel.setText("Aucune photo sélectionnée");
+            }
+        } else {
+            photoPreview.setImage(null);
+            photoLabel.setText("Aucune photo sélectionnée");
+        }
+    }
+
+    /** Show circle + initials when no photo is available */
+    private void showInitialsAvatar(User user) {
+        avatarPhoto.setVisible(false);
+        avatarPhoto.setManaged(false);
+        avatarCircle.setVisible(true);
+        avatarCircle.setManaged(true);
+        avatarInitials.setVisible(true);
+        avatarInitials.setManaged(true);
+
+        String name = user.getUsername().trim();
+        String[] parts = name.split("\\s+", 2);
+        String initials = parts.length >= 2
+                ? "" + Character.toUpperCase(parts[0].charAt(0)) + Character.toUpperCase(parts[1].charAt(0))
+                : name.length() >= 2 ? name.substring(0, 2).toUpperCase()
+                : name.toUpperCase();
+        avatarInitials.setText(initials);
+    }
+
+    /* ─── Photo chooser ─── */
+    @FXML
+    private void onChoosePhoto() {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Choisir une photo de profil");
+        chooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Images", "*.jpg", "*.jpeg", "*.png", "*.webp")
+        );
+        Stage stage = (Stage) usernameField.getScene().getWindow();
+        File file = chooser.showOpenDialog(stage);
+        if (file != null) {
+            selectedPhotoPath = file.getAbsolutePath();
+            photoPreview.setImage(new Image(file.toURI().toString(), 72, 72, true, true));
+            photoLabel.setText("✅ " + file.getName());
+        }
     }
 
     /* ─── Panel toggles ─── */
@@ -129,13 +210,15 @@ public class MonCompteController implements Initializable {
                     phoneField.getText().trim(),
                     user.getRoles().name(),
                     user.isVerified(),
-                    null // no password change here
+                    null,           // no password change here
+                    selectedPhotoPath
             );
             // Refresh session
             user.setUsername(username);
             user.setEmail(email);
             user.setAddress(addressField.getText().trim());
             user.setTelephone(phoneField.getText().trim());
+            user.setImage(selectedPhotoPath);
             SessionManager.getInstance().setCurrentUser(user);
 
             loadProfile();
@@ -177,7 +260,8 @@ public class MonCompteController implements Initializable {
                     user.getId(), user.getUsername(), user.getEmail(),
                     user.getAddress(), user.getTelephone(),
                     user.getRoles().name(), user.isVerified(),
-                    newPass // service handles hashing
+                    newPass,
+                    user.getImage()
             );
             user.setPassword(PasswordUtil.hash(newPass));
             SessionManager.getInstance().setCurrentUser(user);
@@ -226,7 +310,6 @@ public class MonCompteController implements Initializable {
     private void showFieldSuccess(Label label, String msg) {
         label.setText(msg);
         label.setVisible(true); label.setManaged(true);
-        // Auto-hide after 4 seconds
         new Thread(() -> {
             try { Thread.sleep(4000); } catch (InterruptedException ignored) {}
             Platform.runLater(() -> { label.setVisible(false); label.setManaged(false); });
