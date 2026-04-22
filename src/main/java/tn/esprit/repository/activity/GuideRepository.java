@@ -77,6 +77,25 @@ public class GuideRepository {
         ps.executeUpdate();
     }
 
+    // ── Unicité ────────────────────────────────────────────────────────────────
+
+    public boolean existsByEmail(String email) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM guide WHERE LOWER(email) = LOWER(?)";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, email.trim());
+        ResultSet rs = ps.executeQuery();
+        return rs.next() && rs.getInt(1) > 0;
+    }
+
+    public boolean existsByEmailAndNotId(String email, int excludeId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM guide WHERE LOWER(email) = LOWER(?) AND id != ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, email.trim());
+        ps.setInt(2, excludeId);
+        ResultSet rs = ps.executeQuery();
+        return rs.next() && rs.getInt(1) > 0;
+    }
+
     private Guide mapRow(ResultSet rs) throws SQLException {
         Guide g = new Guide();
         g.setId(rs.getInt("id"));

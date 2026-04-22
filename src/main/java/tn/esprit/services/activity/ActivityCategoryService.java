@@ -19,6 +19,9 @@ public class ActivityCategoryService {
             throw new IllegalArgumentException("Category name is required");
         if (category.getName().length() < 3)
             throw new IllegalArgumentException("Category name must be at least 3 characters");
+        if (repo.existsByName(category.getName()))
+            throw new IllegalArgumentException(
+                    "La catégorie « " + category.getName() + " » existe déjà.");
         repo.save(category);
     }
 
@@ -37,6 +40,9 @@ public class ActivityCategoryService {
             throw new IllegalArgumentException("Category name is required");
         if (category.getName().length() < 3)
             throw new IllegalArgumentException("Category name must be at least 3 characters");
+        if (repo.existsByNameAndNotId(category.getName(), category.getId()))
+            throw new IllegalArgumentException(
+                    "Une autre catégorie porte déjà le nom « " + category.getName() + " ».");
         repo.update(category);
     }
 

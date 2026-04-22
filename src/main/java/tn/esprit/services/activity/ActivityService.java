@@ -18,6 +18,9 @@ public class ActivityService {
 
     public void ajouter(Activity activity) throws SQLException {
         validate(activity);
+        if (repo.existsByTitle(activity.getTitle()))
+            throw new IllegalArgumentException(
+                    "Une activité intitulée « " + activity.getTitle() + " » existe déjà.");
         repo.save(activity);
     }
 
@@ -33,6 +36,9 @@ public class ActivityService {
 
     public void modifier(Activity activity) throws SQLException {
         validate(activity);
+        if (repo.existsByTitleAndNotId(activity.getTitle(), activity.getId()))
+            throw new IllegalArgumentException(
+                    "Une autre activité porte déjà le titre « " + activity.getTitle() + " ».");
         repo.update(activity);
     }
 

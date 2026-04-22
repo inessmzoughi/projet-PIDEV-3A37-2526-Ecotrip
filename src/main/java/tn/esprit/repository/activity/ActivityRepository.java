@@ -1,5 +1,4 @@
 package tn.esprit.repository.activity;
-
 import tn.esprit.database.Base;
 import tn.esprit.models.activity.Activity;
 import tn.esprit.models.activity.ActivityCategory;
@@ -100,6 +99,25 @@ public class ActivityRepository {
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setInt(1, id);
         ps.executeUpdate();
+    }
+
+    // ── Unicité ────────────────────────────────────────────────────────────────
+
+    public boolean existsByTitle(String title) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM activity WHERE LOWER(title) = LOWER(?)";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, title.trim());
+        ResultSet rs = ps.executeQuery();
+        return rs.next() && rs.getInt(1) > 0;
+    }
+
+    public boolean existsByTitleAndNotId(String title, int excludeId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM activity WHERE LOWER(title) = LOWER(?) AND id != ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, title.trim());
+        ps.setInt(2, excludeId);
+        ResultSet rs = ps.executeQuery();
+        return rs.next() && rs.getInt(1) > 0;
     }
 
     private Activity mapRow(ResultSet rs) throws SQLException {

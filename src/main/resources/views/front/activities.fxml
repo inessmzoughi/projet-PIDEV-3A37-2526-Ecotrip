@@ -136,16 +136,6 @@
             <Label fx:id="pagInfo" text="Page 1 / 1" styleClass="heb-page-info"/>
             <Button fx:id="btnNext" text="Suivant →" styleClass="heb-page-btn" onAction="#onNext"/>
         </HBox>
-
-        <!-- ══ CTA ══ -->
-        <VBox styleClass="act-cta-section" alignment="CENTER" spacing="16">
-            <padding><Insets top="60" bottom="60" left="40" right="40"/></padding>
-            <Label text="Vous ne trouvez pas ce que vous cherchez ?" styleClass="section-title-white"/>
-            <Label text="Contactez-nous et nous créerons une expérience sur mesure pour vous."
-                   styleClass="section-sub-white" wrapText="true"/>
-            <Button text="Nous contacter" onAction="#handleContact" styleClass="act-cta-btn"/>
-        </VBox>
-
         <!-- ══ FOOTER ══ -->
         <fx:include source="../components/front-footer.fxml"/>
 

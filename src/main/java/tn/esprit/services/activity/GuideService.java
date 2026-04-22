@@ -16,6 +16,9 @@ public class GuideService {
 
     public void ajouter(Guide guide) throws SQLException {
         validate(guide);
+        if (repo.existsByEmail(guide.getEmail()))
+            throw new IllegalArgumentException(
+                    "Un guide avec l'email « " + guide.getEmail() + " » existe déjà.");
         repo.save(guide);
     }
 
@@ -31,6 +34,9 @@ public class GuideService {
 
     public void modifier(Guide guide) throws SQLException {
         validate(guide);
+        if (repo.existsByEmailAndNotId(guide.getEmail(), guide.getId()))
+            throw new IllegalArgumentException(
+                    "Cet email est déjà utilisé par un autre guide.");
         repo.update(guide);
     }
 
