@@ -13,93 +13,163 @@ import java.time.Duration;
 
 public class AiDescriptionService {
 
-    // Remplace par ta clé Gemini (gratuite sur https://aistudio.google.com)
-    private static final String API_KEY = "AIzaSyCoGdQS1A234RtV-Zq7pXDqDIz8cBQLxN4";
-
+    private static final String API_KEY_ENV = "GEMINI_API_KEY";
+    private static final String API_KEY_PROPERTY = "gemini.api.key";
     private static final String API_URL =
             "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=";
 
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    private static final HttpClient httpClient = HttpClient.newBuilder()
+    private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(10))
             .build();
 
-    // Genere une description pour une activite
+    private AiDescriptionService() {
+    }
+
     public static String generateActivityDescription(String title,
                                                      String location,
                                                      String price,
                                                      String durationMin) throws Exception {
+        String safeTitle = clean(title, "cette activite");
+        String safeLocation = clean(location, "Tunisie");
+        String safePrice = clean(price, "sur demande");
+        String safeDuration = clean(durationMin, "60");
+
         String prompt = String.format(
-                "Tu es un redacteur pour une plateforme de tourisme eco-responsable.\n" +
-                        "Redige une description attrayante en francais pour l'activite suivante :\n" +
-                        "- Titre : %s\n- Lieu : %s\n- Prix : %s TND\n- Duree : %s minutes\n\n" +
+                "Tu es un redacteur pour une plateforme de tourisme eco-responsable.%n" +
+                        "Redige une description attrayante en francais pour l'activite suivante :%n" +
+                        "- Titre : %s%n- Lieu : %s%n- Prix : %s TND%n- Duree : %s minutes%n%n" +
                         "La description doit faire 2 a 3 phrases, etre engageante et mettre en valeur l'aspect ecologique. " +
                         "Reponds uniquement avec la description, sans titre ni introduction.",
-                title, location, price, durationMin
+                safeTitle, safeLocation, safePrice, safeDuration
         );
-        return callApi(prompt);
+
+        String fallback = String.format(
+                "%s vous invite a decouvrir %s dans une experience pensee pour les voyageurs en quete d'authenticite. " +
+                        "Entre immersion locale, rythme accessible et approche eco-responsable, cette activite propose un moment nature aussi memorable que respectueux de l'environnement.",
+                capitalize(safeTitle), safeLocation
+        );
+
+        return generateText(prompt, fallback);
     }
 
-    // Genere une description pour une categorie d'activite
     public static String generateCategoryDescription(String categoryName) throws Exception {
+        String safeCategory = clean(categoryName, "cette categorie");
+
         String prompt = String.format(
-                "Tu es un redacteur pour une plateforme de tourisme eco-responsable.\n" +
-                        "Redige une courte description en francais pour la categorie d'activite : \"%s\".\n\n" +
+                "Tu es un redacteur pour une plateforme de tourisme eco-responsable.%n" +
+                        "Redige une courte description en francais pour la categorie d'activite : \"%s\".%n%n" +
                         "La description doit faire 1 a 2 phrases, etre claire et donner envie de decouvrir cette categorie. " +
                         "Reponds uniquement avec la description, sans titre ni introduction.",
-                categoryName
+                safeCategory
         );
-        return callApi(prompt);
+
+        String fallback = String.format(
+                "%s rassemble des experiences immersives qui mettent en valeur le patrimoine local, la nature et un tourisme plus responsable.",
+                capitalize(safeCategory)
+        );
+
+        return generateText(prompt, fallback);
     }
 
-    // Genere une bio pour un guide touristique
     public static String generateGuideBio(String firstName, String lastName) throws Exception {
+        String safeFirstName = clean(firstName, "Ce");
+        String safeLastName = clean(lastName, "guide");
+
         String prompt = String.format(
-                "Tu es un redacteur pour une plateforme de tourisme eco-responsable.\n" +
+                "Tu es un redacteur pour une plateforme de tourisme eco-responsable.%n" +
                         "Redige une biographie professionnelle courte en francais pour un guide touristique " +
-                        "qui s'appelle %s %s.\n\n" +
+                        "qui s'appelle %s %s.%n%n" +
                         "La bio doit faire 2 a 3 phrases, mettre en avant la passion pour la nature et l'expertise locale. " +
                         "Reponds uniquement avec la bio, sans titre ni introduction.",
-                firstName, lastName
+                safeFirstName, safeLastName
         );
-        return callApi(prompt);
+
+        String fallback = String.format(
+                "%s %s accompagne les voyageurs avec une approche chaleureuse, une excellente connaissance du terrain et une vraie sensibilite aux experiences durables. " +
+                        "Sa passion pour la nature et le patrimoine local permet de creer des sorties authentiques, rassurantes et enrichissantes.",
+                capitalize(safeFirstName), capitalize(safeLastName)
+        );
+
+        return generateText(prompt, fallback);
     }
 
-    // Appel HTTP a l'API Gemini
-    private static String callApi(String userPrompt) throws Exception {
-        ObjectNode body = mapper.createObjectNode();
+    public static boolean isAiConfigured() {
+        return !resolveApiKey().isBlank();
+    }
+
+    private static String generateText(String prompt, String fallback) throws Exception {
+        String apiKey = resolveApiKey();
+        if (apiKey.isBlank()) {
+            return fallback;
+        }
+
+        try {
+            String response = callApi(prompt, apiKey);
+            return response.isBlank() ? fallback : response;
+        } catch (Exception exception) {
+            System.err.println("Gemini unavailable, fallback generated instead: " + exception.getMessage());
+            return fallback;
+        }
+    }
+
+    private static String callApi(String userPrompt, String apiKey) throws Exception {
+        ObjectNode body = MAPPER.createObjectNode();
         ArrayNode contents = body.putArray("contents");
         ObjectNode content = contents.addObject();
         ArrayNode parts = content.putArray("parts");
         ObjectNode part = parts.addObject();
         part.put("text", userPrompt);
 
-        String requestBody = mapper.writeValueAsString(body);
+        String requestBody = MAPPER.writeValueAsString(body);
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(API_URL + API_KEY))
+                .uri(URI.create(API_URL + apiKey))
                 .timeout(Duration.ofSeconds(30))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
 
-        HttpResponse<String> response = httpClient.send(request,
-                HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
 
         if (response.statusCode() != 200) {
-            throw new RuntimeException("Erreur API Gemini (" + response.statusCode() + ") : "
-                    + response.body());
+            throw new RuntimeException("Erreur API Gemini (" + response.statusCode() + ") : " + response.body());
         }
 
-        // Format reponse Gemini : candidates[0].content.parts[0].text
-        JsonNode json = mapper.readTree(response.body());
-        JsonNode text = json
-                .path("candidates").get(0)
+        JsonNode json = MAPPER.readTree(response.body());
+        JsonNode textNode = json.path("candidates").get(0)
                 .path("content")
                 .path("parts").get(0)
                 .path("text");
 
-        return text.asText().trim();
+        return textNode.asText("").trim();
+    }
+
+    private static String resolveApiKey() {
+        String propertyKey = System.getProperty(API_KEY_PROPERTY, "").trim();
+        if (!propertyKey.isEmpty()) {
+            return propertyKey;
+        }
+
+        String envKey = System.getenv(API_KEY_ENV);
+        return envKey == null ? "" : envKey.trim();
+    }
+
+    private static String clean(String value, String fallback) {
+        if (value == null || value.isBlank()) {
+            return fallback;
+        }
+        return value.trim();
+    }
+
+    private static String capitalize(String value) {
+        if (value == null || value.isBlank()) {
+            return "";
+        }
+        if (value.length() == 1) {
+            return value.toUpperCase();
+        }
+        return Character.toUpperCase(value.charAt(0)) + value.substring(1);
     }
 }

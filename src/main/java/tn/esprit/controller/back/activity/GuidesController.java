@@ -1,10 +1,22 @@
 package tn.esprit.controller.back.activity;
 
 import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -15,6 +27,7 @@ import javafx.stage.Stage;
 import tn.esprit.models.activity.Guide;
 import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;
+import tn.esprit.services.activity.AiDescriptionService;
 import tn.esprit.services.activity.GuideService;
 
 import java.io.File;
@@ -28,54 +41,77 @@ import java.util.stream.Collectors;
 
 public class GuidesController implements Initializable {
 
-    /* ─── Stats ─── */
-    @FXML private Label statTotal, statRating, statAssigned;
+    @FXML private Label statTotal;
+    @FXML private Label statRating;
+    @FXML private Label statAssigned;
 
-    /* ─── Inline Form Panel (Chambres-style) ─── */
-    @FXML private VBox  formPanel;
+    @FXML private VBox formPanel;
     @FXML private Label formPanelTitle;
 
-    /* ─── Form Fields ─── */
-    @FXML private TextField firstNameField, lastNameField, emailField,
-            phoneField, ratingField, photoField;
-    @FXML private TextArea  bioField;
-    @FXML private Label     errFirstName, errLastName, errEmail,
-            errPhone, errRating, charCount;
-    @FXML private Button    submitBtn;
+    @FXML private TextField firstNameField;
+    @FXML private TextField lastNameField;
+    @FXML private TextField emailField;
+    @FXML private TextField phoneField;
+    @FXML private TextField ratingField;
+    @FXML private TextField photoField;
+    @FXML private TextArea bioField;
+    @FXML private Label errFirstName;
+    @FXML private Label errLastName;
+    @FXML private Label errEmail;
+    @FXML private Label errPhone;
+    @FXML private Label errRating;
+    @FXML private Label charCount;
+    @FXML private Button submitBtn;
     @FXML private ImageView photoPreview;
-    @FXML private Label     photoLabel;
+    @FXML private Label photoLabel;
+    @FXML private Button generateBioBtn;
+    @FXML private ProgressIndicator aiProgress;
+    @FXML private Label aiStatusLabel;
 
-    /* ─── Table ─── */
     @FXML private TextField searchField;
     @FXML private ComboBox<String> sortCombo;
     @FXML private TableView<Guide> tableView;
     @FXML private TableColumn<Guide, Integer> colIndex;
-    @FXML private TableColumn<Guide, String>  colName, colEmail, colPhone;
-    @FXML private TableColumn<Guide, Float>   colRating;
-    @FXML private TableColumn<Guide, Void>    colActions;
-    @FXML private Label badgeCount, pagInfo;
-    @FXML private HBox  pagButtons;
+    @FXML private TableColumn<Guide, String> colName;
+    @FXML private TableColumn<Guide, String> colEmail;
+    @FXML private TableColumn<Guide, String> colPhone;
+    @FXML private TableColumn<Guide, Float> colRating;
+    @FXML private TableColumn<Guide, Void> colActions;
+    @FXML private Label badgeCount;
+    @FXML private Label pagInfo;
+    @FXML private HBox pagButtons;
 
-    /* ─── State ─── */
     private final GuideService service = new GuideService();
     private List<Guide> allData = new ArrayList<>();
-    private Guide guideEnEdition = null;
-    private String selectedPhotoPath = null;
+    private Guide guideEnEdition;
+    private String selectedPhotoPath;
     private static final int PER_PAGE = 8;
     private int currentPage = 1;
 
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
+    public void initialize(URL url, ResourceBundle resourceBundle) {
         sortCombo.setItems(FXCollections.observableArrayList(
-                "Trier par…", "Nom (A→Z)", "Note (croissante)", "Note (décroissante)"));
+                "Trier par...",
+                "Nom (A-Z)",
+                "Note (croissante)",
+                "Note (decroissante)"
+        ));
         sortCombo.getSelectionModel().selectFirst();
+        aiProgress.managedProperty().bind(aiProgress.visibleProperty());
+        aiStatusLabel.managedProperty().bind(aiStatusLabel.visibleProperty());
+        aiProgress.setVisible(false);
+        aiStatusLabel.setVisible(false);
         setupColumns();
         refreshAll();
     }
 
     private void refreshAll() {
-        try { allData = service.afficherAll(); }
-        catch (SQLException e) { allData = new ArrayList<>(); showAlert("Erreur", e.getMessage()); }
+        try {
+            allData = service.afficherAll();
+        } catch (SQLException exception) {
+            allData = new ArrayList<>();
+            showAlert("Erreur", exception.getMessage());
+        }
         updateStats();
         renderTable();
     }
@@ -83,134 +119,157 @@ public class GuidesController implements Initializable {
     private void updateStats() {
         statTotal.setText(String.valueOf(allData.size()));
         double avg = allData.stream()
-                .filter(g -> g.getRating() != null)
+                .filter(guide -> guide.getRating() != null)
                 .mapToDouble(Guide::getRating)
-                .average().orElse(0);
-        statRating.setText(allData.isEmpty() ? "—" : String.format("%.1f ⭐", avg));
-        statAssigned.setText("—");
+                .average()
+                .orElse(0);
+        statRating.setText(allData.isEmpty() ? "--" : String.format("%.1f / 5", avg));
+        statAssigned.setText("--");
     }
 
-    /* ══════════════════════════════════════════════
-       FORM PANEL — open / close  (Chambres pattern)
-       ══════════════════════════════════════════════ */
-
-    @FXML private void onOpenForm() {
+    @FXML
+    private void onOpenForm() {
         guideEnEdition = null;
-        formPanelTitle.setText("🧭 Nouveau Guide");
-        submitBtn.setText("➕ Ajouter");
-        firstNameField.clear(); lastNameField.clear(); emailField.clear();
-        phoneField.clear(); ratingField.clear(); bioField.clear(); photoField.clear();
+        formPanelTitle.setText("Nouveau guide");
+        submitBtn.setText("Ajouter");
+        firstNameField.clear();
+        lastNameField.clear();
+        emailField.clear();
+        phoneField.clear();
+        ratingField.clear();
+        bioField.clear();
+        photoField.clear();
         photoPreview.setImage(null);
-        photoLabel.setText("Aucune photo sélectionnée");
-        charCount.setText("0 / 5000 caractères");
+        photoLabel.setText("Aucune photo selectionnee");
+        charCount.setText("0 / 5000 caracteres");
+        setAiFeedback(false, "", false);
         resetAllErrors();
         formPanel.setVisible(true);
         formPanel.setManaged(true);
         firstNameField.requestFocus();
     }
 
-    @FXML private void onCloseForm() {
+    @FXML
+    private void onCloseForm() {
         formPanel.setVisible(false);
         formPanel.setManaged(false);
         guideEnEdition = null;
+        setAiFeedback(false, "", false);
         resetAllErrors();
     }
 
-    private void loadForEdit(Guide g) {
-        guideEnEdition = g;
-        formPanelTitle.setText("✏️ Modifier le Guide");
-        submitBtn.setText("💾 Enregistrer");
-        firstNameField.setText(g.getFirstName());
-        lastNameField.setText(g.getLastName());
-        emailField.setText(g.getEmail());
-        phoneField.setText(g.getPhone());
-        bioField.setText(g.getBio() != null ? g.getBio() : "");
-        photoField.setText(g.getPhoto() != null ? g.getPhoto() : "");
-        ratingField.setText(g.getRating() != null ? String.valueOf(g.getRating()) : "");
-        if (g.getPhoto() != null && !g.getPhoto().isBlank()) {
-            try { photoPreview.setImage(new Image(g.getPhoto(), 80, 80, true, true)); }
-            catch (Exception ignored) {}
+    private void loadForEdit(Guide guide) {
+        guideEnEdition = guide;
+        formPanelTitle.setText("Modifier le guide");
+        submitBtn.setText("Enregistrer");
+        firstNameField.setText(guide.getFirstName());
+        lastNameField.setText(guide.getLastName());
+        emailField.setText(guide.getEmail());
+        phoneField.setText(guide.getPhone());
+        bioField.setText(guide.getBio() != null ? guide.getBio() : "");
+        photoField.setText(guide.getPhoto() != null ? guide.getPhoto() : "");
+        ratingField.setText(guide.getRating() != null ? String.valueOf(guide.getRating()) : "");
+        if (guide.getPhoto() != null && !guide.getPhoto().isBlank()) {
+            try {
+                photoPreview.setImage(new Image(guide.getPhoto(), 80, 80, true, true));
+            } catch (Exception ignored) {
+                photoPreview.setImage(null);
+            }
         } else {
             photoPreview.setImage(null);
         }
-        photoLabel.setText("Aucune photo sélectionnée");
+        photoLabel.setText("Aucune photo selectionnee");
         updateCounter();
+        setAiFeedback(false, "", false);
         resetAllErrors();
         formPanel.setVisible(true);
         formPanel.setManaged(true);
         firstNameField.requestFocus();
     }
 
-    /* ══════════════════════════════════════════════
-       SAVE
-       ══════════════════════════════════════════════ */
+    @FXML
+    private void onSubmit() {
+        if (!validateAll()) {
+            return;
+        }
 
-    @FXML private void onSubmit() {
-        if (!validateAll()) return;
-        Guide g = guideEnEdition != null ? guideEnEdition : new Guide();
-        g.setFirstName(firstNameField.getText().trim());
-        g.setLastName(lastNameField.getText().trim());
-        g.setEmail(emailField.getText().trim());
-        g.setPhone(phoneField.getText().trim());
-        g.setBio(bioField.getText().trim());
-        g.setPhoto(photoField.getText().trim());
-        String ratingTxt = ratingField.getText().trim();
-        g.setRating(ratingTxt.isEmpty() ? null : Float.parseFloat(ratingTxt));
+        Guide guide = guideEnEdition != null ? guideEnEdition : new Guide();
+        guide.setFirstName(firstNameField.getText().trim());
+        guide.setLastName(lastNameField.getText().trim());
+        guide.setEmail(emailField.getText().trim());
+        guide.setPhone(phoneField.getText().trim());
+        guide.setBio(bioField.getText().trim());
+        guide.setPhoto(photoField.getText().trim());
+
+        String ratingText = ratingField.getText().trim();
+        guide.setRating(ratingText.isEmpty() ? null : Float.parseFloat(ratingText));
+
         try {
-            if (guideEnEdition == null) service.ajouter(g);
-            else                        service.modifier(g);
+            if (guideEnEdition == null) {
+                service.ajouter(guide);
+            } else {
+                service.modifier(guide);
+            }
             onCloseForm();
             refreshAll();
-        } catch (Exception e) { showAlert("Erreur", e.getMessage()); }
+        } catch (Exception exception) {
+            showAlert("Erreur", exception.getMessage());
+        }
     }
 
-    @FXML private void onReset() {
+    @FXML
+    private void onReset() {
         onOpenForm();
     }
 
-    /* ══════════════════════════════════════════════
-       TABLE + PAGINATION
-       ══════════════════════════════════════════════ */
-
     private void renderTable() {
-        String query = searchField.getText().toLowerCase().trim();
-        String sort  = sortCombo.getValue();
+        String query = searchField.getText() == null ? "" : searchField.getText().toLowerCase().trim();
+        String sort = sortCombo.getValue();
 
         List<Guide> filtered = allData.stream()
-                .filter(g -> query.isEmpty()
-                        || g.getFirstName().toLowerCase().contains(query)
-                        || g.getLastName().toLowerCase().contains(query)
-                        || g.getEmail().toLowerCase().contains(query))
+                .filter(guide -> query.isEmpty()
+                        || guide.getFirstName().toLowerCase().contains(query)
+                        || guide.getLastName().toLowerCase().contains(query)
+                        || guide.getEmail().toLowerCase().contains(query))
                 .collect(Collectors.toList());
 
-        if ("Nom (A→Z)".equals(sort))
-            filtered.sort(Comparator.comparing(Guide::getLastName));
-        else if ("Note (croissante)".equals(sort))
-            filtered.sort(Comparator.comparing(g -> g.getRating() == null ? 0f : g.getRating()));
-        else if ("Note (décroissante)".equals(sort))
-            filtered.sort((a, b) -> Float.compare(
-                    b.getRating() == null ? 0f : b.getRating(),
-                    a.getRating() == null ? 0f : a.getRating()));
+        if ("Nom (A-Z)".equals(sort)) {
+            filtered.sort(Comparator.comparing(Guide::getLastName, String.CASE_INSENSITIVE_ORDER));
+        } else if ("Note (croissante)".equals(sort)) {
+            filtered.sort(Comparator.comparing(guide -> guide.getRating() == null ? 0f : guide.getRating()));
+        } else if ("Note (decroissante)".equals(sort)) {
+            filtered.sort((first, second) -> Float.compare(
+                    second.getRating() == null ? 0f : second.getRating(),
+                    first.getRating() == null ? 0f : first.getRating()
+            ));
+        }
 
         badgeCount.setText(String.valueOf(filtered.size()));
 
-        int total      = filtered.size();
+        int total = filtered.size();
         int totalPages = Math.max(1, (int) Math.ceil((double) total / PER_PAGE));
-        if (currentPage > totalPages) currentPage = 1;
+        if (currentPage > totalPages) {
+            currentPage = 1;
+        }
         int from = (currentPage - 1) * PER_PAGE;
-        int to   = Math.min(from + PER_PAGE, total);
+        int to = Math.min(from + PER_PAGE, total);
 
         tableView.setItems(FXCollections.observableArrayList(filtered.subList(from, to)));
-        pagInfo.setText(total == 0 ? "" : "Affichage " + (from + 1) + "–" + to + " sur " + total);
+        pagInfo.setText(total == 0 ? "" : "Affichage " + (from + 1) + "-" + to + " sur " + total);
 
         pagButtons.getChildren().clear();
-        for (int p = 1; p <= totalPages; p++) {
-            final int pn = p;
-            Button b = new Button(String.valueOf(p));
-            b.getStyleClass().add("page-btn");
-            if (p == currentPage) b.getStyleClass().add("page-btn-active");
-            b.setOnAction(e -> { currentPage = pn; renderTable(); });
-            pagButtons.getChildren().add(b);
+        for (int page = 1; page <= totalPages; page++) {
+            final int pageNumber = page;
+            Button button = new Button(String.valueOf(page));
+            button.getStyleClass().add("page-btn");
+            if (page == currentPage) {
+                button.getStyleClass().add("page-btn-active");
+            }
+            button.setOnAction(event -> {
+                currentPage = pageNumber;
+                renderTable();
+            });
+            pagButtons.getChildren().add(button);
         }
     }
 
@@ -219,188 +278,318 @@ public class GuidesController implements Initializable {
         colPhone.setCellValueFactory(new PropertyValueFactory<>("phone"));
         colRating.setCellValueFactory(new PropertyValueFactory<>("rating"));
 
-        colIndex.setCellFactory(col -> new TableCell<>() {
-            @Override protected void updateItem(Integer item, boolean empty) {
+        colIndex.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(Integer item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) { setText(null); return; }
+                if (empty) {
+                    setText(null);
+                    return;
+                }
                 setText(String.valueOf(getIndex() + 1 + (currentPage - 1) * PER_PAGE));
                 getStyleClass().add("td-index");
             }
         });
 
-        colName.setCellFactory(col -> new TableCell<>() {
-            @Override protected void updateItem(String item, boolean empty) {
+        colName.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) { setText(null); setGraphic(null); return; }
-                Guide g = getTableView().getItems().get(getIndex());
+                if (empty) {
+                    setText(null);
+                    setGraphic(null);
+                    return;
+                }
+                Guide guide = getTableView().getItems().get(getIndex());
                 HBox box = new HBox(8);
                 box.setAlignment(Pos.CENTER_LEFT);
+
                 Label avatar = new Label();
-                if (g.getPhoto() != null && !g.getPhoto().isBlank()) {
+                if (guide.getPhoto() != null && !guide.getPhoto().isBlank()) {
                     try {
-                        ImageView iv = new ImageView(new Image(g.getPhoto(), 32, 32, true, true));
-                        iv.setFitWidth(32); iv.setFitHeight(32);
-                        avatar.setGraphic(iv);
-                    } catch (Exception ex) {
-                        avatar.setText("🧭");
-                        avatar.setStyle("-fx-font-size: 18px;");
+                        ImageView view = new ImageView(new Image(guide.getPhoto(), 32, 32, true, true));
+                        view.setFitWidth(32);
+                        view.setFitHeight(32);
+                        avatar.setGraphic(view);
+                    } catch (Exception exception) {
+                        avatar.setText("Guide");
                     }
                 } else {
-                    avatar.setText("🧭");
-                    avatar.setStyle("-fx-font-size: 18px; -fx-background-color: #f0fff4; " +
-                            "-fx-background-radius: 16px; -fx-min-width: 32px; " +
-                            "-fx-min-height: 32px; -fx-alignment: CENTER;");
+                    avatar.setText("Guide");
+                    avatar.setStyle("-fx-background-color:#f0fff4; -fx-background-radius:16px;"
+                            + "-fx-min-width:32px; -fx-min-height:32px; -fx-alignment:center;"
+                            + "-fx-font-size:10px; -fx-text-fill:#2d7a50;");
                 }
-                Label name = new Label(g.getFirstName() + " " + g.getLastName());
+
+                Label name = new Label(guide.getFirstName() + " " + guide.getLastName());
                 name.getStyleClass().add("td-name");
                 box.getChildren().addAll(avatar, name);
-                setGraphic(box); setText(null);
+                setGraphic(box);
+                setText(null);
             }
         });
 
-        colRating.setCellFactory(col -> new TableCell<>() {
-            @Override protected void updateItem(Float item, boolean empty) {
+        colRating.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(Float item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null) { setText("—"); setGraphic(null); return; }
-                Label l = new Label(String.format("%.1f ⭐", item));
-                l.setStyle("-fx-text-fill: #f59e0b; -fx-font-weight: bold;");
-                setGraphic(l); setText(null);
+                if (empty || item == null) {
+                    setText("--");
+                    setGraphic(null);
+                    return;
+                }
+                Label label = new Label(String.format("%.1f / 5", item));
+                label.setStyle("-fx-text-fill: #f59e0b; -fx-font-weight: bold;");
+                setGraphic(label);
+                setText(null);
             }
         });
 
-        colActions.setCellFactory(col -> new TableCell<>() {
-            private final Button editBtn = new Button("✏️");
-            private final Button delBtn  = new Button("🗑️");
-            private final HBox   box     = new HBox(8, editBtn, delBtn);
+        colActions.setCellFactory(column -> new TableCell<>() {
+            private final Button editBtn = new Button("Modifier");
+            private final Button delBtn = new Button("Supprimer");
+            private final HBox box = new HBox(8, editBtn, delBtn);
+
             {
                 editBtn.getStyleClass().add("btn-edit");
                 delBtn.getStyleClass().add("btn-del");
                 box.setAlignment(Pos.CENTER_LEFT);
-                editBtn.setOnAction(e -> loadForEdit(getTableView().getItems().get(getIndex())));
-                delBtn.setOnAction(e  -> confirmDelete(getTableView().getItems().get(getIndex())));
+                editBtn.setOnAction(event -> loadForEdit(getTableView().getItems().get(getIndex())));
+                delBtn.setOnAction(event -> confirmDelete(getTableView().getItems().get(getIndex())));
             }
-            @Override protected void updateItem(Void item, boolean empty) {
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
                 setGraphic(empty ? null : box);
             }
         });
     }
 
-    /* ══════════════════════════════════════════════
-       PHOTO
-       ══════════════════════════════════════════════ */
-
-    @FXML private void onChoosePhoto() {
+    @FXML
+    private void onChoosePhoto() {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Choisir une photo");
         chooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Images", "*.jpg", "*.jpeg", "*.png", "*.webp"));
+                new FileChooser.ExtensionFilter("Images", "*.jpg", "*.jpeg", "*.png", "*.webp")
+        );
         Stage stage = (Stage) firstNameField.getScene().getWindow();
         File file = chooser.showOpenDialog(stage);
         if (file != null) {
             selectedPhotoPath = file.toURI().toString();
             photoField.setText(file.getAbsolutePath());
             photoPreview.setImage(new Image(selectedPhotoPath, 80, 80, true, true));
-            photoLabel.setText("✅ " + file.getName());
+            photoLabel.setText("Photo selectionnee: " + file.getName());
         }
     }
 
-    /* ══════════════════════════════════════════════
-       DELETE
-       ══════════════════════════════════════════════ */
-
-    private void confirmDelete(Guide g) {
+    private void confirmDelete(Guide guide) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Supprimer ?");
-        alert.setHeaderText("Supprimer « " + g.getFirstName() + " " + g.getLastName() + " » ?");
-        alert.setContentText("Cette action est irréversible.");
-        ButtonType cancel  = new ButtonType("Annuler",   ButtonBar.ButtonData.CANCEL_CLOSE);
+        alert.setHeaderText("Supprimer \"" + guide.getFirstName() + " " + guide.getLastName() + "\" ?");
+        alert.setContentText("Cette action est irreversible.");
+        ButtonType cancel = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
         ButtonType confirm = new ButtonType("Supprimer", ButtonBar.ButtonData.OK_DONE);
         alert.getButtonTypes().setAll(cancel, confirm);
-        alert.showAndWait().filter(r -> r == confirm).ifPresent(r -> {
+        alert.showAndWait().filter(result -> result == confirm).ifPresent(result -> {
             try {
-                service.supprimer(g.getId());
-                if (guideEnEdition != null && guideEnEdition.getId() == g.getId()) onCloseForm();
+                service.supprimer(guide.getId());
+                if (guideEnEdition != null && guideEnEdition.getId() == guide.getId()) {
+                    onCloseForm();
+                }
                 refreshAll();
-            } catch (SQLException e) { showAlert("Erreur", e.getMessage()); }
+            } catch (SQLException exception) {
+                showAlert("Erreur", exception.getMessage());
+            }
         });
     }
 
-    /* ══════════════════════════════════════════════
-       VALIDATION
-       ══════════════════════════════════════════════ */
-
-    @FXML private void validateFirstName() {
+    @FXML
+    private void validateFirstName() {
         setFieldError(firstNameField, errFirstName, firstNameField.getText().trim().length() < 2);
     }
-    @FXML private void validateLastName() {
+
+    @FXML
+    private void validateLastName() {
         setFieldError(lastNameField, errLastName, lastNameField.getText().trim().length() < 2);
     }
-    @FXML private void validateEmail() {
+
+    @FXML
+    private void validateEmail() {
         setFieldError(emailField, errEmail,
                 !emailField.getText().trim().matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$"));
     }
-    @FXML private void validatePhone() {
+
+    @FXML
+    private void validatePhone() {
         setFieldError(phoneField, errPhone, phoneField.getText().trim().length() < 10);
     }
-    @FXML private void validateRating() {
-        String txt = ratingField.getText().trim();
-        if (txt.isEmpty()) { setFieldError(ratingField, errRating, false); return; }
+
+    @FXML
+    private void validateRating() {
+        String text = ratingField.getText().trim();
+        if (text.isEmpty()) {
+            setFieldError(ratingField, errRating, false);
+            return;
+        }
         try {
-            float v = Float.parseFloat(txt);
-            setFieldError(ratingField, errRating, v < 0 || v > 5);
-        } catch (NumberFormatException e) { setFieldError(ratingField, errRating, true); }
+            float value = Float.parseFloat(text);
+            setFieldError(ratingField, errRating, value < 0 || value > 5);
+        } catch (NumberFormatException exception) {
+            setFieldError(ratingField, errRating, true);
+        }
     }
-    @FXML private void updateCounter() {
-        charCount.setText(bioField.getText().length() + " / 5000 caractères");
+
+    @FXML
+    private void updateCounter() {
+        charCount.setText(bioField.getText().length() + " / 5000 caracteres");
+    }
+
+    @FXML
+    private void onGenerateBio() {
+        validateFirstName();
+        validateLastName();
+        if (firstNameField.getText().trim().length() < 2 || lastNameField.getText().trim().length() < 2) {
+            setAiFeedback(false, "Renseignez d'abord le prenom et le nom du guide.", true);
+            return;
+        }
+
+        setAiFeedback(true, "Generation de la biographie en cours...", false);
+
+        Task<String> task = new Task<>() {
+            @Override
+            protected String call() throws Exception {
+                return AiDescriptionService.generateGuideBio(
+                        firstNameField.getText().trim(),
+                        lastNameField.getText().trim()
+                );
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            bioField.setText(task.getValue());
+            bioField.positionCaret(bioField.getText().length());
+            updateCounter();
+            setAiFeedback(false,
+                    AiDescriptionService.isAiConfigured()
+                            ? "Biographie generee avec succes."
+                            : "Biographie proposee en mode local.",
+                    false);
+        });
+        task.setOnFailed(event -> setAiFeedback(false, "Generation indisponible pour le moment.", true));
+
+        Thread thread = new Thread(task, "guide-ai-bio");
+        thread.setDaemon(true);
+        thread.start();
     }
 
     private boolean validateAll() {
-        boolean ok = true;
+        boolean valid = true;
+
         if (firstNameField.getText().trim().length() < 2) {
-            setFieldError(firstNameField, errFirstName, true); ok = false;
-        } else setFieldError(firstNameField, errFirstName, false);
+            setFieldError(firstNameField, errFirstName, true);
+            valid = false;
+        } else {
+            setFieldError(firstNameField, errFirstName, false);
+        }
+
         if (lastNameField.getText().trim().length() < 2) {
-            setFieldError(lastNameField, errLastName, true); ok = false;
-        } else setFieldError(lastNameField, errLastName, false);
+            setFieldError(lastNameField, errLastName, true);
+            valid = false;
+        } else {
+            setFieldError(lastNameField, errLastName, false);
+        }
+
         if (!emailField.getText().trim().matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$")) {
-            setFieldError(emailField, errEmail, true); ok = false;
-        } else setFieldError(emailField, errEmail, false);
+            setFieldError(emailField, errEmail, true);
+            valid = false;
+        } else {
+            setFieldError(emailField, errEmail, false);
+        }
+
         if (phoneField.getText().trim().length() < 10) {
-            setFieldError(phoneField, errPhone, true); ok = false;
-        } else setFieldError(phoneField, errPhone, false);
-        return ok;
+            setFieldError(phoneField, errPhone, true);
+            valid = false;
+        } else {
+            setFieldError(phoneField, errPhone, false);
+        }
+
+        String ratingText = ratingField.getText().trim();
+        if (!ratingText.isEmpty()) {
+            try {
+                float value = Float.parseFloat(ratingText);
+                if (value < 0 || value > 5) {
+                    setFieldError(ratingField, errRating, true);
+                    valid = false;
+                } else {
+                    setFieldError(ratingField, errRating, false);
+                }
+            } catch (NumberFormatException exception) {
+                setFieldError(ratingField, errRating, true);
+                valid = false;
+            }
+        } else {
+            setFieldError(ratingField, errRating, false);
+        }
+
+        return valid;
     }
 
-    /* ══════════════════════════════════════════════
-       NAVIGATION + HELPERS
-       ══════════════════════════════════════════════ */
+    @FXML
+    private void onSearch() {
+        currentPage = 1;
+        renderTable();
+    }
 
-    @FXML private void onSearch()        { currentPage = 1; renderTable(); }
-    @FXML private void onNavDashboard()  { onCloseForm(); SceneManager.navigateTo(Routes.ADMIN_DASHBOARD); }
-    @FXML private void onNavActivities() { onCloseForm(); SceneManager.navigateTo(Routes.ADMIN_ACTIVITIES); }
+    @FXML
+    private void onNavDashboard() {
+        onCloseForm();
+        SceneManager.navigateTo(Routes.ADMIN_DASHBOARD);
+    }
+
+    @FXML
+    private void onNavActivities() {
+        onCloseForm();
+        SceneManager.navigateTo(Routes.ADMIN_ACTIVITIES);
+    }
 
     private void setFieldError(TextField field, Label errLabel, boolean hasError) {
         if (hasError) {
-            if (!field.getStyleClass().contains("form-input-error"))
+            if (!field.getStyleClass().contains("form-input-error")) {
                 field.getStyleClass().add("form-input-error");
-            errLabel.setVisible(true); errLabel.setManaged(true);
+            }
+            errLabel.setVisible(true);
+            errLabel.setManaged(true);
         } else {
             field.getStyleClass().remove("form-input-error");
-            errLabel.setVisible(false); errLabel.setManaged(false);
+            errLabel.setVisible(false);
+            errLabel.setManaged(false);
         }
     }
 
     private void resetAllErrors() {
         setFieldError(firstNameField, errFirstName, false);
-        setFieldError(lastNameField,  errLastName,  false);
-        setFieldError(emailField,     errEmail,     false);
-        setFieldError(phoneField,     errPhone,     false);
-        if (errRating != null) setFieldError(ratingField, errRating, false);
+        setFieldError(lastNameField, errLastName, false);
+        setFieldError(emailField, errEmail, false);
+        setFieldError(phoneField, errPhone, false);
+        setFieldError(ratingField, errRating, false);
     }
 
     private void showAlert(String title, String msg) {
-        Alert a = new Alert(Alert.AlertType.ERROR);
-        a.setTitle(title); a.setContentText(msg); a.showAndWait();
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setContentText(msg);
+        alert.showAndWait();
+    }
+
+    private void setAiFeedback(boolean loading, String message, boolean error) {
+        aiProgress.setVisible(loading);
+        generateBioBtn.setDisable(loading);
+        aiStatusLabel.setText(message == null ? "" : message);
+        aiStatusLabel.setVisible(message != null && !message.isBlank());
+        aiStatusLabel.getStyleClass().removeAll("ai-assist-status-error", "ai-assist-status-success");
+        if (aiStatusLabel.isVisible()) {
+            aiStatusLabel.getStyleClass().add(error ? "ai-assist-status-error" : "ai-assist-status-success");
+        }
     }
 }
