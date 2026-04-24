@@ -195,4 +195,16 @@ public class UserRepository {
         u.setFaceDescriptor(rs.getString("face_descriptor"));
         return u;
     }
+    // Add this method to your existing UserRepository.java
+    public void saveFaceDescriptor(int userId, String descriptorJson) {
+        String sql = "UPDATE user SET face_descriptor = ? WHERE id = ?";
+        try (Connection conn = Base.getInstance().getConnection();
+             PreparedStatement s = conn.prepareStatement(sql)) {
+            s.setString(1, descriptorJson);
+            s.setInt(2, userId);
+            s.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error saving face descriptor", e);
+        }
+    }
 }

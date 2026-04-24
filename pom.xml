@@ -57,6 +57,20 @@
             <version>5.10.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.12.0</version>
+        </dependency>
+        <!-- OpenCV for webcam + image processing -->
+        <dependency>
+            <groupId>org.openpnp</groupId>
+            <artifactId>opencv</artifactId>
+            <version>4.7.0-0</version>
+        </dependency>
+
+        <!-- Jackson already in your project — used for descriptor JSON -->
+        <!-- com.fasterxml.jackson.core:jackson-databind already present -->
     </dependencies>
     <build>
         <plugins>

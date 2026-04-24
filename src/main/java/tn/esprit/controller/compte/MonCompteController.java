@@ -16,7 +16,12 @@ import tn.esprit.navigation.SceneManager;
 import tn.esprit.services.Auth_User.UserService;
 import tn.esprit.session.SessionManager;
 import tn.esprit.utils.PasswordUtil;
-
+import javafx.animation.AnimationTimer;
+import javafx.scene.image.WritableImage;
+import org.opencv.core.Mat;
+import tn.esprit.services.face.FaceEnrollmentService;   // new HF-based one
+import tn.esprit.services.face.WebcamService;
+import tn.esprit.utils.FaceDescriptorUtil;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -52,7 +57,16 @@ public class MonCompteController implements Initializable {
     @FXML private Label toastLabel;
 
     private final UserService service = new UserService();
+    @FXML private VBox      faceFormPanel;
+    @FXML private Label     faceSuccessLabel, faceErrorLabel, faceStatusLabel;
+    @FXML private javafx.scene.image.ImageView webcamView;
+    @FXML private VBox      webcamPlaceholder;
+    @FXML private Label     faceDetectedLabel;
+    @FXML private Button    btnStartCamera, btnCaptureFace, btnStopCamera;
 
+    private final WebcamService        webcamService     = new WebcamService();
+    private final FaceEnrollmentService enrollmentService = new FaceEnrollmentService();
+    private AnimationTimer cameraTimer;
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         if (!SessionManager.getInstance().isLoggedIn()) {
@@ -62,6 +76,10 @@ public class MonCompteController implements Initializable {
         loadProfile();
         showPanel(editFormPanel);
         hidePanel(passwordFormPanel);
+        if (SessionManager.getInstance().shouldOpenFacePanelOnLoad()) {
+            SessionManager.getInstance().clearOpenFacePanel();
+            showFaceForm(); // opens the face panel directly
+        }
     }
 
     /* ─── Load profile info ─── */
@@ -328,5 +346,131 @@ public class MonCompteController implements Initializable {
         for (Label l : new Label[]{errCurrentPassword, errNewPassword, errConfirmPassword, passSuccessLabel}) {
             l.setVisible(false); l.setManaged(false);
         }
+    }
+
+    // ── Panel toggle (same as before) ──
+    @FXML public void showFaceForm() {
+        showPanel(faceFormPanel);
+        hidePanel(editFormPanel);
+        hidePanel(passwordFormPanel);
+        clearFaceMessages();
+        updateFaceStatus();
+    }
+    @FXML public void cancelFace() {
+        stopCamera();
+        showPanel(editFormPanel);
+        hidePanel(faceFormPanel);
+    }
+
+    private void updateFaceStatus() {
+        String desc = SessionManager.getInstance().getCurrentUser().getFaceDescriptor();
+        boolean enrolled = FaceDescriptorUtil.isEnrolled(desc);
+        faceStatusLabel.setText(enrolled
+                ? "✅ Visage enregistré — vous pouvez le mettre à jour."
+                : "❌ Aucun visage enregistré.");
+        faceStatusLabel.setStyle(enrolled
+                ? "-fx-text-fill:#166534;" : "-fx-text-fill:#991b1b;");
+    }
+
+    // ── Camera lifecycle (same as before) ──
+    @FXML public void onStartCamera() {
+        if (!webcamService.start()) {
+            showFaceError("Impossible d'accéder à la caméra.");
+            return;
+        }
+        webcamView.setVisible(true);    webcamView.setManaged(true);
+        webcamPlaceholder.setVisible(false); webcamPlaceholder.setManaged(false);
+        btnStartCamera.setDisable(true);
+        btnCaptureFace.setDisable(false);
+        btnStopCamera.setDisable(false);
+
+        final long[] lastFrameTime = {0};
+        cameraTimer = new AnimationTimer() {
+            @Override public void handle(long now) {
+                if (now - lastFrameTime[0] < 66_000_000) return;
+                lastFrameTime[0] = now;
+                Mat frame = webcamService.grabFrame();
+                if (frame == null) return;
+                WritableImage wi = webcamService.matToWritableImage(frame);
+                webcamView.setImage(wi);
+            }
+        };
+        cameraTimer.start();
+    }
+
+    @FXML public void onStopCamera() { stopCamera(); }
+
+    private void stopCamera() {
+        if (cameraTimer != null) { cameraTimer.stop(); cameraTimer = null; }
+        webcamService.stop();
+        webcamView.setVisible(false);    webcamView.setManaged(false);
+        webcamPlaceholder.setVisible(true); webcamPlaceholder.setManaged(true);
+        btnStartCamera.setDisable(false);
+        btnCaptureFace.setDisable(true);
+        btnStopCamera.setDisable(true);
+        faceDetectedLabel.setVisible(false); faceDetectedLabel.setManaged(false);
+    }
+
+    // ── Capture + enroll — now calls HuggingFace API ──
+    @FXML public void onCaptureFace() {
+        clearFaceMessages();
+        Mat frame = webcamService.grabFrame();
+        if (frame == null) {
+            showFaceError("Impossible de capturer une image. Réessayez.");
+            return;
+        }
+
+        btnCaptureFace.setDisable(true);
+        btnCaptureFace.setText("⏳  Envoi à l'API...");
+
+        // Run HuggingFace API call off UI thread — it can take 2-5 seconds
+        Thread t = new Thread(() -> {
+            try {
+                boolean success = enrollmentService.enrollFace(frame);
+
+                javafx.application.Platform.runLater(() -> {
+                    if (success) {
+                        faceDetectedLabel.setVisible(true);
+                        faceDetectedLabel.setManaged(true);
+                        showFaceSuccess(
+                                "✅ Visage enregistré avec succès ! "
+                                        + "Vous pouvez maintenant utiliser la connexion faciale.");
+                        updateFaceStatus();
+                        stopCamera();
+                    } else {
+                        showFaceError(
+                                "❌ L'API n'a pas pu extraire un visage. "
+                                        + "Assurez-vous d'être bien face à la caméra et réessayez.");
+                    }
+                    btnCaptureFace.setText("📸  Capturer et enregistrer");
+                    btnCaptureFace.setDisable(false);
+                });
+
+            } catch (Exception e) {
+                javafx.application.Platform.runLater(() -> {
+                    showFaceError("Erreur API : " + e.getMessage());
+                    btnCaptureFace.setText("📸  Capturer et enregistrer");
+                    btnCaptureFace.setDisable(false);
+                });
+            }
+        });
+        t.setDaemon(true);
+        t.start();
+    }
+
+    // ── Helpers (same as before) ──
+    private void showFaceSuccess(String msg) {
+        faceSuccessLabel.setText(msg);
+        faceSuccessLabel.setVisible(true); faceSuccessLabel.setManaged(true);
+        faceErrorLabel.setVisible(false);  faceErrorLabel.setManaged(false);
+    }
+    private void showFaceError(String msg) {
+        faceErrorLabel.setText(msg);
+        faceErrorLabel.setVisible(true); faceErrorLabel.setManaged(true);
+        faceSuccessLabel.setVisible(false); faceSuccessLabel.setManaged(false);
+    }
+    private void clearFaceMessages() {
+        faceSuccessLabel.setVisible(false); faceSuccessLabel.setManaged(false);
+        faceErrorLabel.setVisible(false);   faceErrorLabel.setManaged(false);
     }
 }

@@ -4,6 +4,7 @@ import tn.esprit.models.User;
 import tn.esprit.models.enums.Role;
 import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;
+import tn.esprit.services.face.FaceGate;
 
 public class SessionManager {
     private static SessionManager instance;
@@ -15,7 +16,21 @@ public class SessionManager {
         if (instance == null) instance = new SessionManager();
         return instance;
     }
+    private boolean faceEnrollmentNudgeShown = false;
 
+    public boolean isFaceEnrollmentNudgeShown() {
+        return faceEnrollmentNudgeShown;
+    }
+
+    public void markFaceEnrollmentNudgeShown() {
+        this.faceEnrollmentNudgeShown = true;
+    }
+    // Add to SessionManager.java:
+    private boolean openFacePanelOnLoad = false;
+
+    public boolean shouldOpenFacePanelOnLoad() { return openFacePanelOnLoad; }
+    public void requestOpenFacePanel()          { this.openFacePanelOnLoad = true; }
+    public void clearOpenFacePanel()            { this.openFacePanelOnLoad = false; }
     public void setCurrentUser(User user) { this.currentUser = user; }
     public User getCurrentUser()          { return currentUser; }
     public boolean isLoggedIn()           { return currentUser != null; }
@@ -25,7 +40,24 @@ public class SessionManager {
 //     After login, redirect to the right office based on role
     public void redirectAfterLogin() {
         if (isAdmin()) {
-            SceneManager.navigateTo(Routes.ADMIN_DASHBOARD);
+            FaceGate.GateResult result = FaceGate.check();
+            switch (result) {
+                case NOT_ENROLLED:
+                    // No face registered yet → allow access + nudge shown by shell
+                    SceneManager.navigateTo(Routes.ADMIN_DASHBOARD);
+                    break;
+
+                case PASS:
+                    // Enrolled + verified → allow
+                    SceneManager.navigateTo(Routes.ADMIN_DASHBOARD);
+                    break;
+
+                case FAIL:
+                    // Enrolled but face didn't match → block, stay on current page
+                    // Alert already shown inside FaceGate.showDialog() via statusLabel
+                    // Do NOT call loadBackPage — just silently return
+                    break;
+            }
         } else {
             SceneManager.navigateTo(Routes.HOME);
         }
@@ -34,6 +66,7 @@ public class SessionManager {
     public void logout() {
         this.currentUser = null;
         SceneManager.navigateTo(Routes.LOGIN);
+        this.faceEnrollmentNudgeShown = false;
     }
 
     private User pendingUser;       // for passing user between screens

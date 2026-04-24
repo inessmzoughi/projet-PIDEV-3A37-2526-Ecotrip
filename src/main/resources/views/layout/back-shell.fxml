@@ -2,6 +2,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 
+<?import javafx.geometry.Insets?>
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="tn.esprit.controller.layout.BackOfficeShellController"
@@ -11,7 +12,44 @@
     <left>
         <fx:include fx:id="sidebar" source="/views/components/back-sidebar.fxml"/>
     </left>
+    <!-- Add this just before <center> in back-shell.fxml -->
 
+    <!-- ── Face Enrollment Nudge Banner ── -->
+    <VBox fx:id="faceNudgeBanner"
+          managed="false" visible="false"
+          styleClass="face-nudge-banner">
+
+        <HBox alignment="CENTER_LEFT" spacing="16">
+            <padding><Insets top="14" bottom="14" left="24" right="20"/></padding>
+
+            <!-- Icon -->
+            <Label text="📷" style="-fx-font-size:20px;"/>
+
+            <!-- Message -->
+            <VBox spacing="2" HBox.hgrow="ALWAYS">
+                <Label text="Activez la reconnaissance faciale"
+                       style="-fx-font-size:14px;-fx-font-weight:bold;-fx-text-fill:#92400e;"/>
+                <Label text="Votre compte n'a pas encore d'empreinte faciale enregistrée. Activez-la pour sécuriser votre accès."
+                       style="-fx-font-size:12px;-fx-text-fill:#b45309;" wrapText="true"/>
+            </VBox>
+
+            <!-- CTA button -->
+            <Button text="📷  Enregistrer mon visage"
+                    onAction="#onGoToFaceEnrollment"
+                    style="-fx-background-color:#92400e;-fx-text-fill:white;
+                       -fx-font-weight:bold;-fx-font-size:12px;
+                       -fx-background-radius:8;-fx-padding:8 16;
+                       -fx-cursor:hand;-fx-border-width:0;"/>
+
+            <!-- Dismiss -->
+            <Button text="✕"
+                    onAction="#onDismissNudge"
+                    style="-fx-background-color:rgba(0,0,0,0.1);-fx-text-fill:#92400e;
+                       -fx-font-size:13px;-fx-background-radius:20;
+                       -fx-min-width:28;-fx-min-height:28;
+                       -fx-cursor:hand;-fx-border-width:0;"/>
+        </HBox>
+    </VBox>
     <!-- CENTER: contenu dynamique -->
     <center>
         <BorderPane styleClass="back-main">

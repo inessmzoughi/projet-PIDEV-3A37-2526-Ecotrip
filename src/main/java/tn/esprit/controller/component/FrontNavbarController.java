@@ -24,7 +24,8 @@ public class FrontNavbarController {
                 activitesBtn,   Routes.ACTIVITES,
                 transportBtn,   Routes.TRANSPORT,
                 boutiqueBtn,    Routes.FRONT_PRODUCTS,
-                contactBtn,     Routes.CONTACT
+                contactBtn,     Routes.CONTACT,
+                monCompteBtn,   Routes.FRONT_MON_COMPTE
         );
 
         // Show/hide auth buttons based on session

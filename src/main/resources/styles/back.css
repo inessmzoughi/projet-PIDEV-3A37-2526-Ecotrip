@@ -661,3 +661,33 @@
     -fx-font-size: 11px;
     -fx-font-weight: bold;
 }
+/* ── Webcam preview container ─────────────────────── */
+.webcam-preview-wrap {
+    -fx-background-color: #0f172a;
+    -fx-background-radius: 14;
+    -fx-min-width: 380; -fx-min-height: 240;
+    -fx-max-width: 380; -fx-max-height: 240;
+}
+
+/* ── Amber header for face panel ─────────────────── */
+.form-card-header-amber {
+    -fx-background-color: #78350f;
+    -fx-background-radius: 16 16 0 0;
+    -fx-padding: 20 20 20 20;
+}
+.form-header-icon-wrap-amber {
+    -fx-background-color: rgba(255,255,255,0.15);
+    -fx-background-radius: 10;
+    -fx-min-width: 36; -fx-min-height: 36;
+    -fx-max-width: 36; -fx-max-height: 36;
+    -fx-alignment: CENTER;
+}
+/* ── Face enrollment nudge banner ────────────────── */
+.face-nudge-banner {
+    -fx-background-color: #fef3c7;
+    -fx-border-color: #f59e0b;
+    -fx-border-width: 0 0 2 0;
+}
+.face-nudge-banner:hover {
+    -fx-background-color: #fde68a;
+}
