@@ -1,8 +1,8 @@
-package tn.esprit.services.face;
+package tn.esprit.services.Auth_User.FaceRecognition;
 
 import org.opencv.core.Mat;
-import tn.esprit.models.User;
-import tn.esprit.repository.UserRepository;
+import tn.esprit.models.Auth_User.User;
+import tn.esprit.repository.Auth_User.UserRepository;
 import tn.esprit.session.SessionManager;
 import tn.esprit.utils.FaceDescriptorUtil;
 

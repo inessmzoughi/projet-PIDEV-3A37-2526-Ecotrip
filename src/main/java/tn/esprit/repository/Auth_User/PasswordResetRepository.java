@@ -1,8 +1,8 @@
-package tn.esprit.repository;
+package tn.esprit.repository.Auth_User;
 
 import tn.esprit.config.EmailConfig;
 import tn.esprit.database.Base;
-import tn.esprit.models.PasswordResetToken;
+import tn.esprit.models.Auth_User.PasswordResetToken;
 
 import java.sql.*;
 import java.time.LocalDateTime;

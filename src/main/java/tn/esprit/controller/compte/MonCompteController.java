@@ -10,7 +10,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import tn.esprit.models.User;
+import tn.esprit.models.Auth_User.User;
 import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;
 import tn.esprit.services.Auth_User.UserService;
@@ -19,8 +19,8 @@ import tn.esprit.utils.PasswordUtil;
 import javafx.animation.AnimationTimer;
 import javafx.scene.image.WritableImage;
 import org.opencv.core.Mat;
-import tn.esprit.services.face.FaceEnrollmentService;   // new HF-based one
-import tn.esprit.services.face.WebcamService;
+import tn.esprit.services.Auth_User.FaceRecognition.FaceEnrollmentService;   // new HF-based one
+import tn.esprit.services.Auth_User.FaceRecognition.WebcamService;
 import tn.esprit.utils.FaceDescriptorUtil;
 import java.io.File;
 import java.net.URL;

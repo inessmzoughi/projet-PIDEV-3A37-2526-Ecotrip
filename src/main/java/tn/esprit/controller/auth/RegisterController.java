@@ -6,15 +6,15 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import tn.esprit.exception.EmailAlreadyExistsException;
-import tn.esprit.models.User;
+import tn.esprit.models.Auth_User.User;
 import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;
 import tn.esprit.services.Auth_User.AuthService;
 import tn.esprit.session.SessionManager;
 import javafx.application.Platform;
-import tn.esprit.models.GoogleUserInfo;
-import tn.esprit.services.GoogleAuthService;
-import tn.esprit.services.GoogleLoginService;
+import tn.esprit.models.Auth_User.GoogleUserInfo;
+import tn.esprit.services.Auth_User.Google.GoogleAuthService;
+import tn.esprit.services.Auth_User.Google.GoogleLoginService;
 
 import java.util.regex.Pattern;
 

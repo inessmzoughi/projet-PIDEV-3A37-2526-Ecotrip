@@ -1,10 +1,10 @@
-package tn.esprit.services;
+package tn.esprit.services.Auth_User.Google;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpServer;
 import tn.esprit.config.GoogleAuthConfig;
-import tn.esprit.models.GoogleUserInfo;
+import tn.esprit.models.Auth_User.GoogleUserInfo;
 
 import java.awt.Desktop;
 import java.io.OutputStream;

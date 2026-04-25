@@ -1,10 +1,10 @@
 package tn.esprit.session;
 
-import tn.esprit.models.User;
+import tn.esprit.models.Auth_User.User;
 import tn.esprit.models.enums.Role;
 import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;
-import tn.esprit.services.face.FaceGate;
+import tn.esprit.services.Auth_User.FaceRecognition.FaceGate;
 
 public class SessionManager {
     private static SessionManager instance;

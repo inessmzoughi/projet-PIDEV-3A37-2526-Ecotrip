@@ -7,7 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;
-import tn.esprit.services.PasswordResetService;
+import tn.esprit.services.Auth_User.ForgetPassword.PasswordResetService;
 
 import java.net.URL;
 import java.util.ResourceBundle;

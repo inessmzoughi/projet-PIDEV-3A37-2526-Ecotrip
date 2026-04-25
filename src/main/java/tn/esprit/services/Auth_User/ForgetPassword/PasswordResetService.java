@@ -1,10 +1,10 @@
-package tn.esprit.services;
+package tn.esprit.services.Auth_User.ForgetPassword;
 
 import tn.esprit.config.EmailConfig;
-import tn.esprit.models.PasswordResetToken;
-import tn.esprit.models.User;
-import tn.esprit.repository.PasswordResetRepository;
-import tn.esprit.repository.UserRepository;
+import tn.esprit.models.Auth_User.PasswordResetToken;
+import tn.esprit.models.Auth_User.User;
+import tn.esprit.repository.Auth_User.PasswordResetRepository;
+import tn.esprit.repository.Auth_User.UserRepository;
 import tn.esprit.utils.PasswordUtil;
 
 import java.util.Optional;
@@ -13,7 +13,7 @@ public class PasswordResetService {
 
     private final UserRepository          userRepo  = new UserRepository();
     private final PasswordResetRepository tokenRepo = new PasswordResetRepository();
-    private final EmailService            email     = new EmailService();
+    private final EmailService email     = new EmailService();
 
     /**
      * Step 1 — Request reset.

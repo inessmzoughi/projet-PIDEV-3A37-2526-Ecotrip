@@ -1,8 +1,8 @@
 package tn.esprit.services.Auth_User;
 
-import tn.esprit.models.User;
+import tn.esprit.models.Auth_User.User;
 import tn.esprit.models.enums.Role;
-import tn.esprit.repository.UserRepository;
+import tn.esprit.repository.Auth_User.UserRepository;
 import tn.esprit.utils.PasswordUtil;
 
 import java.util.List;

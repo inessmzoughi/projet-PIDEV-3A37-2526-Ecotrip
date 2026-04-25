@@ -1,8 +1,9 @@
 package tn.esprit.models;
 
+import tn.esprit.models.Auth_User.User;
 import tn.esprit.models.enums.ReservationStatus;
 import tn.esprit.models.enums.ReservationType;
-import tn.esprit.repository.UserRepository;
+import tn.esprit.repository.Auth_User.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDate;

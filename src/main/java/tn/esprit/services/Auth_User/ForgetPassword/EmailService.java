@@ -1,4 +1,4 @@
-package tn.esprit.services;
+package tn.esprit.services.Auth_User.ForgetPassword;
 
 import tn.esprit.config.EmailConfig;
 

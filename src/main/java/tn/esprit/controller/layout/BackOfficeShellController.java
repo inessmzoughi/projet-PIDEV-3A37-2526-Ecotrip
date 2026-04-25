@@ -7,7 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import tn.esprit.controller.component.BackSidebarController;
-import tn.esprit.services.face.FaceGate;
+import tn.esprit.services.Auth_User.FaceRecognition.FaceGate;
 import tn.esprit.session.SessionManager;
 import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;
