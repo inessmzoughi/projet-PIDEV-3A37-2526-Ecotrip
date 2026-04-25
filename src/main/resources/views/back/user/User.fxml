@@ -26,63 +26,137 @@
                         <Label text="Gestion des Utilisateurs" styleClass="page-title"/>
                     </VBox>
 
-                    <!-- Stat Cards -->
-                    <HBox spacing="20">
-                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
-                            <HBox spacing="12" alignment="CENTER_LEFT">
+                    <!-- ══ STAT CARDS ROW 1 ══ -->
+                    <HBox spacing="16">
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="6">
+                            <HBox spacing="10" alignment="CENTER_LEFT">
                                 <Label text="👥" styleClass="stat-icon"/>
-                                <VBox spacing="2">
+                                <VBox spacing="2" HBox.hgrow="ALWAYS">
                                     <Label text="Total Utilisateurs" styleClass="stat-label"/>
                                     <Label fx:id="statTotal" text="0" styleClass="stat-value"/>
                                 </VBox>
                             </HBox>
+                            <Label fx:id="statTotalSub" text="—" styleClass="stat-sub"/>
                         </VBox>
-                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
-                            <HBox spacing="12" alignment="CENTER_LEFT">
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="6">
+                            <HBox spacing="10" alignment="CENTER_LEFT">
                                 <Label text="🛡" styleClass="stat-icon"/>
-                                <VBox spacing="2">
+                                <VBox spacing="2" HBox.hgrow="ALWAYS">
                                     <Label text="Administrateurs" styleClass="stat-label"/>
                                     <Label fx:id="statAdmins" text="0" styleClass="stat-value"/>
                                 </VBox>
                             </HBox>
+                            <Label fx:id="statAdminsPct" text="—" styleClass="stat-sub"/>
                         </VBox>
-                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
-                            <HBox spacing="12" alignment="CENTER_LEFT">
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="6">
+                            <HBox spacing="10" alignment="CENTER_LEFT">
                                 <Label text="👤" styleClass="stat-icon"/>
-                                <VBox spacing="2">
+                                <VBox spacing="2" HBox.hgrow="ALWAYS">
                                     <Label text="Utilisateurs" styleClass="stat-label"/>
                                     <Label fx:id="statUsers" text="0" styleClass="stat-value"/>
                                 </VBox>
                             </HBox>
+                            <Label fx:id="statUsersPct" text="—" styleClass="stat-sub"/>
                         </VBox>
-                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
-                            <HBox spacing="12" alignment="CENTER_LEFT">
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="6">
+                            <HBox spacing="10" alignment="CENTER_LEFT">
                                 <Label text="✅" styleClass="stat-icon"/>
-                                <VBox spacing="2">
+                                <VBox spacing="2" HBox.hgrow="ALWAYS">
                                     <Label text="Emails Vérifiés" styleClass="stat-label"/>
                                     <Label fx:id="statVerified" text="0" styleClass="stat-value"/>
                                 </VBox>
                             </HBox>
+                            <Label fx:id="statVerifiedPct" text="—" styleClass="stat-sub"/>
                         </VBox>
                     </HBox>
 
-                    <!-- CHARTS ROW -->
-                    <GridPane hgap="20" vgap="0">
+                    <!-- ══ STAT CARDS ROW 2 ══ -->
+                    <HBox spacing="16">
+                        <VBox styleClass="stat-card-amber" HBox.hgrow="ALWAYS" spacing="6">
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label text="📷" styleClass="stat-icon"/>
+                                <VBox spacing="2" HBox.hgrow="ALWAYS">
+                                    <Label text="Visage Enregistré" styleClass="stat-label"/>
+                                    <Label fx:id="statFaceEnrolled" text="0" styleClass="stat-value"/>
+                                </VBox>
+                            </HBox>
+                            <Label fx:id="statFaceEnrolledPct" text="—" styleClass="stat-sub"/>
+                        </VBox>
+                        <VBox styleClass="stat-card-blue" HBox.hgrow="ALWAYS" spacing="6">
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label text="🖼" styleClass="stat-icon"/>
+                                <VBox spacing="2" HBox.hgrow="ALWAYS">
+                                    <Label text="Avec Photo" styleClass="stat-label"/>
+                                    <Label fx:id="statWithPhoto" text="0" styleClass="stat-value"/>
+                                </VBox>
+                            </HBox>
+                            <Label fx:id="statWithPhotoPct" text="—" styleClass="stat-sub"/>
+                        </VBox>
+                        <VBox styleClass="stat-card-red" HBox.hgrow="ALWAYS" spacing="6">
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label text="📞" styleClass="stat-icon"/>
+                                <VBox spacing="2" HBox.hgrow="ALWAYS">
+                                    <Label text="Sans Téléphone" styleClass="stat-label"/>
+                                    <Label fx:id="statNoPhone" text="0" styleClass="stat-value"/>
+                                </VBox>
+                            </HBox>
+                            <Label fx:id="statNoPhonePct" text="—" styleClass="stat-sub"/>
+                        </VBox>
+                        <VBox styleClass="stat-card-purple" HBox.hgrow="ALWAYS" spacing="6">
+                            <HBox spacing="10" alignment="CENTER_LEFT">
+                                <Label text="📍" styleClass="stat-icon"/>
+                                <VBox spacing="2" HBox.hgrow="ALWAYS">
+                                    <Label text="Sans Adresse" styleClass="stat-label"/>
+                                    <Label fx:id="statNoAddress" text="0" styleClass="stat-value"/>
+                                </VBox>
+                            </HBox>
+                            <Label fx:id="statNoAddressPct" text="—" styleClass="stat-sub"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- ══ CHARTS ROW ══ -->
+                    <GridPane hgap="16" vgap="0">
                         <columnConstraints>
-                            <ColumnConstraints percentWidth="50"/>
-                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="33"/>
+                            <ColumnConstraints percentWidth="33"/>
+                            <ColumnConstraints percentWidth="34"/>
                         </columnConstraints>
-                        <VBox styleClass="chart-card" GridPane.columnIndex="0" spacing="10">
-                            <Label text="Répartition par rôle" styleClass="chart-title"/>
-                            <PieChart fx:id="chartRoles" prefHeight="200"
+
+                        <!-- Roles pie -->
+                        <VBox styleClass="chart-card" GridPane.columnIndex="0" spacing="8">
+                            <Label text="👥  Répartition par rôle" styleClass="chart-title"/>
+                            <PieChart fx:id="chartRoles" prefHeight="180"
                                       animated="false" labelsVisible="true"/>
                         </VBox>
-                        <VBox styleClass="chart-card" GridPane.columnIndex="1" spacing="10">
-                            <Label text="Statut de vérification" styleClass="chart-title"/>
-                            <PieChart fx:id="chartVerified" prefHeight="200"
+
+                        <!-- Verification pie -->
+                        <VBox styleClass="chart-card" GridPane.columnIndex="1" spacing="8">
+                            <Label text="✅  Statut de vérification" styleClass="chart-title"/>
+                            <PieChart fx:id="chartVerified" prefHeight="180"
+                                      animated="false" labelsVisible="true"/>
+                        </VBox>
+
+                        <!-- Face enrollment pie -->
+                        <VBox styleClass="chart-card" GridPane.columnIndex="2" spacing="8">
+                            <Label text="📷  Reconnaissance faciale" styleClass="chart-title"/>
+                            <PieChart fx:id="chartFace" prefHeight="180"
                                       animated="false" labelsVisible="true"/>
                         </VBox>
                     </GridPane>
+
+                    <!-- ══ TOP CITIES BAR CHART (built programmatically) ══ -->
+                    <VBox styleClass="chart-card" spacing="12">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <Label text="📍  Utilisateurs par ville / région" styleClass="chart-title"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="citiesNote" text="" styleClass="stat-sub"/>
+                        </HBox>
+                        <VBox fx:id="citiesContainer" spacing="8"/>
+                        <Label fx:id="noCitiesLabel"
+                               text="Aucune adresse renseignée pour l'instant."
+                               style="-fx-font-size:13px;-fx-text-fill:#94a3b8;"
+                               managed="false" visible="false"/>
+                    </VBox>
 
                     <HBox spacing="24">
 

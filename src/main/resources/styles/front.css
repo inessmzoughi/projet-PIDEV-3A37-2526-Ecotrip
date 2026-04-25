@@ -2066,3 +2066,25 @@
     -fx-max-width: 36; -fx-max-height: 36;
     -fx-alignment: CENTER;
 }
+/* ══ VIEW TOGGLE ══════════════════════════════════════ */
+.view-toggle-group {
+    -fx-background-color: #f1f5f9;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-padding: 3;
+}
+.view-toggle-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #64748b;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-padding: 7 16;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+.view-toggle-active {
+    -fx-background-color: white;
+    -fx-text-fill: #0d3d18;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 2);
+}

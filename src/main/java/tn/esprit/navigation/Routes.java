@@ -4,6 +4,7 @@ public class Routes {
     // ── Public (no login required) ──────────────────────────
     public static final String LOGIN    = "login";
     public static final String REGISTER = "register";
+    public static final String FORGET_PASSWORD = "forgetPassword";
 
     // ── Front Office (USER role) ─────────────────────────────
     public static final String HOME           = "home";

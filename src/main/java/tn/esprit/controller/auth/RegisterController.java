@@ -1,6 +1,7 @@
 package tn.esprit.controller.auth;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -10,6 +11,10 @@ import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;
 import tn.esprit.services.Auth_User.AuthService;
 import tn.esprit.session.SessionManager;
+import javafx.application.Platform;
+import tn.esprit.models.GoogleUserInfo;
+import tn.esprit.services.GoogleAuthService;
+import tn.esprit.services.GoogleLoginService;
 
 import java.util.regex.Pattern;
 
@@ -20,6 +25,9 @@ public class RegisterController {
     @FXML private PasswordField passwordField;
     @FXML private PasswordField confirmPasswordField;
     @FXML private Label         errorLabel;
+    @FXML private Button btnGoogleRegister;
+    private final GoogleAuthService  googleAuthService  = new GoogleAuthService();
+    private final GoogleLoginService googleLoginService = new GoogleLoginService();
 
     private final AuthService authService = new AuthService();
 
@@ -75,6 +83,43 @@ public class RegisterController {
     @FXML
     private void handleLogin() {
         SceneManager.navigateTo(Routes.LOGIN);
+    }
+    @FXML
+    private void handleGoogleLogin() {
+        btnGoogleRegister.setDisable(true);
+
+        Thread t = new Thread(() -> {
+            try {
+                GoogleUserInfo googleInfo = googleAuthService.authenticate();
+
+                if (googleInfo == null || googleInfo.getEmail().isEmpty()) {
+                    Platform.runLater(() -> {
+                        showError("Impossible de récupérer les informations Google.");
+                        btnGoogleRegister.setDisable(false);
+                    });
+                    return;
+                }
+
+                User user = googleLoginService.findOrCreateUser(googleInfo);
+                Platform.runLater(() -> {
+                    SessionManager.getInstance().setCurrentUser(user);
+                    SessionManager.getInstance().redirectAfterLogin();
+                });
+
+            } catch (java.util.concurrent.TimeoutException e) {
+                Platform.runLater(() -> {
+                    showError("Délai dépassé. Veuillez réessayer.");
+                    btnGoogleRegister.setDisable(false);
+                });
+            } catch (Exception e) {
+                Platform.runLater(() -> {
+                    showError("Erreur Google : " + e.getMessage());
+                    btnGoogleRegister.setDisable(false);
+                });
+            }
+        });
+        t.setDaemon(true);
+        t.start();
     }
 
     private void showError(String message) {

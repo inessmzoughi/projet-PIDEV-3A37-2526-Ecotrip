@@ -94,7 +94,33 @@
                     maxWidth="Infinity">
                 <VBox.margin><Insets top="22"/></VBox.margin>
             </Button>
+            <!-- Add after the register button, before the back-to-login button -->
 
+            <HBox alignment="CENTER" spacing="10">
+                <VBox.margin><Insets top="16"/></VBox.margin>
+                <Region HBox.hgrow="ALWAYS"
+                        style="-fx-border-color:transparent transparent #e5e7eb transparent;
+                   -fx-border-width:0 0 1 0;-fx-pref-height:1;"/>
+                <Label text="  ou  " styleClass="auth-divider-label"/>
+                <Region HBox.hgrow="ALWAYS"
+                        style="-fx-border-color:transparent transparent #e5e7eb transparent;
+                   -fx-border-width:0 0 1 0;-fx-pref-height:1;"/>
+            </HBox>
+
+            <Button fx:id="btnGoogleRegister"
+                    onAction="#handleGoogleLogin"
+                    styleClass="btn-google"
+                    maxWidth="Infinity">
+                <VBox.margin><Insets top="12"/></VBox.margin>
+                <graphic>
+                    <HBox spacing="10" alignment="CENTER">
+                        <Label text="G" style="-fx-font-size:16px;-fx-font-weight:bold;
+                                   -fx-text-fill:#4285f4;"/>
+                        <Label text="S'inscrire avec Google"
+                               style="-fx-font-size:14px;-fx-font-weight:600;-fx-text-fill:#374151;"/>
+                    </HBox>
+                </graphic>
+            </Button>
             <!-- Back to login -->
             <Button text="Vous avez deja un compte ? Connectez-vous →"
                     onAction="#handleLogin"

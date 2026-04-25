@@ -239,7 +239,8 @@
     -fx-max-height: 48px;
     -fx-background-radius: 12;
     -fx-alignment: CENTER;
-    -fx-font-weight: bold; /* rend l'emoji plus visible */
+    -fx-font-weight: bold;
+    -fx-background-color: #1A5F2AFF/* rend l'emoji plus visible */
 }
 
 /* Background + couleur plus foncée */
@@ -690,4 +691,47 @@
 }
 .face-nudge-banner:hover {
     -fx-background-color: #fde68a;
+}
+/* ── Stat card color variants ───────────────────────── */
+.stat-card-amber {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: rgba(0,0,0,0.05);
+    -fx-border-width: 1;
+    -fx-padding: 20;
+    -fx-border-color: #f59e0b;
+}
+.stat-card-blue {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: rgba(0,0,0,0.05);
+    -fx-border-width: 1;
+    -fx-padding: 20;
+    -fx-border-color: #3b82f6;
+}
+.stat-card-red {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: rgba(0,0,0,0.05);
+    -fx-border-width: 1;
+    -fx-padding: 20;
+    -fx-border-color: #ef4444;
+}
+.stat-card-purple {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: rgba(0,0,0,0.05);
+    -fx-border-width: 1;
+    -fx-padding: 20;
+    -fx-border-color: #8b5cf6;
+}
+
+/* ── Stat sub-label ─────────────────────────────────── */
+.stat-sub {
+    -fx-font-size: 11px;
+    -fx-text-fill: #94a3b8;
 }

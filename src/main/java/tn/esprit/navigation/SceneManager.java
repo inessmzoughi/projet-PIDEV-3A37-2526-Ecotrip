@@ -34,6 +34,7 @@ public class SceneManager {
     static {
         publicRoutes.put(Routes.LOGIN,    "/views/auth/login.fxml");
         publicRoutes.put(Routes.REGISTER, "/views/auth/register.fxml");
+        publicRoutes.put(Routes.FORGET_PASSWORD, "/views/auth/forget-password.fxml");
 
         frontRoutes.put(Routes.HOME,              "/views/front/home.fxml");
         frontRoutes.put(Routes.ABOUT,             "/views/front/about.fxml");
