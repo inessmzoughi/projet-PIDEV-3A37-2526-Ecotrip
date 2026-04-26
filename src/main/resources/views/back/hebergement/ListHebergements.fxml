@@ -275,20 +275,44 @@
                                            wrapText="true"/>
                                 </VBox>
 
-                                <!-- Description -->
+
+
+                                <!-- Description avec son propre bouton -->
                                 <VBox spacing="4" styleClass="form-group">
                                     <Label text="📝  Description *" styleClass="form-label"/>
-                                    <TextArea fx:id="descriptionField"
-                                              promptText="Décrivez l'hébergement en détail…"
-                                              styleClass="form-textarea"
-                                              prefHeight="90"
-                                              wrapText="true"
-                                              onKeyReleased="#updateCounter"/>
-                                    <Label fx:id="charCount"
-                                           text="0 / 500 caractères"
-                                           styleClass="char-count"/>
+                                    <HBox spacing="8" alignment="CENTER_LEFT">
+                                        <TextArea fx:id="descriptionField"
+                                                  promptText="Décrivez l'hébergement en détail…"
+                                                  styleClass="form-textarea"
+                                                  prefHeight="90"
+                                                  wrapText="true"
+                                                  onKeyReleased="#updateCounter"
+                                                  HBox.hgrow="ALWAYS"/>
+                                        <Button text="✨"
+                                                onAction="#onSuggestDescription"
+                                                style="-fx-background-color:#7c3aed; -fx-text-fill:white;
+                       -fx-font-size:14px; -fx-background-radius:8;
+                       -fx-cursor:hand; -fx-padding:6 10 6 10;"
+                                                maxHeight="Infinity"/>
+                                    </HBox>
+                                    <Label fx:id="charCount" text="0 / 500 caractères" styleClass="char-count"/>
                                 </VBox>
 
+                                <!-- Prix avec son propre bouton -->
+                                <VBox spacing="4" styleClass="form-group">
+                                    <Label text="💰  Prix par nuit suggéré (DT)" styleClass="form-label"/>
+                                    <HBox spacing="8" alignment="CENTER_LEFT">
+                                        <TextField fx:id="prixField"
+                                                   promptText="Ex : 250"
+                                                   styleClass="form-input"
+                                                   HBox.hgrow="ALWAYS"/>
+                                        <Button text="✨"
+                                                onAction="#onSuggestPrix"
+                                                style="-fx-background-color:#7c3aed; -fx-text-fill:white;
+                       -fx-font-size:14px; -fx-background-radius:8;
+                       -fx-cursor:hand; -fx-padding:6 10 6 10;"/>
+                                    </HBox>
+                                </VBox>
                                 <!-- Équipements -->
                                 <VBox spacing="6" styleClass="form-group">
                                     <Label text="🔧  Équipements disponibles" styleClass="form-label"/>

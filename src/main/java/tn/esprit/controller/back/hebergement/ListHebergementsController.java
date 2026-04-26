@@ -9,10 +9,7 @@ import tn.esprit.models.hebergements.Equipement;
 import tn.esprit.models.hebergements.Hebergement;
 import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;
-import tn.esprit.services.hebergement.CategorieH_service;
-import tn.esprit.services.hebergement.Equipement_service;
-import tn.esprit.services.hebergement.HebergementEquipement_service;
-import tn.esprit.services.hebergement.Hebergement_service;
+import tn.esprit.services.hebergement.*;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -52,6 +49,7 @@ public class ListHebergementsController implements Initializable {
     @FXML private FlowPane         equipementsCheckboxPane;
     @FXML private Label            errPropietaire;
     @FXML private WebView          mapView;
+    @FXML private TextField prixField;
 
     /* ─── Table ─── */
     @FXML private TextField              searchField;
@@ -76,6 +74,7 @@ public class ListHebergementsController implements Initializable {
     private int currentPage = 1;
     private final Map<String, Integer> propietaireMap = new LinkedHashMap<>();
     private final Map<String, Integer> categorieMap   = new LinkedHashMap<>();
+    private final GeminiService geminiService = new GeminiService();
 
     /* ─── Pont Java ↔ JavaScript ─── */
     public class JavaConnector {
@@ -486,8 +485,108 @@ public class ListHebergementsController implements Initializable {
         formSubtitle.setText("Remplissez les informations ci-dessous.");
         submitBtn.setText("➕ Ajouter");
         equipementCheckboxes.forEach(cb -> cb.setSelected(false));
+        prixField.clear();   // ← ajouter dans onReset()
+    }
+    /* ─── Suggestion IA (Gemini) ─── */
+    @FXML
+    /* ─── Helper commun : vérifie les 4 champs requis ─── */
+    private boolean checkFieldsForIA() {
+        String nom        = nomField.getText().trim();
+        String ville      = villeField.getText().trim();
+        String etoilesStr = nbEtoilesField.getText().trim();
+        String categorie  = categorieCombo.getValue();
+
+        if (nom.isEmpty() || ville.isEmpty()
+                || !etoilesStr.matches("[1-5]") || categorie == null) {
+            showSuccessPopup(
+                    "Remplissez d'abord :\nNom · Ville · Étoiles · Catégorie", "⚠️");
+            return false;
+        }
+        return true;
     }
 
+    /* ─── Bouton Description : ✨ Suggérer ─── */
+    @FXML
+    private void onSuggestDescription() {
+        if (!checkFieldsForIA()) return;
+
+        String nom      = nomField.getText().trim();
+        String ville    = villeField.getText().trim();
+        int    etoiles  = Integer.parseInt(nbEtoilesField.getText().trim());
+        String categorie = categorieCombo.getValue();
+
+        descriptionField.setPromptText("⏳ Génération en cours…");
+        descriptionField.setDisable(true);
+
+        Thread t = new Thread(() -> {
+            try {
+                String desc = geminiService.suggestDescription(
+                        nom, ville, etoiles, categorie);
+                javafx.application.Platform.runLater(() -> {
+                    descriptionField.setText(desc);
+                    descriptionField.setDisable(false);
+                    descriptionField.setPromptText("Décrivez l'hébergement…");
+                    updateCounter();
+                });
+            } catch (Exception e) {
+                javafx.application.Platform.runLater(() -> {
+                    descriptionField.setDisable(false);
+                    descriptionField.setPromptText("Décrivez l'hébergement…");
+                    handleGeminiError(e);
+                });
+            }
+        });
+        t.setDaemon(true);
+        t.start();
+    }
+
+    /* ─── Bouton Prix : ✨ Suggérer ─── */
+    @FXML
+    private void onSuggestPrix() {
+        if (!checkFieldsForIA()) return;
+
+        String nom       = nomField.getText().trim();
+        String ville     = villeField.getText().trim();
+        int    etoiles   = Integer.parseInt(nbEtoilesField.getText().trim());
+        String categorie = categorieCombo.getValue();
+
+        prixField.setPromptText("⏳ Calcul…");
+        prixField.setDisable(true);
+
+        Thread t = new Thread(() -> {
+            try {
+                int prix = geminiService.suggestPrix(
+                        nom, ville, etoiles, categorie);
+                javafx.application.Platform.runLater(() -> {
+                    prixField.setText(String.valueOf(prix));
+                    prixField.setDisable(false);
+                    prixField.setPromptText("Ex : 250");
+                });
+            } catch (Exception e) {
+                javafx.application.Platform.runLater(() -> {
+                    prixField.setDisable(false);
+                    prixField.setPromptText("Ex : 250");
+                    handleGeminiError(e);
+                });
+            }
+        });
+        t.setDaemon(true);
+        t.start();
+    }
+
+    /* ─── Gestion erreurs Gemini lisibles ─── */
+    private void handleGeminiError(Exception e) {
+        String msg = e.getMessage() != null ? e.getMessage() : "Erreur inconnue";
+        if (msg.contains("RESOURCE_EXHAUSTED")) {
+            showSuccessPopup("Quota Gemini dépassé.\nAttendez 1 minute et réessayez.", "⚠️");
+        } else if (msg.contains("404")) {
+            showSuccessPopup("Modèle Gemini introuvable.", "⚠️");
+        } else if (msg.contains("API_KEY")) {
+            showSuccessPopup("Clé API Gemini invalide.", "⚠️");
+        } else {
+            showAlert("Erreur Gemini", msg);
+        }
+    }
     /* ─── Charger pour édition ─── */
     private void chargerPourEdition(Hebergement h) {
         hebergementEnEdition = h;
