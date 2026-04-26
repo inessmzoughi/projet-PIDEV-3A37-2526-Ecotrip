@@ -1,9 +1,11 @@
 package tn.esprit.controller.front;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.*;
@@ -37,11 +39,11 @@ public class ProductsController implements Initializable {
     private int currentPage = 1;
     private List<Product> filteredProducts = new ArrayList<>();
 
-    private static final String GREEN_DARK  = "#2d5a1b";
-    private static final String GREEN_MED   = "#4a7c3f";
-    private static final String WHITE       = "#ffffff";
-    private static final String GREY_TEXT   = "#666666";
-    private static final String BORDER      = "#e0e0e0";
+    private static final String GREEN_DARK = "#2d5a1b";
+    private static final String GREEN_MED  = "#4a7c3f";
+    private static final String WHITE      = "#ffffff";
+    private static final String GREY_TEXT  = "#666666";
+    private static final String BORDER     = "#e0e0e0";
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -112,7 +114,6 @@ public class ProductsController implements Initializable {
     }
 
     private VBox buildCard(Product p) {
-
         VBox card = new VBox();
         card.setPrefWidth(300);
         card.setMaxWidth(300);
@@ -149,10 +150,7 @@ public class ProductsController implements Initializable {
         header.setPrefHeight(80);
         header.setAlignment(Pos.CENTER_LEFT);
         header.setPadding(new Insets(0, 16, 0, 16));
-        header.setStyle(
-                "-fx-background-color: " + GREEN_DARK + ";" +
-                        "-fx-background-radius: 14 14 0 0;"
-        );
+        header.setStyle("-fx-background-color: " + GREEN_DARK + "; -fx-background-radius: 14 14 0 0;");
         Label prodIcon = new Label("🛍");
         prodIcon.setStyle("-fx-font-size: 36px;");
         header.getChildren().add(prodIcon);
@@ -162,11 +160,7 @@ public class ProductsController implements Initializable {
         body.setPadding(new Insets(16));
 
         Label nom = new Label(p.getNom());
-        nom.setStyle(
-                "-fx-font-size: 17px;" +
-                        "-fx-font-weight: bold;" +
-                        "-fx-text-fill: " + GREEN_DARK + ";"
-        );
+        nom.setStyle("-fx-font-size: 17px; -fx-font-weight: bold; -fx-text-fill: " + GREEN_DARK + ";");
         nom.setWrapText(true);
 
         Separator sep = new Separator();
@@ -176,11 +170,7 @@ public class ProductsController implements Initializable {
         Label pIcon = new Label("💰");
         pIcon.setStyle("-fx-font-size: 14px;");
         Label prix = new Label(String.format("%.2f TND", p.getPrix()));
-        prix.setStyle(
-                "-fx-font-size: 15px;" +
-                        "-fx-font-weight: bold;" +
-                        "-fx-text-fill: " + GREEN_MED + ";"
-        );
+        prix.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: " + GREEN_MED + ";");
         priceRow.getChildren().addAll(pIcon, prix);
 
         HBox stockRow = new HBox(8);
@@ -194,61 +184,102 @@ public class ProductsController implements Initializable {
         if (p.getStock() <= 10) {
             Label low = new Label("⚠ Stock faible");
             low.setStyle(
-                    "-fx-background-color: #fff3cd;" +
-                            "-fx-text-fill: #856404;" +
-                            "-fx-font-size: 11px;" +
-                            "-fx-padding: 2 8 2 8;" +
-                            "-fx-background-radius: 10;"
+                    "-fx-background-color: #fff3cd; -fx-text-fill: #856404;" +
+                            "-fx-font-size: 11px; -fx-padding: 2 8 2 8; -fx-background-radius: 10;"
             );
             stockRow.getChildren().add(low);
         }
 
-        // ✅ Bouton Ajouter au panier
-        Button btn = new Button("🛒  Ajouter au panier");
-        btn.setMaxWidth(Double.MAX_VALUE);
-        String btnStyle =
-                "-fx-background-color: " + GREEN_DARK + ";" +
-                        "-fx-text-fill: white;" +
-                        "-fx-font-size: 13px;" +
-                        "-fx-font-weight: bold;" +
-                        "-fx-padding: 10 0 10 0;" +
-                        "-fx-background-radius: 8;" +
-                        "-fx-cursor: hand;";
-        String btnHover =
-                "-fx-background-color: " + GREEN_MED + ";" +
-                        "-fx-text-fill: white;" +
-                        "-fx-font-size: 13px;" +
-                        "-fx-font-weight: bold;" +
-                        "-fx-padding: 10 0 10 0;" +
-                        "-fx-background-radius: 8;" +
-                        "-fx-cursor: hand;";
-        btn.setStyle(btnStyle);
-        btn.setOnMouseEntered(e -> btn.setStyle(btnHover));
-        btn.setOnMouseExited(e  -> btn.setStyle(btnStyle));
-        btn.setOnAction(e -> addToCart(p, btn, btnStyle));
+        // Bouton Ajouter au panier
+        Button btnPanier = new Button("🛒  Ajouter au panier");
+        btnPanier.setMaxWidth(Double.MAX_VALUE);
+        String panierStyle =
+                "-fx-background-color: " + GREEN_DARK + "; -fx-text-fill: white;" +
+                        "-fx-font-size: 13px; -fx-font-weight: bold;" +
+                        "-fx-padding: 10 0 10 0; -fx-background-radius: 8; -fx-cursor: hand;";
+        String panierHover =
+                "-fx-background-color: " + GREEN_MED + "; -fx-text-fill: white;" +
+                        "-fx-font-size: 13px; -fx-font-weight: bold;" +
+                        "-fx-padding: 10 0 10 0; -fx-background-radius: 8; -fx-cursor: hand;";
+        btnPanier.setStyle(panierStyle);
+        btnPanier.setOnMouseEntered(e -> btnPanier.setStyle(panierHover));
+        btnPanier.setOnMouseExited(e  -> btnPanier.setStyle(panierStyle));
+        btnPanier.setOnAction(e -> addToCart(p, btnPanier, panierStyle));
 
-        body.getChildren().addAll(nom, sep, priceRow, stockRow, btn);
+        // ✅ Bouton Détails
+        Button btnDetails = new Button("🔍  Détails");
+        btnDetails.setMaxWidth(Double.MAX_VALUE);
+        String detailsStyle =
+                "-fx-background-color: transparent; -fx-text-fill: " + GREEN_DARK + ";" +
+                        "-fx-font-size: 13px; -fx-font-weight: bold;" +
+                        "-fx-padding: 9 0 9 0; -fx-background-radius: 8;" +
+                        "-fx-border-color: " + GREEN_DARK + "; -fx-border-width: 1.5;" +
+                        "-fx-border-radius: 8; -fx-cursor: hand;";
+        String detailsHover =
+                "-fx-background-color: #eaf3de; -fx-text-fill: " + GREEN_DARK + ";" +
+                        "-fx-font-size: 13px; -fx-font-weight: bold;" +
+                        "-fx-padding: 9 0 9 0; -fx-background-radius: 8;" +
+                        "-fx-border-color: " + GREEN_DARK + "; -fx-border-width: 1.5;" +
+                        "-fx-border-radius: 8; -fx-cursor: hand;";
+        btnDetails.setStyle(detailsStyle);
+        btnDetails.setOnMouseEntered(e -> btnDetails.setStyle(detailsHover));
+        btnDetails.setOnMouseExited(e  -> btnDetails.setStyle(detailsStyle));
+        btnDetails.setOnAction(e -> openDetail(p));
+
+        HBox btnRow = new HBox(10);
+        btnRow.setAlignment(Pos.CENTER);
+        HBox.setHgrow(btnPanier,  Priority.ALWAYS);
+        HBox.setHgrow(btnDetails, Priority.ALWAYS);
+        btnRow.getChildren().addAll(btnPanier, btnDetails);
+
+        body.getChildren().addAll(nom, sep, priceRow, stockRow, btnRow);
         card.getChildren().addAll(header, body);
         return card;
     }
 
-    // ✅ Ajouter au panier avec feedback visuel
+    // ✅ CORRECTION PRINCIPALE : passe allProducts au controller détail
+    private void openDetail(Product p) {
+        try {
+            // ⚠️ Adapter ce chemin selon ton projet (doit correspondre à l'emplacement réel)
+            URL fxmlUrl = getClass().getResource("/views/front/Productdetail.fxml");
+            System.out.println("Detail FXML URL = " + fxmlUrl);
+
+            if (fxmlUrl == null) {
+                System.err.println("❌ Productdetail.fxml introuvable !");
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
+            Parent root = loader.load();
+
+            ProductDetailController controller = loader.getController();
+
+            // ✅ On passe : le produit sélectionné + TOUS les produits DB + callback retour
+            controller.initData(p, allProducts, () -> {
+                try {
+                    URL productsUrl = getClass().getResource("/views/front/Products.fxml");
+                    Parent backRoot = FXMLLoader.load(productsUrl);
+                    btnCart.getScene().setRoot(backRoot);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            });
+
+            btnCart.getScene().setRoot(root);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     private void addToCart(Product p, Button btn, String originalStyle) {
         CartManager.getInstance().addProduct(p);
-
-        // ✅ Mettre à jour le compteur du bouton panier
         btnCart.setText("🛒  Mon Panier (" + CartManager.getInstance().getCount() + ")");
 
-        // Feedback visuel
         btn.setText("✓  Ajouté !");
-        btn.setStyle(
-                "-fx-background-color: #4CAF50;" +
-                        "-fx-text-fill: white;" +
-                        "-fx-font-size: 13px;" +
-                        "-fx-font-weight: bold;" +
-                        "-fx-padding: 10 0 10 0;" +
-                        "-fx-background-radius: 8;"
-        );
+        btn.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;" +
+                "-fx-font-size: 13px; -fx-font-weight: bold;" +
+                "-fx-padding: 10 0 10 0; -fx-background-radius: 8;");
         new Thread(() -> {
             try { Thread.sleep(1500); } catch (InterruptedException ignored) {}
             javafx.application.Platform.runLater(() -> {
@@ -258,18 +289,7 @@ public class ProductsController implements Initializable {
         }).start();
     }
 
-    @FXML
-    private void onOpenCart() {
-        /*try {
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
-                    getClass().getResource("/views/front/produit/Cart.fxml")
-            );
-            javafx.scene.Parent root = loader.load();
-            btnCart.getScene().setRoot(root);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
-    }
+    @FXML private void onOpenCart() {}
 
     @FXML
     private void onReset() {

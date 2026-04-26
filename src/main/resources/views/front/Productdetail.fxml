@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="tn.esprit.controller.front.ProductDetailController"
+            fitToWidth="true"
+            hbarPolicy="NEVER"
+            vbarPolicy="AS_NEEDED"
+            style="-fx-background-color: #f8fafc; -fx-background: #f8fafc;">
+
+    <VBox spacing="0" style="-fx-background-color: #f8fafc;">
+
+        <!-- ══ HEADER ══ -->
+        <HBox alignment="CENTER_LEFT" spacing="16"
+              style="-fx-background-color: #2d5a1b; -fx-padding: 16 40 16 40;">
+            <Button fx:id="btnBack" text="← Retour aux produits" onAction="#onBack"
+                    style="-fx-background-color: transparent; -fx-text-fill: white;
+                           -fx-font-size: 13px; -fx-font-weight: bold; -fx-cursor: hand;
+                           -fx-border-color: white; -fx-border-radius: 8;
+                           -fx-background-radius: 8; -fx-padding: 8 16 8 16;"/>
+            <Label text="EcoTrip – Détail Produit"
+                   style="-fx-text-fill: white; -fx-font-size: 18px; -fx-font-weight: bold;"/>
+        </HBox>
+
+        <!-- ══ PRODUIT PRINCIPAL ══ -->
+        <HBox spacing="32" alignment="TOP_CENTER">
+            <padding><Insets top="40" bottom="20" left="60" right="60"/></padding>
+
+            <!-- LEFT : Info produit -->
+            <VBox spacing="0" prefWidth="360"
+                  style="-fx-background-color: white; -fx-background-radius: 16;
+                         -fx-border-color: #e0e0e0; -fx-border-radius: 16; -fx-border-width: 1;
+                         -fx-effect: dropshadow(gaussian, #00000018, 12, 0, 0, 4);">
+                <VBox alignment="CENTER" spacing="8"
+                      style="-fx-background-color: #2d5a1b; -fx-background-radius: 16 16 0 0;
+                             -fx-padding: 32 20 32 20;">
+                    <Label text="🛍" style="-fx-font-size: 52px;"/>
+                    <Label fx:id="lblNom" text="Nom du produit"
+                           style="-fx-font-size: 19px; -fx-font-weight: bold; -fx-text-fill: white;
+                                  -fx-wrap-text: true; -fx-alignment: CENTER;"/>
+                </VBox>
+                <VBox spacing="12" style="-fx-padding: 18 22 22 22;">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="💰" style="-fx-font-size: 17px;"/>
+                        <VBox spacing="1">
+                            <Label text="Prix" style="-fx-text-fill: #888; -fx-font-size: 10px; -fx-font-weight: bold;"/>
+                            <Label fx:id="lblPrix" text="0,00 TND"
+                                   style="-fx-font-size: 21px; -fx-font-weight: bold; -fx-text-fill: #2d5a1b;"/>
+                        </VBox>
+                    </HBox>
+                    <Separator/>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="📦" style="-fx-font-size: 15px;"/>
+                        <Label fx:id="lblStock" text="0 unités"
+                               style="-fx-font-size: 13px; -fx-text-fill: #334155;"/>
+                    </HBox>
+                    <HBox>
+                        <Label fx:id="lblStatut" text="✔  Disponible"
+                               style="-fx-background-color: #d4edda; -fx-text-fill: #155724;
+                                      -fx-font-size: 12px; -fx-font-weight: bold;
+                                      -fx-padding: 4 12 4 12; -fx-background-radius: 10;"/>
+                    </HBox>
+                    <Separator/>
+                    <Button fx:id="btnAddToCart" text="🛒  Ajouter au panier"
+                            onAction="#onAddToCart" maxWidth="Infinity"
+                            style="-fx-background-color: #2d5a1b; -fx-text-fill: white;
+                                   -fx-font-size: 14px; -fx-font-weight: bold;
+                                   -fx-padding: 11 0 11 0; -fx-background-radius: 10; -fx-cursor: hand;"/>
+                </VBox>
+            </VBox>
+
+            <!-- RIGHT : Panel IA -->
+            <VBox spacing="0" HBox.hgrow="ALWAYS"
+                  style="-fx-background-color: white; -fx-background-radius: 16;
+                         -fx-border-color: #e0e0e0; -fx-border-radius: 16; -fx-border-width: 1;
+                         -fx-effect: dropshadow(gaussian, #00000018, 12, 0, 0, 4);">
+                <HBox spacing="10" alignment="CENTER_LEFT"
+                      style="-fx-background-color: #f0fdf4; -fx-background-radius: 16 16 0 0;
+                             -fx-padding: 14 18 14 18; -fx-border-color: #bbf7d0; -fx-border-width: 0 0 1 0;">
+                    <Label text="🤖" style="-fx-font-size: 19px;"/>
+                    <VBox spacing="1">
+                        <Label text="Analyse IA" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #166534;"/>
+                        <Label text="Powered by Groq AI" style="-fx-font-size: 10px; -fx-text-fill: #4a7c3f;"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Loading spinner -->
+                <VBox fx:id="loadingBox" alignment="CENTER" spacing="10"
+                      style="-fx-padding: 30 20 30 20;">
+                    <ProgressIndicator fx:id="loadingSpinner" prefWidth="38" prefHeight="38"/>
+                    <Label fx:id="lblLoadingText" text="⏳ Recherche de produits similaires..."
+                           style="-fx-text-fill: #64748b; -fx-font-size: 12px; -fx-font-style: italic;"/>
+                </VBox>
+
+                <!-- Conseil IA (texte court) -->
+                <Label fx:id="lblAiConseil" visible="false" managed="false"
+                       wrapText="true"
+                       style="-fx-text-fill: #334155; -fx-font-size: 12px;
+                              -fx-padding: 16 20 16 20;"/>
+            </VBox>
+        </HBox>
+
+        <!-- ══ SECTION RECOMMANDATIONS CARTES ══ -->
+        <VBox fx:id="recommendationsSection" visible="false" managed="false" spacing="14">
+            <padding><Insets top="8" bottom="50" left="60" right="60"/></padding>
+
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <Label text="🎯" style="-fx-font-size: 18px;"/>
+                <Label text="Produits similaires recommandés"
+                       style="-fx-font-size: 17px; -fx-font-weight: bold; -fx-text-fill: #2d5a1b;"/>
+            </HBox>
+
+            <!-- Les cartes seront injectées ici dynamiquement -->
+            <FlowPane fx:id="recommendedCardsBox" hgap="20" vgap="20"/>
+        </VBox>
+
+        <!-- ══ FOOTER ══ -->
+        <HBox alignment="CENTER" style="-fx-background-color: #2d5a1b; -fx-padding: 18 40 18 40;">
+            <Label text="© 2026 EcoTrip – Boutique éco-responsable"
+                   style="-fx-text-fill: #86efac; -fx-font-size: 12px;"/>
+        </HBox>
+
+    </VBox>
+</ScrollPane>
