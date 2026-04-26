@@ -26,6 +26,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -36,12 +37,15 @@ import tn.esprit.models.activity.Guide;
 import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;
 import tn.esprit.services.activity.ActivityCategoryService;
+import tn.esprit.services.activity.ActivityMapService;
 import tn.esprit.services.activity.ActivityService;
 import tn.esprit.services.activity.AiDescriptionService;
 import tn.esprit.services.activity.GuideService;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.net.URL;
+import java.net.URI;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -69,6 +73,9 @@ public class ListActivitiesController implements Initializable {
     @FXML private TextField latitudeField;
     @FXML private TextField longitudeField;
     @FXML private TextArea descriptionField;
+    @FXML private WebView mapPreview;
+    @FXML private Label mapStatusLabel;
+    @FXML private Button openMapBtn;
     @FXML private ComboBox<String> categoryCombo;
     @FXML private ComboBox<String> activeCombo;
     @FXML private ComboBox<String> guideCombo;
@@ -134,10 +141,12 @@ public class ListActivitiesController implements Initializable {
         aiStatusLabel.managedProperty().bind(aiStatusLabel.visibleProperty());
         aiProgress.setVisible(false);
         aiStatusLabel.setVisible(false);
+        mapStatusLabel.managedProperty().bind(mapStatusLabel.visibleProperty());
 
         loadCategories();
         loadGuides();
         setupColumns();
+        configureMapPreview();
         refreshAll();
     }
 
@@ -416,6 +425,14 @@ public class ListActivitiesController implements Initializable {
         charCount.setText(descriptionField.getText().length() + " / 5000 caracteres");
     }
 
+    private void configureMapPreview() {
+        latitudeField.textProperty().addListener((obs, oldValue, newValue) -> updateMapPreview());
+        longitudeField.textProperty().addListener((obs, oldValue, newValue) -> updateMapPreview());
+        locationField.textProperty().addListener((obs, oldValue, newValue) -> updateMapPreview());
+        titleField.textProperty().addListener((obs, oldValue, newValue) -> updateMapPreview());
+        updateMapPreview();
+    }
+
     @FXML
     private void onGenerateDescription() {
         if (!validateInputsForAi()) {
@@ -454,6 +471,25 @@ public class ListActivitiesController implements Initializable {
         Thread thread = new Thread(task, "activity-ai-description");
         thread.setDaemon(true);
         thread.start();
+    }
+
+    @FXML
+    private void onOpenMap() {
+        if (!ActivityMapService.hasValidCoordinates(latitudeField.getText(), longitudeField.getText())) {
+            mapStatusLabel.setText("Ajoutez une latitude et une longitude valides pour ouvrir la carte.");
+            mapStatusLabel.setVisible(true);
+            mapStatusLabel.getStyleClass().removeAll("map-status-error", "map-status-success");
+            mapStatusLabel.getStyleClass().add("map-status-error");
+            return;
+        }
+
+        try {
+            Desktop.getDesktop().browse(new URI(
+                    ActivityMapService.buildOpenStreetMapUrl(latitudeField.getText(), longitudeField.getText())
+            ));
+        } catch (Exception exception) {
+            showAlert("Erreur", "Impossible d'ouvrir la carte : " + exception.getMessage());
+        }
     }
 
     private boolean validateAll() {
@@ -664,6 +700,7 @@ public class ListActivitiesController implements Initializable {
 
         charCount.setText("0 / 5000 caracteres");
         setAiFeedback(false, "", false);
+        updateMapPreview();
         if (photoPreview != null) {
             photoPreview.setImage(null);
         }
@@ -699,6 +736,7 @@ public class ListActivitiesController implements Initializable {
         }
         updateCounter();
         setAiFeedback(false, "", false);
+        updateMapPreview();
         formIcon.setText("✏️");
         formTitle.setText("Modifier l'activite");
         formSubtitle.setText("Mettez a jour les informations.");
@@ -845,5 +883,40 @@ public class ListActivitiesController implements Initializable {
         if (aiStatusLabel.isVisible()) {
             aiStatusLabel.getStyleClass().add(error ? "ai-assist-status-error" : "ai-assist-status-success");
         }
+    }
+
+    private void updateMapPreview() {
+        if (mapPreview == null) {
+            return;
+        }
+
+        boolean hasCoordinates = ActivityMapService.hasValidCoordinates(latitudeField.getText(), longitudeField.getText());
+        openMapBtn.setDisable(!hasCoordinates);
+        mapStatusLabel.getStyleClass().removeAll("map-status-error", "map-status-success");
+
+        if (!hasCoordinates) {
+            mapPreview.getEngine().loadContent(
+                    ActivityMapService.buildEmptyStateHtml(
+                            "Carte de l'activite",
+                            "Ajoutez des coordonnees pour visualiser instantanement la localisation."
+                    )
+            );
+            mapStatusLabel.setText("Coordonnees non disponibles.");
+            mapStatusLabel.setVisible(true);
+            mapStatusLabel.getStyleClass().add("map-status-error");
+            return;
+        }
+
+        mapPreview.getEngine().loadContent(
+                ActivityMapService.buildMapHtml(
+                        titleField.getText(),
+                        locationField.getText(),
+                        latitudeField.getText(),
+                        longitudeField.getText()
+                )
+        );
+        mapStatusLabel.setText("Carte synchronisee avec les coordonnees saisies.");
+        mapStatusLabel.setVisible(true);
+        mapStatusLabel.getStyleClass().add("map-status-success");
     }
 }

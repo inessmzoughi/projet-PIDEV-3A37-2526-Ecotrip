@@ -1,33 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
 <HBox xmlns:fx="http://javafx.com/fxml"
       fx:controller="tn.esprit.controller.component.FrontNavbarController"
       styleClass="front-navbar" alignment="CENTER_LEFT">
 
-    <!-- Logo -->
     <HBox styleClass="navbar-brand" alignment="CENTER">
-        <Label text="🌿 EcoTrip" styleClass="navbar-logo"/>
+        <Label text="EcoTrip" styleClass="navbar-logo"/>
     </HBox>
 
-    <!-- Spacer -->
     <Region HBox.hgrow="ALWAYS"/>
 
-    <!-- Nav links -->
     <HBox styleClass="nav-links" spacing="4" alignment="CENTER">
-        <Button fx:id="homeBtn"        text="Home"            onAction="#handleHome"       styleClass="nav-btn"/>
-        <Button fx:id="hebergBtn"      text="Hébergement"     onAction="#handleHeberg"     styleClass="nav-btn"/>
-        <Button fx:id="activitesBtn"   text="Activités"       onAction="#handleActivites"  styleClass="nav-btn"/>
-        <Button fx:id="transportBtn"   text="Transport"       onAction="#handleTransport"  styleClass="nav-btn"/>
-        <Button fx:id="boutiqueBtn"    text="Boutique"        onAction="#handleBoutique"   styleClass="nav-btn"/>
-        <Button fx:id="contactBtn"     text="Panier"         onAction="#handleContact"    styleClass="nav-btn"/>
+        <Button fx:id="homeBtn"          text="Home"             onAction="#handleHome"         styleClass="nav-btn"/>
+        <Button fx:id="hebergBtn"        text="Hebergement"      onAction="#handleHeberg"       styleClass="nav-btn"/>
+        <Button fx:id="activitesBtn"     text="Activites"        onAction="#handleActivites"    styleClass="nav-btn"/>
+        <Button fx:id="transportBtn"     text="Transport"        onAction="#handleTransport"    styleClass="nav-btn"/>
+        <Button fx:id="boutiqueBtn"      text="Boutique"         onAction="#handleBoutique"     styleClass="nav-btn"/>
+        <Button fx:id="contactBtn"       text="Panier"           onAction="#handleContact"      styleClass="nav-btn"/>
 
-        <!-- Shown only when logged in -->
-        <Button fx:id="reservationsBtn" text="Mes réservations" onAction="#handleReservations" styleClass="nav-btn"  />
-        <Button fx:id="monCompteBtn"    text="Mon compte"        onAction="#handleMonCompte"    styleClass="nav-btn" />
-        <Button fx:id="logoutBtn"       text="Déconnexion"       onAction="#handleLogout"       styleClass="nav-btn nav-btn-logout" visible="false" managed="false"/>
-        <Button fx:id="loginBtn"        text="Connexion"         onAction="#handleLogin"        styleClass="nav-btn nav-btn-primary" visible="false" managed="false"/>
+        <Button fx:id="reservationsBtn"  text="Mes reservations" onAction="#handleReservations" styleClass="nav-btn"/>
+        <Button fx:id="favorisBtn"       text="Mes favoris"      onAction="#handleFavoris"      styleClass="nav-btn"/>
+        <Button fx:id="monCompteBtn"     text="Mon compte"       onAction="#handleMonCompte"    styleClass="nav-btn"/>
+        <Button fx:id="logoutBtn"        text="Deconnexion"      onAction="#handleLogout"
+                styleClass="nav-btn nav-btn-logout" visible="false" managed="false"/>
+        <Button fx:id="loginBtn"         text="Connexion"        onAction="#handleLogin"
+                styleClass="nav-btn nav-btn-primary" visible="false" managed="false"/>
     </HBox>
 
 </HBox>

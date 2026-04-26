@@ -230,3 +230,52 @@
 .ai-assist-status-error {
     -fx-text-fill: #b91c1c;
 }
+
+.map-preview-card {
+    -fx-background-color: linear-gradient(to bottom right, #f8fff9, #f8fafc);
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: #dcefe1;
+    -fx-border-width: 1;
+    -fx-padding: 14 14 12 14;
+}
+
+.map-preview-title {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #166534;
+}
+
+.map-preview-subtitle {
+    -fx-font-size: 11px;
+    -fx-text-fill: #64748b;
+}
+
+.map-preview-btn {
+    -fx-background-color: #eff6ff;
+    -fx-text-fill: #1d4ed8;
+    -fx-background-radius: 10;
+    -fx-border-color: #bfdbfe;
+    -fx-border-radius: 10;
+    -fx-border-width: 1;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 9 14 9 14;
+    -fx-cursor: hand;
+}
+
+.map-preview-btn:hover {
+    -fx-background-color: #dbeafe;
+}
+
+.map-status-label {
+    -fx-font-size: 11px;
+}
+
+.map-status-success {
+    -fx-text-fill: #166534;
+}
+
+.map-status-error {
+    -fx-text-fill: #b91c1c;
+}

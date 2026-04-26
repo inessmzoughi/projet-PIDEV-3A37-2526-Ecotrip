@@ -10,6 +10,10 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.List;
+import java.util.Locale;
+
+import tn.esprit.models.activity.Activity;
 
 public class AiDescriptionService {
 
@@ -97,6 +101,49 @@ public class AiDescriptionService {
 
     public static boolean isAiConfigured() {
         return !resolveApiKey().isBlank();
+    }
+
+    public static String generateActivitySuggestionReply(String userPrompt,
+                                                         List<Activity> suggestions,
+                                                         String fallback) throws Exception {
+        if (suggestions == null || suggestions.isEmpty()) {
+            return fallback;
+        }
+
+        String promptText = clean(userPrompt, "une experience eco-responsable en Tunisie");
+
+        StringBuilder activitiesContext = new StringBuilder();
+        for (int index = 0; index < suggestions.size(); index++) {
+            Activity activity = suggestions.get(index);
+            activitiesContext.append(index + 1)
+                    .append(". ")
+                    .append(clean(activity.getTitle(), "Activite"))
+                    .append(" | lieu: ")
+                    .append(clean(activity.getLocation(), "Tunisie"))
+                    .append(" | categorie: ")
+                    .append(activity.getCategory() != null ? clean(activity.getCategory().getName(), "nature") : "nature")
+                    .append(" | prix: ")
+                    .append(String.format(Locale.US, "%.0f", activity.getPrice()))
+                    .append(" TND | duree: ")
+                    .append(activity.getDurationMinutes())
+                    .append(" min | description: ")
+                    .append(clean(activity.getDescription(), "Experience eco-responsable"))
+                    .append(System.lineSeparator());
+        }
+
+        String prompt = String.format(
+                "Tu es un assistant voyage premium pour une plateforme d'activites eco-responsables.%n" +
+                        "Un utilisateur cherche une suggestion pour : %s%n%n" +
+                        "Voici les activites disponibles a recommander :%n%s%n" +
+                        "Redige une reponse en francais, chaleureuse et concise (4 a 6 phrases maximum). " +
+                        "Mets surtout en avant la meilleure activite, cite aussi 1 ou 2 alternatives si elles sont pertinentes, " +
+                        "et insiste sur le lieu, l'ambiance, le type d'experience et ce qui peut plaire a l'utilisateur. " +
+                        "Reponds uniquement avec le texte de conseil, sans liste numérotée ni markdown.",
+                promptText,
+                activitiesContext
+        );
+
+        return generateText(prompt, fallback);
     }
 
     private static String generateText(String prompt, String fallback) throws Exception {

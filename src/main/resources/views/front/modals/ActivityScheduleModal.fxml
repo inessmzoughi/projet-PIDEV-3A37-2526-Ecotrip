@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="tn.esprit.controller.front.modals.ActivityScheduleController"
+           styleClass="modal-blur-overlay"
+           alignment="CENTER">
+
+    <VBox styleClass="activity-schedule-modal" maxWidth="980" maxHeight="860" spacing="0">
+        <HBox styleClass="activity-schedule-topbar" alignment="CENTER_LEFT" spacing="12">
+            <VBox spacing="3">
+                <Label text="Planning de l'activite" styleClass="activity-schedule-topbar-title"/>
+                <Label fx:id="activityNameLabel" styleClass="activity-schedule-topbar-subtitle"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="✕" styleClass="res-modal-close" onAction="#onClose"/>
+        </HBox>
+
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="front-scroll">
+            <VBox spacing="18" styleClass="activity-schedule-body">
+                <padding>
+                    <Insets top="20" right="22" bottom="22" left="22"/>
+                </padding>
+
+                <VBox spacing="6" styleClass="activity-schedule-summary-card">
+                    <Label text="Visualisation des departs" styleClass="activity-schedule-section-title"/>
+                    <Label fx:id="activityMetaLabel" styleClass="activity-schedule-summary-text" wrapText="true"/>
+                    <Label fx:id="selectionStateLabel" visible="false" managed="false"
+                           styleClass="activity-schedule-status"/>
+                </VBox>
+
+                <HBox spacing="18" alignment="TOP_LEFT">
+                    <StackPane fx:id="calendarHost" styleClass="activity-schedule-calendar-card"
+                               HBox.hgrow="ALWAYS" minHeight="520" prefHeight="520"/>
+
+                    <VBox spacing="12" styleClass="activity-schedule-side-card" prefWidth="280" minWidth="280">
+                        <Label text="Creneaux du jour" styleClass="activity-schedule-section-title"/>
+                        <Label fx:id="selectedDateLabel" styleClass="activity-schedule-date-title"/>
+                        <Label fx:id="emptySlotsLabel" styleClass="activity-schedule-empty"
+                               text="Choisissez un jour pour voir les departs."
+                               wrapText="true"/>
+                        <VBox fx:id="slotsBox" spacing="10"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+
+        <HBox styleClass="activity-schedule-footer" alignment="CENTER_LEFT" spacing="12">
+            <Label text="Selectionnez un creneau pour continuer vers la reservation."
+                   styleClass="activity-schedule-footer-text"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Fermer" styleClass="res-modal-btn-cancel" onAction="#onClose"/>
+            <Button fx:id="reserveButton" text="Reserver ce creneau"
+                    styleClass="res-modal-btn-confirm-blue" onAction="#onReserve"/>
+        </HBox>
+    </VBox>
+</StackPane>

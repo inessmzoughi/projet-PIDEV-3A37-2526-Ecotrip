@@ -1,143 +1,175 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.geometry.*?>
 <?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<ScrollPane xmlns="http://javafx.com/javafx/17"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="tn.esprit.controller.front.ActivitiesController"
-            fitToWidth="true"
-            hbarPolicy="NEVER"
-            vbarPolicy="AS_NEEDED"
-            styleClass="front-scroll">
+<StackPane xmlns="http://javafx.com/javafx/17"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="tn.esprit.controller.front.ActivitiesController"
+           styleClass="heb-page-shell">
 
-    <VBox spacing="0">
+    <ScrollPane fitToWidth="true"
+                hbarPolicy="NEVER"
+                vbarPolicy="AS_NEEDED"
+                styleClass="front-scroll">
 
-        <!-- ══ HERO ══ -->
-        <VBox styleClass="heb-hero" alignment="CENTER" spacing="14">
-            <padding><Insets top="80" bottom="80" left="40" right="40"/></padding>
-            <Label text="Activités &amp; Aventures" styleClass="heb-hero-title"/>
-            <Label text="Randonnées, plongée, désert, culture — des expériences inoubliables avec des guides locaux certifiés."
-                   styleClass="heb-hero-sub" wrapText="true"/>
-        </VBox>
+        <VBox spacing="0" styleClass="heb-page">
 
-        <!-- ══ CATEGORY FILTER TABS ══ -->
-        <HBox styleClass="act-tab-bar" alignment="CENTER_LEFT" spacing="8">
-            <padding><Insets top="16" bottom="16" left="40" right="40"/></padding>
-            <Button fx:id="tabAll"
-                    text="🌿  Toutes"
-                    onAction="#handleTabAll"
-                    styleClass="act-tab act-tab-active"/>
-            <HBox fx:id="categoryTabsBox" spacing="8" alignment="CENTER_LEFT"/>
-        </HBox>
+            <VBox styleClass="heb-hero" alignment="CENTER" spacing="14">
+                <padding><Insets top="80" bottom="80" left="40" right="40"/></padding>
+                <Label text="Activites &amp; Aventures" styleClass="heb-hero-title"/>
+                <Label text="Randonnees, plongee, desert, culture : des experiences inoubliables avec des guides locaux certifies."
+                       styleClass="heb-hero-sub" wrapText="true"/>
+            </VBox>
 
-        <!-- ══ FILTRES (identical to hebergement) ══ -->
-        <VBox styleClass="heb-filters-container">
-            <padding><Insets top="30" bottom="30" left="40" right="40"/></padding>
-            <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 0 0 20 0;">
-                <Region styleClass="filters-title-bar"/>
-                <Label text="RECHERCHER ET FILTRER LES ACTIVITÉS" styleClass="filters-section-title"/>
-            </HBox>
-            <HBox spacing="16" alignment="CENTER_LEFT">
 
-                <!-- Search -->
-                <TextField fx:id="searchField"
-                           promptText="Rechercher par titre ou lieu..."
-                           styleClass="heb-filter-input"
-                           HBox.hgrow="ALWAYS"/>
+            <VBox styleClass="heb-filters-container">
+                <padding><Insets top="30" bottom="30" left="40" right="40"/></padding>
 
-                <!-- Sort -->
-                <ComboBox fx:id="sortCombo"
-                          promptText="Trier par"
-                          styleClass="heb-filter-input"
-                          prefWidth="180">
-                    <items>
-                        <javafx.collections.FXCollections fx:factory="observableArrayList">
-                            <String fx:value="Trier par"/>
-                            <String fx:value="Prix croissant"/>
-                            <String fx:value="Prix décroissant"/>
-                            <String fx:value="Durée croissante"/>
-                            <String fx:value="Alphabétique"/>
-                        </javafx.collections.FXCollections>
-                    </items>
-                </ComboBox>
+                <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 0 0 20 0;">
+                    <Region styleClass="filters-title-bar"/>
+                    <Label text="RECHERCHER ET FILTRER LES ACTIVITES" styleClass="filters-section-title"/>
+                </HBox>
 
-                <!-- Price slider -->
-                <VBox spacing="4" minWidth="160">
-                    <Label text="💰 Prix max" styleClass="act-filter-hint"/>
-                    <Slider fx:id="priceSlider" min="0" max="500" value="500"
-                            styleClass="act-slider" prefWidth="160"/>
-                    <HBox spacing="6">
-                        <Label text="0 TND" styleClass="act-filter-hint"/>
-                        <Label fx:id="priceLabel" text="500 TND" styleClass="act-filter-value"/>
+                <VBox spacing="18">
+                    <HBox spacing="16" alignment="CENTER_LEFT">
+                        <TextField fx:id="searchField"
+                                   promptText="Rechercher par titre ou lieu..."
+                                   styleClass="heb-filter-input"
+                                   HBox.hgrow="ALWAYS"/>
+
+                        <ComboBox fx:id="sortCombo"
+                                  promptText="Trier par"
+                                  styleClass="heb-filter-input"
+                                  prefWidth="220"/>
+
+                        <ComboBox fx:id="categoryCombo"
+                                  promptText="categories"
+                                  styleClass="heb-filter-input"
+                                  prefWidth="220"/>
+
+                        <Button text="Reinitialiser"
+                                styleClass="heb-clear-btn"
+                                onAction="#handleResetFilters"
+                                prefWidth="160"/>
                     </HBox>
+
                 </VBox>
+            </VBox>
 
-                <!-- Duration -->
-                <VBox spacing="4">
-                    <Label text="⏱ Durée" styleClass="act-filter-hint"/>
-                    <HBox spacing="8" alignment="CENTER_LEFT">
-                        <RadioButton fx:id="durAll"   text="Toutes"  styleClass="act-radio" selected="true"/>
-                        <RadioButton fx:id="durShort" text="&lt; 2h" styleClass="act-radio"/>
-                        <RadioButton fx:id="durMed"   text="2h–4h"   styleClass="act-radio"/>
-                        <RadioButton fx:id="durLong"  text="&gt; 4h" styleClass="act-radio"/>
-                    </HBox>
-                </VBox>
-
-                <!-- Participants -->
-                <VBox spacing="4">
-                    <Label text="👥 Participants min" styleClass="act-filter-hint"/>
-                    <Spinner fx:id="participantsSpinner" min="1" max="50" initialValue="1"
-                             editable="true" styleClass="act-spinner" prefWidth="80"/>
-                </VBox>
-
-                <!-- Reset button -->
-                <Button text="Réinitialiser" styleClass="heb-clear-btn"
-                        onAction="#handleResetFilters" prefWidth="130"/>
-
+            <HBox alignment="CENTER_LEFT">
+                <padding><Insets top="24" bottom="12" left="40" right="40"/></padding>
+                <Label fx:id="resultsCountLabel" text="0 Activite(s) trouvee(s)" styleClass="heb-result-count"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="activeFilterLabel" text="" styleClass="act-filter-badge"
+                       visible="false" managed="false"/>
+                <Button fx:id="clearFilterBtn" text="✕ Effacer filtre"
+                        onAction="#handleClearFilter"
+                        styleClass="act-clear-btn" visible="false" managed="false"/>
             </HBox>
-        </VBox>
 
-        <!-- ══ RÉSULTATS HEADER ══ -->
-        <HBox alignment="CENTER_LEFT">
-            <padding><Insets top="24" bottom="12" left="40" right="40"/></padding>
-            <Label fx:id="resultsCountLabel" text="0 Activité(s) Trouvée(s)" styleClass="heb-result-count"/>
+            <FlowPane fx:id="activitiesGrid" hgap="28" vgap="28" styleClass="heb-cards-pane">
+                <padding><Insets top="0" bottom="20" left="40" right="40"/></padding>
+            </FlowPane>
+
+            <VBox fx:id="emptyState" alignment="CENTER" spacing="16"
+                  managed="false" visible="false" styleClass="heb-empty">
+                <padding><Insets top="60" bottom="60"/></padding>
+                <Label text="🌵" styleClass="heb-empty-icon"/>
+                <Label text="Aucune activite trouvee" styleClass="heb-empty-title"/>
+                <Label text="Essayez de modifier vos filtres pour voir plus de resultats"
+                       styleClass="heb-empty-sub" wrapText="true"/>
+                <Button text="↺ Reinitialiser les filtres" styleClass="heb-clear-btn"
+                        onAction="#handleResetFilters"/>
+            </VBox>
+
+            <HBox fx:id="paginationBar" alignment="CENTER" spacing="16"
+                  managed="false" visible="false" styleClass="heb-pagination">
+                <padding><Insets top="24" bottom="24" left="40" right="40"/></padding>
+                <Button fx:id="btnPrev" text="← Precedent" styleClass="heb-page-btn" onAction="#onPrev"/>
+                <Label fx:id="pagInfo" text="Page 1 / 1" styleClass="heb-page-info"/>
+                <Button fx:id="btnNext" text="Suivant →" styleClass="heb-page-btn" onAction="#onNext"/>
+            </HBox>
+
+            <fx:include source="../components/front-footer.fxml"/>
+
+        </VBox>
+    </ScrollPane>
+
+    <Button fx:id="chatbotLauncher"
+            text=" "
+            onAction="#toggleChatbot"
+            styleClass="activity-chatbot-fab"
+            StackPane.alignment="BOTTOM_RIGHT">
+        <StackPane.margin>
+            <Insets right="28" bottom="32"/>
+        </StackPane.margin>
+    </Button>
+
+    <VBox fx:id="chatbotPanel"
+          visible="false"
+          managed="false"
+          spacing="0"
+          styleClass="activity-chatbot-panel"
+          StackPane.alignment="BOTTOM_RIGHT">
+        <StackPane.margin>
+            <Insets right="28" bottom="32"/>
+        </StackPane.margin>
+
+        <HBox styleClass="activity-chatbot-header" alignment="CENTER_LEFT" spacing="12">
+            <Label text="🌿 EcoTrip Assistant" styleClass="activity-chatbot-title"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Label fx:id="activeFilterLabel" text="" styleClass="act-filter-badge"
-                   visible="false" managed="false"/>
-            <Button fx:id="clearFilterBtn" text="✕  Effacer filtre"
-                    onAction="#handleClearFilter"
-                    styleClass="act-clear-btn" visible="false" managed="false"/>
+            <Button text="−" onAction="#toggleChatbot" styleClass="activity-chatbot-min-btn"/>
         </HBox>
 
-        <!-- ══ CARTES ══ -->
-        <FlowPane fx:id="activitiesGrid" hgap="28" vgap="28" styleClass="heb-cards-pane">
-            <padding><Insets top="0" bottom="20" left="40" right="40"/></padding>
-        </FlowPane>
+        <ScrollPane fitToWidth="true"
+                    hbarPolicy="NEVER"
+                    vbarPolicy="AS_NEEDED"
+                    styleClass="activity-chatbot-scroll">
+            <VBox spacing="14" styleClass="activity-chatbot-body">
+                <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
 
-        <!-- ══ EMPTY STATE ══ -->
-        <VBox fx:id="emptyState" alignment="CENTER" spacing="16"
-              managed="false" visible="false" styleClass="heb-empty">
-            <padding><Insets top="60" bottom="60"/></padding>
-            <Label text="🌵" styleClass="heb-empty-icon"/>
-            <Label text="Aucune Activité Trouvée" styleClass="heb-empty-title"/>
-            <Label text="Essayez de modifier vos filtres pour voir plus de résultats"
-                   styleClass="heb-empty-sub" wrapText="true"/>
-            <Button text="↺  Réinitialiser les filtres" styleClass="heb-clear-btn"
-                    onAction="#handleResetFilters"/>
-        </VBox>
+                <VBox spacing="8" styleClass="activity-chatbot-bubble">
+                    <Label fx:id="chatbotGreetingLabel"
+                           text="Salut ! Je suis ton assistant EcoTrip."
+                           styleClass="activity-chatbot-message"
+                           wrapText="true"/>
+                    <Label fx:id="chatbotStatusLabel"
+                           text="Dis-moi une ville, une categorie ou une ambiance et je te proposerai les meilleures activites."
+                           styleClass="activity-chatbot-submessage"
+                           wrapText="true"/>
+                </VBox>
 
-        <!-- ══ PAGINATION ══ -->
-        <HBox fx:id="paginationBar" alignment="CENTER" spacing="16"
-              managed="false" visible="false" styleClass="heb-pagination">
-            <padding><Insets top="24" bottom="24" left="40" right="40"/></padding>
-            <Button fx:id="btnPrev" text="← Précédent" styleClass="heb-page-btn" onAction="#onPrev"/>
-            <Label fx:id="pagInfo" text="Page 1 / 1" styleClass="heb-page-info"/>
-            <Button fx:id="btnNext" text="Suivant →" styleClass="heb-page-btn" onAction="#onNext"/>
+                <FlowPane hgap="8" vgap="8">
+                    <Button text="Nature a Djerba" onAction="#handleChatbotNature" styleClass="activity-chatbot-chip"/>
+                    <Button text="Culture a Tunis" onAction="#handleChatbotCulture" styleClass="activity-chatbot-chip"/>
+                    <Button text="Aventure desert" onAction="#handleChatbotAdventure" styleClass="activity-chatbot-chip"/>
+                </FlowPane>
+
+                <VBox fx:id="chatbotSuggestionsBox" spacing="12"/>
+            </VBox>
+        </ScrollPane>
+
+        <HBox styleClass="activity-chatbot-inputbar" alignment="CENTER_LEFT" spacing="10">
+            <TextField fx:id="chatbotInputField"
+                       promptText="Demande-moi n'importe quoi sur les activites..."
+                       styleClass="activity-chatbot-input"
+                       HBox.hgrow="ALWAYS"
+                       onAction="#handleChatbotSend"/>
+            <Button fx:id="chatbotSendBtn"
+                    text="➤"
+                    onAction="#handleChatbotSend"
+                    styleClass="activity-chatbot-send-btn"/>
         </HBox>
-        <!-- ══ FOOTER ══ -->
-        <fx:include source="../components/front-footer.fxml"/>
-
     </VBox>
-</ScrollPane>
+
+</StackPane>

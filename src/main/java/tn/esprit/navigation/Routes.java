@@ -14,6 +14,7 @@ public class Routes {
     public static final String BOUTIQUE       = "boutique";
     public static final String CONTACT        = "contact";
     public static final String MES_RESERVATIONS = "mes-reservations";
+    public static final String MES_FAVORIS    = "mes-favoris";
     public static final String FRONT_PRODUCTS = "FRONT_PRODUCTS";
 
 

@@ -14,6 +14,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.web.WebView?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17.0.12"
             xmlns:fx="http://javafx.com/fxml/1"
@@ -173,6 +174,23 @@
                                                    styleClass="form-input"/>
                                     </VBox>
                                 </HBox>
+
+                                <VBox spacing="8" styleClass="form-group">
+                                    <VBox styleClass="map-preview-card" spacing="10">
+                                        <HBox alignment="CENTER_LEFT" spacing="10">
+                                            <VBox spacing="2" HBox.hgrow="ALWAYS">
+                                                <Label text="Apercu carte" styleClass="map-preview-title"/>
+                                                <Label text="Visualisez la position exacte de l'activite pendant la saisie."
+                                                       styleClass="map-preview-subtitle" wrapText="true"/>
+                                            </VBox>
+                                            <Button fx:id="openMapBtn" text="Ouvrir"
+                                                    styleClass="map-preview-btn" onAction="#onOpenMap"/>
+                                        </HBox>
+                                        <WebView fx:id="mapPreview" prefHeight="190" minHeight="190"
+                                                 styleClass="map-preview-webview"/>
+                                        <Label fx:id="mapStatusLabel" styleClass="map-status-label"/>
+                                    </VBox>
+                                </VBox>
 
                                 <VBox spacing="8" styleClass="form-group">
                                     <HBox styleClass="ai-assist-box" alignment="CENTER_LEFT" spacing="12">
