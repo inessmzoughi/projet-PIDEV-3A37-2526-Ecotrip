@@ -13,11 +13,10 @@ import tn.esprit.models.produit.LigneCommande;
 import tn.esprit.models.produit.Product;
 import tn.esprit.services.produit.CommandeService;
 import tn.esprit.services.produit.LigneCommandeService;
-import tn.esprit.session.SessionManager;
 import tn.esprit.utils.CartManager;
 import tn.esprit.models.cart.CartItem;
-import tn.esprit.services.ReservationService;
-import tn.esprit.models.cart.CartItem;
+import tn.esprit.services.reservation.ReservationService;
+
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.Date;

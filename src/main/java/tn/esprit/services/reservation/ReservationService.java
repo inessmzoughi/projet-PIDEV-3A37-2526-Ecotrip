@@ -1,4 +1,4 @@
-package tn.esprit.services;
+package tn.esprit.services.reservation;
 
 import tn.esprit.models.Reservation;
 import tn.esprit.models.cart.CartItem;

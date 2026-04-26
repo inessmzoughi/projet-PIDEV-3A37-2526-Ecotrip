@@ -350,7 +350,7 @@
 
 /* ══ BADGES ═══════════════════════════════════════════ */
 .badge         { -fx-background-radius: 20; -fx-padding: 2 10 2 10; -fx-font-size: 12px; -fx-font-weight: bold; }
-.badge-green   { -fx-background-color: #c6f6d5; -fx-text-fill: #1a3a2a; }
+.badge-green   { -fx-background-radius: 20; -fx-padding: 2 10 2 10; -fx-font-size: 12px; -fx-font-weight: bold;-fx-background-color: #c6f6d5; -fx-text-fill: #1a3a2a; }
 .badge-blue    { -fx-background-color: #dbeafe; -fx-text-fill: #1e40af; }
 .badge-orange  { -fx-background-color: #fed7aa; -fx-text-fill: #c2410c; }
 .badge-actif   { -fx-background-color: #dcfce7; -fx-text-fill: #166534; -fx-background-radius: 20; -fx-padding: 4 10 4 10; -fx-font-size: 12px; -fx-font-weight: bold; }
@@ -731,6 +731,24 @@
 }
 
 /* ── Stat sub-label ─────────────────────────────────── */
+.stat-sub {
+    -fx-font-size: 11px;
+    -fx-text-fill: #94a3b8;
+}
+/* ── PDF export button ──────────────────────────────── */
+.btn-export-pdf {
+    -fx-background-color: #dc2626;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-padding: 8 16;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+    -fx-font-size: 13px;
+}
+.btn-export-pdf:hover { -fx-background-color: #b91c1c; }
+
+/* ── Stat sub-label (if not already there) ──────────── */
 .stat-sub {
     -fx-font-size: 11px;
     -fx-text-fill: #94a3b8;

@@ -24,28 +24,106 @@
                         <Label text="Gestion des Réservations" styleClass="page-title"/>
                     </VBox>
 
-                    <!-- Stats -->
-                    <HBox spacing="16">
-                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="6">
-                            <Label text="📋 Total" styleClass="stat-label"/>
-                            <Label fx:id="statTotal" text="0" styleClass="stat-value"/>
-                        </VBox>
-                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="6">
-                            <Label text="⏳ En attente" styleClass="stat-label"/>
-                            <Label fx:id="statPending" text="0" styleClass="stat-value"/>
-                        </VBox>
-                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="6">
-                            <Label text="✅ Confirmées" styleClass="stat-label"/>
-                            <Label fx:id="statConfirmed" text="0" styleClass="stat-value"/>
-                        </VBox>
-                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="6">
-                            <Label text="❌ Annulées" styleClass="stat-label"/>
-                            <Label fx:id="statCancelled" text="0" styleClass="stat-value"/>
-                        </VBox>
-                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="6">
-                            <Label text="💰 Revenus" styleClass="stat-label"/>
-                            <Label fx:id="statRevenue" text="0.00 TND" styleClass="stat-value"
-                                   style="-fx-font-size:16px;"/>
+                    <!-- Replace existing Stats HBox with this enhanced version -->
+                    <HBox spacing="12">
+                        <!-- Row 1: existing stats -->
+                        <VBox spacing="12" HBox.hgrow="ALWAYS">
+                            <HBox spacing="12">
+                                <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="6">
+                                    <HBox spacing="10" alignment="CENTER_LEFT">
+                                        <Label text="📋" styleClass="stat-icon"/>
+                                        <VBox spacing="2">
+                                            <Label text="Total" styleClass="stat-label"/>
+                                            <Label fx:id="statTotal" text="0" styleClass="stat-value"/>
+                                        </VBox>
+                                    </HBox>
+                                    <Label fx:id="statTotalSub" text="—" styleClass="stat-sub"/>
+                                </VBox>
+                                <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="6">
+                                    <HBox spacing="10" alignment="CENTER_LEFT">
+                                        <Label text="⏳" styleClass="stat-icon"/>
+                                        <VBox spacing="2">
+                                            <Label text="En attente" styleClass="stat-label"/>
+                                            <Label fx:id="statPending" text="0" styleClass="stat-value"/>
+                                        </VBox>
+                                    </HBox>
+                                    <Label fx:id="statPendingPct" text="—" styleClass="stat-sub"/>
+                                </VBox>
+                                <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="6">
+                                    <HBox spacing="10" alignment="CENTER_LEFT">
+                                        <Label text="✅" styleClass="stat-icon"/>
+                                        <VBox spacing="2">
+                                            <Label text="Confirmées" styleClass="stat-label"/>
+                                            <Label fx:id="statConfirmed" text="0" styleClass="stat-value"/>
+                                        </VBox>
+                                    </HBox>
+                                    <Label fx:id="statConfirmedPct" text="—" styleClass="stat-sub"/>
+                                </VBox>
+                                <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="6">
+                                    <HBox spacing="10" alignment="CENTER_LEFT">
+                                        <Label text="❌" styleClass="stat-icon"/>
+                                        <VBox spacing="2">
+                                            <Label text="Annulées" styleClass="stat-label"/>
+                                            <Label fx:id="statCancelled" text="0" styleClass="stat-value"/>
+                                        </VBox>
+                                    </HBox>
+                                    <Label fx:id="statCancelledPct" text="—" styleClass="stat-sub"/>
+                                </VBox>
+                            </HBox>
+                            <!-- Row 2: new stats -->
+                            <HBox spacing="12">
+                                <VBox styleClass="stat-card-amber" HBox.hgrow="ALWAYS" spacing="6">
+                                    <HBox spacing="10" alignment="CENTER_LEFT">
+                                        <Label text="💰" styleClass="stat-icon"/>
+                                        <VBox spacing="2">
+                                            <Label text="Revenus totaux" styleClass="stat-label"/>
+                                            <Label fx:id="statRevenue" text="0.00 TND" styleClass="stat-value"
+                                                   style="-fx-font-size:16px;"/>
+                                        </VBox>
+                                    </HBox>
+                                    <Label fx:id="statRevenueSub" text="réservations confirmées" styleClass="stat-sub"/>
+                                </VBox>
+                                <VBox styleClass="stat-card-blue" HBox.hgrow="ALWAYS" spacing="6">
+                                    <HBox spacing="10" alignment="CENTER_LEFT">
+                                        <Label text="🏨" styleClass="stat-icon"/>
+                                        <VBox spacing="2">
+                                            <Label text="Hébergements" styleClass="stat-label"/>
+                                            <Label fx:id="statHeb" text="0" styleClass="stat-value"/>
+                                        </VBox>
+                                    </HBox>
+                                    <Label fx:id="statHebPct" text="—" styleClass="stat-sub"/>
+                                </VBox>
+                                <VBox styleClass="stat-card-blue" HBox.hgrow="ALWAYS" spacing="6">
+                                    <HBox spacing="10" alignment="CENTER_LEFT">
+                                        <Label text="🧭" styleClass="stat-icon"/>
+                                        <VBox spacing="2">
+                                            <Label text="Activités" styleClass="stat-label"/>
+                                            <Label fx:id="statAct" text="0" styleClass="stat-value"/>
+                                        </VBox>
+                                    </HBox>
+                                    <Label fx:id="statActPct" text="—" styleClass="stat-sub"/>
+                                </VBox>
+                                <VBox styleClass="stat-card-red" HBox.hgrow="ALWAYS" spacing="6">
+                                    <HBox spacing="10" alignment="CENTER_LEFT">
+                                        <Label text="🚌" styleClass="stat-icon"/>
+                                        <VBox spacing="2">
+                                            <Label text="Transports" styleClass="stat-label"/>
+                                            <Label fx:id="statTrans" text="0" styleClass="stat-value"/>
+                                        </VBox>
+                                    </HBox>
+                                    <Label fx:id="statTransPct" text="—" styleClass="stat-sub"/>
+                                </VBox>
+                                <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="6">
+                                    <HBox spacing="10" alignment="CENTER_LEFT">
+                                        <Label text="👥" styleClass="stat-icon"/>
+                                        <VBox spacing="2">
+                                            <Label text="Moy. personnes" styleClass="stat-label"/>
+                                            <Label fx:id="statAvgPersons" text="0" styleClass="stat-value"/>
+                                        </VBox>
+                                    </HBox>
+                                    <Label fx:id="statAvgRevenue" text="—" styleClass="stat-sub"/>
+                                </VBox>
+                            </HBox>
                         </VBox>
                     </HBox>
 
@@ -61,10 +139,14 @@
                         <DatePicker fx:id="filterDateFrom" promptText="Début" prefWidth="140"/>
                         <DatePicker fx:id="filterDateTo"   promptText="Fin"   prefWidth="140"/>
                         <Button text="↺ Réinitialiser" styleClass="btn-cancel" onAction="#onReset"/>
+                        <!-- Export pdf button -->
+                        <Button text="📄 Exporter PDF"
+                                styleClass="btn-export-pdf"
+                                onAction="#onExportPdf"/>
                         <Region HBox.hgrow="ALWAYS"/>
                         <HBox alignment="CENTER_LEFT" spacing="8">
                             <Label text="📋 Réservations" styleClass="table-card-title"/>
-                            <Label fx:id="badgeCount" text="0" styleClass="badge badge-green"/>
+                            <Label fx:id="badgeCount" text="0" styleClass="badge-green"/>
                         </HBox>
                     </HBox>
 

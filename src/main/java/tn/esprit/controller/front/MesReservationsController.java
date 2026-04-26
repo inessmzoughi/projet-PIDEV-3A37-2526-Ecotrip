@@ -17,7 +17,7 @@ import tn.esprit.models.enums.ReservationStatus;
 import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;
 import tn.esprit.repository.ReservationRepository;
-import tn.esprit.services.ReservationService;
+import tn.esprit.services.reservation.ReservationService;
 import tn.esprit.session.SessionManager;
 
 import java.net.URL;
