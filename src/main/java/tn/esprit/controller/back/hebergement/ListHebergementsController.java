@@ -508,26 +508,42 @@ public class ListHebergementsController implements Initializable {
     /* ─── Bouton Description : ✨ Suggérer ─── */
     @FXML
     private void onSuggestDescription() {
+
+        // ── Vérifier URL image ──
+        String imageUrl = imagePrincipaleField.getText().trim();
+        if (imageUrl.isEmpty()) {
+            showSuccessPopup("Entrez d'abord l'URL de l'image\npuis cliquez Analyser.", "⚠️");
+            return;
+        }
+        if (!imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+            showSuccessPopup("L'URL doit commencer par\nhttp:// ou https://", "⚠️");
+            return;
+        }
+
+        // ── Vérifier les autres champs ──
         if (!checkFieldsForIA()) return;
 
-        String nom      = nomField.getText().trim();
-        String ville    = villeField.getText().trim();
-        int    etoiles  = Integer.parseInt(nbEtoilesField.getText().trim());
+        String nom       = nomField.getText().trim();
+        String ville     = villeField.getText().trim();
+        int    etoiles   = Integer.parseInt(nbEtoilesField.getText().trim());
         String categorie = categorieCombo.getValue();
 
-        descriptionField.setPromptText("⏳ Génération en cours…");
+        // ── UI pendant le chargement ──
+        descriptionField.setPromptText("📸 Analyse de l'image en cours…");
         descriptionField.setDisable(true);
 
         Thread t = new Thread(() -> {
             try {
-                String desc = geminiService.suggestDescription(
-                        nom, ville, etoiles, categorie);
+                String desc = geminiService.suggestDescriptionFromImage(
+                        imageUrl, nom, ville, etoiles, categorie);
+
                 javafx.application.Platform.runLater(() -> {
                     descriptionField.setText(desc);
                     descriptionField.setDisable(false);
                     descriptionField.setPromptText("Décrivez l'hébergement…");
                     updateCounter();
                 });
+
             } catch (Exception e) {
                 javafx.application.Platform.runLater(() -> {
                     descriptionField.setDisable(false);

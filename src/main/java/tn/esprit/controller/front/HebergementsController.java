@@ -47,7 +47,7 @@ public class HebergementsController implements Initializable {
     @FXML private Label pagInfo;        // "Page 2 sur 4"
     @FXML private Button btnPrev;
     @FXML private Button btnNext;
-    @FXML private TextField prixField;
+
 
     private final Hebergement_service           service           = new Hebergement_service();
     private final CategorieH_service            categorieService  = new CategorieH_service();
