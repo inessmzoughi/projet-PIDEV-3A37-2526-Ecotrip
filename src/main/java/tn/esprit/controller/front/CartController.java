@@ -1,5 +1,11 @@
 package tn.esprit.controller.front;
 
+// Ajouter ces imports en haut du fichier
+import tn.esprit.utils.MollieCheckoutWindow;
+import tn.esprit.utils.MollieConfig;
+import tn.esprit.utils.MolliePayment;
+import tn.esprit.utils.MolliePaymentService;
+import java.math.BigDecimal;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.*;
 import javafx.fxml.FXML;
@@ -250,13 +256,15 @@ public class CartController implements Initializable {
             return;
         }
 
-        String mode = rbCarte.isSelected() ? "CARTE" : rbPaypal.isSelected() ? "PAYPAL" : "CASH";
+        boolean isPaypal = rbPaypal.isSelected();
 
         try {
+            // ── Finaliser les réservations ────────────────────────────────
             if (!cart.getReservationItems().isEmpty()) {
                 reservationService.finalizeAllReservations(cart.getReservationItems());
             }
 
+            // ── Enregistrer les commandes produits ────────────────────────
             for (Map.Entry<Product, Integer> entry : cart.getProductItems().entrySet()) {
                 Product p   = entry.getKey();
                 int     qty = entry.getValue();
@@ -268,8 +276,60 @@ public class CartController implements Initializable {
             }
 
             double total = cart.getTotal();
-            cart.clear();
+            String numeroCommande = "CMD-" + System.currentTimeMillis();
 
+            // ── Paiement PayPal via Mollie ────────────────────────────────
+            if (isPaypal) {
+                try {
+                    BigDecimal montantEUR = MollieConfig.convertStoreAmountToMollie(
+                            BigDecimal.valueOf(total));
+
+                    MolliePaymentService mollieService = new MolliePaymentService();
+                    MolliePayment molliePayment = mollieService.createPayment(
+                            numeroCommande,
+                            "Commande EcoTrip " + numeroCommande,
+                            montantEUR,
+                            ""
+                    );
+
+                    // Informe l'utilisateur comment tester
+                    Alert info = new Alert(Alert.AlertType.INFORMATION);
+                    info.setTitle("Mode test Mollie");
+                    info.setHeaderText("Comment simuler le paiement ?");
+                    info.setContentText(
+                            "Dans la fenêtre qui va s'ouvrir :\n\n" +
+                                    "1. Cliquez sur 'TEST CARDS' (bouton bleu à droite)\n" +
+                                    "2. Choisissez une carte de test\n" +
+                                    "3. Le paiement sera simulé automatiquement\n\n" +
+                                    "Ou cliquez directement sur 'Vérifier le paiement'\n" +
+                                    "après avoir utilisé une carte de test."
+                    );
+                    info.showAndWait();
+
+                    MollieCheckoutWindow.CheckoutResult result =
+                            MollieCheckoutWindow.show(molliePayment, mollieService);
+
+                    if (result.successful()) {
+                        cart.clear();
+                        showAlert(Alert.AlertType.INFORMATION, "Paiement confirmé ✅",
+                                "Paiement confirmé via Mollie !\n"
+                                        + "Commande : " + numeroCommande
+                                        + "\nTotal : " + String.format("%.2f TND", total));
+                        refreshCart();
+                    } else {
+                        showAlert(Alert.AlertType.WARNING, "Paiement non complété",
+                                "Statut : " + result.status());
+                    }
+                    return;
+
+                } catch (Exception ex) {
+                    showAlert(Alert.AlertType.ERROR, "Erreur Mollie", ex.getMessage());
+                    return;
+                }
+            }
+            // ── Paiement Cash ou Carte (comportement original) ────────────
+            String mode = rbCarte.isSelected() ? "CARTE" : "CASH";
+            cart.clear();
             showAlert(Alert.AlertType.INFORMATION, "Commande confirmée ✅",
                     "Votre commande a été enregistrée !\nMode : " + mode
                             + "\nTotal : " + String.format("%.2f TND", total));
