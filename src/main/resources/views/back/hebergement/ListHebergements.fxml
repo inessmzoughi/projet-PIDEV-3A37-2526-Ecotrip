@@ -17,10 +17,22 @@
 
                     <!-- Breadcrumb + Titre -->
                     <VBox spacing="4">
-                        <HBox spacing="4">
-                            <Button text="Dashboard" styleClass="breadcrumb-link" onAction="#onNavDashboard"/>
+                        <HBox spacing="4" alignment="CENTER_LEFT">
+                            <Button text="Dashboard" styleClass="breadcrumb-link"
+                                    onAction="#onNavDashboard"/>
                             <Label text=" › " styleClass="breadcrumb-sep"/>
                             <Label text="Hébergements" styleClass="breadcrumb-active"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <Button text="💬 Modération Avis"
+                                    onAction="#onNavModeration"
+                                    style="-fx-background-color:#f59e0b;
+                                           -fx-text-fill:white;
+                                           -fx-font-weight:bold;
+                                           -fx-background-radius:8;
+                                           -fx-cursor:hand;
+                                           -fx-padding:7 16 7 16;
+                                           -fx-border-width:0;
+                                           -fx-font-size:12px;"/>
                         </HBox>
                         <Label text="Hébergements" styleClass="page-title"/>
                     </VBox>
@@ -61,18 +73,15 @@
 
                     <HBox spacing="24">
 
-                        <!-- ════════════════════════════════
-                             FORMULAIRE
-                             ════════════════════════════════ -->
+                        <!-- FORMULAIRE -->
                         <VBox minWidth="420" maxWidth="420" styleClass="form-card">
-
-                            <!-- Header formulaire -->
                             <HBox styleClass="form-card-header" alignment="CENTER_LEFT" spacing="14">
                                 <Label fx:id="formIcon" text="🏨" styleClass="form-icon"/>
                                 <VBox spacing="4">
-                                    <Label fx:id="formTitle"    text="Nouvel Hébergement"
+                                    <Label fx:id="formTitle" text="Nouvel Hébergement"
                                            styleClass="form-heading-title"/>
-                                    <Label fx:id="formSubtitle" text="Remplissez les informations ci-dessous."
+                                    <Label fx:id="formSubtitle"
+                                           text="Remplissez les informations ci-dessous."
                                            styleClass="form-heading-sub"/>
                                 </VBox>
                             </HBox>
@@ -83,13 +92,11 @@
                                 <!-- Nom -->
                                 <VBox spacing="4" styleClass="form-group">
                                     <Label text="🏷️  Nom de l'hébergement *" styleClass="form-label"/>
-                                    <TextField fx:id="nomField"
-                                               promptText="Ex : Riad Dar Zitoun"
-                                               styleClass="form-input"
-                                               onKeyReleased="#validateNom"/>
+                                    <TextField fx:id="nomField" promptText="Ex : Riad Dar Zitoun"
+                                               styleClass="form-input" onKeyReleased="#validateNom"/>
                                     <HBox spacing="6" alignment="CENTER_LEFT">
                                         <Label text="⚠" style="-fx-text-fill:#e53e3e; -fx-font-size:12px;"
-                                               fx:id="errNomIcon" managed="false" visible="false"/>
+                                               managed="false" visible="false"/>
                                         <Label fx:id="errNom"
                                                text="Le nom de l'hébergement est obligatoire."
                                                style="-fx-text-fill:#e53e3e; -fx-font-size:12px; -fx-font-weight:500;"
@@ -100,15 +107,12 @@
                                 <!-- Ville -->
                                 <VBox spacing="4" styleClass="form-group">
                                     <Label text="📍  Ville *" styleClass="form-label"/>
-                                    <TextField fx:id="villeField"
-                                               promptText="Ex : Tunis"
-                                               styleClass="form-input"
-                                               onKeyReleased="#validateVille"/>
+                                    <TextField fx:id="villeField" promptText="Ex : Tunis"
+                                               styleClass="form-input" onKeyReleased="#validateVille"/>
                                     <HBox spacing="6" alignment="CENTER_LEFT">
                                         <Label text="⚠" style="-fx-text-fill:#e53e3e; -fx-font-size:12px;"
-                                               fx:id="errVilleIcon" managed="false" visible="false"/>
-                                        <Label fx:id="errVille"
-                                               text="La ville est obligatoire."
+                                               managed="false" visible="false"/>
+                                        <Label fx:id="errVille" text="La ville est obligatoire."
                                                style="-fx-text-fill:#e53e3e; -fx-font-size:12px; -fx-font-weight:500;"
                                                managed="false" visible="false" wrapText="true"/>
                                     </HBox>
@@ -119,11 +123,10 @@
                                     <Label text="🗺️  Adresse complète *" styleClass="form-label"/>
                                     <TextField fx:id="adresseField"
                                                promptText="Ex : 12 Rue de la Médina"
-                                               styleClass="form-input"
-                                               onKeyReleased="#validateAdresse"/>
+                                               styleClass="form-input" onKeyReleased="#validateAdresse"/>
                                     <HBox spacing="6" alignment="CENTER_LEFT">
                                         <Label text="⚠" style="-fx-text-fill:#e53e3e; -fx-font-size:12px;"
-                                               fx:id="errAdresseIcon" managed="false" visible="false"/>
+                                               managed="false" visible="false"/>
                                         <Label fx:id="errAdresse"
                                                text="L'adresse complète est obligatoire."
                                                style="-fx-text-fill:#e53e3e; -fx-font-size:12px; -fx-font-weight:500;"
@@ -135,13 +138,12 @@
                                 <HBox spacing="12">
                                     <VBox spacing="4" styleClass="form-group" HBox.hgrow="ALWAYS">
                                         <Label text="⭐  Nombre d'étoiles (1–5) *" styleClass="form-label"/>
-                                        <TextField fx:id="nbEtoilesField"
-                                                   promptText="1 à 5"
+                                        <TextField fx:id="nbEtoilesField" promptText="1 à 5"
                                                    styleClass="form-input"
                                                    onKeyReleased="#validateNbEtoiles"/>
                                         <HBox spacing="6" alignment="CENTER_LEFT">
                                             <Label text="⚠" style="-fx-text-fill:#e53e3e; -fx-font-size:12px;"
-                                                   fx:id="errNbEtoilesIcon" managed="false" visible="false"/>
+                                                   managed="false" visible="false"/>
                                             <Label fx:id="errNbEtoiles"
                                                    text="Entrez une valeur entre 1 et 5."
                                                    style="-fx-text-fill:#e53e3e; -fx-font-size:12px; -fx-font-weight:500;"
@@ -150,14 +152,12 @@
                                     </VBox>
                                     <VBox spacing="4" styleClass="form-group" HBox.hgrow="ALWAYS">
                                         <Label text="🏷  Catégorie *" styleClass="form-label"/>
-                                        <ComboBox fx:id="categorieCombo"
-                                                  promptText="Choisir…"
-                                                  styleClass="sort-select"
-                                                  maxWidth="Infinity"
+                                        <ComboBox fx:id="categorieCombo" promptText="Choisir…"
+                                                  styleClass="sort-select" maxWidth="Infinity"
                                                   onAction="#validateCategorie"/>
                                         <HBox spacing="6" alignment="CENTER_LEFT">
                                             <Label text="⚠" style="-fx-text-fill:#e53e3e; -fx-font-size:12px;"
-                                                   fx:id="errCategorieIcon" managed="false" visible="false"/>
+                                                   managed="false" visible="false"/>
                                             <Label fx:id="errCategorie"
                                                    text="Veuillez choisir une catégorie."
                                                    style="-fx-text-fill:#e53e3e; -fx-font-size:12px; -fx-font-weight:500;"
@@ -171,11 +171,10 @@
                                     <Label text="🌿  Label Écologique *" styleClass="form-label"/>
                                     <TextField fx:id="labelEcoField"
                                                promptText="Ex : Green Key, Écolabel EU…"
-                                               styleClass="form-input"
-                                               onKeyReleased="#validateLabelEco"/>
+                                               styleClass="form-input" onKeyReleased="#validateLabelEco"/>
                                     <HBox spacing="6" alignment="CENTER_LEFT">
                                         <Label text="⚠" style="-fx-text-fill:#e53e3e; -fx-font-size:12px;"
-                                               fx:id="errLabelEcoIcon" managed="false" visible="false"/>
+                                               managed="false" visible="false"/>
                                         <Label fx:id="errLabelEco"
                                                text="Le label écologique est obligatoire."
                                                style="-fx-text-fill:#e53e3e; -fx-font-size:12px; -fx-font-weight:500;"
@@ -183,16 +182,14 @@
                                     </HBox>
                                 </VBox>
 
-                                <!-- Image URL + bouton analyser -->
+                                <!-- Image URL -->
                                 <VBox spacing="4" styleClass="form-group">
                                     <Label text="🖼️  Image principale (URL) *" styleClass="form-label"/>
-                                    <HBox spacing="8" alignment="CENTER_LEFT">
-                                        <TextField fx:id="imagePrincipaleField"
-                                                   promptText="https://exemple.com/image.jpg"
-                                                   styleClass="form-input"
-                                                   onKeyReleased="#validateImage"
-                                                   HBox.hgrow="ALWAYS"/>
-                                    </HBox>
+                                    <TextField fx:id="imagePrincipaleField"
+                                               promptText="https://exemple.com/image.jpg"
+                                               styleClass="form-input"
+                                               onKeyReleased="#validateImage"
+                                               HBox.hgrow="ALWAYS"/>
                                     <HBox spacing="6" alignment="CENTER_LEFT">
                                         <Label text="⚠" style="-fx-text-fill:#e53e3e; -fx-font-size:12px;"
                                                managed="false" visible="false"/>
@@ -208,12 +205,11 @@
                                     <Label text="👤  Propriétaire *" styleClass="form-label"/>
                                     <ComboBox fx:id="propietaireCombo"
                                               promptText="Choisir un propriétaire…"
-                                              styleClass="sort-select"
-                                              maxWidth="Infinity"
+                                              styleClass="sort-select" maxWidth="Infinity"
                                               onAction="#validatePropietaire"/>
                                     <HBox spacing="6" alignment="CENTER_LEFT">
                                         <Label text="⚠" style="-fx-text-fill:#e53e3e; -fx-font-size:12px;"
-                                               fx:id="errPropietaireIcon" managed="false" visible="false"/>
+                                               managed="false" visible="false"/>
                                         <Label fx:id="errPropietaire"
                                                text="Veuillez sélectionner un propriétaire."
                                                style="-fx-text-fill:#e53e3e; -fx-font-size:12px; -fx-font-weight:500;"
@@ -224,23 +220,20 @@
                                 <!-- Statut -->
                                 <VBox spacing="4" styleClass="form-group">
                                     <Label text="✅  Statut de l'hébergement" styleClass="form-label"/>
-                                    <ComboBox fx:id="actifCombo"
-                                              styleClass="sort-select"
-                                              maxWidth="Infinity"
-                                              onAction="#validateActif"/>
+                                    <ComboBox fx:id="actifCombo" styleClass="sort-select"
+                                              maxWidth="Infinity" onAction="#validateActif"/>
                                 </VBox>
 
                                 <!-- Latitude + Longitude -->
                                 <HBox spacing="12">
                                     <VBox spacing="4" styleClass="form-group" HBox.hgrow="ALWAYS">
                                         <Label text="🌐  Latitude *" styleClass="form-label"/>
-                                        <TextField fx:id="latitudeField"
-                                                   promptText="Ex : 36.8065"
+                                        <TextField fx:id="latitudeField" promptText="Ex : 36.8065"
                                                    styleClass="form-input"
                                                    onKeyReleased="#validateLatitude"/>
                                         <HBox spacing="6" alignment="CENTER_LEFT">
                                             <Label text="⚠" style="-fx-text-fill:#e53e3e; -fx-font-size:12px;"
-                                                   fx:id="errLatitudeIcon" managed="false" visible="false"/>
+                                                   managed="false" visible="false"/>
                                             <Label fx:id="errLatitude"
                                                    text="Latitude invalide. Tunisie : 30.2 à 37.5"
                                                    style="-fx-text-fill:#e53e3e; -fx-font-size:12px; -fx-font-weight:500;"
@@ -249,13 +242,12 @@
                                     </VBox>
                                     <VBox spacing="4" styleClass="form-group" HBox.hgrow="ALWAYS">
                                         <Label text="🌐  Longitude *" styleClass="form-label"/>
-                                        <TextField fx:id="longitudeField"
-                                                   promptText="Ex : 10.1815"
+                                        <TextField fx:id="longitudeField" promptText="Ex : 10.1815"
                                                    styleClass="form-input"
                                                    onKeyReleased="#validateLongitude"/>
                                         <HBox spacing="6" alignment="CENTER_LEFT">
                                             <Label text="⚠" style="-fx-text-fill:#e53e3e; -fx-font-size:12px;"
-                                                   fx:id="errLongitudeIcon" managed="false" visible="false"/>
+                                                   managed="false" visible="false"/>
                                             <Label fx:id="errLongitude"
                                                    text="Longitude invalide. Tunisie : 7.5 à 11.6"
                                                    style="-fx-text-fill:#e53e3e; -fx-font-size:12px; -fx-font-weight:500;"
@@ -264,7 +256,7 @@
                                     </VBox>
                                 </HBox>
 
-                                <!-- ── CARTE LEAFLET ── -->
+                                <!-- Carte Leaflet -->
                                 <VBox spacing="6" styleClass="form-group">
                                     <HBox alignment="CENTER_LEFT" spacing="8">
                                         <Label text="🗺️  Carte interactive" styleClass="form-label"/>
@@ -272,39 +264,33 @@
                                                style="-fx-font-size:11px; -fx-text-fill:#64748b;"/>
                                     </HBox>
                                     <WebView fx:id="mapView" prefHeight="240" prefWidth="380"
-                                             style="-fx-border-color:#e2e8f0; -fx-border-radius:8; -fx-background-radius:8;"/>
-                                    <Label text="💡 Cliquez sur la carte pour remplir automatiquement Latitude et Longitude."
+                                             style="-fx-border-color:#e2e8f0; -fx-border-radius:8;"/>
+                                    <Label text="💡 Cliquez sur la carte pour remplir Latitude et Longitude."
                                            style="-fx-font-size:11px; -fx-text-fill:#64748b; -fx-font-style:italic;"
                                            wrapText="true"/>
                                 </VBox>
 
-
-
                                 <!-- Description + bouton analyser photo -->
                                 <VBox spacing="4" styleClass="form-group">
                                     <HBox alignment="CENTER_LEFT" spacing="8">
-                                        <Label text="📝  Description *"
-                                               styleClass="form-label"
+                                        <Label text="📝  Description *" styleClass="form-label"
                                                HBox.hgrow="ALWAYS"/>
                                         <Button text="📸 Analyser photo"
                                                 onAction="#onSuggestDescription"
                                                 style="-fx-background-color:#7c3aed;
-                       -fx-text-fill:white;
-                       -fx-font-size:11px;
-                       -fx-font-weight:bold;
-                       -fx-background-radius:20;
-                       -fx-cursor:hand;
-                       -fx-padding:5 14 5 14;
-                       -fx-border-width:0;"/>
+                                                       -fx-text-fill:white;
+                                                       -fx-font-size:11px;
+                                                       -fx-font-weight:bold;
+                                                       -fx-background-radius:20;
+                                                       -fx-cursor:hand;
+                                                       -fx-padding:5 14 5 14;
+                                                       -fx-border-width:0;"/>
                                     </HBox>
                                     <TextArea fx:id="descriptionField"
                                               promptText="Décrivez l'hébergement en détail…"
-                                              styleClass="form-textarea"
-                                              prefHeight="90"
-                                              wrapText="true"
-                                              onKeyReleased="#updateCounter"/>
-                                    <Label fx:id="charCount"
-                                           text="0 / 500 caractères"
+                                              styleClass="form-textarea" prefHeight="90"
+                                              wrapText="true" onKeyReleased="#updateCounter"/>
+                                    <Label fx:id="charCount" text="0 / 500 caractères"
                                            styleClass="char-count"/>
                                 </VBox>
 
@@ -312,86 +298,85 @@
                                 <VBox spacing="4" styleClass="form-group">
                                     <HBox alignment="CENTER_LEFT" spacing="8">
                                         <Label text="💰  Prix par nuit suggéré (DT)"
-                                               styleClass="form-label"
-                                               HBox.hgrow="ALWAYS"/>
+                                               styleClass="form-label" HBox.hgrow="ALWAYS"/>
                                         <Button text="✨ Suggérer prix"
                                                 onAction="#onSuggestPrix"
                                                 style="-fx-background-color:#059669;
-                       -fx-text-fill:white;
-                       -fx-font-size:11px;
-                       -fx-font-weight:bold;
-                       -fx-background-radius:20;
-                       -fx-cursor:hand;
-                       -fx-padding:5 14 5 14;
-                       -fx-border-width:0;"/>
+                                                       -fx-text-fill:white;
+                                                       -fx-font-size:11px;
+                                                       -fx-font-weight:bold;
+                                                       -fx-background-radius:20;
+                                                       -fx-cursor:hand;
+                                                       -fx-padding:5 14 5 14;
+                                                       -fx-border-width:0;"/>
                                     </HBox>
-                                    <TextField fx:id="prixField"
-                                               promptText="Ex : 250"
+                                    <TextField fx:id="prixField" promptText="Ex : 250"
                                                styleClass="form-input"/>
                                 </VBox>
+
                                 <!-- Équipements -->
                                 <VBox spacing="6" styleClass="form-group">
                                     <Label text="🔧  Équipements disponibles" styleClass="form-label"/>
                                     <FlowPane fx:id="equipementsCheckboxPane"
-                                              hgap="10" vgap="8"
-                                              styleClass="eq-checkbox-pane"/>
+                                              hgap="10" vgap="8" styleClass="eq-checkbox-pane"/>
                                 </VBox>
 
                             </VBox>
 
                             <!-- Footer boutons -->
                             <HBox styleClass="form-footer" alignment="CENTER_RIGHT" spacing="10">
-                                <Button text="↺  Réinitialiser" styleClass="btn-cancel" onAction="#onReset"/>
-                                <Button fx:id="submitBtn" text="➕  Ajouter" styleClass="btn-submit" onAction="#onSubmit"/>
+                                <Button text="↺  Réinitialiser" styleClass="btn-cancel"
+                                        onAction="#onReset"/>
+                                <Button fx:id="submitBtn" text="➕  Ajouter"
+                                        styleClass="btn-submit" onAction="#onSubmit"/>
                             </HBox>
                         </VBox>
 
-                        <!-- ════════════════════════════════
-                             TABLE
-                             ════════════════════════════════ -->
+                        <!-- TABLE -->
                         <VBox spacing="14" HBox.hgrow="ALWAYS">
                             <HBox styleClass="action-bar" alignment="CENTER_LEFT" spacing="12">
                                 <HBox alignment="CENTER_LEFT" spacing="8" HBox.hgrow="ALWAYS">
-                                    <Label text="🏨  Tous les hébergements" styleClass="table-card-title"/>
-                                    <Label fx:id="badgeCount" text="0" styleClass="badge, badge-green"/>
+                                    <Label text="🏨  Tous les hébergements"
+                                           styleClass="table-card-title"/>
+                                    <Label fx:id="badgeCount" text="0"
+                                           styleClass="badge, badge-green"/>
                                 </HBox>
                                 <HBox styleClass="search-wrap" alignment="CENTER_LEFT" spacing="6">
                                     <Label text="🔍" styleClass="search-icon"/>
                                     <TextField fx:id="searchField"
                                                promptText="Rechercher par nom ou ville…"
                                                styleClass="search-input"
-                                               onKeyReleased="#onSearch"
-                                               prefWidth="200"/>
+                                               onKeyReleased="#onSearch" prefWidth="200"/>
                                 </HBox>
-                                <ComboBox fx:id="sortCombo"
-                                          promptText="Trier par…"
-                                          styleClass="sort-select"
-                                          onAction="#onSort"
+                                <ComboBox fx:id="sortCombo" promptText="Trier par…"
+                                          styleClass="sort-select" onAction="#onSort"
                                           prefWidth="160"/>
                             </HBox>
 
                             <VBox styleClass="table-card">
-                                <TableView fx:id="tableView"
-                                           styleClass="main-table"
+                                <TableView fx:id="tableView" styleClass="main-table"
                                            prefHeight="420" maxHeight="420">
                                     <columns>
-                                        <TableColumn fx:id="colNom"       text="Nom"        minWidth="120"/>
-                                        <TableColumn fx:id="colVille"     text="Ville"      minWidth="90"/>
-                                        <TableColumn fx:id="colNbEtoiles" text="Étoiles"    minWidth="80"/>
-                                        <TableColumn fx:id="colLabelEco"  text="Label Éco"  minWidth="90"/>
-                                        <TableColumn fx:id="colActif"     text="Statut"     minWidth="80"/>
-                                        <TableColumn fx:id="colActions" text="Actions" minWidth="200" maxWidth="220"/>
+                                        <TableColumn fx:id="colNom"       text="Nom"       minWidth="120"/>
+                                        <TableColumn fx:id="colVille"     text="Ville"     minWidth="90"/>
+                                        <TableColumn fx:id="colNbEtoiles" text="Étoiles"   minWidth="80"/>
+                                        <TableColumn fx:id="colLabelEco"  text="Label Éco" minWidth="90"/>
+                                        <TableColumn fx:id="colActif"     text="Statut"    minWidth="80"/>
+                                        <TableColumn fx:id="colActions"   text="Actions"
+                                                     minWidth="200" maxWidth="220"/>
                                     </columns>
                                     <placeholder>
                                         <VBox alignment="CENTER" spacing="8" styleClass="empty-state">
                                             <Label text="🔍" styleClass="empty-icon"/>
-                                            <Label text="Aucun hébergement trouvé." styleClass="empty-label"/>
+                                            <Label text="Aucun hébergement trouvé."
+                                                   styleClass="empty-label"/>
                                         </VBox>
                                     </placeholder>
                                 </TableView>
                                 <HBox fx:id="paginationBar" styleClass="pagination-bar"
                                       alignment="CENTER_LEFT" spacing="8">
-                                    <Label fx:id="pagInfo" styleClass="pag-info" HBox.hgrow="ALWAYS"/>
+                                    <Label fx:id="pagInfo" styleClass="pag-info"
+                                           HBox.hgrow="ALWAYS"/>
                                     <Region HBox.hgrow="ALWAYS"/>
                                     <HBox fx:id="pagButtons" spacing="4"/>
                                 </HBox>

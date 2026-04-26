@@ -13,6 +13,9 @@
 
     <VBox styleClass="heb-page" spacing="0">
 
+        <!-- ══ NAVBAR ══ -->
+        <fx:include source="../components/front-navbar.fxml"/>
+
         <!-- ══ HERO ══ -->
         <VBox styleClass="heb-hero" alignment="CENTER" spacing="14">
             <padding><Insets top="80" bottom="80" left="40" right="40"/></padding>

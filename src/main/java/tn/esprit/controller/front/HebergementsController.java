@@ -1,5 +1,9 @@
 package tn.esprit.controller.front;
 
+import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -10,6 +14,8 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.stage.Stage;
+import javafx.util.Duration;
 import tn.esprit.controller.front.modals.HebergementReservationController;
 import tn.esprit.models.hebergements.Categorie_hebergement;
 import tn.esprit.models.hebergements.Chambre;
@@ -19,6 +25,7 @@ import tn.esprit.services.hebergement.CategorieH_service;
 import tn.esprit.services.hebergement.Chambre_service;
 import tn.esprit.services.hebergement.HebergementEquipement_service;
 import tn.esprit.services.hebergement.Hebergement_service;
+import tn.esprit.services.hebergement.LikeHebergement_service;
 
 import java.io.File;
 import java.net.URL;
@@ -29,7 +36,6 @@ import java.util.stream.Collectors;
 
 import javafx.fxml.FXMLLoader;
 import tn.esprit.utils.CartManager;
-import javafx.scene.layout.StackPane;
 
 public class HebergementsController implements Initializable {
 
@@ -41,23 +47,22 @@ public class HebergementsController implements Initializable {
     @FXML private Label            resultCount;
     @FXML private VBox             emptyState;
 
-
     /* ── Pagination UI ── */
-    @FXML private HBox  paginationBar;
-    @FXML private Label pagInfo;        // "Page 2 sur 4"
+    @FXML private HBox   paginationBar;
+    @FXML private Label  pagInfo;
     @FXML private Button btnPrev;
     @FXML private Button btnNext;
-
 
     private final Hebergement_service           service           = new Hebergement_service();
     private final CategorieH_service            categorieService  = new CategorieH_service();
     private final Chambre_service               chambreService    = new Chambre_service();
     private final HebergementEquipement_service equipementService = new HebergementEquipement_service();
+    private final LikeHebergement_service       likeService       = new LikeHebergement_service();
 
     private List<Hebergement> allData;
     private List<Hebergement> filteredData;
 
-    private static final int    PER_PAGE   = 6;
+    private static final int    PER_PAGE    = 6;
     private static final String UPLOADS_DIR = "uploads/hebergements/";
     private int currentPage = 1;
 
@@ -127,7 +132,6 @@ public class HebergementsController implements Initializable {
             default -> {}
         }
 
-        // ✅ Reset à la page 1 à chaque nouveau filtre
         currentPage = 1;
         renderPage();
     }
@@ -150,7 +154,6 @@ public class HebergementsController implements Initializable {
             return;
         }
 
-        // Calcul pagination
         int totalPages = (int) Math.ceil((double) total / PER_PAGE);
         if (currentPage > totalPages) currentPage = totalPages;
         if (currentPage < 1) currentPage = 1;
@@ -158,28 +161,21 @@ public class HebergementsController implements Initializable {
         int from = (currentPage - 1) * PER_PAGE;
         int to   = Math.min(from + PER_PAGE, total);
 
-        // Affiche les cartes de la page courante
         filteredData.subList(from, to).forEach(h -> cardsPane.getChildren().add(buildCard(h)));
 
-        // ✅ Met à jour la pagination
         pagInfo.setText("Page " + currentPage + " / " + totalPages);
         btnPrev.setDisable(currentPage <= 1);
         btnNext.setDisable(currentPage >= totalPages);
 
-        // Affiche la barre seulement s'il y a plusieurs pages
         paginationBar.setVisible(totalPages > 1);
         paginationBar.setManaged(totalPages > 1);
     }
 
-    /* ─────────────── BOUTONS PAGINATION ─────────────── */
-
-    @FXML
-    private void onPrev() {
+    @FXML private void onPrev() {
         if (currentPage > 1) { currentPage--; renderPage(); }
     }
 
-    @FXML
-    private void onNext() {
+    @FXML private void onNext() {
         int totalPages = (int) Math.ceil((double) filteredData.size() / PER_PAGE);
         if (currentPage < totalPages) { currentPage++; renderPage(); }
     }
@@ -285,6 +281,26 @@ public class HebergementsController implements Initializable {
         }
         body.getChildren().add(priceBox);
 
+        // ── Pourcentage de likes ──
+        try {
+            double pct = likeService.getLikePercentage(h.getId());
+            int    nb  = likeService.countLikes(h.getId());
+
+            String emoji = pct >= 75 ? "🔥" : pct >= 40 ? "❤️" : "🤍";
+            Label lblPct = new Label(emoji + "  " + nb + " personnes ont aimé  ("
+                    + String.format("%.0f", pct) + "%)");
+            lblPct.setStyle("-fx-font-size:11px; -fx-text-fill:#2d6a4f; -fx-font-weight:bold;");
+
+            body.getChildren().addAll(lblPct, buildProgressBar(pct));
+        } catch (SQLException ignored) {}
+
+        // Bouton Voir détails
+        Button btnDetail = new Button("👁 Voir détails");
+        btnDetail.getStyleClass().add("heb-card-btn");
+        btnDetail.setMaxWidth(Double.MAX_VALUE);
+        btnDetail.setOnAction(e -> ouvrirDetail(h));
+        body.getChildren().add(btnDetail);
+
         // Bouton Réserver
         Button btn = new Button("Réserver");
         btn.getStyleClass().add("heb-card-btn");
@@ -294,6 +310,47 @@ public class HebergementsController implements Initializable {
 
         card.getChildren().add(body);
         return card;
+    }
+
+    /* ─────────────── BARRE DE PROGRESSION LIKES ─────────────── */
+
+    private StackPane buildProgressBar(double pct) {
+        // Fond gris
+        HBox bg = new HBox();
+        bg.setStyle("-fx-background-color:#e2e8f0; -fx-background-radius:6;");
+        bg.setPrefHeight(7);
+        bg.setMaxWidth(Double.MAX_VALUE);
+
+        // Barre colorée
+        HBox fill = new HBox();
+        fill.setPrefHeight(7);
+        fill.setPrefWidth(0);
+
+        String color = pct >= 75 ? "#16a34a"
+                : pct >= 40 ? "#52b788"
+                :             "#86efac";
+        fill.setStyle("-fx-background-color:" + color + "; -fx-background-radius:6;");
+
+        StackPane bar = new StackPane(bg, fill);
+        bar.setMaxWidth(Double.MAX_VALUE);
+        StackPane.setAlignment(fill, Pos.CENTER_LEFT);
+
+        // Animation fluide déclenchée après layout
+        bar.widthProperty().addListener((obs, oldW, newW) -> {
+            if (newW.doubleValue() > 0 && fill.getPrefWidth() == 0) {
+                double targetW = newW.doubleValue() * pct / 100.0;
+                Timeline anim = new Timeline(
+                        new KeyFrame(Duration.ZERO,
+                                new KeyValue(fill.prefWidthProperty(), 0)),
+                        new KeyFrame(Duration.millis(900),
+                                new KeyValue(fill.prefWidthProperty(),
+                                        targetW, Interpolator.EASE_OUT))
+                );
+                anim.play();
+            }
+        });
+
+        return bar;
     }
 
     /* ─────────────── IMAGE ─────────────── */
@@ -356,23 +413,18 @@ public class HebergementsController implements Initializable {
     private void onReserver(Hebergement h) {
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/views/front/modals/HebergementReservationModal.fxml")
-            );
+                    getClass().getResource("/views/front/modals/HebergementReservationModal.fxml"));
             StackPane modalOverlay = loader.load();
 
             HebergementReservationController ctrl = loader.getController();
             ctrl.setHebergement(h);
             ctrl.setOverlayRoot(modalOverlay);
 
-            // 🔥 FIX: handle root safely
             Parent rootNode = cardsPane.getScene().getRoot();
-
             StackPane overlayContainer;
-
             if (rootNode instanceof StackPane) {
                 overlayContainer = (StackPane) rootNode;
             } else {
-                // Wrap existing root inside a StackPane
                 overlayContainer = new StackPane();
                 Scene scene = rootNode.getScene();
                 overlayContainer.getChildren().add(rootNode);
@@ -380,19 +432,31 @@ public class HebergementsController implements Initializable {
             }
 
             overlayContainer.getChildren().add(modalOverlay);
-
-            // Apply blur
-            if (!overlayContainer.getChildren().isEmpty()) {
+            if (!overlayContainer.getChildren().isEmpty())
                 overlayContainer.getChildren().get(0)
                         .setEffect(new javafx.scene.effect.GaussianBlur(8));
-            }
 
-            // Remove blur on close + keep cart update
             ctrl.setOnCartUpdated(() -> {
                 System.out.println("Cart: " + CartManager.getInstance().getCount());
                 overlayContainer.getChildren().get(0).setEffect(null);
             });
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void ouvrirDetail(Hebergement h) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/views/front/HebergementDetail.fxml"));
+            Parent root = loader.load();
+
+            HebergementDetailController ctrl = loader.getController();
+            ctrl.setHebergement(h);
+
+            Scene scene = cardsPane.getScene();
+            scene.setRoot(root);
         } catch (Exception e) {
             e.printStackTrace();
         }

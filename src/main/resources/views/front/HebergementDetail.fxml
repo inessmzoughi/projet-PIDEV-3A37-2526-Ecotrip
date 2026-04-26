@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+
+<ScrollPane fitToWidth="true"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="tn.esprit.controller.front.HebergementDetailController"
+            hbarPolicy="NEVER"
+            vbarPolicy="AS_NEEDED"
+            styleClass="front-scroll">
+
+    <VBox styleClass="heb-page" spacing="0">
+
+        <!-- ══ HERO BANNER ══ -->
+        <VBox fx:id="heroZone" styleClass="detail-hero" alignment="BOTTOM_LEFT" minHeight="340">
+            <padding><Insets top="0" bottom="0" left="0" right="0"/></padding>
+
+            <!-- Image de fond via ImageView superposé en code -->
+            <StackPane fx:id="imageStack" minHeight="340" maxHeight="340">
+
+                <!-- Overlay dégradé vert -->
+                <VBox styleClass="detail-hero-overlay" alignment="BOTTOM_LEFT">
+                    <padding><Insets top="0" bottom="32" left="48" right="48"/></padding>
+
+                    <!-- Bouton retour -->
+                    <HBox alignment="TOP_LEFT" VBox.vgrow="ALWAYS">
+                        <padding><Insets top="24" bottom="0" left="0" right="0"/></padding>
+                        <Button fx:id="btnRetour"
+                                text="← Retour aux hébergements"
+                                onAction="#onRetour"
+                                styleClass="detail-back-btn"/>
+                    </HBox>
+
+                    <!-- Titre sur l'image -->
+                    <VBox spacing="8">
+                        <Label fx:id="lblCategorie" styleClass="detail-hero-category"/>
+                        <Label fx:id="lblNom"       styleClass="detail-hero-nom"/>
+                        <HBox spacing="20" alignment="CENTER_LEFT">
+                            <Label fx:id="lblVille"   styleClass="detail-hero-ville"/>
+                            <Label fx:id="lblEtoiles" styleClass="detail-hero-stars"/>
+                        </HBox>
+                    </VBox>
+                </VBox>
+
+                <!-- ImageView injecté en Java -->
+                <ImageView fx:id="imageView"
+                           fitWidth="1200" fitHeight="340"
+                           preserveRatio="false" smooth="true"
+                           mouseTransparent="true"/>
+            </StackPane>
+        </VBox>
+
+        <!-- ══ CONTENU PRINCIPAL ══ -->
+        <HBox spacing="32" styleClass="detail-content-row">
+            <padding><Insets top="40" bottom="48" left="48" right="48"/></padding>
+
+            <!-- ── Colonne gauche (infos + avis) ── -->
+            <VBox spacing="28" HBox.hgrow="ALWAYS">
+
+                <!-- Description -->
+                <VBox spacing="10" styleClass="detail-section-card">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="🌿" styleClass="detail-section-icon"/>
+                        <Label text="À propos de cet hébergement" styleClass="detail-section-title"/>
+                    </HBox>
+                    <Label fx:id="lblDescription"
+                           wrapText="true"
+                           styleClass="detail-description"/>
+                </VBox>
+
+                <!-- Équipements -->
+                <VBox spacing="10" styleClass="detail-section-card">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="✨" styleClass="detail-section-icon"/>
+                        <Label text="Équipements" styleClass="detail-section-title"/>
+                    </HBox>
+                    <FlowPane fx:id="equipementsPane" hgap="8" vgap="8"/>
+                </VBox>
+
+                <!-- ══ AVIS ══ -->
+                <VBox spacing="16" styleClass="detail-section-card">
+
+                    <!-- Header -->
+                    <HBox alignment="CENTER_LEFT" spacing="12">
+                        <Label text="💬" styleClass="detail-section-icon"/>
+                        <Label text="Avis des voyageurs" styleClass="detail-section-title"/>
+                        <Label fx:id="lblAvisCount" text="0 avis" styleClass="detail-avis-badge"/>
+                    </HBox>
+
+                    <!-- Formulaire avis -->
+                    <VBox fx:id="formAvisBox" spacing="12" styleClass="detail-avis-form">
+                        <Label text="✍️  Partagez votre expérience"
+                               styleClass="detail-form-label"/>
+
+                        <TextArea fx:id="commentaireField"
+                                  promptText="Votre commentaire (5–500 caractères)…"
+                                  prefHeight="90"
+                                  wrapText="true"
+                                  styleClass="detail-textarea"/>
+
+                        <Label fx:id="errCommentaire"
+                               styleClass="detail-err-label"
+                               visible="false" managed="false"/>
+
+                        <!-- Upload photo -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <Button fx:id="btnChoisirPhoto"
+                                    text="📷  Ajouter une photo"
+                                    onAction="#onChoisirPhoto"
+                                    styleClass="detail-btn-photo"/>
+                            <Label fx:id="lblPhotoChoisie"
+                                   text="Aucune photo choisie"
+                                   styleClass="detail-photo-hint"/>
+                        </HBox>
+
+                        <!-- Prévisualisation photo -->
+                        <ImageView fx:id="photoPreview"
+                                   fitWidth="220" fitHeight="130"
+                                   preserveRatio="true" smooth="true"
+                                   visible="false" managed="false"
+                                   style="-fx-background-radius:8;"/>
+
+                        <Button fx:id="btnEnvoyerAvis"
+                                text="📤  Publier mon avis"
+                                onAction="#onEnvoyerAvis"
+                                styleClass="detail-btn-publier"
+                                maxWidth="220"/>
+                    </VBox>
+
+                    <!-- Liste des avis -->
+                    <VBox fx:id="avisContainer" spacing="12"/>
+
+                </VBox>
+            </VBox>
+
+            <!-- ── Colonne droite (sticky sidebar) ── -->
+            <VBox spacing="16" prefWidth="280" minWidth="260">
+
+                <!-- Prix + Like -->
+                <VBox spacing="14" styleClass="detail-sidebar-card">
+                    <Label text="Tarifs" styleClass="detail-sidebar-title"/>
+                    <HBox fx:id="prixBox" alignment="CENTER_LEFT" spacing="6"/>
+
+                    <Separator/>
+
+                    <!-- Like -->
+                    <HBox alignment="CENTER" spacing="10">
+                        <Button fx:id="btnLike"
+                                text="🤍  0"
+                                onAction="#onLike"
+                                styleClass="detail-like-btn"
+                                maxWidth="Infinity"
+                                HBox.hgrow="ALWAYS"/>
+                    </HBox>
+
+                    <Label fx:id="lblLikeCount" visible="false" managed="false"/>
+
+                    <Button text="🛏  Réserver maintenant"
+                            fx:id="btnReserver"
+                            onAction="#onReserver"
+                            styleClass="detail-btn-reserver"
+                            maxWidth="Infinity"/>
+                </VBox>
+
+                <!-- Localisation -->
+                <VBox spacing="8" styleClass="detail-sidebar-card">
+                    <Label text="📍 Localisation" styleClass="detail-sidebar-title"/>
+                    <Label fx:id="lblVilleSidebar" styleClass="detail-sidebar-ville"/>
+                    <Label fx:id="lblAdresse"      styleClass="detail-sidebar-adresse"
+                           wrapText="true"/>
+                </VBox>
+
+            </VBox>
+        </HBox>
+
+        <!-- ══ FOOTER ══ -->
+        <fx:include source="../components/front-footer.fxml"/>
+
+    </VBox>
+</ScrollPane>

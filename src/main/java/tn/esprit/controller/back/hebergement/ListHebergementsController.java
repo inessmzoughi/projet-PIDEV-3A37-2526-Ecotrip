@@ -49,7 +49,7 @@ public class ListHebergementsController implements Initializable {
     @FXML private FlowPane         equipementsCheckboxPane;
     @FXML private Label            errPropietaire;
     @FXML private WebView          mapView;
-    @FXML private TextField prixField;
+    @FXML private TextField        prixField;
 
     /* ─── Table ─── */
     @FXML private TextField              searchField;
@@ -66,15 +66,15 @@ public class ListHebergementsController implements Initializable {
     private final CategorieH_service            categorieService     = new CategorieH_service();
     private final Equipement_service            equipementService    = new Equipement_service();
     private final HebergementEquipement_service hebergementEqService = new HebergementEquipement_service();
-    private List<Hebergement> allData;
-    private List<Equipement>  allEquipements       = new ArrayList<>();
+    private final GeminiService                 geminiService        = new GeminiService();
+    private List<Hebergement>    allData;
+    private List<Equipement>     allEquipements       = new ArrayList<>();
     private final List<CheckBox> equipementCheckboxes = new ArrayList<>();
     private Hebergement hebergementEnEdition = null;
     private static final int PER_PAGE = 6;
     private int currentPage = 1;
     private final Map<String, Integer> propietaireMap = new LinkedHashMap<>();
     private final Map<String, Integer> categorieMap   = new LinkedHashMap<>();
-    private final GeminiService geminiService = new GeminiService();
 
     /* ─── Pont Java ↔ JavaScript ─── */
     public class JavaConnector {
@@ -109,10 +109,8 @@ public class ListHebergementsController implements Initializable {
     /* ─── Carte ─── */
     private void initMap() {
         WebEngine engine = mapView.getEngine();
-
         String css = getClass().getResource("/leaflet/leaflet.css").toExternalForm();
         String js  = getClass().getResource("/leaflet/leaflet.js").toExternalForm();
-
         String html = "<!DOCTYPE html><html><head>"
                 + "<meta charset='utf-8'/>"
                 + "<link rel='stylesheet' href='" + css + "'/>"
@@ -135,9 +133,7 @@ public class ListHebergementsController implements Initializable {
                 + "setTimeout(function(){ map.invalidateSize(); }, 300);"
                 + "setInterval(function(){ map.invalidateSize(); }, 1000);"
                 + "</script></body></html>";
-
         engine.loadContent(html);
-
         engine.getLoadWorker().stateProperty().addListener((obs, old, state) -> {
             if (state == Worker.State.SUCCEEDED) {
                 JSObject win = (JSObject) engine.executeScript("window");
@@ -156,24 +152,21 @@ public class ListHebergementsController implements Initializable {
                     "setMarker(" + lat + "," + lng + ",'" + nom + "','" + ville + "')");
         } catch (NumberFormatException ignored) {}
     }
+
     private void showMapPopup(Hebergement h) {
         Stage popup = new Stage();
         popup.initStyle(StageStyle.DECORATED);
         popup.initModality(Modality.APPLICATION_MODAL);
         popup.initOwner(submitBtn.getScene().getWindow());
         popup.setTitle(h.getNom() + " — " + h.getVille());
-
         WebView miniMap = new WebView();
         miniMap.setPrefSize(500, 380);
-
         String css = getClass().getResource("/leaflet/leaflet.css").toExternalForm();
         String js  = getClass().getResource("/leaflet/leaflet.js").toExternalForm();
-
         double lat = h.getLatitude();
         double lng = h.getLongitude();
         String nom   = h.getNom().replace("'", "\\'");
         String ville = h.getVille().replace("'", "\\'");
-
         String html = "<!DOCTYPE html><html><head>"
                 + "<meta charset='utf-8'/>"
                 + "<link rel='stylesheet' href='" + css + "'/>"
@@ -189,45 +182,32 @@ public class ListHebergementsController implements Initializable {
                 + "setTimeout(function(){ map.invalidateSize(); }, 300);"
                 + "setInterval(function(){ map.invalidateSize(); }, 1000);"
                 + "</script></body></html>";
-
         miniMap.getEngine().loadContent(html);
-
-        // Infos sous la carte
-        Label lblNom   = new Label(h.getNom());
+        Label lblNom = new Label(h.getNom());
         lblNom.setStyle("-fx-font-size:15px; -fx-font-weight:bold; -fx-text-fill:#0f172a;");
-
         Label lblVille = new Label("📍 " + h.getVille() + "  |  " + h.getNb_etoiles() + " étoiles");
         lblVille.setStyle("-fx-font-size:12px; -fx-text-fill:#64748b;");
-
         Label lblCoords = new Label("Lat: " + lat + "  —  Lng: " + lng);
         lblCoords.setStyle("-fx-font-size:11px; -fx-text-fill:#94a3b8; -fx-font-style:italic;");
-
         Button closeBtn = new Button("Fermer");
-        closeBtn.setStyle(
-                "-fx-background-color:#0ea5e9; -fx-text-fill:white; -fx-font-weight:bold;" +
-                        "-fx-background-radius:8; -fx-padding:8 32 8 32; -fx-cursor:hand;" +
-                        "-fx-font-size:13px; -fx-border-width:0;");
+        closeBtn.setStyle("-fx-background-color:#0ea5e9; -fx-text-fill:white; -fx-font-weight:bold;"
+                + "-fx-background-radius:8; -fx-padding:8 32 8 32; -fx-cursor:hand;"
+                + "-fx-font-size:13px; -fx-border-width:0;");
         closeBtn.setOnAction(e -> popup.close());
-
         VBox info = new VBox(4, lblNom, lblVille, lblCoords);
         info.setPadding(new Insets(12, 16, 4, 16));
-
         HBox footer = new HBox(closeBtn);
         footer.setAlignment(Pos.CENTER_RIGHT);
         footer.setPadding(new Insets(8, 16, 16, 16));
-
         VBox root = new VBox(miniMap, info, footer);
         root.setStyle("-fx-background-color:white;");
-
         popup.setScene(new Scene(root));
         popup.setResizable(false);
-
         popup.setOnShown(e -> {
             Stage owner = (Stage) submitBtn.getScene().getWindow();
             popup.setX(owner.getX() + (owner.getWidth()  - popup.getWidth())  / 2);
             popup.setY(owner.getY() + (owner.getHeight() - popup.getHeight()) / 2);
         });
-
         popup.showAndWait();
     }
 
@@ -463,17 +443,18 @@ public class ListHebergementsController implements Initializable {
         nbEtoilesField.clear(); descriptionField.clear();
         labelEcoField.clear(); imagePrincipaleField.clear();
         latitudeField.clear(); longitudeField.clear();
+        prixField.clear();
         categorieCombo.setValue(null);
         propietaireCombo.getSelectionModel().selectFirst();
         actifCombo.getSelectionModel().selectFirst();
-        setFieldError(nomField,      errNom,      false);
-        setFieldError(villeField,    errVille,    false);
-        setFieldError(adresseField,  errAdresse,  false);
-        setFieldError(nbEtoilesField,errNbEtoiles,false);
-        setFieldError(labelEcoField, errLabelEco, false);
-        setFieldError(imagePrincipaleField, errImage, false);
-        setFieldError(latitudeField, errLatitude, false);
-        setFieldError(longitudeField,errLongitude,false);
+        setFieldError(nomField,               errNom,       false);
+        setFieldError(villeField,             errVille,     false);
+        setFieldError(adresseField,           errAdresse,   false);
+        setFieldError(nbEtoilesField,         errNbEtoiles, false);
+        setFieldError(labelEcoField,          errLabelEco,  false);
+        setFieldError(imagePrincipaleField,   errImage,     false);
+        setFieldError(latitudeField,          errLatitude,  false);
+        setFieldError(longitudeField,         errLongitude, false);
         errCategorie.setVisible(false);   errCategorie.setManaged(false);
         categorieCombo.getStyleClass().remove("form-input-error");
         errPropietaire.setVisible(false); errPropietaire.setManaged(false);
@@ -485,17 +466,14 @@ public class ListHebergementsController implements Initializable {
         formSubtitle.setText("Remplissez les informations ci-dessous.");
         submitBtn.setText("➕ Ajouter");
         equipementCheckboxes.forEach(cb -> cb.setSelected(false));
-        prixField.clear();   // ← ajouter dans onReset()
     }
-    /* ─── Suggestion IA (Gemini) ─── */
-    @FXML
-    /* ─── Helper commun : vérifie les 4 champs requis ─── */
+
+    /* ─── Helper commun IA ─── */
     private boolean checkFieldsForIA() {
         String nom        = nomField.getText().trim();
         String ville      = villeField.getText().trim();
         String etoilesStr = nbEtoilesField.getText().trim();
         String categorie  = categorieCombo.getValue();
-
         if (nom.isEmpty() || ville.isEmpty()
                 || !etoilesStr.matches("[1-5]") || categorie == null) {
             showSuccessPopup(
@@ -505,11 +483,9 @@ public class ListHebergementsController implements Initializable {
         return true;
     }
 
-    /* ─── Bouton Description : ✨ Suggérer ─── */
+    /* ─── Bouton Description : Analyser photo ─── */
     @FXML
     private void onSuggestDescription() {
-
-        // ── Vérifier URL image ──
         String imageUrl = imagePrincipaleField.getText().trim();
         if (imageUrl.isEmpty()) {
             showSuccessPopup("Entrez d'abord l'URL de l'image\npuis cliquez Analyser.", "⚠️");
@@ -519,8 +495,6 @@ public class ListHebergementsController implements Initializable {
             showSuccessPopup("L'URL doit commencer par\nhttp:// ou https://", "⚠️");
             return;
         }
-
-        // ── Vérifier les autres champs ──
         if (!checkFieldsForIA()) return;
 
         String nom       = nomField.getText().trim();
@@ -528,7 +502,6 @@ public class ListHebergementsController implements Initializable {
         int    etoiles   = Integer.parseInt(nbEtoilesField.getText().trim());
         String categorie = categorieCombo.getValue();
 
-        // ── UI pendant le chargement ──
         descriptionField.setPromptText("📸 Analyse de l'image en cours…");
         descriptionField.setDisable(true);
 
@@ -536,14 +509,12 @@ public class ListHebergementsController implements Initializable {
             try {
                 String desc = geminiService.suggestDescriptionFromImage(
                         imageUrl, nom, ville, etoiles, categorie);
-
                 javafx.application.Platform.runLater(() -> {
                     descriptionField.setText(desc);
                     descriptionField.setDisable(false);
                     descriptionField.setPromptText("Décrivez l'hébergement…");
                     updateCounter();
                 });
-
             } catch (Exception e) {
                 javafx.application.Platform.runLater(() -> {
                     descriptionField.setDisable(false);
@@ -556,11 +527,10 @@ public class ListHebergementsController implements Initializable {
         t.start();
     }
 
-    /* ─── Bouton Prix : ✨ Suggérer ─── */
+    /* ─── Bouton Prix : Suggérer prix ─── */
     @FXML
     private void onSuggestPrix() {
         if (!checkFieldsForIA()) return;
-
         String nom       = nomField.getText().trim();
         String ville     = villeField.getText().trim();
         int    etoiles   = Integer.parseInt(nbEtoilesField.getText().trim());
@@ -571,8 +541,7 @@ public class ListHebergementsController implements Initializable {
 
         Thread t = new Thread(() -> {
             try {
-                int prix = geminiService.suggestPrix(
-                        nom, ville, etoiles, categorie);
+                int prix = geminiService.suggestPrix(nom, ville, etoiles, categorie);
                 javafx.application.Platform.runLater(() -> {
                     prixField.setText(String.valueOf(prix));
                     prixField.setDisable(false);
@@ -590,7 +559,7 @@ public class ListHebergementsController implements Initializable {
         t.start();
     }
 
-    /* ─── Gestion erreurs Gemini lisibles ─── */
+    /* ─── Gestion erreurs Gemini ─── */
     private void handleGeminiError(Exception e) {
         String msg = e.getMessage() != null ? e.getMessage() : "Erreur inconnue";
         if (msg.contains("RESOURCE_EXHAUSTED")) {
@@ -603,18 +572,19 @@ public class ListHebergementsController implements Initializable {
             showAlert("Erreur Gemini", msg);
         }
     }
+
     /* ─── Charger pour édition ─── */
     private void chargerPourEdition(Hebergement h) {
         hebergementEnEdition = h;
         nomField.setText(h.getNom());
         villeField.setText(h.getVille());
-        adresseField.setText(h.getAdresse()                != null ? h.getAdresse()            : "");
-        labelEcoField.setText(h.getLabel_eco()             != null ? h.getLabel_eco()          : "");
-        imagePrincipaleField.setText(h.getImage_principale() != null ? h.getImage_principale() : "");
+        adresseField.setText(h.getAdresse()                  != null ? h.getAdresse()            : "");
+        labelEcoField.setText(h.getLabel_eco()               != null ? h.getLabel_eco()          : "");
+        imagePrincipaleField.setText(h.getImage_principale() != null ? h.getImage_principale()   : "");
         nbEtoilesField.setText(String.valueOf(h.getNb_etoiles()));
         latitudeField.setText(String.valueOf(h.getLatitude()));
         longitudeField.setText(String.valueOf(h.getLongitude()));
-        descriptionField.setText(h.getDescription()        != null ? h.getDescription()        : "");
+        descriptionField.setText(h.getDescription()          != null ? h.getDescription()        : "");
         categorieMap.forEach((nom, id)   -> { if (id == h.getCategorie_id())   categorieCombo.setValue(nom); });
         propietaireMap.forEach((nom, id) -> { if (id == h.getPropietaire_id()) propietaireCombo.setValue(nom); });
         if (h.getPropietaire_id() == 0) propietaireCombo.setValue("— Aucun —");
@@ -633,7 +603,8 @@ public class ListHebergementsController implements Initializable {
         try {
             List<Equipement> existing    = hebergementEqService.getEquipementsByHebergement(h.getId());
             List<Integer>    existingIds = existing.stream().map(Equipement::getId).toList();
-            equipementCheckboxes.forEach(cb -> cb.setSelected(existingIds.contains((Integer) cb.getUserData())));
+            equipementCheckboxes.forEach(cb -> cb.setSelected(
+                    existingIds.contains((Integer) cb.getUserData())));
         } catch (SQLException e) { showAlert("Erreur", e.getMessage()); }
     }
 
@@ -670,7 +641,7 @@ public class ListHebergementsController implements Initializable {
         else if ("Ville (A→Z)".equals(sort))
             filtered.sort(Comparator.comparing(Hebergement::getVille));
         badgeCount.setText(String.valueOf(filtered.size()));
-        int total = filtered.size();
+        int total      = filtered.size();
         int totalPages = Math.max(1, (int) Math.ceil((double) total / PER_PAGE));
         if (currentPage > totalPages) currentPage = 1;
         int from = (currentPage - 1) * PER_PAGE;
@@ -726,24 +697,17 @@ public class ListHebergementsController implements Initializable {
             private final Button delBtn  = new Button("🗑 Supprimer");
             private final HBox   box     = new HBox(5, mapBtn, editBtn, delBtn);
             {
-                // Style bouton carte — cercle bleu
-                mapBtn.setStyle(
-                        "-fx-background-color:#0ea5e9; -fx-text-fill:white;" +
-                                "-fx-background-radius:50%; -fx-min-width:28px; -fx-min-height:28px;" +
-                                "-fx-max-width:28px; -fx-max-height:28px;" +
-                                "-fx-font-size:12px; -fx-cursor:hand; -fx-padding:0;");
-
+                mapBtn.setStyle("-fx-background-color:#0ea5e9; -fx-text-fill:white;"
+                        + "-fx-background-radius:50%; -fx-min-width:28px; -fx-min-height:28px;"
+                        + "-fx-max-width:28px; -fx-max-height:28px;"
+                        + "-fx-font-size:12px; -fx-cursor:hand; -fx-padding:0;");
                 editBtn.getStyleClass().add("btn-edit");
                 delBtn.getStyleClass().add("btn-del");
                 box.setAlignment(Pos.CENTER_LEFT);
                 box.setPadding(new Insets(0, 0, 0, 2));
-
-                mapBtn.setOnAction(e -> showMapPopup(
-                        getTableView().getItems().get(getIndex())));
-                editBtn.setOnAction(e -> chargerPourEdition(
-                        getTableView().getItems().get(getIndex())));
-                delBtn.setOnAction(e -> confirmDelete(
-                        getTableView().getItems().get(getIndex())));
+                mapBtn.setOnAction(e  -> showMapPopup(getTableView().getItems().get(getIndex())));
+                editBtn.setOnAction(e -> chargerPourEdition(getTableView().getItems().get(getIndex())));
+                delBtn.setOnAction(e  -> confirmDelete(getTableView().getItems().get(getIndex())));
             }
             @Override protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
@@ -775,6 +739,7 @@ public class ListHebergementsController implements Initializable {
     @FXML private void onSearch()       { currentPage = 1; renderTable(); }
     @FXML private void onSort()         { currentPage = 1; renderTable(); }
     @FXML private void onNavDashboard() { SceneManager.navigateTo(Routes.ADMIN_DASHBOARD); }
+    @FXML private void onNavModeration(){ SceneManager.navigateTo(Routes.ADMIN_ModerationAvis); }
 
     /* ─── Helpers ─── */
     private void setFieldError(TextField field, Label errLabel, boolean hasError) {
@@ -802,20 +767,18 @@ public class ListHebergementsController implements Initializable {
         msg.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
         String btnColor = iconText.equals("⚠️") ? "#d97706" : "#38a169";
         Button closeBtn = new Button("OK");
-        closeBtn.setStyle(
-                "-fx-background-color:" + btnColor + "; -fx-text-fill:white;"
-                        + "-fx-font-weight:bold; -fx-background-radius:8;"
-                        + "-fx-padding:9 48 9 48; -fx-cursor:hand;"
-                        + "-fx-border-width:0; -fx-font-size:13px;");
+        closeBtn.setStyle("-fx-background-color:" + btnColor + "; -fx-text-fill:white;"
+                + "-fx-font-weight:bold; -fx-background-radius:8;"
+                + "-fx-padding:9 48 9 48; -fx-cursor:hand;"
+                + "-fx-border-width:0; -fx-font-size:13px;");
         closeBtn.setOnAction(e -> popup.close());
         VBox box = new VBox(14, icon, msg, closeBtn);
         box.setAlignment(Pos.CENTER);
         box.setPadding(new Insets(32, 36, 28, 36));
         box.setPrefWidth(320);
-        box.setStyle(
-                "-fx-background-color:white; -fx-background-radius:14;"
-                        + "-fx-effect:dropshadow(gaussian,rgba(0,0,0,0.15),20,0,0,5);"
-                        + "-fx-border-color:#e2e8f0; -fx-border-radius:14; -fx-border-width:1;");
+        box.setStyle("-fx-background-color:white; -fx-background-radius:14;"
+                + "-fx-effect:dropshadow(gaussian,rgba(0,0,0,0.15),20,0,0,5);"
+                + "-fx-border-color:#e2e8f0; -fx-border-radius:14; -fx-border-width:1;");
         Scene scene = new Scene(box);
         scene.setFill(Color.TRANSPARENT);
         popup.setScene(scene);
