@@ -57,6 +57,11 @@
             <version>5.10.1</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-web</artifactId>
+            <version>17.0.12</version>  <!-- mets la même version que tes autres javafx -->
+        </dependency>
     </dependencies>
     <build>
         <plugins>

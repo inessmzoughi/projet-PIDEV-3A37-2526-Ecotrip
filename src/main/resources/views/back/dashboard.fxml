@@ -151,11 +151,33 @@
 
             <VBox styleClass="chart-card" GridPane.columnIndex="0" GridPane.rowIndex="0" spacing="8">
                 <Label text="Chambres par hébergement" styleClass="chart-title"/>
-                <BarChart fx:id="chartChambres" styleClass="dash-chart"
-                          prefHeight="220" animated="false">
-                    <xAxis><CategoryAxis/></xAxis>
-                    <yAxis><NumberAxis/></yAxis>
-                </BarChart>
+                <!-- Cards actif/inactif + étoiles -->
+                <HBox spacing="12">
+                    <VBox styleClass="mini-stat-card" HBox.hgrow="ALWAYS" alignment="CENTER" spacing="4">
+                        <Label text="✅ Actifs" styleClass="mini-stat-label"/>
+                        <Label fx:id="mstatActifs" text="—" styleClass="mini-stat-value-green"/>
+                    </VBox>
+                    <VBox styleClass="mini-stat-card" HBox.hgrow="ALWAYS" alignment="CENTER" spacing="4">
+                        <Label text="❌ Inactifs" styleClass="mini-stat-label"/>
+                        <Label fx:id="mstatInactifs" text="—" styleClass="mini-stat-value-red"/>
+                    </VBox>
+                    <VBox styleClass="mini-stat-card" HBox.hgrow="ALWAYS" alignment="CENTER" spacing="4">
+                        <Label text="⭐ Moy. Étoiles" styleClass="mini-stat-label"/>
+                        <Label fx:id="mstatAvgEtoiles" text="—" styleClass="mini-stat-value-yellow"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Top 5 hébergements -->
+                <Label text="🏆 Top 5 hébergements (chambres)" styleClass="section-sub-title"/>
+                <TableView fx:id="topHebergementsTable" prefHeight="200" styleClass="main-table">
+                    <columns>
+                        <TableColumn fx:id="colTopNom"      text="Hébergement"  minWidth="140"/>
+                        <TableColumn fx:id="colTopVille"    text="Ville"        minWidth="90"/>
+                        <TableColumn fx:id="colTopEtoiles"  text="Étoiles"      minWidth="80"/>
+                        <TableColumn fx:id="colTopChambres" text="Chambres"     minWidth="80"/>
+                        <TableColumn fx:id="colTopActif"    text="Statut"       minWidth="80"/>
+                    </columns>
+                </TableView>
             </VBox>
 
             <VBox styleClass="chart-card" GridPane.columnIndex="1" GridPane.rowIndex="0" spacing="8">

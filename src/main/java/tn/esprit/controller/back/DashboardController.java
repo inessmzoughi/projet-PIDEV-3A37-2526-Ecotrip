@@ -1,9 +1,11 @@
 package tn.esprit.controller.back;
 
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.chart.*;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import tn.esprit.models.hebergements.Hebergement;
@@ -16,7 +18,9 @@ import tn.esprit.services.hebergement.Hebergement_service;
 import tn.esprit.session.SessionManager;
 
 import java.sql.SQLException;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DashboardController {
 
@@ -40,7 +44,18 @@ public class DashboardController {
     @FXML private Label mstatChambres;
     @FXML private Label mstatEquipements;
     @FXML private Label mstatCategoriesHeb;
-    @FXML private BarChart<String, Number> chartChambres;
+    // Nouvelles cards
+    @FXML private Label mstatActifs;
+    @FXML private Label mstatInactifs;
+    @FXML private Label mstatAvgEtoiles;
+    // Top 5 table
+    @FXML private TableView<HebergementRow>            topHebergementsTable;
+    @FXML private TableColumn<HebergementRow, String>  colTopNom;
+    @FXML private TableColumn<HebergementRow, String>  colTopVille;
+    @FXML private TableColumn<HebergementRow, String>  colTopEtoiles;
+    @FXML private TableColumn<HebergementRow, Integer> colTopChambres;
+    @FXML private TableColumn<HebergementRow, String>  colTopActif;
+    // PieChart conservé
     @FXML private PieChart chartHebPie;
 
     // ── Transport module ─────────────────────────────────────
@@ -61,104 +76,139 @@ public class DashboardController {
     private final Equipement_service  equipementService  = new Equipement_service();
     private final CategorieH_service  categorieHService  = new CategorieH_service();
 
+    // ── DTO interne Top 5 ────────────────────────────────────
+    public static class HebergementRow {
+        private final String nom, ville, etoiles, actif;
+        private final int chambres;
+
+        public HebergementRow(String nom, String ville, int etoiles, int chambres, int actif) {
+            this.nom      = nom;
+            this.ville    = ville;
+            this.etoiles  = "⭐".repeat(Math.max(0, etoiles));
+            this.chambres = chambres;
+            this.actif    = actif == 1 ? "✅ Actif" : "❌ Inactif";
+        }
+        public String getNom()      { return nom; }
+        public String getVille()    { return ville; }
+        public String getEtoiles()  { return etoiles; }
+        public int    getChambres() { return chambres; }
+        public String getActif()    { return actif; }
+    }
+
     @FXML
     public void initialize() {
         if (!SessionManager.getInstance().isAdmin()) {
             Platform.runLater(() -> SceneManager.navigateTo(Routes.LOGIN));
             return;
         }
+        setupTopTable();
         loadStats();
         loadCharts();
         loadRecentActivites();
     }
 
-    // ── Chargement des stats ─────────────────────────────────
+    // ── Setup colonnes Top 5 ─────────────────────────────────
+    private void setupTopTable() {
+        topHebergementsTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        colTopNom.setCellValueFactory(new PropertyValueFactory<>("nom"));
+        colTopVille.setCellValueFactory(new PropertyValueFactory<>("ville"));
+        colTopEtoiles.setCellValueFactory(new PropertyValueFactory<>("etoiles"));
+        colTopChambres.setCellValueFactory(new PropertyValueFactory<>("chambres"));
+        colTopActif.setCellValueFactory(new PropertyValueFactory<>("actif"));
+
+        colTopChambres.setCellFactory(col -> new TableCell<>() {
+            @Override protected void updateItem(Integer item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) { setGraphic(null); setText(null); return; }
+                Label badge = new Label(String.valueOf(item));
+                badge.setStyle(
+                        "-fx-background-color:" + (item >= 5 ? "#d1fae5" : "#fef3c7") + ";"
+                                + "-fx-text-fill:"        + (item >= 5 ? "#065f46" : "#92400e") + ";"
+                                + "-fx-font-weight:bold; -fx-background-radius:6;"
+                                + "-fx-padding:2 10 2 10;");
+                setGraphic(badge); setText(null);
+            }
+        });
+    }
+
+    // ── Stats ────────────────────────────────────────────────
     private void loadStats() {
         // ── Stats hébergement (données réelles) ──
         try {
-            int totalHeb  = hebergementService.getAll().size();
+            List<Hebergement> hebs = hebergementService.getAll();
+            int totalHeb  = hebs.size();
             int totalCh   = chambreService.getAll().size();
             int totalEq   = equipementService.getAll().size();
             int totalCat  = categorieHService.getAll().size();
+            long actifs   = hebs.stream().filter(h -> h.getActif() == 1).count();
+            long inactifs = totalHeb - actifs;
+            double avgEt  = hebs.stream().mapToInt(Hebergement::getNb_etoiles).average().orElse(0);
 
-            List<Hebergement> hebs = hebergementService.getAll();
-            long actifs = hebs.stream().filter(h -> h.getActif() == 1).count();
-
-            // Top cards
             statHebergements.setText(String.valueOf(totalHeb));
-
-            // Module hébergement
             mstatHebergements.setText(String.valueOf(totalHeb));
             mstatChambres.setText(String.valueOf(totalCh));
             mstatEquipements.setText(String.valueOf(totalEq));
             mstatCategoriesHeb.setText(String.valueOf(totalCat));
+            mstatActifs.setText(String.valueOf(actifs));
+            mstatInactifs.setText(String.valueOf(inactifs));
+            mstatAvgEtoiles.setText(String.format("%.1f / 5", avgEt));
+
+            // Top 5 par nombre de chambres
+            List<HebergementRow> top5 = hebs.stream()
+                    .map(h -> {
+                        int count = 0;
+                        try { count = chambreService.getByHebergement(h.getId()).size(); }
+                        catch (SQLException ignored) {}
+                        return new HebergementRow(
+                                h.getNom(), h.getVille(), h.getNb_etoiles(), count, h.getActif());
+                    })
+                    .sorted(Comparator.comparingInt(HebergementRow::getChambres).reversed())
+                    .limit(5)
+                    .collect(Collectors.toList());
+
+            topHebergementsTable.setItems(FXCollections.observableArrayList(top5));
 
         } catch (SQLException e) {
             mstatHebergements.setText("—");
             mstatChambres.setText("—");
             mstatEquipements.setText("—");
             mstatCategoriesHeb.setText("—");
+            mstatActifs.setText("—");
+            mstatInactifs.setText("—");
+            mstatAvgEtoiles.setText("—");
             statHebergements.setText("—");
         }
 
-        // ── Stats autres modules (à connecter plus tard) ──
+        // ── Autres modules : pas touché ──
         statActivites.setText("0");
         statTransports.setText("0");
         statProduits.setText("0");
         statUtilisateurs.setText("0");
         statReservations.setText("0");
-
         mstatTotalActivites.setText("0");
         mstatActiveActivites.setText("0");
         mstatCategoriesActivites.setText("0");
         mstatGuides.setText("0");
-
         mstatTransports.setText("0");
         mstatCategoriesTransport.setText("0");
         mstatChauffeurs.setText("0");
         mstatTrajets.setText("0");
-
         mstatProduits.setText("0");
         mstatCategoriesBoutique.setText("0");
         mstatCommandes.setText("0");
         mstatPaiements.setText("0");
     }
 
-    // ── Chargement des graphiques ────────────────────────────
+    // ── Graphiques ───────────────────────────────────────────
     private void loadCharts() {
-        // ── BAR CHART ─────────────────────────────────────────
-        try {
-            XYChart.Series<String, Number> series = new XYChart.Series<>();
-            series.setName("Nombre de chambres");
-            List<Hebergement> hebs = hebergementService.getAll();
-
-            for (Hebergement h : hebs) {
-                int count = chambreService.getByHebergement(h.getId()).size();
-                // ✅ Supprimé le if (count > 0) — affiche même les hébergements sans chambres
-                String nom = h.getNom().length() > 12
-                        ? h.getNom().substring(0, 12) + "…"
-                        : h.getNom();
-                series.getData().add(new XYChart.Data<>(nom, count));
-            }
-
-            chartChambres.getData().clear();
-            chartChambres.getData().add(series);
-            chartChambres.setLegendVisible(true);
-            chartChambres.setTitle("Chambres par hébergement");
-
-        } catch (SQLException e) {
-            chartChambres.getData().clear();
-        }
-
-        // ── PIE CHART ─────────────────────────────────────────
+        // PieChart conservé intact
         try {
             chartHebPie.getData().clear();
             List<Hebergement> hebs = hebergementService.getAll();
             java.util.Map<Integer, Long> countParCat = hebs.stream()
                     .collect(java.util.stream.Collectors.groupingBy(
                             Hebergement::getCategorie_id,
-                            java.util.stream.Collectors.counting()
-                    ));
+                            java.util.stream.Collectors.counting()));
             for (java.util.Map.Entry<Integer, Long> entry : countParCat.entrySet()) {
                 String nom;
                 try {
@@ -173,7 +223,6 @@ public class DashboardController {
             chartHebPie.setLegendVisible(true);
             chartHebPie.setLabelsVisible(true);
             chartHebPie.setTitle("Répartition des hébergements");
-
         } catch (SQLException e) {
             chartHebPie.getData().clear();
         }
@@ -181,7 +230,6 @@ public class DashboardController {
 
     // ── Activités récentes ───────────────────────────────────
     private void loadRecentActivites() {
-        // À connecter avec ton service Activité quand disponible
         recentActivitesList.getChildren().clear();
         recentActivitesList.getChildren().add(
                 buildRecentItem("Randonnée Zaghouan", "Zaghouan • 45 TND", true));
@@ -192,7 +240,6 @@ public class DashboardController {
     private HBox buildRecentItem(String title, String subtitle, boolean active) {
         HBox row = new HBox(12);
         row.getStyleClass().add("recent-item");
-
         VBox info = new VBox(2);
         Label titleLabel = new Label(title);
         titleLabel.getStyleClass().add("recent-title");
@@ -201,7 +248,6 @@ public class DashboardController {
         info.getChildren().addAll(titleLabel, subLabel);
         HBox.setHgrow(info, javafx.scene.layout.Priority.ALWAYS);
         row.getChildren().add(info);
-
         if (active) {
             Label badge = new Label("Actif");
             badge.getStyleClass().add("badge-success");
@@ -215,18 +261,15 @@ public class DashboardController {
     @FXML private void handleNewCatActivite()   { SceneManager.navigateTo(Routes.ADMIN_ACTIVITY_CATEGORIES); }
     @FXML private void handleNewHoraire()       { SceneManager.navigateTo(Routes.ADMIN_SCHEDULES); }
     @FXML private void handleNewGuide()         { SceneManager.navigateTo(Routes.ADMIN_GUIDES); }
-
     @FXML private void handleNewHeberg()        { SceneManager.navigateTo(Routes.ADMIN_HEBERGEMENTS); }
     @FXML private void handleNewChambre()       { SceneManager.navigateTo(Routes.ADMIN_HEBERGEMENTS); }
     @FXML private void handleNewEquipement()    { SceneManager.navigateTo(Routes.ADMIN_EQUIPEMENTS); }
     @FXML private void handleNewCatHeberg()     { SceneManager.navigateTo(Routes.ADMIN_CATEGORIES_HEBERGEMENT); }
-
     @FXML private void handleNewTransport()     { SceneManager.navigateTo(Routes.ADMIN_TRANSPORT); }
     @FXML private void handleNewCatTransport()  { SceneManager.navigateTo(Routes.ADMIN_TRANSPORT); }
     @FXML private void handleNewChauffeur()     { SceneManager.navigateTo(Routes.ADMIN_TRANSPORT); }
     @FXML private void handleNewTrajet()        { SceneManager.navigateTo(Routes.ADMIN_TRANSPORT); }
     @FXML private void handleViewTransports()   { SceneManager.navigateTo(Routes.ADMIN_TRANSPORT); }
-
     @FXML private void handleNewProduit()       { SceneManager.navigateTo(Routes.ADMIN_BOUTIQUE); }
     @FXML private void handleNewCatBoutique()   { SceneManager.navigateTo(Routes.ADMIN_BOUTIQUE); }
     @FXML private void handleViewCommandes()    { SceneManager.navigateTo(Routes.ADMIN_BOUTIQUE); }
