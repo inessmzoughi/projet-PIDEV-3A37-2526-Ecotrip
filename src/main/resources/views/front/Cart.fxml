@@ -14,7 +14,9 @@
 
     <VBox styleClass="heb-page" spacing="0">
 
-        <!-- HERO -->
+        <!-- ══════════════════════════════════════════ -->
+        <!--  HERO                                      -->
+        <!-- ══════════════════════════════════════════ -->
         <VBox styleClass="heb-hero" alignment="CENTER" spacing="14">
             <padding><Insets top="60" bottom="60" left="40" right="40"/></padding>
             <Label text="🛒  Mon Panier" styleClass="heb-hero-title"/>
@@ -22,11 +24,13 @@
                    styleClass="heb-hero-sub"/>
         </VBox>
 
-        <!-- CONTENU : articles + récapitulatif -->
+        <!-- ══════════════════════════════════════════ -->
+        <!--  CONTENU : articles + récapitulatif        -->
+        <!-- ══════════════════════════════════════════ -->
         <HBox fx:id="contentBox" spacing="24" alignment="TOP_CENTER">
             <padding><Insets top="32" bottom="32" left="40" right="40"/></padding>
 
-            <!-- Liste des articles -->
+            <!-- Liste des articles (remplie dynamiquement) -->
             <VBox fx:id="itemsContainer" spacing="16" HBox.hgrow="ALWAYS"/>
 
             <!-- Récapitulatif -->
@@ -43,6 +47,7 @@
                               -fx-text-fill: #2d5a1b;"/>
                 <Separator/>
 
+                <!-- Nombre d'articles -->
                 <HBox spacing="8" alignment="CENTER_LEFT">
                     <Label text="Nombre d'articles :"
                            style="-fx-text-fill: #666; -fx-font-size: 13px;"/>
@@ -50,6 +55,7 @@
                            style="-fx-font-weight: bold; -fx-text-fill: #2d5a1b;"/>
                 </HBox>
 
+                <!-- Total -->
                 <HBox spacing="8" alignment="CENTER_LEFT">
                     <Label text="Total :"
                            style="-fx-font-size: 16px; -fx-font-weight: bold;
@@ -65,13 +71,13 @@
                 <Label text="Mode de paiement"
                        style="-fx-font-weight: bold; -fx-text-fill: #2d5a1b;
                               -fx-font-size: 14px;"/>
-
                 <RadioButton fx:id="rbCarte"  text="💳  Carte bancaire"/>
                 <RadioButton fx:id="rbPaypal" text="🅿️  PayPal"/>
                 <RadioButton fx:id="rbCash"   text="💵  Cash"/>
 
                 <Separator/>
 
+                <!-- ✅ Confirmer la commande -->
                 <Button fx:id="btnPayer"
                         text="✅  Confirmer la commande"
                         maxWidth="Infinity"
@@ -84,6 +90,7 @@
                                -fx-background-radius: 8;
                                -fx-cursor: hand;"/>
 
+                <!-- 🗑 Vider le panier -->
                 <Button text="🗑  Vider le panier"
                         maxWidth="Infinity"
                         onAction="#onVider"
@@ -93,10 +100,26 @@
                                -fx-padding: 10 0 10 0;
                                -fx-background-radius: 8;
                                -fx-cursor: hand;"/>
+
+                <!-- 📄 Exporter en PDF  ✅ -->
+                <Button fx:id="btnExporterPDF"
+                        text="📄  Exporter la commande en PDF"
+                        maxWidth="Infinity"
+                        onAction="#onExporterPDF"
+                        style="-fx-background-color: #1a3d73;
+                               -fx-text-fill: white;
+                               -fx-font-size: 14px;
+                               -fx-font-weight: bold;
+                               -fx-padding: 12 0 12 0;
+                               -fx-background-radius: 8;
+                               -fx-cursor: hand;"/>
+
             </VBox>
         </HBox>
 
-        <!-- EMPTY STATE -->
+        <!-- ══════════════════════════════════════════ -->
+        <!--  EMPTY STATE                               -->
+        <!-- ══════════════════════════════════════════ -->
         <VBox fx:id="emptyState" alignment="CENTER" spacing="16"
               managed="false" visible="false">
             <padding><Insets top="80" bottom="80"/></padding>
