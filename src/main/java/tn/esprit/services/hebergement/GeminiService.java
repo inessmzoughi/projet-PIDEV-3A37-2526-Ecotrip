@@ -9,7 +9,17 @@ import java.time.Duration;
 
 public class GeminiService {
 
-    private static final String API_KEY = "AIzaSyDPgsrDc38BtaCzIKP3wmt2O-r95_D3ZZI";
+    private static final String API_KEY = loadApiKey();
+
+    private static String loadApiKey() {
+        try (var in = GeminiService.class.getResourceAsStream("/config.properties")) {
+            var props = new java.util.Properties();
+            props.load(in);
+            return props.getProperty("gemini.api.key");
+        } catch (Exception e) {
+            throw new RuntimeException("config.properties introuvable !", e);
+        }
+    }
 
     // Modèles gratuits classés du plus léger au plus lourd
     private static final String[] MODELS = {

@@ -1,33 +1,72 @@
 package tn.esprit.services.hebergement;
 
 import com.cloudinary.Cloudinary;
-import com.cloudinary.Transformation;
 import com.cloudinary.utils.ObjectUtils;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Properties;
 
 public class CloudinaryService {
 
     private static CloudinaryService instance;
     private final Cloudinary cloudinary;
 
+    // Chargement des clés depuis config.properties
+    private static final String CLOUD_NAME = loadCloudName();
+    private static final String API_KEY = loadApiKey();
+    private static final String API_SECRET = loadApiSecret();
+
     private CloudinaryService() {
         cloudinary = new Cloudinary(ObjectUtils.asMap(
-                "cloud_name", "dzxaahx6v",
-                "api_key",    "917792891782727",
-                "api_secret", "I_jzycVu6wbe8luahEhXE8RUfMk"
+                "cloud_name", CLOUD_NAME,
+                "api_key", API_KEY,
+                "api_secret", API_SECRET,
+                "secure", true
         ));
     }
 
+    private static String loadCloudName() {
+        try (var in = CloudinaryService.class.getResourceAsStream("/config.properties")) {
+            Properties props = new Properties();
+            props.load(in);
+            return props.getProperty("cloudinary.cloud.name");
+        } catch (Exception e) {
+            throw new RuntimeException("config.properties introuvable !", e);
+        }
+    }
+
+    private static String loadApiKey() {
+        try (var in = CloudinaryService.class.getResourceAsStream("/config.properties")) {
+            Properties props = new Properties();
+            props.load(in);
+            return props.getProperty("cloudinary.api.key");
+        } catch (Exception e) {
+            throw new RuntimeException("config.properties introuvable !", e);
+        }
+    }
+
+    private static String loadApiSecret() {
+        try (var in = CloudinaryService.class.getResourceAsStream("/config.properties")) {
+            Properties props = new Properties();
+            props.load(in);
+            return props.getProperty("cloudinary.api.secret");
+        } catch (Exception e) {
+            throw new RuntimeException("config.properties introuvable !", e);
+        }
+    }
+
     public static CloudinaryService getInstance() {
-        if (instance == null) instance = new CloudinaryService();
+        if (instance == null) {
+            instance = new CloudinaryService();
+        }
         return instance;
     }
 
     /** Upload image avis client → retourne URL publique */
     public String uploadAvisImage(File fichier) throws Exception {
-        Map result = cloudinary.uploader().upload(fichier,
+        Map result = cloudinary.uploader().upload(
+                fichier,
                 ObjectUtils.asMap("folder", "avis_clients")
         );
         return (String) result.get("secure_url");
@@ -35,7 +74,8 @@ public class CloudinaryService {
 
     /** Upload image hébergement → retourne URL publique */
     public String uploadHebergementImage(File fichier) throws Exception {
-        Map result = cloudinary.uploader().upload(fichier,
+        Map result = cloudinary.uploader().upload(
+                fichier,
                 ObjectUtils.asMap("folder", "hebergements")
         );
         return (String) result.get("secure_url");
@@ -43,6 +83,9 @@ public class CloudinaryService {
 
     /** Supprimer une image par son public_id */
     public void deleteImage(String publicId) throws Exception {
-        cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+        cloudinary.uploader().destroy(
+                publicId,
+                ObjectUtils.emptyMap()
+        );
     }
 }
