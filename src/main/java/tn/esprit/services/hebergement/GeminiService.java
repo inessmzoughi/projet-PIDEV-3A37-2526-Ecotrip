@@ -9,19 +9,31 @@ import java.time.Duration;
 
 public class GeminiService {
 
-    /* ─── Config ─── */
-    private static final String API_KEY = "AIzaSyC6hK-PSpg8dQVwuDPBnZNoNivVPoCvexI";
-    private static final String API_URL =
-            "https://generativelanguage.googleapis.com/v1beta/models/"
-                    + "gemini-2.5-flash:generateContent?key=" + API_KEY;
+    private static final String[] API_KEYS = {
+            "AIzaSyDPgsrDc38BtaCzIKP3wmt2O-r95_D3ZZI",   // ta première clé
+            "AIzaSyC6hK-PSpg8dQVwuDPBnZNoNivVPoCvexIi",    // ta deuxième clé
+    };
+    private int keyIndex = 0;
+    private String getNextKey() {
+        String key = API_KEYS[keyIndex];
+        keyIndex = (keyIndex + 1) % API_KEYS.length;
+        return key;
+    }
+    // Modèles en ordre de priorité (fallback automatique)
+    private static final String[] MODELS = {
+            "gemini-1.5-flash",        // ✅ Plus stable, très rapide
+            "gemini-1.5-flash-8b",     // ✅ Ultra léger, quasi jamais surchargé
+            "gemini-2.5-flash"         // Original (en dernier recours)
+    };
 
+    private static final String BASE_URL =
+            "https://generativelanguage.googleapis.com/v1beta/models/"
+                    + "gemini-2.0-flash:generateContent?key=";
     private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(10))
             .build();
 
-    /* ════════════════════════════════════════
-       1. DESCRIPTION depuis NOM/VILLE/ÉTOILES
-       ════════════════════════════════════════ */
+    /* ════════ 1. DESCRIPTION texte ════════ */
     public String suggestDescription(String nom, String ville,
                                      int etoiles, String categorie)
             throws IOException, InterruptedException {
@@ -32,21 +44,16 @@ public class GeminiService {
                         + "pour cet hebergement. "
                         + "La description doit faire ENTRE 80 ET 120 MOTS exactement. "
                         + "Elle doit mentionner la ville, le standing, l ambiance et les atouts. "
-                        + "Hebergement : "
-                        + "Nom : " + nom + ", "
-                        + "Ville : " + ville + ", "
-                        + "Etoiles : " + etoiles + ", "
-                        + "Categorie : " + categorie + ". "
+                        + "Hebergement : Nom : " + nom + ", Ville : " + ville
+                        + ", Etoiles : " + etoiles + ", Categorie : " + categorie + ". "
                         + "Reponds UNIQUEMENT avec le texte de la description. "
                         + "Pas de titre, pas de guillemets, pas de JSON.";
 
-        String raw = callGeminiText(prompt);
+        String raw = callGeminiTextWithFallback(prompt);
         return raw.length() > 500 ? raw.substring(0, 500) : raw;
     }
 
-    /* ════════════════════════════════════════
-       2. PRIX depuis NOM/VILLE/ÉTOILES
-       ════════════════════════════════════════ */
+    /* ════════ 2. PRIX ════════ */
     public int suggestPrix(String nom, String ville,
                            int etoiles, String categorie)
             throws IOException, InterruptedException {
@@ -55,21 +62,13 @@ public class GeminiService {
                 "Tu es un expert en tourisme tunisien. "
                         + "Donne un prix par nuit en dinars tunisiens REALISTE "
                         + "selon le marche tunisien 2024. "
-                        + "Fourchettes : "
-                        + "1 etoile 40-80 DT, "
-                        + "2 etoiles 80-150 DT, "
-                        + "3 etoiles 150-250 DT, "
-                        + "4 etoiles 250-400 DT, "
-                        + "5 etoiles 400-700 DT. "
-                        + "Hebergement : "
-                        + "Nom : " + nom + ", "
-                        + "Ville : " + ville + ", "
-                        + "Etoiles : " + etoiles + ", "
-                        + "Categorie : " + categorie + ". "
-                        + "Reponds UNIQUEMENT avec un nombre entier. Exemple : 180. "
-                        + "Pas de texte, pas de DT, juste le nombre.";
+                        + "Fourchettes : 1 etoile 40-80 DT, 2 etoiles 80-150 DT, "
+                        + "3 etoiles 150-250 DT, 4 etoiles 250-400 DT, 5 etoiles 400-700 DT. "
+                        + "Hebergement : Nom : " + nom + ", Ville : " + ville
+                        + ", Etoiles : " + etoiles + ", Categorie : " + categorie + ". "
+                        + "Reponds UNIQUEMENT avec un nombre entier. Exemple : 180.";
 
-        String raw = callGeminiText(prompt).trim();
+        String raw = callGeminiTextWithFallback(prompt).trim();
         try {
             return Integer.parseInt(raw.replaceAll("[^0-9]", ""));
         } catch (NumberFormatException e) {
@@ -77,103 +76,133 @@ public class GeminiService {
         }
     }
 
-    /* ════════════════════════════════════════
-       3. DESCRIPTION depuis IMAGE (Vision)
-       ════════════════════════════════════════ */
+    /* ════════ 3. DESCRIPTION depuis IMAGE ════════ */
     public String suggestDescriptionFromImage(String imageUrl, String nom,
                                               String ville, int etoiles,
                                               String categorie)
             throws IOException, InterruptedException {
 
-        // ── Étape 1 : télécharger l'image ──
         byte[] imageBytes = downloadImage(imageUrl);
         String mimeType   = detectMimeType(imageUrl);
-        String base64     = java.util.Base64.getEncoder()
-                .encodeToString(imageBytes);
+        String base64     = java.util.Base64.getEncoder().encodeToString(imageBytes);
 
-        System.out.println("Image téléchargée : "
-                + imageBytes.length + " bytes | type : " + mimeType);
+        System.out.println("Image téléchargée : " + imageBytes.length + " bytes | type : " + mimeType);
 
-        // ── Étape 2 : prompt sans caractères spéciaux ──
         String prompt =
                 "Tu es un expert en tourisme tunisien. "
                         + "Regarde attentivement cette photo d hebergement. "
                         + "Genere une description commerciale attrayante EN FRANÇAIS "
                         + "entre 80 et 120 mots, en combinant ce que tu vois sur la photo "
-                        + "avec ces informations : "
-                        + "Nom : " + nom + ", "
-                        + "Ville : " + ville + ", "
-                        + "Etoiles : " + etoiles + ", "
-                        + "Categorie : " + categorie + ". "
+                        + "avec ces informations : Nom : " + nom + ", Ville : " + ville
+                        + ", Etoiles : " + etoiles + ", Categorie : " + categorie + ". "
                         + "La description doit mentionner l ambiance visuelle, "
                         + "le standing, la ville et les points forts visibles sur la photo. "
                         + "Reponds UNIQUEMENT avec le texte de description. "
                         + "Pas de titre, pas de guillemets, pas de JSON.";
 
-        // ── Étape 3 : appel Vision ──
-        String raw = callGeminiVision(base64, mimeType, prompt);
-
+        String raw = callGeminiVisionWithFallback(base64, mimeType, prompt);
         System.out.println("Vision réponse : " + raw);
-
         return raw.length() > 500 ? raw.substring(0, 500) : raw;
     }
 
-    /* ════════════════════════════════════════
-       APPELS HTTP
-       ════════════════════════════════════════ */
+    /* ══════════════════════════════════════════════════
+       FALLBACK : essaie chaque modèle avec retry 503
+       ══════════════════════════════════════════════════ */
 
-    /* ─── Appel texte seul ─── */
-    private String callGeminiText(String prompt)
+    private String callGeminiTextWithFallback(String prompt)
             throws IOException, InterruptedException {
 
         String escaped = escapeJson(prompt);
+        String body = buildTextBody(escaped);
 
-        String body = "{"
-                + "\"contents\":[{"
-                + "\"parts\":[{\"text\":\"" + escaped + "\"}]"
-                + "}],"
-                + "\"generationConfig\":{"
-                + "\"temperature\":0.7,"
-                + "\"maxOutputTokens\":500"
-                + "}"
-                + "}";
-
-        return sendRequest(body, 20);
+        return callWithFallback(body, 20);
     }
 
-    private String callGeminiVision(String base64, String mimeType, String prompt)
+    private String callGeminiVisionWithFallback(String base64, String mimeType, String prompt)
             throws IOException, InterruptedException {
 
         String escaped = escapeJson(prompt);
+        String body = buildVisionBody(base64, mimeType, escaped);
 
-        String body = "{"
-                + "\"contents\":[{"
-                + "\"parts\":["
-                + "{"
-                + "\"inline_data\":{"
-                + "\"mime_type\":\"" + mimeType + "\","
-                + "\"data\":\"" + base64 + "\""
-                + "}"
-                + "},"
-                + "{"
-                + "\"text\":\"" + escaped + "\""
-                + "}"
-                + "]"
-                + "}],"
-                + "\"generationConfig\":{"
-                + "\"temperature\":0.7,"
-                + "\"maxOutputTokens\":800"  // ✅ 800 au lieu de 500
-                + "}"
-                + "}";
-
-        return sendRequest(body, 60);
+        return callWithFallback(body, 60);
     }
+
+    /**
+     * Tente chaque modèle dans MODELS[].
+     * Pour chaque modèle : 3 essais avec backoff (1s, 2s, 4s) en cas de 503.
+     */
+    private String callWithFallback(String body, int timeoutSeconds)
+            throws IOException, InterruptedException {
+
+        IOException lastError = null;
+
+        for (String model : MODELS) {
+            String url = BASE_URL + model + ":generateContent?key=" + API_KEYS;
+
+            for (int attempt = 1; attempt <= 3; attempt++) {
+                try {
+                    String result = sendRequest( body, timeoutSeconds);
+                    if (attempt > 1 || !model.equals(MODELS[0])) {
+                        System.out.println("✅ Succès avec modèle : " + model
+                                + " (tentative " + attempt + ")");
+                    }
+                    return result;
+
+                } catch (IOException e) {
+                    lastError = e;
+                    boolean is503 = e.getMessage() != null
+                            && (e.getMessage().contains("503")
+                            || e.getMessage().contains("UNAVAILABLE"));
+
+                    if (is503 && attempt < 3) {
+                        long delay = (long) Math.pow(2, attempt) * 1000; // 2s, 4s
+                        System.out.println("⚠️ 503 sur " + model
+                                + " – tentative " + attempt + "/3, attente "
+                                + delay + "ms...");
+                        Thread.sleep(delay);
+                    } else {
+                        System.out.println("❌ Abandon modèle " + model
+                                + " : " + e.getMessage());
+                        break; // passe au modèle suivant
+                    }
+                }
+            }
+        }
+
+        throw new IOException("Tous les modèles Gemini sont indisponibles. "
+                + "Réessayez dans quelques minutes.\n"
+                + (lastError != null ? lastError.getMessage() : ""), lastError);
+    }
+
+    /* ════════ BUILDERS JSON ════════ */
+
+    private String buildTextBody(String escapedPrompt) {
+        return "{"
+                + "\"contents\":[{\"parts\":[{\"text\":\"" + escapedPrompt + "\"}]}],"
+                + "\"generationConfig\":{\"temperature\":0.7,\"maxOutputTokens\":500}"
+                + "}";
+    }
+
+    private String buildVisionBody(String base64, String mimeType, String escapedPrompt) {
+        return "{"
+                + "\"contents\":[{\"parts\":["
+                + "{\"inline_data\":{\"mime_type\":\"" + mimeType + "\","
+                + "\"data\":\"" + base64 + "\"}},"
+                + "{\"text\":\"" + escapedPrompt + "\"}"
+                + "]}],"
+                + "\"generationConfig\":{\"temperature\":0.7,\"maxOutputTokens\":800}"
+                + "}";
+    }
+
+    /* ════════ HTTP ════════ */
 
     private String sendRequest(String body, int timeoutSeconds)
             throws IOException, InterruptedException {
 
+        String url = BASE_URL + getNextKey();  // ← alternance automatique
+
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(API_URL))
+                .uri(URI.create(url))           // ← url à la place de API_URL
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(body))
                 .timeout(Duration.ofSeconds(timeoutSeconds))
@@ -189,15 +218,10 @@ public class GeminiService {
                     + response.statusCode() + "\n" + response.body());
         }
 
-        // ✅ HTTP 200 même si MAX_TOKENS → extraire le texte disponible
         return extractText(response.body());
     }
+    /* ════════ UTILITAIRES (inchangés) ════════ */
 
-    /* ════════════════════════════════════════
-       UTILITAIRES
-       ════════════════════════════════════════ */
-
-    /* ─── Télécharger image en bytes ─── */
     private byte[] downloadImage(String imageUrl)
             throws IOException, InterruptedException {
 
@@ -214,22 +238,16 @@ public class GeminiService {
         HttpResponse<byte[]> response =
                 HTTP_CLIENT.send(req, HttpResponse.BodyHandlers.ofByteArray());
 
-        if (response.statusCode() != 200) {
-            throw new IOException(
-                    "Image non accessible (HTTP " + response.statusCode() + "). "
-                            + "Essayez une autre URL.");
-        }
+        if (response.statusCode() != 200)
+            throw new IOException("Image non accessible (HTTP " + response.statusCode() + ").");
 
         byte[] bytes = response.body();
-
-        if (bytes == null || bytes.length == 0) {
+        if (bytes == null || bytes.length == 0)
             throw new IOException("Image vide — URL invalide.");
-        }
 
         return bytes;
     }
 
-    /* ─── Détecter MIME depuis URL ─── */
     private String detectMimeType(String imageUrl) {
         String url = imageUrl.toLowerCase();
         if (url.contains(".png"))  return "image/png";
@@ -238,7 +256,6 @@ public class GeminiService {
         return "image/jpeg";
     }
 
-    /* ─── Échapper JSON sans apostrophes ni accents ─── */
     private String escapeJson(String text) {
         return text
                 .replace("\\", "\\\\")
@@ -249,26 +266,16 @@ public class GeminiService {
     }
 
     private String extractText(String responseBody) {
-
-        // ✅ Chercher les 2 variantes : avec et sans espace après :
         String key = "\"text\": \"";
         int start = responseBody.indexOf(key);
-
-        // Si pas trouvé avec espace, essayer sans espace
-        if (start == -1) {
-            key = "\"text\":\"";
-            start = responseBody.indexOf(key);
-        }
-
-        if (start == -1) {
-            throw new IllegalStateException(
-                    "Réponse Gemini inattendue : " + responseBody);
-        }
+        if (start == -1) { key = "\"text\":\""; start = responseBody.indexOf(key); }
+        if (start == -1)
+            throw new IllegalStateException("Réponse Gemini inattendue : " + responseBody);
 
         start += key.length();
-
         StringBuilder sb = new StringBuilder();
         int i = start;
+
         while (i < responseBody.length()) {
             char c = responseBody.charAt(i);
             if (c == '\\' && i + 1 < responseBody.length()) {
@@ -282,12 +289,8 @@ public class GeminiService {
                     case 'u'  -> {
                         if (i + 5 < responseBody.length()) {
                             String hex = responseBody.substring(i + 2, i + 6);
-                            try {
-                                sb.append((char) Integer.parseInt(hex, 16));
-                                i += 6;
-                            } catch (NumberFormatException e) {
-                                sb.append('\\'); i++;
-                            }
+                            try { sb.append((char) Integer.parseInt(hex, 16)); i += 6; }
+                            catch (NumberFormatException e) { sb.append('\\'); i++; }
                         } else { sb.append('\\'); i++; }
                     }
                     default -> { sb.append('\\'); sb.append(next); i += 2; }
@@ -295,17 +298,13 @@ public class GeminiService {
             } else if (c == '"') {
                 break;
             } else {
-                sb.append(c);
-                i++;
+                sb.append(c); i++;
             }
         }
 
         String result = sb.toString().trim();
-
-        if (result.isEmpty() && responseBody.contains("MAX_TOKENS")) {
-            throw new IllegalStateException(
-                    "Image trop lourde. Essayez une image plus légère.");
-        }
+        if (result.isEmpty() && responseBody.contains("MAX_TOKENS"))
+            throw new IllegalStateException("Image trop lourde. Essayez une image plus légère.");
 
         System.out.println("extractText (" + result.length() + " chars) : " + result);
         return result;

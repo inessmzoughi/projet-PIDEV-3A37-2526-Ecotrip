@@ -1,6 +1,7 @@
 package tn.esprit.controller.back;
 
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.chart.*;
@@ -11,10 +12,7 @@ import javafx.scene.layout.HBox;
 import tn.esprit.models.hebergements.Hebergement;
 import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;
-import tn.esprit.services.hebergement.CategorieH_service;
-import tn.esprit.services.hebergement.Chambre_service;
-import tn.esprit.services.hebergement.Equipement_service;
-import tn.esprit.services.hebergement.Hebergement_service;
+import tn.esprit.services.hebergement.*;
 import tn.esprit.session.SessionManager;
 
 import java.sql.SQLException;
@@ -39,11 +37,14 @@ public class DashboardController {
     @FXML private Label mstatGuides;
     @FXML private VBox  recentActivitesList;
 
+
     // ── Hébergement module ───────────────────────────────────
     @FXML private Label mstatHebergements;
     @FXML private Label mstatChambres;
     @FXML private Label mstatEquipements;
     @FXML private Label mstatCategoriesHeb;
+    @FXML private HBox topRevenueCards;
+
     // Nouvelles cards
     @FXML private Label mstatActifs;
     @FXML private Label mstatInactifs;
@@ -75,6 +76,7 @@ public class DashboardController {
     private final Chambre_service     chambreService     = new Chambre_service();
     private final Equipement_service  equipementService  = new Equipement_service();
     private final CategorieH_service  categorieHService  = new CategorieH_service();
+
 
     // ── DTO interne Top 5 ────────────────────────────────────
     public static class HebergementRow {
