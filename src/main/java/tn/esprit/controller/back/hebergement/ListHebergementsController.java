@@ -30,11 +30,17 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
+import javafx.animation.*;
+import javafx.application.Platform;
+import javafx.util.Duration;
+import tn.esprit.services.hebergement.AvisHebergement_service;
 
 public class ListHebergementsController implements Initializable {
 
     /* ─── Stats ─── */
     @FXML private Label statTotal, statEtoiles, statActif;
+    @FXML private Button btnModeration;
+    @FXML private Label  lblNotifBadge;
 
     /* ─── Formulaire ─── */
     @FXML private Label            formIcon, formTitle, formSubtitle;
@@ -76,6 +82,7 @@ public class ListHebergementsController implements Initializable {
     private final Map<String, Integer> propietaireMap = new LinkedHashMap<>();
     private final Map<String, Integer> categorieMap   = new LinkedHashMap<>();
 
+
     /* ─── Pont Java ↔ JavaScript ─── */
     public class JavaConnector {
         public void onMapClick(double lat, double lng) {
@@ -104,6 +111,7 @@ public class ListHebergementsController implements Initializable {
         loadData();
         refreshAll();
         initMap();
+        checkNotificationBadge();
     }
 
     /* ─── Carte ─── */
@@ -795,5 +803,36 @@ public class ListHebergementsController implements Initializable {
         a.setTitle(title);
         a.setContentText(msg);
         a.showAndWait();
+    }
+    private void checkNotificationBadge() {
+        Thread t = new Thread(() -> {
+            try {
+                int count = new AvisHebergement_service().countEnAttente();
+                Platform.runLater(() -> {
+                    if (count > 0) {
+                        lblNotifBadge.setText(String.valueOf(count));
+                        lblNotifBadge.setVisible(true);
+                        playBellShake();
+                    }
+                });
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+        t.setDaemon(true);
+        t.start();
+    }
+
+    private void playBellShake() {
+        Timeline shake = new Timeline(
+                new KeyFrame(Duration.ZERO,        new KeyValue(btnModeration.rotateProperty(),  0)),
+                new KeyFrame(Duration.millis(80),  new KeyValue(btnModeration.rotateProperty(), -8)),
+                new KeyFrame(Duration.millis(160), new KeyValue(btnModeration.rotateProperty(),  8)),
+                new KeyFrame(Duration.millis(240), new KeyValue(btnModeration.rotateProperty(), -6)),
+                new KeyFrame(Duration.millis(320), new KeyValue(btnModeration.rotateProperty(),  6)),
+                new KeyFrame(Duration.millis(400), new KeyValue(btnModeration.rotateProperty(),  0))
+        );
+        shake.setCycleCount(3);
+        shake.play();
     }
 }

@@ -45,6 +45,7 @@ public class HebergementDetailController implements Initializable {
     @FXML private Label      lblCategorie, lblVilleSidebar, lblAdresse;
     @FXML private Label      lblLikeCount, lblAvisCount;
     @FXML private Button     btnLike, btnRetour, btnReserver;
+    @FXML private Button btnDislike;
     @FXML private TextArea   commentaireField;
     @FXML private Button     btnEnvoyerAvis, btnChoisirPhoto;
     @FXML private Label      lblPhotoChoisie;
@@ -63,7 +64,8 @@ public class HebergementDetailController implements Initializable {
     /* ─── State ─── */
     private Hebergement hebergement;
     private User        currentUser;
-    private boolean     isLiked      = false;
+    private boolean isLiked    = false;
+    private boolean isDisliked = false;
     private File        selectedPhoto = null;   // photo choisie pour le nouvel avis
     private Avis        editingAvis   = null;   // avis en cours d'édition
 
@@ -110,8 +112,9 @@ public class HebergementDetailController implements Initializable {
     }
 
     /* ─── Réserver (déléguer au controller existant) ─── */
+    /* ─── Réserver ─── */
     @FXML
-    private void onReserver() {
+    private void onReserver(javafx.event.ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/views/front/modals/HebergementReservationModal.fxml"));
@@ -121,13 +124,17 @@ public class HebergementDetailController implements Initializable {
             ctrl.setHebergement(hebergement);
             ctrl.setOverlayRoot(overlay);
 
-            Parent rootNode = btnReserver.getScene().getRoot();
+            // ✅ Get scene from event source — never null here
+            javafx.scene.Node source = (javafx.scene.Node) event.getSource();
+            javafx.scene.Scene scene = source.getScene();
+            Parent rootNode = scene.getRoot();
+
             StackPane container;
             if (rootNode instanceof StackPane) {
                 container = (StackPane) rootNode;
             } else {
                 container = new StackPane(rootNode);
-                btnReserver.getScene().setRoot(container);
+                scene.setRoot(container);
             }
             container.getChildren().add(overlay);
             if (!container.getChildren().isEmpty())
@@ -216,11 +223,10 @@ public class HebergementDetailController implements Initializable {
             int count = likeService.countLikes(hebergement.getId());
             lblLikeCount.setText(String.valueOf(count));
             if (currentUser != null) {
-                isLiked = likeService.isLiked(currentUser.getId(), hebergement.getId());
-                updateLikeBtn();
-            } else {
-                btnLike.setText("🤍  " + count);
+                isLiked    = likeService.isLiked(currentUser.getId(), hebergement.getId());
+                isDisliked = likeService.isDisliked(currentUser.getId(), hebergement.getId());
             }
+            updateLikeDislikeBtns();
         } catch (SQLException e) {
             lblLikeCount.setText("0");
         }
@@ -230,17 +236,37 @@ public class HebergementDetailController implements Initializable {
     private void onLike() {
         if (currentUser == null) return;
         try {
+            if (isDisliked) {
+                likeService.removeDislike(currentUser.getId(), hebergement.getId());
+                isDisliked = false;
+            }
             isLiked = likeService.toggleLike(currentUser.getId(), hebergement.getId());
-            int count = likeService.countLikes(hebergement.getId());
-            lblLikeCount.setText(String.valueOf(count));
-            updateLikeBtn();
+            lblLikeCount.setText(String.valueOf(likeService.countLikes(hebergement.getId())));
+            updateLikeDislikeBtns();
         } catch (SQLException e) {
             showAlert("Erreur like : " + e.getMessage());
         }
     }
 
-    private void updateLikeBtn() {
+    @FXML
+    private void onDislike() {
+        if (currentUser == null) return;
+        try {
+            if (isLiked) {
+                likeService.toggleLike(currentUser.getId(), hebergement.getId()); // removes like
+                isLiked = false;
+                lblLikeCount.setText(String.valueOf(likeService.countLikes(hebergement.getId())));
+            }
+            isDisliked = likeService.toggleDislike(currentUser.getId(), hebergement.getId());
+            updateLikeDislikeBtns();
+        } catch (SQLException e) {
+            showAlert("Erreur dislike : " + e.getMessage());
+        }
+    }
+
+    private void updateLikeDislikeBtns() {
         String count = lblLikeCount.getText();
+        // Like button
         if (isLiked) {
             btnLike.setText("❤️  " + count);
             btnLike.setStyle("-fx-background-color:#fee2e2; -fx-text-fill:#e53e3e;"
@@ -250,6 +276,20 @@ public class HebergementDetailController implements Initializable {
         } else {
             btnLike.setText("🤍  " + count);
             btnLike.setStyle("-fx-background-color:#f8fafc; -fx-text-fill:#64748b;"
+                    + "-fx-font-weight:bold; -fx-background-radius:20;"
+                    + "-fx-border-color:#e2e8f0; -fx-border-radius:20;"
+                    + "-fx-cursor:hand; -fx-padding:8 20 8 20;");
+        }
+        // Dislike button
+        if (isDisliked) {
+            btnDislike.setText("👎  Pas pour moi");
+            btnDislike.setStyle("-fx-background-color:#fef3c7; -fx-text-fill:#92400e;"
+                    + "-fx-font-weight:bold; -fx-background-radius:20;"
+                    + "-fx-border-color:#fcd34d; -fx-border-radius:20;"
+                    + "-fx-cursor:hand; -fx-padding:8 20 8 20;");
+        } else {
+            btnDislike.setText("👎  Pas pour moi");
+            btnDislike.setStyle("-fx-background-color:#f8fafc; -fx-text-fill:#94a3b8;"
                     + "-fx-font-weight:bold; -fx-background-radius:20;"
                     + "-fx-border-color:#e2e8f0; -fx-border-radius:20;"
                     + "-fx-cursor:hand; -fx-padding:8 20 8 20;");

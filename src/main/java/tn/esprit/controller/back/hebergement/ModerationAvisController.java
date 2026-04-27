@@ -152,13 +152,23 @@ public class ModerationAvisController implements Initializable {
         imageBox.setAlignment(Pos.CENTER_LEFT);
 
         try {
-            // Supporte URL http/https et chemins locaux
             Image img;
             if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
                 img = new Image(imagePath, 260, 180, true, true, true);
+            } else if (imagePath.startsWith("file:")) {
+                // Already a file URI
+                img = new Image(imagePath, 260, 180, true, true, true);
             } else {
-                img = new Image("file:///" + imagePath.replace("\\", "/"),
-                        260, 180, true, true, true);
+                // Absolute or relative path → convert to proper URI
+                java.io.File file = new java.io.File(imagePath);
+                String uri = file.toURI().toString(); // produces file:///... correctly
+                img = new Image(uri, 260, 180, true, true, true);
+            }
+
+            // Check the image actually loaded
+            if (img.isError()) {
+                throw new Exception("Load error: " +
+                        (img.getException() != null ? img.getException().getMessage() : imagePath));
             }
 
             ImageView iv = new ImageView(img);

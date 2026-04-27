@@ -18,21 +18,29 @@
                     <!-- Breadcrumb + Titre -->
                     <VBox spacing="4">
                         <HBox spacing="4" alignment="CENTER_LEFT">
-                            <Button text="Dashboard" styleClass="breadcrumb-link"
-                                    onAction="#onNavDashboard"/>
-                            <Label text=" › " styleClass="breadcrumb-sep"/>
-                            <Label text="Hébergements" styleClass="breadcrumb-active"/>
-                            <Region HBox.hgrow="ALWAYS"/>
-                            <Button text="💬 Modération Avis"
-                                    onAction="#onNavModeration"
-                                    style="-fx-background-color:#f59e0b;
-                                           -fx-text-fill:white;
-                                           -fx-font-weight:bold;
-                                           -fx-background-radius:8;
-                                           -fx-cursor:hand;
-                                           -fx-padding:7 16 7 16;
-                                           -fx-border-width:0;
-                                           -fx-font-size:12px;"/>
+                            <StackPane>
+                                <Button text="🔔  Modération des Avis"
+                                        fx:id="btnModeration"
+                                        onAction="#onNavModeration"
+                                        style="-fx-background-color:#f59e0b;
+                   -fx-text-fill:white;
+                   -fx-font-weight:bold;
+                   -fx-background-radius:8;
+                   -fx-cursor:hand;
+                   -fx-padding:8 20 8 20;
+                   -fx-border-width:0;
+                   -fx-font-size:13px;"/>
+                                <Label fx:id="lblNotifBadge" text="0"
+                                       style="-fx-background-color:#ef4444;
+                  -fx-text-fill:white;
+                  -fx-font-weight:bold;
+                  -fx-font-size:9px;
+                  -fx-background-radius:10;
+                  -fx-padding:2 5 2 5;"
+                                       StackPane.alignment="TOP_RIGHT"
+                                       translateX="6" translateY="-6"
+                                       visible="false"/>
+                            </StackPane>
                         </HBox>
                         <Label text="Hébergements" styleClass="page-title"/>
                     </VBox>

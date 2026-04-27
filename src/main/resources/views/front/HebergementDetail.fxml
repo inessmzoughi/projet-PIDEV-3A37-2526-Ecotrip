@@ -147,13 +147,20 @@
                     <Separator/>
 
                     <!-- Like -->
-                    <HBox alignment="CENTER" spacing="10">
+                    <!-- Like / Dislike row -->
+                    <HBox alignment="CENTER" spacing="8">
                         <Button fx:id="btnLike"
                                 text="🤍  0"
                                 onAction="#onLike"
                                 styleClass="detail-like-btn"
-                                maxWidth="Infinity"
-                                HBox.hgrow="ALWAYS"/>
+                                HBox.hgrow="ALWAYS"
+                                maxWidth="Infinity"/>
+                        <Button fx:id="btnDislike"
+                                text="👎  Pas pour moi"
+                                onAction="#onDislike"
+                                styleClass="detail-like-btn"
+                                HBox.hgrow="ALWAYS"
+                                maxWidth="Infinity"/>
                     </HBox>
 
                     <Label fx:id="lblLikeCount" visible="false" managed="false"/>
