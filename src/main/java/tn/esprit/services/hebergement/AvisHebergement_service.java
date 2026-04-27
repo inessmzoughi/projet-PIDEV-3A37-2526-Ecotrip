@@ -54,7 +54,7 @@ public class AvisHebergement_service {
 
     /* ─── Rejeter avis ─── */
     public void rejeter(int avisId) throws SQLException {
-        changerStatut(avisId, "REJETE");
+        supprimer(avisId);
     }
 
     private void changerStatut(int avisId, String statut) throws SQLException {
