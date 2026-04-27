@@ -9,26 +9,19 @@ import java.time.Duration;
 
 public class GeminiService {
 
-    private static final String[] API_KEYS = {
-            "AIzaSyDPgsrDc38BtaCzIKP3wmt2O-r95_D3ZZI",   // ta première clé
-            "AIzaSyC6hK-PSpg8dQVwuDPBnZNoNivVPoCvexIi",    // ta deuxième clé
-    };
-    private int keyIndex = 0;
-    private String getNextKey() {
-        String key = API_KEYS[keyIndex];
-        keyIndex = (keyIndex + 1) % API_KEYS.length;
-        return key;
-    }
-    // Modèles en ordre de priorité (fallback automatique)
+    private static final String API_KEY = "AIzaSyDPgsrDc38BtaCzIKP3wmt2O-r95_D3ZZI";
+
+    // Modèles gratuits classés du plus léger au plus lourd
     private static final String[] MODELS = {
-            "gemini-1.5-flash",        // ✅ Plus stable, très rapide
-            "gemini-1.5-flash-8b",     // ✅ Ultra léger, quasi jamais surchargé
-            "gemini-2.5-flash"         // Original (en dernier recours)
+            "gemini-2.0-flash-lite",  // le plus léger, rarement bloqué
+            "gemini-1.5-flash-latest",
+            "gemini-2.5-flash-lite",
+            "gemini-2.5-flash"
     };
 
-    private static final String BASE_URL =
-            "https://generativelanguage.googleapis.com/v1beta/models/"
-                    + "gemini-2.0-flash:generateContent?key=";
+    private static final String BASE =
+            "https://generativelanguage.googleapis.com/v1beta/models/";
+
     private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
             .connectTimeout(Duration.ofSeconds(10))
             .build();
@@ -49,7 +42,7 @@ public class GeminiService {
                         + "Reponds UNIQUEMENT avec le texte de la description. "
                         + "Pas de titre, pas de guillemets, pas de JSON.";
 
-        String raw = callGeminiTextWithFallback(prompt);
+        String raw = callWithFallback(buildTextBody(escapeJson(prompt)), 20);
         return raw.length() > 500 ? raw.substring(0, 500) : raw;
     }
 
@@ -68,7 +61,7 @@ public class GeminiService {
                         + ", Etoiles : " + etoiles + ", Categorie : " + categorie + ". "
                         + "Reponds UNIQUEMENT avec un nombre entier. Exemple : 180.";
 
-        String raw = callGeminiTextWithFallback(prompt).trim();
+        String raw = callWithFallback(buildTextBody(escapeJson(prompt)), 20).trim();
         try {
             return Integer.parseInt(raw.replaceAll("[^0-9]", ""));
         } catch (NumberFormatException e) {
@@ -83,8 +76,8 @@ public class GeminiService {
             throws IOException, InterruptedException {
 
         byte[] imageBytes = downloadImage(imageUrl);
-        String mimeType   = detectMimeType(imageUrl);
-        String base64     = java.util.Base64.getEncoder().encodeToString(imageBytes);
+        String mimeType = detectMimeType(imageUrl);
+        String base64 = java.util.Base64.getEncoder().encodeToString(imageBytes);
 
         System.out.println("Image téléchargée : " + imageBytes.length + " bytes | type : " + mimeType);
 
@@ -95,83 +88,60 @@ public class GeminiService {
                         + "entre 80 et 120 mots, en combinant ce que tu vois sur la photo "
                         + "avec ces informations : Nom : " + nom + ", Ville : " + ville
                         + ", Etoiles : " + etoiles + ", Categorie : " + categorie + ". "
-                        + "La description doit mentionner l ambiance visuelle, "
-                        + "le standing, la ville et les points forts visibles sur la photo. "
                         + "Reponds UNIQUEMENT avec le texte de description. "
                         + "Pas de titre, pas de guillemets, pas de JSON.";
 
-        String raw = callGeminiVisionWithFallback(base64, mimeType, prompt);
+        String raw = callWithFallback(buildVisionBody(base64, mimeType, escapeJson(prompt)), 60);
         System.out.println("Vision réponse : " + raw);
         return raw.length() > 500 ? raw.substring(0, 500) : raw;
     }
 
-    /* ══════════════════════════════════════════════════
-       FALLBACK : essaie chaque modèle avec retry 503
-       ══════════════════════════════════════════════════ */
-
-    private String callGeminiTextWithFallback(String prompt)
-            throws IOException, InterruptedException {
-
-        String escaped = escapeJson(prompt);
-        String body = buildTextBody(escaped);
-
-        return callWithFallback(body, 20);
-    }
-
-    private String callGeminiVisionWithFallback(String base64, String mimeType, String prompt)
-            throws IOException, InterruptedException {
-
-        String escaped = escapeJson(prompt);
-        String body = buildVisionBody(base64, mimeType, escaped);
-
-        return callWithFallback(body, 60);
-    }
-
-    /**
-     * Tente chaque modèle dans MODELS[].
-     * Pour chaque modèle : 3 essais avec backoff (1s, 2s, 4s) en cas de 503.
-     */
+    /* ════════════════════════════════════════════════
+       FALLBACK : essaie chaque modèle, gère 429 + 503
+       ════════════════════════════════════════════════ */
     private String callWithFallback(String body, int timeoutSeconds)
             throws IOException, InterruptedException {
 
         IOException lastError = null;
 
         for (String model : MODELS) {
-            String url = BASE_URL + model + ":generateContent?key=" + API_KEYS;
+            String url = BASE + model + ":generateContent?key=" + API_KEY;
+            System.out.println("⏳ Essai modèle : " + model);
 
-            for (int attempt = 1; attempt <= 3; attempt++) {
+            for (int attempt = 1; attempt <= 2; attempt++) {
                 try {
-                    String result = sendRequest( body, timeoutSeconds);
-                    if (attempt > 1 || !model.equals(MODELS[0])) {
-                        System.out.println("✅ Succès avec modèle : " + model
-                                + " (tentative " + attempt + ")");
-                    }
+                    String result = sendRequest(url, body, timeoutSeconds);
+                    System.out.println("✅ Succès : " + model);
                     return result;
 
                 } catch (IOException e) {
                     lastError = e;
-                    boolean is503 = e.getMessage() != null
-                            && (e.getMessage().contains("503")
-                            || e.getMessage().contains("UNAVAILABLE"));
+                    String msg = e.getMessage() != null ? e.getMessage() : "";
 
-                    if (is503 && attempt < 3) {
-                        long delay = (long) Math.pow(2, attempt) * 1000; // 2s, 4s
-                        System.out.println("⚠️ 503 sur " + model
-                                + " – tentative " + attempt + "/3, attente "
-                                + delay + "ms...");
-                        Thread.sleep(delay);
+                    boolean is429 = msg.contains("429") || msg.contains("RESOURCE_EXHAUSTED");
+                    boolean is503 = msg.contains("503") || msg.contains("UNAVAILABLE");
+
+                    if (is429) {
+                        // Quota dépassé sur ce modèle → passer au suivant immédiatement
+                        System.out.println("⛔ 429 quota sur " + model + " → modèle suivant");
+                        break;
+                    } else if (is503 && attempt < 2) {
+                        System.out.println("⚠️ 503 sur " + model + " → attente 3s...");
+                        Thread.sleep(3000);
                     } else {
-                        System.out.println("❌ Abandon modèle " + model
-                                + " : " + e.getMessage());
-                        break; // passe au modèle suivant
+                        System.out.println("❌ Erreur " + model + " : " + msg);
+                        break;
                     }
                 }
             }
         }
 
-        throw new IOException("Tous les modèles Gemini sont indisponibles. "
-                + "Réessayez dans quelques minutes.\n"
-                + (lastError != null ? lastError.getMessage() : ""), lastError);
+        throw new IOException(
+                "Tous les modèles Gemini sont indisponibles ou quota dépassé. "
+                        + "Réessayez dans 1 minute.\n"
+                        + (lastError != null ? lastError.getMessage() : ""),
+                lastError
+        );
     }
 
     /* ════════ BUILDERS JSON ════════ */
@@ -196,13 +166,11 @@ public class GeminiService {
 
     /* ════════ HTTP ════════ */
 
-    private String sendRequest(String body, int timeoutSeconds)
+    private String sendRequest(String url, String body, int timeoutSeconds)
             throws IOException, InterruptedException {
 
-        String url = BASE_URL + getNextKey();  // ← alternance automatique
-
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))           // ← url à la place de API_URL
+                .uri(URI.create(url))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(body))
                 .timeout(Duration.ofSeconds(timeoutSeconds))
@@ -211,7 +179,9 @@ public class GeminiService {
         HttpResponse<String> response =
                 HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
 
-        System.out.println("Gemini HTTP status : " + response.statusCode());
+        System.out.println("Gemini HTTP status ["
+                + url.split("/models/")[1].split(":")[0] + "] : "
+                + response.statusCode());
 
         if (response.statusCode() != 200) {
             throw new IOException("Gemini API — HTTP "
@@ -220,16 +190,15 @@ public class GeminiService {
 
         return extractText(response.body());
     }
-    /* ════════ UTILITAIRES (inchangés) ════════ */
+
+    /* ════════ UTILITAIRES ════════ */
 
     private byte[] downloadImage(String imageUrl)
             throws IOException, InterruptedException {
 
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(imageUrl))
-                .header("User-Agent",
-                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                                + "AppleWebKit/537.36 Chrome/120.0.0.0")
+                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
                 .header("Accept", "image/*,*/*")
                 .GET()
                 .timeout(Duration.ofSeconds(20))
