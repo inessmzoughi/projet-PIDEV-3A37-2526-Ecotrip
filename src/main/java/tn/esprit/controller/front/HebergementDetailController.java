@@ -24,6 +24,7 @@ import tn.esprit.services.hebergement.Chambre_service;
 import tn.esprit.services.hebergement.HebergementEquipement_service;
 import tn.esprit.services.hebergement.LikeHebergement_service;
 import tn.esprit.session.SessionManager;
+import tn.esprit.services.hebergement.CloudinaryService;
 
 import java.io.File;
 import java.net.URL;
@@ -34,6 +35,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.UUID;
+
+
 
 public class HebergementDetailController implements Initializable {
 
@@ -60,6 +63,7 @@ public class HebergementDetailController implements Initializable {
     private final CategorieH_service          categorieService  = new CategorieH_service();
     private final HebergementEquipement_service equipService    = new HebergementEquipement_service();
     private final Chambre_service             chambreService    = new Chambre_service();
+    private final CloudinaryService           cloudinaryService = CloudinaryService.getInstance();
 
     /* ─── State ─── */
     private Hebergement hebergement;
@@ -363,8 +367,15 @@ public class HebergementDetailController implements Initializable {
         hideErr();
 
         try {
-            String photoPath = selectedPhoto != null
-                    ? savePhoto(selectedPhoto) : null;
+            String photoPath = null;
+            if (selectedPhoto != null) {
+                try {
+                    photoPath = cloudinaryService.uploadAvisImage(selectedPhoto);
+                } catch (Exception e) {
+                    showAlert("Erreur upload photo : " + e.getMessage());
+                    return;
+                }
+            }
 
             if (editingAvis != null) {
                 editingAvis.setCommentaire(texte);
