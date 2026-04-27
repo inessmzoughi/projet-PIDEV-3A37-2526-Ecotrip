@@ -1,14 +1,13 @@
 package tn.esprit.controller.back;
 
 import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import tn.esprit.models.hebergements.Categorie_hebergement;
 import tn.esprit.models.hebergements.Hebergement;
 import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;
@@ -16,8 +15,7 @@ import tn.esprit.services.hebergement.*;
 import tn.esprit.session.SessionManager;
 
 import java.sql.SQLException;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class DashboardController {
@@ -30,34 +28,23 @@ public class DashboardController {
     @FXML private Label statUtilisateurs;
     @FXML private Label statReservations;
 
-    // ── Activités module ─────────────────────────────────────
+    // ── Activites module ─────────────────────────────────────
     @FXML private Label mstatTotalActivites;
     @FXML private Label mstatActiveActivites;
     @FXML private Label mstatCategoriesActivites;
     @FXML private Label mstatGuides;
     @FXML private VBox  recentActivitesList;
 
-
-    // ── Hébergement module ───────────────────────────────────
+    // ── Hebergement module ───────────────────────────────────
     @FXML private Label mstatHebergements;
-    @FXML private Label mstatChambres;
     @FXML private Label mstatEquipements;
     @FXML private Label mstatCategoriesHeb;
-    @FXML private HBox topRevenueCards;
 
-    // Nouvelles cards
-    @FXML private Label mstatActifs;
-    @FXML private Label mstatInactifs;
-    @FXML private Label mstatAvgEtoiles;
-    // Top 5 table
-    @FXML private TableView<HebergementRow>            topHebergementsTable;
-    @FXML private TableColumn<HebergementRow, String>  colTopNom;
-    @FXML private TableColumn<HebergementRow, String>  colTopVille;
-    @FXML private TableColumn<HebergementRow, String>  colTopEtoiles;
-    @FXML private TableColumn<HebergementRow, Integer> colTopChambres;
-    @FXML private TableColumn<HebergementRow, String>  colTopActif;
-    // PieChart conservé
+    // Charts
     @FXML private PieChart chartHebPie;
+    @FXML private BarChart<String, Number> chartTopRevenueHeb;
+    @FXML private CategoryAxis             xAxisRevenue;
+    @FXML private NumberAxis               yAxisRevenue;
 
     // ── Transport module ─────────────────────────────────────
     @FXML private Label mstatTransports;
@@ -71,117 +58,66 @@ public class DashboardController {
     @FXML private Label mstatCommandes;
     @FXML private Label mstatPaiements;
 
-    // ── Services Hébergement ─────────────────────────────────
+    // ── Services ─────────────────────────────────────────────
     private final Hebergement_service hebergementService = new Hebergement_service();
-    private final Chambre_service     chambreService     = new Chambre_service();
+    private final Chambre_service     chambreService     = new Chambre_service(); // kept for revenue only
     private final Equipement_service  equipementService  = new Equipement_service();
     private final CategorieH_service  categorieHService  = new CategorieH_service();
 
-
-    // ── DTO interne Top 5 ────────────────────────────────────
-    public static class HebergementRow {
-        private final String nom, ville, etoiles, actif;
-        private final int chambres;
-
-        public HebergementRow(String nom, String ville, int etoiles, int chambres, int actif) {
-            this.nom      = nom;
-            this.ville    = ville;
-            this.etoiles  = "⭐".repeat(Math.max(0, etoiles));
-            this.chambres = chambres;
-            this.actif    = actif == 1 ? "✅ Actif" : "❌ Inactif";
+    // ── Couleurs barres ──────────────────────────────────────
+    private static String getBarColorRgb(int index) {
+        int r, g, b;
+        switch (index) {
+            case 0:  r = 99;  g = 102; b = 241; break;
+            case 1:  r = 139; g = 92;  b = 246; break;
+            case 2:  r = 167; g = 139; b = 250; break;
+            case 3:  r = 196; g = 181; b = 253; break;
+            default: r = 221; g = 214; b = 254; break;
         }
-        public String getNom()      { return nom; }
-        public String getVille()    { return ville; }
-        public String getEtoiles()  { return etoiles; }
-        public int    getChambres() { return chambres; }
-        public String getActif()    { return actif; }
+        return "rgb(" + r + "," + g + "," + b + ")";
     }
 
+    // ── DTO revenu (utilisé uniquement pour le BarChart) ─────
+    private static class RevenueEntry {
+        final String nom;
+        final double revenu;
+        RevenueEntry(String nom, double revenu) { this.nom = nom; this.revenu = revenu; }
+    }
+
+    // ── Initialisation ───────────────────────────────────────
     @FXML
     public void initialize() {
         if (!SessionManager.getInstance().isAdmin()) {
             Platform.runLater(() -> SceneManager.navigateTo(Routes.LOGIN));
             return;
         }
-        setupTopTable();
         loadStats();
         loadCharts();
         loadRecentActivites();
     }
 
-    // ── Setup colonnes Top 5 ─────────────────────────────────
-    private void setupTopTable() {
-        topHebergementsTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        colTopNom.setCellValueFactory(new PropertyValueFactory<>("nom"));
-        colTopVille.setCellValueFactory(new PropertyValueFactory<>("ville"));
-        colTopEtoiles.setCellValueFactory(new PropertyValueFactory<>("etoiles"));
-        colTopChambres.setCellValueFactory(new PropertyValueFactory<>("chambres"));
-        colTopActif.setCellValueFactory(new PropertyValueFactory<>("actif"));
-
-        colTopChambres.setCellFactory(col -> new TableCell<>() {
-            @Override protected void updateItem(Integer item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) { setGraphic(null); setText(null); return; }
-                Label badge = new Label(String.valueOf(item));
-                badge.setStyle(
-                        "-fx-background-color:" + (item >= 5 ? "#d1fae5" : "#fef3c7") + ";"
-                                + "-fx-text-fill:"        + (item >= 5 ? "#065f46" : "#92400e") + ";"
-                                + "-fx-font-weight:bold; -fx-background-radius:6;"
-                                + "-fx-padding:2 10 2 10;");
-                setGraphic(badge); setText(null);
-            }
-        });
-    }
-
     // ── Stats ────────────────────────────────────────────────
     private void loadStats() {
-        // ── Stats hébergement (données réelles) ──
         try {
             List<Hebergement> hebs = hebergementService.getAll();
-            int totalHeb  = hebs.size();
-            int totalCh   = chambreService.getAll().size();
-            int totalEq   = equipementService.getAll().size();
-            int totalCat  = categorieHService.getAll().size();
-            long actifs   = hebs.stream().filter(h -> h.getActif() == 1).count();
-            long inactifs = totalHeb - actifs;
-            double avgEt  = hebs.stream().mapToInt(Hebergement::getNb_etoiles).average().orElse(0);
+            int totalHeb = hebs.size();
+            int totalEq  = equipementService.getAll().size();
+            int totalCat = categorieHService.getAll().size();
 
             statHebergements.setText(String.valueOf(totalHeb));
             mstatHebergements.setText(String.valueOf(totalHeb));
-            mstatChambres.setText(String.valueOf(totalCh));
             mstatEquipements.setText(String.valueOf(totalEq));
             mstatCategoriesHeb.setText(String.valueOf(totalCat));
-            mstatActifs.setText(String.valueOf(actifs));
-            mstatInactifs.setText(String.valueOf(inactifs));
-            mstatAvgEtoiles.setText(String.format("%.1f / 5", avgEt));
-
-            // Top 5 par nombre de chambres
-            List<HebergementRow> top5 = hebs.stream()
-                    .map(h -> {
-                        int count = 0;
-                        try { count = chambreService.getByHebergement(h.getId()).size(); }
-                        catch (SQLException ignored) {}
-                        return new HebergementRow(
-                                h.getNom(), h.getVille(), h.getNb_etoiles(), count, h.getActif());
-                    })
-                    .sorted(Comparator.comparingInt(HebergementRow::getChambres).reversed())
-                    .limit(5)
-                    .collect(Collectors.toList());
-
-            topHebergementsTable.setItems(FXCollections.observableArrayList(top5));
 
         } catch (SQLException e) {
-            mstatHebergements.setText("—");
-            mstatChambres.setText("—");
-            mstatEquipements.setText("—");
-            mstatCategoriesHeb.setText("—");
-            mstatActifs.setText("—");
-            mstatInactifs.setText("—");
-            mstatAvgEtoiles.setText("—");
-            statHebergements.setText("—");
+            String dash = "—";
+            statHebergements.setText(dash);
+            mstatHebergements.setText(dash);
+            mstatEquipements.setText(dash);
+            mstatCategoriesHeb.setText(dash);
         }
 
-        // ── Autres modules : pas touché ──
+        // Placeholders autres modules
         statActivites.setText("0");
         statTransports.setText("0");
         statProduits.setText("0");
@@ -203,40 +139,123 @@ public class DashboardController {
 
     // ── Graphiques ───────────────────────────────────────────
     private void loadCharts() {
-        // PieChart conservé intact
+        loadPieChart();
+        loadTopRevenueChart();
+    }
+
+    private void loadPieChart() {
         try {
             chartHebPie.getData().clear();
             List<Hebergement> hebs = hebergementService.getAll();
-            java.util.Map<Integer, Long> countParCat = hebs.stream()
-                    .collect(java.util.stream.Collectors.groupingBy(
-                            Hebergement::getCategorie_id,
-                            java.util.stream.Collectors.counting()));
-            for (java.util.Map.Entry<Integer, Long> entry : countParCat.entrySet()) {
-                String nom;
+            Map<Integer, Long> countParCat = hebs.stream()
+                    .collect(Collectors.groupingBy(Hebergement::getCategorie_id, Collectors.counting()));
+
+            for (Map.Entry<Integer, Long> entry : countParCat.entrySet()) {
+                String nom = "Categorie " + entry.getKey();
                 try {
-                    var cat = categorieHService.getById(entry.getKey());
-                    nom = (cat != null) ? cat.getNom() : "Cat " + entry.getKey();
-                } catch (SQLException ex) {
-                    nom = "Cat " + entry.getKey();
-                }
+                    Categorie_hebergement cat = categorieHService.getById(entry.getKey());
+                    if (cat != null) nom = cat.getNom();
+                } catch (SQLException ex) { /* keep default */ }
                 chartHebPie.getData().add(
                         new PieChart.Data(nom + " (" + entry.getValue() + ")", entry.getValue()));
             }
             chartHebPie.setLegendVisible(true);
-            chartHebPie.setLabelsVisible(true);
-            chartHebPie.setTitle("Répartition des hébergements");
+            chartHebPie.setLabelsVisible(false);
+            chartHebPie.setTitle("Repartition des hebergements");
         } catch (SQLException e) {
             chartHebPie.getData().clear();
         }
     }
 
-    // ── Activités récentes ───────────────────────────────────
+    private void loadTopRevenueChart() {
+        try {
+            List<Hebergement> hebs = hebergementService.getAll();
+            List<RevenueEntry> top5 = new ArrayList<>();
+            for (Hebergement h : hebs) {
+                double rev = 0;
+                try { rev = chambreService.getRevenueByHebergement(h.getId()); }
+                catch (SQLException ignored) {}
+                top5.add(new RevenueEntry(h.getNom(), rev));
+            }
+            top5.sort((a, b) -> Double.compare(b.revenu, a.revenu));
+            if (top5.size() > 5) top5 = top5.subList(0, 5);
+
+            XYChart.Series<String, Number> series = new XYChart.Series<>();
+            series.setName("Revenu (TND)");
+
+            // Utiliser le nom complet comme clé d'axe X
+            for (RevenueEntry e : top5) {
+                series.getData().add(new XYChart.Data<>(e.nom, e.revenu));
+            }
+
+            chartTopRevenueHeb.getData().clear();
+            chartTopRevenueHeb.getData().add(series);
+            chartTopRevenueHeb.setLegendVisible(false);
+            chartTopRevenueHeb.setAnimated(true);
+
+            final List<RevenueEntry> finalTop5 = top5;
+            Platform.runLater(() -> {
+                int i = 0;
+                for (XYChart.Series<String, Number> s : chartTopRevenueHeb.getData()) {
+                    for (XYChart.Data<String, Number> d : s.getData()) {
+                        if (d.getNode() != null) {
+                            final int idx = i;
+                            d.getNode().setStyle(
+                                    "-fx-bar-fill: " + getBarColorRgb(idx) + ";"
+                                            + " -fx-background-radius: 4 4 0 0;");
+
+                            // Tooltip : nom + revenu
+                            String nomComplet = idx < finalTop5.size() ? finalTop5.get(idx).nom : "";
+                            double rev = d.getYValue().doubleValue();
+                            Tooltip tip = new Tooltip(nomComplet + "\n" + String.format("%.0f TND", rev));
+                            tip.setStyle("-fx-font-size: 12px;");
+                            Tooltip.install(d.getNode(), tip);
+
+                            javafx.scene.layout.StackPane bar =
+                                    (javafx.scene.layout.StackPane) d.getNode();
+                            bar.getChildren().removeIf(n -> n instanceof Label);
+
+                            // Label "XXX TND" au-dessus de la barre
+                            Label tndLabel = new Label(String.format("%.0f TND", rev));
+                            tndLabel.setStyle(
+                                    "-fx-font-size: 11px; -fx-font-weight: bold;"
+                                            + " -fx-text-fill: rgb(99,102,241);");
+                            javafx.scene.layout.StackPane.setAlignment(
+                                    tndLabel, javafx.geometry.Pos.TOP_CENTER);
+                            tndLabel.setTranslateY(-20);
+
+                            // Label nom de l'hébergement à l'intérieur de la barre
+                            Label nomLabel = new Label(nomComplet);
+                            nomLabel.setStyle(
+                                    "-fx-font-size: 11px; -fx-font-weight: bold;"
+                                            + " -fx-text-fill: white;"
+                                            + " -fx-wrap-text: true;"
+                                            + " -fx-alignment: CENTER;");
+                            nomLabel.setMaxWidth(Double.MAX_VALUE);
+                            nomLabel.setWrapText(true);
+                            javafx.scene.layout.StackPane.setAlignment(
+                                    nomLabel, javafx.geometry.Pos.CENTER);
+
+                            bar.getChildren().addAll(tndLabel, nomLabel);
+
+                            i++;
+                        }
+                    }
+                }
+            });
+
+        } catch (SQLException e) {
+            chartTopRevenueHeb.getData().clear();
+        }
+    }
+
+    // ── Activites recentes ───────────────────────────────────
     private void loadRecentActivites() {
         recentActivitesList.getChildren().clear();
         recentActivitesList.getChildren().add(
-                buildRecentItem("Randonnée Zaghouan", "Zaghouan • 45 TND", true));
+                buildRecentItem("Randonnee Zaghouan", "Zaghouan - 45 TND", true));
         recentActivitesList.getChildren().add(
-                buildRecentItem("Plongée Tabarka", "Tabarka • 80 TND", true));
+                buildRecentItem("Plongee Tabarka", "Tabarka - 80 TND", true));
     }
 
     private HBox buildRecentItem(String title, String subtitle, boolean active) {
@@ -248,7 +267,7 @@ public class DashboardController {
         Label subLabel = new Label(subtitle);
         subLabel.getStyleClass().add("recent-sub");
         info.getChildren().addAll(titleLabel, subLabel);
-        HBox.setHgrow(info, javafx.scene.layout.Priority.ALWAYS);
+        HBox.setHgrow(info, Priority.ALWAYS);
         row.getChildren().add(info);
         if (active) {
             Label badge = new Label("Actif");
