@@ -17,15 +17,20 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import tn.esprit.controller.front.modals.HebergementReservationController;
+import tn.esprit.models.User;
 import tn.esprit.models.hebergements.Categorie_hebergement;
 import tn.esprit.models.hebergements.Chambre;
 import tn.esprit.models.hebergements.Equipement;
 import tn.esprit.models.hebergements.Hebergement;
+import tn.esprit.navigation.Routes;
+import tn.esprit.navigation.SceneManager;
 import tn.esprit.services.hebergement.CategorieH_service;
 import tn.esprit.services.hebergement.Chambre_service;
+import tn.esprit.services.hebergement.FavoriHebergement_service;
 import tn.esprit.services.hebergement.HebergementEquipement_service;
 import tn.esprit.services.hebergement.Hebergement_service;
 import tn.esprit.services.hebergement.LikeHebergement_service;
+import tn.esprit.session.SessionManager;
 
 import java.io.File;
 import java.net.URL;
@@ -58,12 +63,14 @@ public class HebergementsController implements Initializable {
     private final Chambre_service               chambreService    = new Chambre_service();
     private final HebergementEquipement_service equipementService = new HebergementEquipement_service();
     private final LikeHebergement_service       likeService       = new LikeHebergement_service();
+    private final FavoriHebergement_service     favoriService     = new FavoriHebergement_service();
 
     private List<Hebergement> allData;
     private List<Hebergement> filteredData;
 
     private static final int    PER_PAGE    = 6;
     private static final String UPLOADS_DIR = "uploads/hebergements/";
+
     private int currentPage = 1;
 
     @Override
@@ -315,13 +322,11 @@ public class HebergementsController implements Initializable {
     /* ─────────────── BARRE DE PROGRESSION LIKES ─────────────── */
 
     private StackPane buildProgressBar(double pct) {
-        // Fond gris
         HBox bg = new HBox();
         bg.setStyle("-fx-background-color:#e2e8f0; -fx-background-radius:6;");
         bg.setPrefHeight(7);
         bg.setMaxWidth(Double.MAX_VALUE);
 
-        // Barre colorée
         HBox fill = new HBox();
         fill.setPrefHeight(7);
         fill.setPrefWidth(0);
@@ -335,7 +340,6 @@ public class HebergementsController implements Initializable {
         bar.setMaxWidth(Double.MAX_VALUE);
         StackPane.setAlignment(fill, Pos.CENTER_LEFT);
 
-        // Animation fluide déclenchée après layout
         bar.widthProperty().addListener((obs, oldW, newW) -> {
             if (newW.doubleValue() > 0 && fill.getPrefWidth() == 0) {
                 double targetW = newW.doubleValue() * pct / 100.0;
@@ -353,7 +357,7 @@ public class HebergementsController implements Initializable {
         return bar;
     }
 
-    /* ─────────────── IMAGE ─────────────── */
+    /* ─────────────── IMAGE ZONE ─────────────── */
 
     private StackPane buildImageZone(Hebergement h) {
         VBox imgBox = new VBox();
@@ -378,6 +382,8 @@ public class HebergementsController implements Initializable {
         }
 
         StackPane stack = new StackPane(imgBox);
+
+        // ── Eco badge ──
         if (h.getLabel_eco() != null && !h.getLabel_eco().isBlank()) {
             Label ecoBadge = new Label(h.getLabel_eco());
             ecoBadge.getStyleClass().add("heb-card-eco-badge");
@@ -385,8 +391,47 @@ public class HebergementsController implements Initializable {
             StackPane.setAlignment(ecoBadge, Pos.TOP_RIGHT);
             StackPane.setMargin(ecoBadge, new Insets(14, 14, 0, 0));
         }
+
+        // ── Bouton favori ──
+        Button btnFavori = new Button("🤍");
+        btnFavori.setStyle("-fx-background-color:rgba(255,255,255,0.85);"
+                + "-fx-background-radius:50%;"
+                + "-fx-min-width:34px; -fx-min-height:34px;"
+                + "-fx-max-width:34px; -fx-max-height:34px;"
+                + "-fx-font-size:15px; -fx-cursor:hand;"
+                + "-fx-border-width:0; -fx-padding:0;");
+        stack.getChildren().add(btnFavori);
+        StackPane.setAlignment(btnFavori, Pos.TOP_LEFT);
+        StackPane.setMargin(btnFavori, new Insets(10, 0, 0, 10));
+
+        // ✅ Fix : relire le user depuis la session à chaque carte
+        User user = SessionManager.getInstance().getCurrentUser();
+
+        boolean[] fav = { false };
+        if (user != null) {
+            try {
+                fav[0] = favoriService.isFavori(user.getId(), h.getId());
+                btnFavori.setText(fav[0] ? "❤️" : "🤍");
+            } catch (SQLException ignored) {}
+        }
+
+        // Toggle au clic
+        btnFavori.setOnAction(e -> {
+            // ✅ Fix : relire le user au moment du clic aussi
+            User u = SessionManager.getInstance().getCurrentUser();
+            if (u == null) return;
+            try {
+                fav[0] = favoriService.toggle(u.getId(), h.getId());
+                btnFavori.setText(fav[0] ? "❤️" : "🤍");
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        });
+
         return stack;
     }
+
+    /* ─────────────── IMAGE LOADER ─────────────── */
 
     private Image loadImage(String imagePath) {
         if (imagePath == null || imagePath.isBlank()) return null;
@@ -448,15 +493,9 @@ public class HebergementsController implements Initializable {
 
     private void ouvrirDetail(Hebergement h) {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/views/front/HebergementDetail.fxml"));
-            Parent root = loader.load();
-
-            HebergementDetailController ctrl = loader.getController();
+            HebergementDetailController ctrl =
+                    SceneManager.navigateToAndGetController(Routes.HEBERGEMENT_DETAIL);
             ctrl.setHebergement(h);
-
-            Scene scene = cardsPane.getScene();
-            scene.setRoot(root);
         } catch (Exception e) {
             e.printStackTrace();
         }

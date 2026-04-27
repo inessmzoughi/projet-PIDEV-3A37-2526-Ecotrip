@@ -44,6 +44,8 @@ public class SceneManager {
         frontRoutes.put(Routes.CONTACT, "/views/front/Cart.fxml");
         frontRoutes.put(Routes.MES_RESERVATIONS,  "/views/front/mes-reservations.fxml");
         frontRoutes.put(Routes.FRONT_MON_COMPTE,  "/views/compte/mon-compte.fxml");
+        frontRoutes.put(Routes.MES_FAVORIS,       "/views/front/MesFavoris.fxml");
+        frontRoutes.put(Routes.HEBERGEMENT_DETAIL, "/views/front/HebergementDetail.fxml");
 //*****************back
         backRoutes.put(Routes.ADMIN_DASHBOARD,    "/views/back/dashboard.fxml");
         backRoutes.put(Routes.ADMIN_ACTIVITES,    "/views/back/activites.fxml");

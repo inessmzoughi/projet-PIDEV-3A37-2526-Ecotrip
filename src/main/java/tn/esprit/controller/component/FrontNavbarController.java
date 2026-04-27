@@ -11,7 +11,9 @@ public class FrontNavbarController {
 
     @FXML private Button homeBtn, hebergBtn, activitesBtn;
     @FXML private Button transportBtn, boutiqueBtn, contactBtn;
-    @FXML private Button reservationsBtn, monCompteBtn, logoutBtn, loginBtn;
+    @FXML private Button reservationsBtn, monCompteBtn, logoutBtn, loginBtn, favorisBtn;
+
+
 
     // Map each button to its route for active-state highlighting
     private Map<Button, String> routeMap;
@@ -61,4 +63,8 @@ public class FrontNavbarController {
         }else SceneManager.navigateTo(Routes.FRONT_MON_COMPTE); }
     @FXML private void handleLogin()        { SceneManager.navigateTo(Routes.LOGIN); }
     @FXML private void handleLogout()       { SessionManager.getInstance().logout(); }
+    @FXML
+    private void handleFavoris() {
+        SceneManager.navigateTo(Routes.MES_FAVORIS);
+    }
 }

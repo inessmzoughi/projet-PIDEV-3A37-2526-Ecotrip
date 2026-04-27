@@ -13,8 +13,7 @@
 
     <VBox styleClass="heb-page" spacing="0">
 
-        <!-- ══ NAVBAR ══ -->
-        <fx:include source="../components/front-navbar.fxml"/>
+
 
         <!-- ══ HERO ══ -->
         <VBox styleClass="heb-hero" alignment="CENTER" spacing="14">

@@ -18,6 +18,8 @@ import tn.esprit.models.hebergements.Chambre;
 import tn.esprit.models.hebergements.Equipement;
 import tn.esprit.models.hebergements.Hebergement;
 import tn.esprit.models.User;
+import tn.esprit.navigation.Routes;
+import tn.esprit.navigation.SceneManager;
 import tn.esprit.services.hebergement.AvisHebergement_service;
 import tn.esprit.services.hebergement.CategorieH_service;
 import tn.esprit.services.hebergement.Chambre_service;
@@ -103,22 +105,10 @@ public class HebergementDetailController implements Initializable {
     /* ─── Retour à la liste (même stage, même scène) ─── */
     @FXML
     private void onRetour() {
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/views/front/Hebergements.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) btnRetour.getScene().getWindow();
-            Scene scene = btnRetour.getScene();
-            scene.setRoot(root);           // ✅ change uniquement le root, même fenêtre
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        SceneManager.navigateTo(Routes.HEBERGEMENTS);
     }
-
-    /* ─── Réserver (déléguer au controller existant) ─── */
-    /* ─── Réserver ─── */
     @FXML
-    private void onReserver(javafx.event.ActionEvent event) {
+    private void onReserver() {
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/views/front/modals/HebergementReservationModal.fxml"));
@@ -128,9 +118,7 @@ public class HebergementDetailController implements Initializable {
             ctrl.setHebergement(hebergement);
             ctrl.setOverlayRoot(overlay);
 
-            // ✅ Get scene from event source — never null here
-            javafx.scene.Node source = (javafx.scene.Node) event.getSource();
-            javafx.scene.Scene scene = source.getScene();
+            javafx.scene.Scene scene = btnReserver.getScene();
             Parent rootNode = scene.getRoot();
 
             StackPane container;
