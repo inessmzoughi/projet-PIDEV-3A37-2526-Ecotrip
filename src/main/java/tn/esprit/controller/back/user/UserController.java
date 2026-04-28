@@ -612,20 +612,76 @@ public class UserController implements Initializable {
 
     /* ─── Delete ─── */
     private void confirmDelete(User u) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Supprimer ?");
-        alert.setHeaderText("Supprimer « " + u.getUsername() + " » ?");
-        alert.setContentText("Cette action est irréversible.");
-        ButtonType cancel  = new ButtonType("Annuler",   ButtonBar.ButtonData.CANCEL_CLOSE);
-        ButtonType confirm = new ButtonType("Supprimer", ButtonBar.ButtonData.OK_DONE);
-        alert.getButtonTypes().setAll(cancel, confirm);
-        alert.showAndWait().filter(r -> r == confirm).ifPresent(r -> {
-            service.deleteUser(u.getId());
-            if (userEnEdition != null && userEnEdition.getId() == u.getId()) onReset();
-            refreshAll();
-        });
-    }
+        // Ask service how many reservations this user has
+        int reservationCount = service.countUserReservations(u.getId());
 
+        if (reservationCount > 0) {
+            // ── User HAS reservations → special cascade confirm ──────────────
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Suppression avec données liées");
+            alert.setHeaderText("⚠️  " + u.getUsername()
+                    + " a " + reservationCount
+                    + " réservation" + (reservationCount > 1 ? "s" : ""));
+            alert.setContentText(
+                    "Cet utilisateur possède " + reservationCount
+                            + " réservation" + (reservationCount > 1 ? "s" : "")
+                            + " enregistrée" + (reservationCount > 1 ? "s" : "") + ".\n\n"
+                            + "Supprimer cet utilisateur supprimera également TOUTES ses réservations.\n"
+                            + "Cette action est irréversible.\n\n"
+                            + "Voulez-vous continuer ?"
+            );
+
+            ButtonType btnCancel  = new ButtonType("Annuler",
+                    ButtonBar.ButtonData.CANCEL_CLOSE);
+            ButtonType btnCascade = new ButtonType(
+                    "Supprimer l'utilisateur et ses réservations",
+                    ButtonBar.ButtonData.OK_DONE);
+
+            alert.getButtonTypes().setAll(btnCancel, btnCascade);
+
+            // Style the destructive button red so admin can't miss it
+            alert.showAndWait().ifPresent(result -> {
+                if (result == btnCascade) {
+                    try {
+                        service.deleteUserWithReservations(u.getId());
+                        if (userEnEdition != null && userEnEdition.getId() == u.getId())
+                            onReset();
+                        refreshAll();
+                        showToast("🗑️ Utilisateur et "
+                                + reservationCount
+                                + " réservation" + (reservationCount > 1 ? "s" : "")
+                                + " supprimés.");
+                    } catch (RuntimeException e) {
+                        showAlert("Erreur de suppression", e.getMessage());
+                    }
+                }
+            });
+
+        } else {
+            // ── User has NO reservations → standard simple confirm ────────────
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Supprimer l'utilisateur ?");
+            alert.setHeaderText("Supprimer « " + u.getUsername() + " » ?");
+            alert.setContentText(
+                    "Cet utilisateur n'a aucune réservation.\n"
+                            + "Cette action est irréversible."
+            );
+
+            ButtonType btnCancel  = new ButtonType("Annuler",
+                    ButtonBar.ButtonData.CANCEL_CLOSE);
+            ButtonType btnConfirm = new ButtonType("Supprimer",
+                    ButtonBar.ButtonData.OK_DONE);
+
+            alert.getButtonTypes().setAll(btnCancel, btnConfirm);
+            alert.showAndWait().filter(r -> r == btnConfirm).ifPresent(r -> {
+                service.deleteUser(u.getId());
+                if (userEnEdition != null && userEnEdition.getId() == u.getId())
+                    onReset();
+                refreshAll();
+                showToast("🗑️ Utilisateur supprimé.");
+            });
+        }
+    }
     /* ─── Navigation ─── */
     @FXML private void onSearch() { currentPage = 1; renderTable(); }
     @FXML private void onSort()   { currentPage = 1; renderTable(); }

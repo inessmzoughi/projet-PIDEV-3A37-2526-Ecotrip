@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import tn.esprit.controller.component.BackSidebarController;
@@ -21,7 +22,7 @@ public class BackOfficeShellController  implements Initializable {
     @FXML private Label pageTitle;
     @FXML private Label adminNameLabel;
     @FXML private BackSidebarController sidebarController;
-    @FXML private VBox faceNudgeBanner;
+    @FXML private HBox faceNudgeBanner;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {

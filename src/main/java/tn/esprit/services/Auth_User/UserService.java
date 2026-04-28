@@ -3,6 +3,7 @@ package tn.esprit.services.Auth_User;
 import tn.esprit.models.Auth_User.User;
 import tn.esprit.models.enums.Role;
 import tn.esprit.repository.Auth_User.UserRepository;
+import tn.esprit.services.reservation.ReservationService;
 import tn.esprit.utils.PasswordUtil;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository = new UserRepository();
+    private final ReservationService reservationService = new ReservationService();
 
     // 🔹 Only adds value: validation + hashing
     public void createUser(String username, String email, String password,
@@ -90,5 +92,32 @@ public class UserService {
 
     public int countVerifiedUsers() {
         return userRepository.countVerified();
+    }
+    /**
+     * Check how many reservations this user has.
+     * Called by controller before deciding which confirm dialog to show.
+     */
+    public int countUserReservations(int userId) {
+        try {
+            return reservationService.countByUser(userId);
+        } catch (Exception e) {
+            return 0; // safe fallback — worst case we try to delete and DB rejects it
+        }
+    }
+
+    /**
+     * Delete user AND all their reservations (cascade).
+     * Only called after admin explicitly confirms they understand reservations will be deleted.
+     */
+    public void deleteUserWithReservations(int userId) {
+        try {
+            // Delete reservations first (FK constraint — child before parent)
+            reservationService.deleteByUser(userId);
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Erreur lors de la suppression des réservations : " + e.getMessage(), e);
+        }
+        // Then delete the user
+        userRepository.delete(userId);
     }
 }

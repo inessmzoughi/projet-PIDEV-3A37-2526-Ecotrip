@@ -80,7 +80,7 @@
                 <PasswordField fx:id="passwordField" promptText="••••••••" styleClass="auth-input-flat"/>
             </VBox>
 
-            <!-- Remember me + Forgot -->
+            <!-- Forgot Password-->
             <HBox alignment="CENTER_LEFT">
                 <VBox.margin><Insets top="12"/></VBox.margin>
                 <Button text="Mot de passe oublie ?" onAction="#onForgotPassword" styleClass="btn-link"/>

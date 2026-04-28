@@ -53,7 +53,7 @@ public class ForgotPasswordController implements Initializable {
         clearErrors();
         String email = emailField.getText().trim();
 
-        if (email.isEmpty() || !email.contains("@")) {
+        if (!email.contains("@")) {
             showFieldError(errEmail, "Veuillez entrer une adresse email valide.");
             return;
         }

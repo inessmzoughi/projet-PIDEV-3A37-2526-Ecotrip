@@ -44,7 +44,7 @@ public class SessionManager {
             switch (result) {
                 case NOT_ENROLLED:
                     // No face registered yet → allow access + nudge shown by shell
-                    SceneManager.navigateTo(Routes.ADMIN_DASHBOARD);
+                    SceneManager.navigateTo(Routes.ADMIN_MON_COMPTE);
                     break;
 
                 case PASS:

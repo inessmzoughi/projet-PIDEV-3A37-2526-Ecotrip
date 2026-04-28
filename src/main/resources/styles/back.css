@@ -18,7 +18,8 @@
 
 /* ══ SIDEBAR ══════════════════════════════════════════ */
 .admin-sidebar {
-    -fx-background-color: #0f2f22;
+    -fx-background-color: linear-gradient(to bottom right, #1a3a07, #2d5c10, #4a8020);
+
     -fx-padding: 0;
 }
 

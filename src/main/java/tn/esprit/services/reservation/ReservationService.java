@@ -67,4 +67,10 @@ public class ReservationService {
     public void update(Reservation r) throws SQLException {
         repo.update(r);
     }
+    public int countByUser(int userId) throws SQLException {
+        return repo.countByUser(userId);
+    }
+    public void deleteByUser(int userId) throws SQLException {
+        repo.deleteByUser(userId);
+    }
 }
