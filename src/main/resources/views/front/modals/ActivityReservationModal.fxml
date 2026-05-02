@@ -1,86 +1,106 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
 <?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.web.WebView?>
 
 <StackPane xmlns:fx="http://javafx.com/fxml"
            fx:controller="tn.esprit.controller.front.modals.ActivityReservationController"
            styleClass="modal-blur-overlay"
            alignment="CENTER">
 
-    <VBox styleClass="res-modal-card" maxWidth="480" maxHeight="650" spacing="0">
+    <VBox styleClass="res-modal-card" maxWidth="560" maxHeight="820" spacing="0">
 
-        <!-- Blue header -->
         <HBox styleClass="res-modal-header-blue" spacing="16" alignment="CENTER_LEFT">
             <StackPane styleClass="res-modal-icon-wrap">
                 <Label text="🧭" style="-fx-font-size:24px;"/>
             </StackPane>
             <VBox spacing="3" HBox.hgrow="ALWAYS">
-                <Label text="Réserver l'activité" styleClass="res-modal-title"/>
+                <Label text="Reserver l'activite" styleClass="res-modal-title"/>
                 <Label fx:id="activityNameLabel" styleClass="res-modal-subtitle" wrapText="true"/>
             </VBox>
             <Button text="✕" styleClass="res-modal-close" onAction="#onClose"/>
         </HBox>
 
-        <!-- Body -->
-        <VBox styleClass="res-modal-body" spacing="16">
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="front-scroll">
+            <VBox styleClass="res-modal-body" spacing="16">
 
-            <Label fx:id="errorLabel" styleClass="res-modal-err-msg"
-                   managed="false" visible="false" wrapText="true"
-                   style="-fx-background-color:#fde8e8;-fx-background-radius:8;-fx-padding:10 14;"/>
+                <Label fx:id="errorLabel" styleClass="res-modal-err-msg"
+                       managed="false" visible="false" wrapText="true"
+                       style="-fx-background-color:#fde8e8;-fx-background-radius:8;-fx-padding:10 14;"/>
 
-            <!-- Date (single date for activity) -->
-            <VBox spacing="6">
-                <Label text="DATE DE L'ACTIVITÉ" styleClass="res-modal-field-label"/>
-                <DatePicker fx:id="activityDatePicker" styleClass="res-modal-input" maxWidth="Infinity"/>
-                <Label fx:id="errDate" styleClass="res-modal-err-msg" managed="false" visible="false"/>
-            </VBox>
-
-            <!-- Number of participants -->
-            <VBox spacing="6">
-                <Label text="NOMBRE DE PARTICIPANTS" styleClass="res-modal-field-label"/>
-                <HBox spacing="12" alignment="CENTER_LEFT">
-                    <Spinner fx:id="participantsSpinner" min="1" max="50" initialValue="1"
-                             styleClass="res-modal-input" prefWidth="120" editable="true"/>
-                    <Label fx:id="maxParticipantsHint" styleClass="res-modal-price-label"
-                           text="places disponibles"/>
-                </HBox>
-                <Label fx:id="errParticipants" styleClass="res-modal-err-msg" managed="false" visible="false"/>
-            </VBox>
-
-            <!-- Info row: location + duration -->
-            <HBox fx:id="infoRow" spacing="20" alignment="CENTER_LEFT"
-                  style="-fx-background-color:#f8fafc;-fx-background-radius:10;-fx-padding:12 16;">
-                <VBox spacing="3">
-                    <Label text="LIEU" styleClass="res-modal-field-label"/>
-                    <Label fx:id="locationLabel" styleClass="res-modal-price-label"/>
+                <VBox spacing="6">
+                    <Label text="DATE DE L'ACTIVITE" styleClass="res-modal-field-label"/>
+                    <DatePicker fx:id="activityDatePicker" styleClass="res-modal-input" maxWidth="Infinity"/>
+                    <Label fx:id="errDate" styleClass="res-modal-err-msg" managed="false" visible="false"/>
                 </VBox>
-                <Separator orientation="VERTICAL"/>
-                <VBox spacing="3">
-                    <Label text="DURÉE" styleClass="res-modal-field-label"/>
-                    <Label fx:id="durationLabel" styleClass="res-modal-price-label"/>
+
+                <VBox spacing="6">
+                    <Label text="CRENEAU DISPONIBLE" styleClass="res-modal-field-label"/>
+                    <ComboBox fx:id="scheduleCombo" styleClass="res-modal-input" maxWidth="Infinity"
+                              promptText="Choisir un depart"/>
+                    <Label fx:id="scheduleHintLabel" styleClass="res-modal-price-label"
+                           managed="false" visible="false" wrapText="true"/>
+                    <Label fx:id="errSchedule" styleClass="res-modal-err-msg" managed="false" visible="false"/>
                 </VBox>
-            </HBox>
 
-            <!-- Price strip -->
-            <VBox fx:id="priceStrip" styleClass="res-modal-price-strip" spacing="4"
-                  managed="false" visible="false">
-                <HBox alignment="CENTER_LEFT" spacing="8">
-                    <Label text="👥" style="-fx-font-size:16px;"/>
-                    <Label fx:id="participantsSummary" styleClass="res-modal-price-label"/>
+                <VBox spacing="6">
+                    <Label text="NOMBRE DE PARTICIPANTS" styleClass="res-modal-field-label"/>
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Spinner fx:id="participantsSpinner" min="1" max="50" initialValue="1"
+                                 styleClass="res-modal-input" prefWidth="120" editable="true"/>
+                        <Label fx:id="maxParticipantsHint" styleClass="res-modal-price-label"
+                               text="places disponibles"/>
+                    </HBox>
+                    <Label fx:id="errParticipants" styleClass="res-modal-err-msg" managed="false" visible="false"/>
+                </VBox>
+
+                <HBox fx:id="infoRow" spacing="20" alignment="CENTER_LEFT"
+                      style="-fx-background-color:#f8fafc;-fx-background-radius:10;-fx-padding:12 16;">
+                    <VBox spacing="3">
+                        <Label text="LIEU" styleClass="res-modal-field-label"/>
+                        <Label fx:id="locationLabel" styleClass="res-modal-price-label"/>
+                    </VBox>
+                    <Separator orientation="VERTICAL"/>
+                    <VBox spacing="3">
+                        <Label text="DUREE" styleClass="res-modal-field-label"/>
+                        <Label fx:id="durationLabel" styleClass="res-modal-price-label"/>
+                    </VBox>
                 </HBox>
-                <HBox alignment="CENTER_LEFT" spacing="6">
-                    <Label fx:id="totalLabel" styleClass="res-modal-price-amount"/>
-                    <Label text="TND" styleClass="res-modal-price-sub"/>
-                </HBox>
+
+                <VBox spacing="8" styleClass="res-map-card">
+                    <HBox alignment="CENTER_LEFT" spacing="12">
+                        <VBox spacing="2" HBox.hgrow="ALWAYS">
+                            <Label text="LOCALISATION" styleClass="res-modal-field-label"/>
+                            <Label text="Retrouvez l'activite directement sur la carte."
+                                   styleClass="res-map-subtitle" wrapText="true"/>
+                        </VBox>
+                        <Button fx:id="openMapBtn" text="Ouvrir la carte"
+                                styleClass="res-map-btn" onAction="#onOpenMap"/>
+                    </HBox>
+                    <WebView fx:id="mapView" prefHeight="220" minHeight="220"/>
+                    <Label fx:id="mapStateLabel" visible="false" managed="false"
+                           styleClass="res-map-status"/>
+                </VBox>
+
+                <VBox fx:id="priceStrip" styleClass="res-modal-price-strip" spacing="4"
+                      managed="false" visible="false">
+                    <HBox alignment="CENTER_LEFT" spacing="8">
+                        <Label text="👥" style="-fx-font-size:16px;"/>
+                        <Label fx:id="participantsSummary" styleClass="res-modal-price-label"/>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="6">
+                        <Label fx:id="totalLabel" styleClass="res-modal-price-amount"/>
+                        <Label text="TND" styleClass="res-modal-price-sub"/>
+                    </HBox>
+                </VBox>
+
             </VBox>
+        </ScrollPane>
 
-        </VBox>
-
-        <!-- Footer -->
         <HBox styleClass="res-modal-footer" alignment="CENTER_RIGHT" spacing="12">
             <Button text="Annuler" styleClass="res-modal-btn-cancel" onAction="#onClose"/>
-            <Button text="🛒  Ajouter au panier" styleClass="res-modal-btn-confirm-blue"
+            <Button text="Ajouter au panier" styleClass="res-modal-btn-confirm-blue"
                     onAction="#onAddToCart"/>
         </HBox>
 

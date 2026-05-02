@@ -394,11 +394,58 @@
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.04), 8, 0, 0, 2);
 }
 .act-filter-title { -fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #1e293b; }
-.act-filter-hint  { -fx-font-size: 12px; -fx-text-fill: #94a3b8; }
-.act-filter-value { -fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #2d5016; }
-.act-radio        { -fx-font-size: 13px; -fx-text-fill: #475569; }
+.act-filter-card {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1;
+    -fx-padding: 14 16 14 16;
+}
+
+.act-filter-card-compact {
+    -fx-min-width: 170;
+}
+
+.act-filter-hint  {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #94a3b8;
+}
+
+.act-filter-value {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d5016;
+}
+
+.act-slider {
+    -fx-pref-height: 26;
+}
+
+.act-radio {
+    -fx-font-size: 13px;
+    -fx-text-fill: #475569;
+    -fx-padding: 6 10 6 10;
+    -fx-background-color: white;
+    -fx-background-radius: 999;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 999;
+    -fx-border-width: 1;
+}
+
+.act-radio:selected {
+    -fx-background-color: #ecfdf3;
+    -fx-border-color: #86efac;
+    -fx-text-fill: #166534;
+}
+
 .act-separator    { -fx-background-color: #e8ecef; }
-.act-spinner      { -fx-font-size: 13px; }
+
+.act-spinner {
+    -fx-font-size: 13px;
+    -fx-pref-height: 44;
+}
 
 .act-cards-grid   { -fx-background-color: transparent; -fx-padding: 4; }
 
@@ -1326,6 +1373,204 @@
 .res-cancel-btn:hover {
     -fx-background-color: #fca5a5;
 }
+
+.heb-page-shell {
+    -fx-background-color: transparent;
+}
+
+.activity-chatbot-fab {
+    -fx-background-color: linear-gradient(to bottom right, #214e1f, #2d5f1d);
+    -fx-background-radius: 999;
+    -fx-border-radius: 999;
+    -fx-min-width: 64;
+    -fx-min-height: 64;
+    -fx-max-width: 64;
+    -fx-max-height: 64;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+    -fx-effect: dropshadow(gaussian, rgba(22, 60, 24, 0.28), 22, 0, 0, 8);
+}
+
+.activity-chatbot-fab:hover {
+    -fx-background-color: #2d6a31;
+    -fx-translate-y: -2;
+}
+
+.activity-chatbot-panel {
+    -fx-background-color: white;
+    -fx-background-radius: 28;
+    -fx-border-radius: 28;
+    -fx-border-color: #dfe7df;
+    -fx-border-width: 1;
+    -fx-pref-width: 360;
+    -fx-max-width: 360;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.18), 28, 0, 0, 10);
+}
+
+.activity-chatbot-header {
+    -fx-background-color: linear-gradient(to right, #214e1f, #1f4f2f);
+    -fx-background-radius: 28 28 0 0;
+    -fx-padding: 18 18 18 18;
+}
+
+.activity-chatbot-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.activity-chatbot-min-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-border-width: 0;
+    -fx-cursor: hand;
+    -fx-padding: 0 4 0 4;
+}
+
+.activity-chatbot-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.activity-chatbot-body {
+    -fx-background-color: white;
+}
+
+.activity-chatbot-bubble {
+    -fx-background-color: #edf7ef;
+    -fx-background-radius: 18;
+    -fx-padding: 14 16 14 16;
+    -fx-border-color: #deefe2;
+    -fx-border-radius: 18;
+    -fx-border-width: 1;
+}
+
+.activity-chatbot-message {
+    -fx-font-size: 14px;
+    -fx-text-fill: #23402e;
+    -fx-line-spacing: 4;
+}
+
+.activity-chatbot-submessage {
+    -fx-font-size: 12px;
+    -fx-text-fill: #4b6b58;
+    -fx-line-spacing: 3;
+}
+
+.activity-chatbot-chip {
+    -fx-background-color: white;
+    -fx-text-fill: #244029;
+    -fx-background-radius: 999;
+    -fx-border-color: #d8e7da;
+    -fx-border-radius: 999;
+    -fx-border-width: 1;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 8 12 8 12;
+    -fx-cursor: hand;
+}
+
+.activity-chatbot-chip:hover {
+    -fx-background-color: #f5faf6;
+}
+
+.activity-chatbot-card {
+    -fx-background-color: #f8faf9;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: #e1e8e2;
+    -fx-border-width: 1;
+    -fx-padding: 12;
+}
+
+.activity-chatbot-card-image {
+    -fx-background-color: linear-gradient(to bottom right, #e8f5e9, #d6ead7);
+    -fx-background-radius: 20;
+}
+
+.activity-chatbot-card-fallback-icon {
+    -fx-font-size: 28px;
+}
+
+.activity-chatbot-card-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #16231c;
+}
+
+.activity-chatbot-card-meta {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+}
+
+.activity-chatbot-card-desc {
+    -fx-font-size: 12px;
+    -fx-text-fill: #455a4c;
+    -fx-line-spacing: 3;
+}
+
+.activity-chatbot-card-price {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #214e1f;
+}
+
+.activity-chatbot-card-btn {
+    -fx-background-color: white;
+    -fx-text-fill: #214e1f;
+    -fx-background-radius: 12;
+    -fx-border-color: #cadcca;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 8 12 8 12;
+    -fx-cursor: hand;
+}
+
+.activity-chatbot-card-btn:hover {
+    -fx-background-color: #f4faf5;
+}
+
+.activity-chatbot-inputbar {
+    -fx-background-color: white;
+    -fx-background-radius: 0 0 28 28;
+    -fx-border-color: #edf1ed;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 16;
+}
+
+.activity-chatbot-input {
+    -fx-background-color: black;
+    -fx-background-radius: 999;
+    -fx-border-color: #2b2b2b;
+    -fx-border-radius: 999;
+    -fx-border-width: 2;
+    -fx-font-size: 13px;
+    -fx-padding: 12 16 12 16;
+}
+
+.activity-chatbot-send-btn {
+    -fx-background-color: linear-gradient(to bottom right, #214e1f, #2d6a31);
+    -fx-text-fill: white;
+    -fx-background-radius: 999;
+    -fx-border-radius: 999;
+    -fx-min-width: 42;
+    -fx-min-height: 42;
+    -fx-max-width: 42;
+    -fx-max-height: 42;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-border-width: 0;
+    -fx-cursor: hand;
+}
+
+.activity-chatbot-send-btn:hover {
+    -fx-background-color: #2f6f33;
+}
+
 /* ══ MES RÉSERVATIONS — cart-style rows ══════════════ */
 .res-row {
     -fx-background-color: white;

@@ -61,6 +61,25 @@ public class ActivityCategoryRepository {
         ps.executeUpdate();
     }
 
+    // ── Unicité ────────────────────────────────────────────────────────────────
+
+    public boolean existsByName(String name) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM activity_category WHERE LOWER(name) = LOWER(?)";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, name.trim());
+        ResultSet rs = ps.executeQuery();
+        return rs.next() && rs.getInt(1) > 0;
+    }
+
+    public boolean existsByNameAndNotId(String name, int excludeId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM activity_category WHERE LOWER(name) = LOWER(?) AND id != ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, name.trim());
+        ps.setInt(2, excludeId);
+        ResultSet rs = ps.executeQuery();
+        return rs.next() && rs.getInt(1) > 0;
+    }
+
     private ActivityCategory mapRow(ResultSet rs) throws SQLException {
         ActivityCategory c = new ActivityCategory();
         c.setId(rs.getInt("id"));
