@@ -1,6 +1,5 @@
 package tn.esprit.controller.front;
 
-// Ajouter ces imports en haut du fichier
 import tn.esprit.utils.MollieCheckoutWindow;
 import tn.esprit.utils.MollieConfig;
 import tn.esprit.utils.MolliePayment;
@@ -20,6 +19,7 @@ import javafx.stage.FileChooser;
 import tn.esprit.models.produit.Commande;
 import tn.esprit.models.produit.LigneCommande;
 import tn.esprit.models.produit.Product;
+import tn.esprit.services.TranslationService;
 import tn.esprit.services.produit.CommandeService;
 import tn.esprit.services.produit.LigneCommandeService;
 import tn.esprit.session.SessionManager;
@@ -33,6 +33,7 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -49,7 +50,23 @@ public class CartController implements Initializable {
     @FXML private RadioButton rbPaypal;
     @FXML private RadioButton rbCash;
     @FXML private Button      btnPayer;
-    @FXML private Button      btnExporterPDF;   // ✅ ajouté
+    @FXML private Button      btnVider;
+    @FXML private Button      btnExporterPDF;
+
+    // ── Labels traduisibles ────────────────────────────────────────────────────
+    @FXML private Label lblHeroTitle;
+    @FXML private Label lblHeroSub;
+    @FXML private Label lblRecap;
+    @FXML private Label lblNbArticles;
+    @FXML private Label lblTotal;
+    @FXML private Label lblModePaiement;
+    @FXML private Label lblEmptyTitle;
+    @FXML private Label lblEmptySub;
+
+    // ── Langue ────────────────────────────────────────────────────────────────
+    @FXML private ComboBox<String> languageSelect;
+    private String currentLang = "fr";
+    private final Map<String, Map<String, String>> translationCache = new HashMap<>();
 
     // ── Services ───────────────────────────────────────────────────────────────
     private final CommandeService      commandeService      = new CommandeService();
@@ -60,14 +77,14 @@ public class CartController implements Initializable {
     // ── Radio groupe paiement ──────────────────────────────────────────────────
     private final ToggleGroup paymentGroup = new ToggleGroup();
 
-    // ── Constantes couleurs UI ─────────────────────────────────────────────────
+    // ── Couleurs UI ────────────────────────────────────────────────────────────
     private static final String GREEN_DARK = "#2d5a1b";
     private static final String GREEN_MED  = "#4a7c3f";
     private static final String WHITE      = "#ffffff";
     private static final String BORDER     = "#e0e0e0";
     private static final String GREY       = "#666666";
 
-    // ── Constantes couleurs PDF (java.awt.Color) ───────────────────────────────
+    // ── Couleurs PDF ───────────────────────────────────────────────────────────
     private static final java.awt.Color PDF_GREEN_DARK  = new java.awt.Color(45,  90,  27);
     private static final java.awt.Color PDF_GREEN_MED   = new java.awt.Color(74, 124,  63);
     private static final java.awt.Color PDF_GREEN_LIGHT = new java.awt.Color(220, 237, 200);
@@ -85,7 +102,56 @@ public class CartController implements Initializable {
         rbPaypal.setToggleGroup(paymentGroup);
         rbCash.setToggleGroup(paymentGroup);
         rbCarte.setSelected(true);
+
+        // ── Sélecteur de langue (même pattern que ProductsController) ──────────
+        if (languageSelect != null) {
+            languageSelect.getItems().addAll("🇫🇷 Français", "🇬🇧 English", "🇪🇸 Español");
+            languageSelect.setValue("🇫🇷 Français");
+            languageSelect.valueProperty().addListener((obs, o, n) -> {
+                if (n == null) return;
+                if      (n.contains("English")) currentLang = "en";
+                else if (n.contains("Español")) currentLang = "es";
+                else                            currentLang = "fr";
+                applyTranslations();
+                refreshCart();
+            });
+        }
+
+        applyTranslations();
         refreshCart();
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    //  TRADUCTION
+    // ══════════════════════════════════════════════════════════════════════════
+
+    private String t(String text) {
+        if (text == null || text.isEmpty() || currentLang.equals("fr")) return text;
+        translationCache.putIfAbsent(text, new HashMap<>());
+        if (translationCache.get(text).containsKey(currentLang)) {
+            return translationCache.get(text).get(currentLang);
+        }
+        String translated = TranslationService.translate(text, currentLang);
+        translationCache.get(text).put(currentLang, translated);
+        return translated;
+    }
+
+    /** Met à jour tous les labels statiques de la page selon la langue courante. */
+    private void applyTranslations() {
+        if (lblHeroTitle     != null) lblHeroTitle.setText("🛒  " + t("Mon Panier"));
+        if (lblHeroSub       != null) lblHeroSub.setText(t("Vérifiez vos articles avant de procéder au paiement"));
+        if (lblRecap         != null) lblRecap.setText(t("Récapitulatif"));
+        if (lblNbArticles    != null) lblNbArticles.setText(t("Nombre d'articles") + " :");
+        if (lblTotal         != null) lblTotal.setText(t("Total") + " :");
+        if (lblModePaiement  != null) lblModePaiement.setText(t("Mode de paiement"));
+        if (lblEmptyTitle    != null) lblEmptyTitle.setText(t("Votre panier est vide"));
+        if (lblEmptySub      != null) lblEmptySub.setText(t("Retournez à la boutique pour ajouter des produits"));
+        if (rbCarte          != null) rbCarte.setText("💳  " + t("Carte bancaire"));
+        if (rbPaypal         != null) rbPaypal.setText("🅿️  PayPal");
+        if (rbCash           != null) rbCash.setText("💵  " + t("Espèces"));
+        if (btnPayer         != null) btnPayer.setText("✅  " + t("Confirmer la commande"));
+        if (btnVider         != null) btnVider.setText("🗑  " + t("Vider le panier"));
+        if (btnExporterPDF   != null) btnExporterPDF.setText("📄  " + t("Exporter la commande en PDF"));
     }
 
     // ══════════════════════════════════════════════════════════════════════════
@@ -108,7 +174,7 @@ public class CartController implements Initializable {
 
         // ── Réservations ──────────────────────────────────────────────────────
         if (hasReservations) {
-            Label sectionLabel = new Label("🏨  Réservations");
+            Label sectionLabel = new Label("🏨  " + t("Réservations"));
             sectionLabel.setStyle("-fx-font-size:15px; -fx-font-weight:bold; -fx-text-fill:" + GREEN_DARK + ";");
             itemsContainer.getChildren().add(sectionLabel);
             for (CartItem item : cart.getReservationItems()) {
@@ -118,7 +184,7 @@ public class CartController implements Initializable {
 
         // ── Produits ──────────────────────────────────────────────────────────
         if (hasProducts) {
-            Label sectionLabel = new Label("🛍  Produits");
+            Label sectionLabel = new Label("🛍  " + t("Produits"));
             sectionLabel.setStyle("-fx-font-size:15px; -fx-font-weight:bold; -fx-text-fill:" + GREEN_DARK + ";"
                     + (hasReservations ? "-fx-padding:16 0 0 0;" : ""));
             itemsContainer.getChildren().add(sectionLabel);
@@ -161,11 +227,11 @@ public class CartController implements Initializable {
 
         String dateInfo = item.getDateFrom() != null
                 ? item.getDateFrom() + " → " + item.getDateTo()
-                + (item.getNights() > 0 ? " (" + item.getNights() + " nuits)" : "")
+                + (item.getNights() > 0 ? " (" + item.getNights() + " " + t("nuits") + ")" : "")
                 : "";
         Label dates  = new Label(dateInfo);
         dates.setStyle("-fx-font-size:12px;-fx-text-fill:" + GREY + ";");
-        Label guests = new Label("👥 " + item.getNumberOfPersons() + " personne(s)");
+        Label guests = new Label("👥 " + item.getNumberOfPersons() + " " + t("personne(s)"));
         guests.setStyle("-fx-font-size:12px;-fx-text-fill:" + GREY + ";");
         info.getChildren().addAll(nom, dates, guests);
 
@@ -196,9 +262,9 @@ public class CartController implements Initializable {
 
         VBox info = new VBox(4);
         HBox.setHgrow(info, Priority.ALWAYS);
-        Label nom = new Label(p.getNom());
+        Label nom = new Label(t(p.getNom()));
         nom.setStyle("-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:" + GREEN_DARK + ";");
-        Label prixUnit = new Label(String.format("%.2f TND / unité", p.getPrix()));
+        Label prixUnit = new Label(String.format("%.2f TND / " + t("unité"), p.getPrix()));
         prixUnit.setStyle("-fx-font-size:12px;-fx-text-fill:" + GREY + ";");
         info.getChildren().addAll(nom, prixUnit);
 
@@ -252,19 +318,19 @@ public class CartController implements Initializable {
     @FXML
     private void onConfirmer() {
         if (cart.getProductItems().isEmpty() && cart.getReservationItems().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Panier vide", "Ajoutez des articles avant de confirmer.");
+            showAlert(Alert.AlertType.WARNING,
+                    t("Panier vide"),
+                    t("Ajoutez des articles avant de confirmer."));
             return;
         }
 
         boolean isPaypal = rbPaypal.isSelected();
 
         try {
-            // ── Finaliser les réservations ────────────────────────────────
             if (!cart.getReservationItems().isEmpty()) {
                 reservationService.finalizeAllReservations(cart.getReservationItems());
             }
 
-            // ── Enregistrer les commandes produits ────────────────────────
             for (Map.Entry<Product, Integer> entry : cart.getProductItems().entrySet()) {
                 Product p   = entry.getKey();
                 int     qty = entry.getValue();
@@ -278,12 +344,10 @@ public class CartController implements Initializable {
             double total = cart.getTotal();
             String numeroCommande = "CMD-" + System.currentTimeMillis();
 
-            // ── Paiement PayPal via Mollie ────────────────────────────────
             if (isPaypal) {
                 try {
                     BigDecimal montantEUR = MollieConfig.convertStoreAmountToMollie(
                             BigDecimal.valueOf(total));
-
                     MolliePaymentService mollieService = new MolliePaymentService();
                     MolliePayment molliePayment = mollieService.createPayment(
                             numeroCommande,
@@ -292,17 +356,14 @@ public class CartController implements Initializable {
                             ""
                     );
 
-                    // Informe l'utilisateur comment tester
                     Alert info = new Alert(Alert.AlertType.INFORMATION);
-                    info.setTitle("Mode test Mollie");
-                    info.setHeaderText("Comment simuler le paiement ?");
+                    info.setTitle(t("Mode test Mollie"));
+                    info.setHeaderText(t("Comment simuler le paiement ?"));
                     info.setContentText(
-                            "Dans la fenêtre qui va s'ouvrir :\n\n" +
-                                    "1. Cliquez sur 'TEST CARDS' (bouton bleu à droite)\n" +
-                                    "2. Choisissez une carte de test\n" +
-                                    "3. Le paiement sera simulé automatiquement\n\n" +
-                                    "Ou cliquez directement sur 'Vérifier le paiement'\n" +
-                                    "après avoir utilisé une carte de test."
+                            t("Dans la fenêtre qui va s'ouvrir") + " :\n\n" +
+                                    "1. " + t("Cliquez sur 'TEST CARDS' (bouton bleu à droite)") + "\n" +
+                                    "2. " + t("Choisissez une carte de test") + "\n" +
+                                    "3. " + t("Le paiement sera simulé automatiquement")
                     );
                     info.showAndWait();
 
@@ -311,27 +372,30 @@ public class CartController implements Initializable {
 
                     if (result.successful()) {
                         cart.clear();
-                        showAlert(Alert.AlertType.INFORMATION, "Paiement confirmé ✅",
-                                "Paiement confirmé via Mollie !\n"
-                                        + "Commande : " + numeroCommande
+                        showAlert(Alert.AlertType.INFORMATION,
+                                t("Paiement confirmé") + " ✅",
+                                t("Paiement confirmé via Mollie") + " !\n"
+                                        + t("Commande") + " : " + numeroCommande
                                         + "\nTotal : " + String.format("%.2f TND", total));
                         refreshCart();
                     } else {
-                        showAlert(Alert.AlertType.WARNING, "Paiement non complété",
-                                "Statut : " + result.status());
+                        showAlert(Alert.AlertType.WARNING,
+                                t("Paiement non complété"),
+                                t("Statut") + " : " + result.status());
                     }
                     return;
-
                 } catch (Exception ex) {
                     showAlert(Alert.AlertType.ERROR, "Erreur Mollie", ex.getMessage());
                     return;
                 }
             }
-            // ── Paiement Cash ou Carte (comportement original) ────────────
-            String mode = rbCarte.isSelected() ? "CARTE" : "CASH";
+
+            String mode = rbCarte.isSelected() ? t("Carte bancaire") : t("Espèces");
             cart.clear();
-            showAlert(Alert.AlertType.INFORMATION, "Commande confirmée ✅",
-                    "Votre commande a été enregistrée !\nMode : " + mode
+            showAlert(Alert.AlertType.INFORMATION,
+                    t("Commande confirmée") + " ✅",
+                    t("Votre commande a été enregistrée") + " !\n"
+                            + t("Mode") + " : " + mode
                             + "\nTotal : " + String.format("%.2f TND", total));
             refreshCart();
 
@@ -355,8 +419,8 @@ public class CartController implements Initializable {
     @FXML
     private void onVider() {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Vider le panier");
-        confirm.setHeaderText("Êtes-vous sûr de vouloir vider le panier ?");
+        confirm.setTitle(t("Vider le panier"));
+        confirm.setHeaderText(t("Êtes-vous sûr de vouloir vider le panier ?"));
         confirm.showAndWait().ifPresent(btn -> {
             if (btn == ButtonType.OK) {
                 cart.clear();
@@ -366,19 +430,20 @@ public class CartController implements Initializable {
     }
 
     // ══════════════════════════════════════════════════════════════════════════
-    //  EXPORT PDF  ✅
+    //  EXPORT PDF
     // ══════════════════════════════════════════════════════════════════════════
 
     @FXML
     private void onExporterPDF() {
         if (cart.getProductItems().isEmpty() && cart.getReservationItems().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Panier vide", "Le panier est vide, rien à exporter.");
+            showAlert(Alert.AlertType.WARNING,
+                    t("Panier vide"),
+                    t("Le panier est vide, rien à exporter."));
             return;
         }
 
-        // Boîte de dialogue pour choisir le fichier de destination
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Enregistrer la facture PDF");
+        fileChooser.setTitle(t("Enregistrer la facture PDF"));
         fileChooser.setInitialFileName(
                 "facture_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".pdf");
         fileChooser.getExtensionFilters().add(
@@ -392,23 +457,21 @@ public class CartController implements Initializable {
             PdfWriter.getInstance(doc, fos);
             doc.open();
 
-            // ── Polices ──────────────────────────────────────────────────────
-            Font fTitle     = new Font(Font.HELVETICA, 22, Font.BOLD,   PDF_GREEN_DARK);
-            Font fSubTitle  = new Font(Font.HELVETICA, 10, Font.NORMAL, PDF_GREY);
-            Font fSection   = new Font(Font.HELVETICA, 13, Font.BOLD,   PDF_GREEN_DARK);
-            Font fTHeader   = new Font(Font.HELVETICA, 10, Font.BOLD,   PDF_WHITE);
-            Font fCell      = new Font(Font.HELVETICA, 10, Font.NORMAL, new java.awt.Color(50, 50, 50));
-            Font fSubtotal  = new Font(Font.HELVETICA, 11, Font.BOLD,   PDF_GREEN_DARK);
-            Font fGrandTotal= new Font(Font.HELVETICA, 16, Font.BOLD,   PDF_GREEN_DARK);
-            Font fMode      = new Font(Font.HELVETICA, 10, Font.ITALIC, PDF_GREY);
+            Font fTitle      = new Font(Font.HELVETICA, 22, Font.BOLD,   PDF_GREEN_DARK);
+            Font fSubTitle   = new Font(Font.HELVETICA, 10, Font.NORMAL, PDF_GREY);
+            Font fSection    = new Font(Font.HELVETICA, 13, Font.BOLD,   PDF_GREEN_DARK);
+            Font fTHeader    = new Font(Font.HELVETICA, 10, Font.BOLD,   PDF_WHITE);
+            Font fCell       = new Font(Font.HELVETICA, 10, Font.NORMAL, new java.awt.Color(50, 50, 50));
+            Font fSubtotal   = new Font(Font.HELVETICA, 11, Font.BOLD,   PDF_GREEN_DARK);
+            Font fGrandTotal = new Font(Font.HELVETICA, 16, Font.BOLD,   PDF_GREEN_DARK);
+            Font fMode       = new Font(Font.HELVETICA, 10, Font.ITALIC, PDF_GREY);
 
-            // ── En-tête ───────────────────────────────────────────────────────
-            Paragraph titre = new Paragraph("FACTURE / BON DE COMMANDE", fTitle);
+            Paragraph titre = new Paragraph(t("FACTURE / BON DE COMMANDE"), fTitle);
             titre.setAlignment(Element.ALIGN_CENTER);
             doc.add(titre);
 
             String dateStr = new SimpleDateFormat("dd/MM/yyyy  HH:mm").format(new Date());
-            Paragraph datePara = new Paragraph("Date : " + dateStr, fSubTitle);
+            Paragraph datePara = new Paragraph(t("Date") + " : " + dateStr, fSubTitle);
             datePara.setAlignment(Element.ALIGN_CENTER);
             datePara.setSpacingBefore(4);
             doc.add(datePara);
@@ -416,9 +479,8 @@ public class CartController implements Initializable {
             doc.add(buildSeparatorTable(PDF_GREEN_DARK));
             doc.add(new Paragraph(" "));
 
-            // ── Section Réservations ──────────────────────────────────────────
             if (!cart.getReservationItems().isEmpty()) {
-                Paragraph secRes = new Paragraph("Réservations", fSection);
+                Paragraph secRes = new Paragraph(t("Réservations"), fSection);
                 secRes.setSpacingBefore(6);
                 secRes.setSpacingAfter(6);
                 doc.add(secRes);
@@ -428,7 +490,8 @@ public class CartController implements Initializable {
                 tRes.setSpacingAfter(8);
 
                 addTableHeader(tRes, fTHeader,
-                        "Désignation", "Date début", "Date fin", "Personnes", "Total (TND)");
+                        t("Désignation"), t("Date début"), t("Date fin"),
+                        t("Personnes"), t("Total (TND)"));
 
                 double sousTotal = 0;
                 boolean alt = false;
@@ -443,13 +506,13 @@ public class CartController implements Initializable {
                     sousTotal += item.getTotalPrice();
                     alt = !alt;
                 }
-                addSubTotalRow(tRes, fSubtotal, 4, String.format("Sous-total : %.2f TND", sousTotal));
+                addSubTotalRow(tRes, fSubtotal, 4,
+                        t("Sous-total") + " : " + String.format("%.2f TND", sousTotal));
                 doc.add(tRes);
             }
 
-            // ── Section Produits ──────────────────────────────────────────────
             if (!cart.getProductItems().isEmpty()) {
-                Paragraph secProd = new Paragraph("Produits", fSection);
+                Paragraph secProd = new Paragraph(t("Produits"), fSection);
                 secProd.setSpacingBefore(12);
                 secProd.setSpacingAfter(6);
                 doc.add(secProd);
@@ -459,7 +522,7 @@ public class CartController implements Initializable {
                 tProd.setSpacingAfter(8);
 
                 addTableHeader(tProd, fTHeader,
-                        "Produit", "Prix unit. (TND)", "Qté", "Sous-total (TND)");
+                        t("Produit"), t("Prix unit. (TND)"), t("Qté"), t("Sous-total (TND)"));
 
                 double sousTotal = 0;
                 boolean alt = false;
@@ -476,48 +539,48 @@ public class CartController implements Initializable {
                     sousTotal += st;
                     alt = !alt;
                 }
-                addSubTotalRow(tProd, fSubtotal, 3, String.format("Sous-total : %.2f TND", sousTotal));
+                addSubTotalRow(tProd, fSubtotal, 3,
+                        t("Sous-total") + " : " + String.format("%.2f TND", sousTotal));
                 doc.add(tProd);
             }
 
-            // ── Grand total ───────────────────────────────────────────────────
             doc.add(buildSeparatorTable(PDF_GREEN_DARK));
             doc.add(new Paragraph(" "));
 
             Paragraph grandTotal = new Paragraph(
-                    String.format("TOTAL GÉNÉRAL : %.2f TND", cart.getTotal()), fGrandTotal);
+                    t("TOTAL GÉNÉRAL") + " : " + String.format("%.2f TND", cart.getTotal()),
+                    fGrandTotal);
             grandTotal.setAlignment(Element.ALIGN_RIGHT);
             doc.add(grandTotal);
 
-            // ── Mode de paiement ──────────────────────────────────────────────
-            String mode = rbCarte.isSelected() ? "Carte bancaire"
-                    : rbPaypal.isSelected() ? "PayPal" : "Cash";
-            Paragraph modePara = new Paragraph("Mode de paiement : " + mode, fMode);
+            String mode = rbCarte.isSelected() ? t("Carte bancaire")
+                    : rbPaypal.isSelected() ? "PayPal" : t("Espèces");
+            Paragraph modePara = new Paragraph(t("Mode de paiement") + " : " + mode, fMode);
             modePara.setAlignment(Element.ALIGN_RIGHT);
             modePara.setSpacingBefore(4);
             doc.add(modePara);
 
-            // ── Pied de page ──────────────────────────────────────────────────
             doc.add(new Paragraph(" "));
             doc.add(buildSeparatorTable(new java.awt.Color(200, 200, 200)));
-            Paragraph footer = new Paragraph("Merci pour votre confiance — ESPRIT Eco-Tourism", fSubTitle);
+            Paragraph footer = new Paragraph(
+                    t("Merci pour votre confiance") + " — ESPRIT Eco-Tourism", fSubTitle);
             footer.setAlignment(Element.ALIGN_CENTER);
             footer.setSpacingBefore(6);
             doc.add(footer);
 
             doc.close();
 
-            showAlert(Alert.AlertType.INFORMATION, "Export réussi ✅",
-                    "Facture enregistrée :\n" + file.getAbsolutePath());
+            showAlert(Alert.AlertType.INFORMATION,
+                    t("Export réussi") + " ✅",
+                    t("Facture enregistrée") + " :\n" + file.getAbsolutePath());
 
         } catch (Exception ex) {
-            showAlert(Alert.AlertType.ERROR, "Erreur export PDF", ex.getMessage());
+            showAlert(Alert.AlertType.ERROR, t("Erreur export PDF"), ex.getMessage());
         }
     }
 
     // ── Helpers PDF ────────────────────────────────────────────────────────────
 
-    /** Ligne de séparation colorée */
     private PdfPTable buildSeparatorTable(java.awt.Color color) throws DocumentException {
         PdfPTable t = new PdfPTable(1);
         t.setWidthPercentage(100);
@@ -531,7 +594,6 @@ public class CartController implements Initializable {
         return t;
     }
 
-    /** Ajoute une ligne d'en-tête verte à un tableau */
     private void addTableHeader(PdfPTable table, Font font, String... cols) {
         for (String col : cols) {
             PdfPCell cell = new PdfPCell(new Phrase(col, font));
@@ -542,7 +604,6 @@ public class CartController implements Initializable {
         }
     }
 
-    /** Ajoute une ligne de données avec couleur alternée */
     private void addRow(PdfPTable table, Font font, java.awt.Color bg, String... values) {
         for (String val : values) {
             PdfPCell cell = new PdfPCell(new Phrase(val, font));
@@ -553,13 +614,11 @@ public class CartController implements Initializable {
         }
     }
 
-    /** Ajoute une ligne de sous-total fusionnée + montant */
     private void addSubTotalRow(PdfPTable table, Font font, int emptyColspan, String label) {
         PdfPCell empty = new PdfPCell(new Phrase(""));
         empty.setColspan(emptyColspan);
         empty.setBorder(Rectangle.NO_BORDER);
         table.addCell(empty);
-
         PdfPCell stCell = new PdfPCell(new Phrase(label, font));
         stCell.setBackgroundColor(PDF_GREEN_LIGHT);
         stCell.setPadding(7);
@@ -567,9 +626,7 @@ public class CartController implements Initializable {
         table.addCell(stCell);
     }
 
-    // ══════════════════════════════════════════════════════════════════════════
-    //  UTILITAIRE ALERT
-    // ══════════════════════════════════════════════════════════════════════════
+    // ── Alert ──────────────────────────────────────────────────────────────────
 
     private void showAlert(Alert.AlertType type, String title, String msg) {
         Alert alert = new Alert(type);

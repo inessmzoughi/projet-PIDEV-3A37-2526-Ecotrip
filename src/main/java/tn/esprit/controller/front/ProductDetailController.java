@@ -45,7 +45,6 @@ public class ProductDetailController implements Initializable {
     @FXML private VBox              recommendationsSection;
     @FXML private FlowPane          recommendedCardsBox;
 
-    // ── Language selector ─────────────────────────────────────────────────────
     @FXML private ComboBox<String> languageSelect;
 
     // ── Constants ─────────────────────────────────────────────────────────────
@@ -66,24 +65,24 @@ public class ProductDetailController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // ── Language selector setup ───────────────────────────────────────────
-        languageSelect.getItems().addAll("🇫🇷 Français", "🇬🇧 English", "🇪🇸 Español");
-        languageSelect.setValue("🇫🇷 Français");
-        languageSelect.valueProperty().addListener((obs, o, n) -> {
-            if (n == null) return;
-            if      (n.contains("English")) currentLang = "en";
-            else if (n.contains("Español")) currentLang = "es";
-            else                            currentLang = "fr";
-            // Re-apply translations to static labels
-            applyTranslations();
-            // Re-populate product info with translated text
-            if (currentProduct != null) populateProductInfo();
-        });
+        if (languageSelect != null) {
+            languageSelect.getItems().addAll("🇫🇷 Français", "🇬🇧 English", "🇪🇸 Español");
+            languageSelect.setValue("🇫🇷 Français");
+            languageSelect.valueProperty().addListener((obs, o, n) -> {
+                if (n == null) return;
+                if      (n.contains("English")) currentLang = "en";
+                else if (n.contains("Español")) currentLang = "es";
+                else                            currentLang = "fr";
+                applyTranslations();
+                if (currentProduct != null) populateProductInfo();
+            });
+        }
     }
 
-    /**
-     * Called by ProductsController after loading this FXML via SceneManager.
-     */
+    // ─────────────────────────────────────────────────────────────────────────
+    // Appelé par ProductsController après navigateToAndGetController
+    // ─────────────────────────────────────────────────────────────────────────
+
     public void initData(Product p, List<Product> allProducts) {
         this.currentProduct = p;
         this.allProducts    = allProducts;
@@ -92,9 +91,8 @@ public class ProductDetailController implements Initializable {
         loadAIRecommendations();
     }
 
-    // ── Translation ───────────────────────────────────────────────────────────
+    // ── Traduction avec cache ─────────────────────────────────────────────────
 
-    /** Translate with cache. Returns original if lang == fr. */
     private String t(String text) {
         if (text == null || text.isEmpty() || currentLang.equals("fr")) return text;
         translationCache.putIfAbsent(text, new HashMap<>());
@@ -106,24 +104,22 @@ public class ProductDetailController implements Initializable {
         return translated;
     }
 
-    /** Update all static UI labels based on current language. */
     private void applyTranslations() {
-        btnBack.setText("← " + t("Retour aux produits"));
-        lblPrixLabel.setText(t("Prix"));
-        lblAnalyseIA.setText(t("Analyse IA"));
-        lblRecoTitle.setText(t("Produits similaires recommandés"));
-        lblLoadingText.setText("⏳ " + t("Recherche de produits similaires..."));
-        btnAddToCart.setText("🛒  " + t("Ajouter au panier"));
+        // btnBack est maintenant dans la barre du haut, hors de la carte produit
+        if (btnBack      != null) btnBack.setText("← " + t("Retour aux produits"));
+        if (lblPrixLabel != null) lblPrixLabel.setText(t("Prix"));
+        if (lblAnalyseIA != null) lblAnalyseIA.setText(t("Analyse IA"));
+        if (lblRecoTitle != null) lblRecoTitle.setText(t("Produits similaires recommandés"));
+        if (lblLoadingText != null)
+            lblLoadingText.setText("⏳ " + t("Recherche de produits similaires..."));
+        if (btnAddToCart != null)
+            btnAddToCart.setText("🛒  " + t("Ajouter au panier"));
     }
-
-    // ── Back button ───────────────────────────────────────────────────────────
 
     @FXML
     private void onBack() {
         SceneManager.navigateTo(Routes.FRONT_PRODUCTS);
     }
-
-    // ── Add to cart ───────────────────────────────────────────────────────────
 
     @FXML
     private void onAddToCart() {
@@ -147,10 +143,7 @@ public class ProductDetailController implements Initializable {
         }).start();
     }
 
-    // ── Product info ──────────────────────────────────────────────────────────
-
     private void populateProductInfo() {
-        // Translate product name
         lblNom.setText(t(currentProduct.getNom()));
         lblPrix.setText(String.format("%.2f TND", currentProduct.getPrix()));
 
@@ -174,8 +167,6 @@ public class ProductDetailController implements Initializable {
         }
     }
 
-    // ── AI Recommendations ────────────────────────────────────────────────────
-
     private void loadAIRecommendations() {
         loadingBox.setVisible(true);
         loadingBox.setManaged(true);
@@ -186,7 +177,6 @@ public class ProductDetailController implements Initializable {
 
         new Thread(() -> {
             List<Product> candidates = getCandidates();
-
             String        conseil;
             List<Product> recommended;
 
@@ -198,7 +188,6 @@ public class ProductDetailController implements Initializable {
                 List<Integer> ids  = parseRecommendedIds(json);
                 conseil            = parseConseil(json);
                 recommended        = findProducts(ids, candidates);
-
                 if (recommended.isEmpty()) {
                     recommended = candidates.subList(0, Math.min(3, candidates.size()));
                 }
@@ -229,9 +218,6 @@ public class ProductDetailController implements Initializable {
         }).start();
     }
 
-    /**
-     * Pre-filter: exclude current product + keep only ±30 TND price range.
-     */
     private List<Product> getCandidates() {
         List<Product> result = new ArrayList<>();
         if (allProducts == null) return result;
@@ -243,8 +229,6 @@ public class ProductDetailController implements Initializable {
         }
         return result;
     }
-
-    // ── Groq API call ─────────────────────────────────────────────────────────
 
     private String callGroqAPI(List<Product> candidates) {
         try {
@@ -297,8 +281,6 @@ public class ProductDetailController implements Initializable {
                 + "{\"ids\":[ID1,ID2],\"conseil\":\"Une phrase de conseil en français.\"}";
     }
 
-    // ── Parsing ───────────────────────────────────────────────────────────────
-
     private List<Integer> parseRecommendedIds(String content) {
         List<Integer> ids = new ArrayList<>();
         try {
@@ -306,13 +288,11 @@ public class ProductDetailController implements Initializable {
             int jsonEnd   = content.lastIndexOf('}');
             if (jsonStart == -1 || jsonEnd == -1) return ids;
             String jsonStr = content.substring(jsonStart, jsonEnd + 1);
-
             int idsStart = jsonStr.indexOf("\"ids\"");
             if (idsStart == -1) return ids;
             int arrStart = jsonStr.indexOf('[', idsStart);
             int arrEnd   = jsonStr.indexOf(']', arrStart);
             if (arrStart == -1 || arrEnd == -1) return ids;
-
             for (String part : jsonStr.substring(arrStart + 1, arrEnd).split(",")) {
                 String trimmed = part.trim();
                 if (!trimmed.isEmpty()) ids.add(Integer.parseInt(trimmed));
@@ -329,13 +309,11 @@ public class ProductDetailController implements Initializable {
             int jsonEnd   = content.lastIndexOf('}');
             if (jsonStart == -1 || jsonEnd == -1) return null;
             String jsonStr = content.substring(jsonStart, jsonEnd + 1);
-
             String marker = "\"conseil\":\"";
             int start = jsonStr.indexOf(marker);
             if (start == -1) { marker = "\"conseil\": \""; start = jsonStr.indexOf(marker); }
             if (start == -1) return null;
             start += marker.length();
-
             StringBuilder sb = new StringBuilder();
             for (int i = start; i < jsonStr.length(); i++) {
                 char c = jsonStr.charAt(i);
@@ -348,9 +326,7 @@ public class ProductDetailController implements Initializable {
                 else { sb.append(c); }
             }
             return sb.toString().trim();
-        } catch (Exception e) {
-            return null;
-        }
+        } catch (Exception e) { return null; }
     }
 
     private List<Product> findProducts(List<Integer> ids, List<Product> candidates) {
@@ -363,8 +339,6 @@ public class ProductDetailController implements Initializable {
         return result;
     }
 
-    // ── Mini recommendation card ──────────────────────────────────────────────
-
     private VBox buildMiniCard(Product p) {
         VBox card = new VBox();
         card.setPrefWidth(260);
@@ -373,21 +347,26 @@ public class ProductDetailController implements Initializable {
 
         final String styleNormal =
                 "-fx-background-color:white;-fx-background-radius:12;" +
-                        "-fx-border-color:#e0e0e0;-fx-border-radius:12;-fx-border-width:1;-fx-cursor:hand;";
+                        "-fx-border-color:#e0e0e0;-fx-border-radius:12;" +
+                        "-fx-border-width:1;-fx-cursor:hand;";
         final String styleHover =
                 "-fx-background-color:white;-fx-background-radius:12;" +
-                        "-fx-border-color:#2d5a1b;-fx-border-radius:12;-fx-border-width:2;-fx-cursor:hand;";
+                        "-fx-border-color:#2d5a1b;-fx-border-radius:12;" +
+                        "-fx-border-width:2;-fx-cursor:hand;";
 
         card.setStyle(styleNormal);
         card.setEffect(new DropShadow(8, Color.web("#00000015")));
         card.setOnMouseEntered(e -> card.setStyle(styleHover));
         card.setOnMouseExited(e  -> card.setStyle(styleNormal));
 
-        // Click on card → open detail for that recommended product
+        final List<Product> productList = this.allProducts;
+
         card.setOnMouseClicked(e -> {
             ProductDetailController ctrl =
                     SceneManager.navigateToAndGetController(Routes.FRONT_PRODUCT_DETAIL);
-            if (ctrl != null) ctrl.initData(p, allProducts);
+            if (ctrl != null) {
+                ctrl.initData(p, productList);
+            }
         });
 
         // Header
@@ -404,7 +383,6 @@ public class ProductDetailController implements Initializable {
         VBox body = new VBox(7);
         body.setPadding(new Insets(11, 13, 13, 13));
 
-        // Translate product name in card
         Label nom = new Label(t(p.getNom()));
         nom.setStyle("-fx-font-size:13px;-fx-font-weight:bold;-fx-text-fill:" + GREEN_DARK + ";");
         nom.setWrapText(true);
@@ -445,7 +423,7 @@ public class ProductDetailController implements Initializable {
         btnPanier.setOnMouseEntered(e -> btnPanier.setStyle(btnHover));
         btnPanier.setOnMouseExited(e  -> btnPanier.setStyle(btnStyle));
         btnPanier.setOnAction(e -> {
-            e.consume(); // prevent card click from firing
+            e.consume();
             CartManager.getInstance().addProduct(p);
             btnPanier.setText("✓ " + t("Ajouté !"));
             btnPanier.setStyle(
@@ -466,8 +444,6 @@ public class ProductDetailController implements Initializable {
         card.getChildren().addAll(header, body);
         return card;
     }
-
-    // ── Utilities ─────────────────────────────────────────────────────────────
 
     private String extractContent(String json) {
         try {
@@ -490,9 +466,7 @@ public class ProductDetailController implements Initializable {
                 else { sb.append(c); }
             }
             return sb.toString().trim();
-        } catch (Exception e) {
-            return "";
-        }
+        } catch (Exception e) { return ""; }
     }
 
     private String escapeJson(String s) {
