@@ -12,17 +12,33 @@ public class CloudinaryService {
     private static CloudinaryService instance;
     private final Cloudinary cloudinary;
 
-    // Chargement des clés depuis config.properties
-    private static final String CLOUD_NAME = loadCloudName();
-    private static final String API_KEY = loadApiKey();
-    private static final String API_SECRET = loadApiSecret();
+    // Chargement en une seule fois
+    private static final String MEMBER = loadMember();
+    private static final String CLOUD_NAME = loadProperty("cloudinary.cloud.name_" + MEMBER);
+    private static final String API_KEY    = loadProperty("cloudinary.api.key_" + MEMBER);
+    private static final String API_SECRET = loadProperty("cloudinary.api.secret_" + MEMBER);
+
+    // Une seule méthode de chargement réutilisable
+    private static String loadMember() {
+        return loadProperty("MEMBER");
+    }
+
+    private static String loadProperty(String key) {
+        try (var in = CloudinaryService.class.getResourceAsStream("/config.properties")) {
+            Properties props = new Properties();
+            props.load(in);
+            return props.getProperty(key);
+        } catch (Exception e) {
+            throw new RuntimeException("config.properties introuvable ! clé : " + key, e);
+        }
+    }
 
     private CloudinaryService() {
         cloudinary = new Cloudinary(ObjectUtils.asMap(
                 "cloud_name", CLOUD_NAME,
-                "api_key", API_KEY,
+                "api_key",    API_KEY,
                 "api_secret", API_SECRET,
-                "secure", true
+                "secure",     true
         ));
     }
 
