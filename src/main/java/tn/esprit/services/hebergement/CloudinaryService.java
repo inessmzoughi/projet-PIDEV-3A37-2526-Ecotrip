@@ -12,17 +12,6 @@ public class CloudinaryService {
     private static CloudinaryService instance;
     private final Cloudinary cloudinary;
 
-    // Chargement en une seule fois
-    private static final String MEMBER = loadMember();
-    private static final String CLOUD_NAME = loadProperty("cloudinary.cloud.name_" + MEMBER);
-    private static final String API_KEY    = loadProperty("cloudinary.api.key_" + MEMBER);
-    private static final String API_SECRET = loadProperty("cloudinary.api.secret_" + MEMBER);
-
-    // Une seule méthode de chargement réutilisable
-    private static String loadMember() {
-        return loadProperty("MEMBER");
-    }
-
     private static String loadProperty(String key) {
         try (var in = CloudinaryService.class.getResourceAsStream("/config.properties")) {
             Properties props = new Properties();
@@ -35,41 +24,11 @@ public class CloudinaryService {
 
     private CloudinaryService() {
         cloudinary = new Cloudinary(ObjectUtils.asMap(
-                "cloud_name", CLOUD_NAME,
-                "api_key",    API_KEY,
-                "api_secret", API_SECRET,
+                "cloud_name", loadProperty("cloudinary.cloud.name"),
+                "api_key",    loadProperty("cloudinary.api.key"),
+                "api_secret", loadProperty("cloudinary.api.secret"),
                 "secure",     true
         ));
-    }
-
-    private static String loadCloudName() {
-        try (var in = CloudinaryService.class.getResourceAsStream("/config.properties")) {
-            Properties props = new Properties();
-            props.load(in);
-            return props.getProperty("cloudinary.cloud.name");
-        } catch (Exception e) {
-            throw new RuntimeException("config.properties introuvable !", e);
-        }
-    }
-
-    private static String loadApiKey() {
-        try (var in = CloudinaryService.class.getResourceAsStream("/config.properties")) {
-            Properties props = new Properties();
-            props.load(in);
-            return props.getProperty("cloudinary.api.key");
-        } catch (Exception e) {
-            throw new RuntimeException("config.properties introuvable !", e);
-        }
-    }
-
-    private static String loadApiSecret() {
-        try (var in = CloudinaryService.class.getResourceAsStream("/config.properties")) {
-            Properties props = new Properties();
-            props.load(in);
-            return props.getProperty("cloudinary.api.secret");
-        } catch (Exception e) {
-            throw new RuntimeException("config.properties introuvable !", e);
-        }
     }
 
     public static CloudinaryService getInstance() {
