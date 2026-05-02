@@ -58,6 +58,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+<<<<<<< HEAD
             <groupId>com.github.librepdf</groupId>
             <artifactId>openpdf</artifactId>
             <version>1.3.30</version>
@@ -67,6 +68,18 @@
             <artifactId>javafx-web</artifactId>
             <version>17.0.2</version>
         </dependency>
+=======
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-web</artifactId>
+            <version>17.0.12</version>  <!-- mets la même version que tes autres javafx -->
+        </dependency>
+        <dependency>
+            <groupId>com.cloudinary</groupId>
+            <artifactId>cloudinary-http44</artifactId>
+            <version>1.36.0</version>
+        </dependency>
+
+>>>>>>> f5edda0fe9b7fdd01db449e7860a9adec24944d3
     </dependencies>
     <build>
         <plugins>
