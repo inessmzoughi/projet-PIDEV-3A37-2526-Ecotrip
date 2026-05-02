@@ -50,8 +50,8 @@ public class ProductDetailController implements Initializable {
     // ── Constants ─────────────────────────────────────────────────────────────
     private static final String API_KEY    = "";
     private static final String API_URL    = "";
-    private static final String GREEN_DARK = "";
-    private static final String GREEN_MED  = "";
+    private static final String GREEN_DARK = "#2d5a1b";
+    private static final String GREEN_MED  = "#4a7c3f";
 
     // ── State ─────────────────────────────────────────────────────────────────
     private Product       currentProduct;

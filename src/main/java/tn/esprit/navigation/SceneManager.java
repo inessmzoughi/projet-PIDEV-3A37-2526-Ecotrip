@@ -30,41 +30,47 @@ public class SceneManager {
         publicRoutes.put(Routes.LOGIN,    "/views/auth/login.fxml");
         publicRoutes.put(Routes.REGISTER, "/views/auth/register.fxml");
 
-        frontRoutes.put(Routes.HOME,                 "/views/front/home.fxml");
-        frontRoutes.put(Routes.ABOUT,                "/views/front/about.fxml");
-        frontRoutes.put(Routes.HEBERGEMENTS,         "/views/front/hebergements.fxml");
-        frontRoutes.put(Routes.ACTIVITES,            "/views/front/activities.fxml");
-        frontRoutes.put(Routes.TRANSPORT,            "/views/front/transport.fxml");
+        frontRoutes.put(Routes.HOME,              "/views/front/home.fxml");
+        frontRoutes.put(Routes.ABOUT,             "/views/front/about.fxml");
+        frontRoutes.put(Routes.HEBERGEMENTS, "/views/front/hebergements.fxml");
+        frontRoutes.put(Routes.ACTIVITES,         "/views/front/activities.fxml");
+        frontRoutes.put(Routes.TRANSPORT,         "/views/front/transport.fxml");
         frontRoutes.put(Routes.FRONT_PRODUCTS,       "/views/front/Products.fxml");
         frontRoutes.put(Routes.FRONT_PRODUCT_DETAIL, "/views/front/Productdetail.fxml");
-        frontRoutes.put(Routes.CONTACT,              "/views/front/Cart.fxml");
-        frontRoutes.put(Routes.MES_RESERVATIONS,     "/views/front/mes-reservations.fxml");
-        frontRoutes.put(Routes.FRONT_MON_COMPTE,     "/views/compte/mon-compte.fxml");
-        frontRoutes.put(Routes.MES_FAVORIS,          "/views/front/MesFavoris.fxml");
-        frontRoutes.put(Routes.HEBERGEMENT_DETAIL,   "/views/front/HebergementDetail.fxml");
+        frontRoutes.put(Routes.CONTACT, "/views/front/Cart.fxml");
+        frontRoutes.put(Routes.MES_RESERVATIONS,  "/views/front/mes-reservations.fxml");
+        frontRoutes.put(Routes.FRONT_MON_COMPTE,  "/views/compte/mon-compte.fxml");
+        frontRoutes.put(Routes.MES_FAVORIS,       "/views/front/MesFavoris.fxml");
+        frontRoutes.put(Routes.HEBERGEMENT_DETAIL, "/views/front/HebergementDetail.fxml");
+//*****************back
+        backRoutes.put(Routes.ADMIN_DASHBOARD,    "/views/back/dashboard.fxml");
+        backRoutes.put(Routes.ADMIN_ACTIVITES,    "/views/back/activites.fxml");
+        backRoutes.put(Routes.ADMIN_TRANSPORT,    "/views/back/transport/Transports.fxml");
+        backRoutes.put(Routes.ADMIN_CHAUFFEURS,   "/views/back/transport/Chauffeurs.fxml");
+        backRoutes.put(Routes.ADMIN_TRANSPORT_CATEGORIES, "/views/back/transport/TransportCategories.fxml");
+        backRoutes.put(Routes.ADMIN_RESERVATIONS, "/views/back/reservation/ListReservations.fxml");
 
-        backRoutes.put(Routes.ADMIN_DASHBOARD,               "/views/back/dashboard.fxml");
-        backRoutes.put(Routes.ADMIN_ACTIVITES,               "/views/back/activites.fxml");
-        backRoutes.put(Routes.ADMIN_TRANSPORT,               "/views/back/transport/Transports.fxml");
-        backRoutes.put(Routes.ADMIN_CHAUFFEURS,              "/views/back/transport/Chauffeurs.fxml");
-        backRoutes.put(Routes.ADMIN_TRANSPORT_CATEGORIES,    "/views/back/transport/TransportCategories.fxml");
-        backRoutes.put(Routes.ADMIN_RESERVATIONS,            "/views/back/reservation/ListReservations.fxml");
-        backRoutes.put(Routes.ADMIN_USERS,                   "/views/back/user/User.fxml");
-        backRoutes.put(Routes.ADMIN_HEBERGEMENTS,            "/views/back/hebergement/ListHebergements.fxml");
-        backRoutes.put(Routes.ADMIN_CATEGORIES_HEBERGEMENT,  "/views/back/hebergement/CategoriesHebergement.fxml");
-        backRoutes.put(Routes.ADMIN_CHAMBRES,                "/views/back/hebergement/Chambres.fxml");
-        backRoutes.put(Routes.ADMIN_EQUIPEMENTS,             "/views/back/hebergement/Equipements.fxml");
-        backRoutes.put(Routes.ADMIN_ModerationAvis,          "/views/back/hebergement/ModerationAvis.fxml");
-        backRoutes.put(Routes.ADMIN_MON_COMPTE,              "/views/compte/mon-compte.fxml");
-        backRoutes.put(Routes.ADMIN_COMMANDE,                "/views/back/produit/Commande.fxml");
-        backRoutes.put(Routes.ADMIN_LIGNE_COMMANDE,          "/views/back/produit/LigneCommande.fxml");
-        backRoutes.put(Routes.ADMIN_PAIEMENT,                "/views/back/produit/Payment.fxml");
-        backRoutes.put(Routes.ADMIN_PRODUCT,                 "/views/back/produit/Product.fxml");
-        backRoutes.put(Routes.ADMIN_PRODUCT_CATEGORY,        "/views/back/produit/ProductCategory.fxml");
-        backRoutes.put(Routes.ADMIN_ACTIVITIES,              "/views/back/activity/ListActivities.fxml");
-        backRoutes.put(Routes.ADMIN_ACTIVITY_CATEGORIES,     "/views/back/activity/Categories.fxml");
-        backRoutes.put(Routes.ADMIN_GUIDES,                  "/views/back/activity/Guides.fxml");
-        backRoutes.put(Routes.ADMIN_SCHEDULES,               "/views/back/activity/Schedules.fxml");
+        backRoutes.put(Routes.ADMIN_USERS,        "/views/back/user/User.fxml");
+
+        backRoutes.put(Routes.ADMIN_HEBERGEMENTS,           "/views/back/hebergement/ListHebergements.fxml");
+        backRoutes.put(Routes.ADMIN_CATEGORIES_HEBERGEMENT, "/views/back/hebergement/CategoriesHebergement.fxml");
+        backRoutes.put(Routes.ADMIN_CHAMBRES,               "/views/back/hebergement/Chambres.fxml");
+        backRoutes.put(Routes.ADMIN_EQUIPEMENTS,            "/views/back/hebergement/Equipements.fxml");
+        backRoutes.put(Routes.ADMIN_ModerationAvis,           "/views/back/hebergement/ModerationAvis.fxml");
+
+        backRoutes.put(Routes.ADMIN_MON_COMPTE,       "/views/compte/mon-compte.fxml");
+        //back produit*
+        backRoutes.put(Routes.ADMIN_COMMANDE,  "/views/back/produit/Commande.fxml");
+        backRoutes.put(Routes.ADMIN_LIGNE_COMMANDE,  "/views/back/produit/LigneCommande.fxml");
+        backRoutes.put(Routes.ADMIN_PAIEMENT,  "/views/back/produit/Payment.fxml");
+        backRoutes.put(Routes.ADMIN_PRODUCT,  "/views/back/produit/Product.fxml");
+        backRoutes.put(Routes.ADMIN_PRODUCT_CATEGORY,  "/views/back/produit/ProductCategory.fxml");
+
+        backRoutes.put(Routes.ADMIN_ACTIVITIES,          "/views/back/activity/ListActivities.fxml");
+        backRoutes.put(Routes.ADMIN_ACTIVITY_CATEGORIES, "/views/back/activity/Categories.fxml");
+        backRoutes.put(Routes.ADMIN_GUIDES,              "/views/back/activity/Guides.fxml");
+        backRoutes.put(Routes.ADMIN_SCHEDULES,           "/views/back/activity/Schedules.fxml");
+
     }
 
     public static void initialize(Stage stage) {
