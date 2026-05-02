@@ -57,7 +57,9 @@ public class MesFavorisController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        searchField.textProperty().addListener((obs, oldValue, newValue) -> renderFavorites());
+        if (searchField != null) {
+            searchField.textProperty().addListener((obs, oldValue, newValue) -> renderFavorites());
+        }
         loadFavorites();
     }
 
@@ -76,8 +78,10 @@ public class MesFavorisController implements Initializable {
     }
 
     private void renderFavorites() {
-        favoritesGrid.getChildren().clear();
-        String search = searchField.getText() == null ? "" : searchField.getText().trim().toLowerCase();
+        if (favoritesGrid != null) {
+            favoritesGrid.getChildren().clear();
+        }
+        String search = (searchField == null || searchField.getText() == null) ? "" : searchField.getText().trim().toLowerCase();
 
         List<Activity> filtered = allFavorites.stream()
                 .filter(activity -> search.isEmpty()
@@ -86,18 +90,32 @@ public class MesFavorisController implements Initializable {
                         || safeLower(activity.getDescription()).contains(search))
                 .collect(Collectors.toList());
 
-        filtered.forEach(activity -> favoritesGrid.getChildren().add(buildCard(activity)));
+        if (favoritesGrid != null) {
+            filtered.forEach(activity -> favoritesGrid.getChildren().add(buildCard(activity)));
+        }
 
         boolean isEmpty = filtered.isEmpty();
-        emptyState.setVisible(isEmpty);
-        emptyState.setManaged(isEmpty);
-        favoritesGrid.setVisible(!isEmpty);
-        favoritesGrid.setManaged(!isEmpty);
-        resultCountLabel.setText(filtered.size() + " activite" + (filtered.size() > 1 ? "s" : "") + " favorite" + (filtered.size() > 1 ? "s" : ""));
+
+        if (emptyState != null) {
+            emptyState.setVisible(isEmpty);
+            emptyState.setManaged(isEmpty);
+        }
+        if (favoritesGrid != null) {
+            favoritesGrid.setVisible(!isEmpty);
+            favoritesGrid.setManaged(!isEmpty);
+        }
+        if (resultCountLabel != null) {
+            resultCountLabel.setText(filtered.size() + " activite" + (filtered.size() > 1 ? "s" : "") + " favorite" + (filtered.size() > 1 ? "s" : ""));
+        }
     }
 
     @FXML
     private void handleContact() {
+        SceneManager.navigateTo(Routes.ACTIVITES);
+    }
+
+    @FXML
+    private void onRetour() {
         SceneManager.navigateTo(Routes.ACTIVITES);
     }
 

@@ -54,10 +54,13 @@
         <VBox fx:id="emptyState" alignment="CENTER" spacing="16"
               managed="false" visible="false" styleClass="heb-empty">
             <padding><Insets top="60" bottom="60"/></padding>
-            <Label text="♥" styleClass="heb-empty-icon"/>
+            <Label text="❤️" styleClass="heb-empty-icon"/>
             <Label text="Aucune activite en favori" styleClass="heb-empty-title"/>
             <Label text="Quand vous cliquez sur Favori depuis une carte ou le detail d'une activite, elle apparaitra ici."
                    styleClass="heb-empty-sub" wrapText="true"/>
+            <Button text="🏨  Explorer les activites"
+                    styleClass="heb-clear-btn"
+                    onAction="#onRetour"/>
         </VBox>
 
         <fx:include source="../components/front-footer.fxml"/>

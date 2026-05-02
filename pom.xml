@@ -36,11 +36,7 @@
             <artifactId>javafx-controls</artifactId>
             <version>17</version>
         </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-web</artifactId>
-            <version>17.0.2</version>
-        </dependency>
+
         <dependency>
             <groupId>com.calendarfx</groupId>
             <artifactId>view</artifactId>
