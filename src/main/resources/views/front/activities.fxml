@@ -20,6 +20,7 @@
     <ScrollPane fitToWidth="true"
                 hbarPolicy="NEVER"
                 vbarPolicy="AS_NEEDED"
+
                 styleClass="front-scroll">
 
         <VBox spacing="0" styleClass="heb-page">

@@ -16,6 +16,8 @@ public class Routes {
     public static final String MES_RESERVATIONS = "mes-reservations";
     public static final String MES_FAVORIS    = "mes-favoris";
     public static final String FRONT_PRODUCTS = "FRONT_PRODUCTS";
+    public static final String MES_FAVORIS = "mes-favoris";
+    public static final String HEBERGEMENT_DETAIL = "hebergement-detail";
 
 
     public static final String FRONT_MON_COMPTE      = "front-mon-compte";
@@ -40,6 +42,7 @@ public class Routes {
     public static final String ADMIN_CATEGORIES_HEBERGEMENT = "admin-categories-hebergement";
     public static final String ADMIN_CHAMBRES              = "admin-chambres";
     public static final String ADMIN_EQUIPEMENTS           = "admin-equipements";
+    public static final String ADMIN_ModerationAvis = "admin-avis";
     public static final String ADMIN_UPDATE_ACCOUNT  = "admin-update-account";
     public static final String ADMIN_CHANGE_PASSWORD = "admin-change-password";
     public static final String ADMIN_PRODUCT_CATEGORY = "admin_product_category";
@@ -47,6 +50,7 @@ public class Routes {
     public static final String ADMIN_PAIEMENT = "ADMIN_PAIEMENT";
     public static final String ADMIN_COMMANDE = "ADMIN_COMMANDE";
     public static final String ADMIN_LIGNE_COMMANDE = "ADMIN_LIGNE_COMMANDE";
+
 
 
 

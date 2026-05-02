@@ -2,7 +2,7 @@ package tn.esprit.services.hebergement;
 
 import tn.esprit.database.Base;
 import tn.esprit.interfaces.I_service;
-import tn.esprit.models.Hebergement;
+import tn.esprit.models.hebergements.Hebergement;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -29,13 +29,11 @@ public class Hebergement_service implements I_service<Hebergement> {
         ps.setInt(12, h.getPropietaire_id());
     }
 
-    // Méthode interface (void)
     @Override
     public void ajouter(Hebergement h) throws SQLException {
         ajouterAvecId(h);
     }
 
-    // Méthode spécifique qui retourne l'ID généré
     public int ajouterAvecId(Hebergement h) throws SQLException {
         String sql = "INSERT INTO hebergement (nom, description, adresse, ville, nb_etoiles, image_principale, label_eco, latitude, longitude, actif, categorie_id, propietaire_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -126,5 +124,39 @@ public class Hebergement_service implements I_service<Hebergement> {
         while (rs.next())
             map.put(rs.getString("username"), rs.getInt("id"));
         return map;
+    }
+
+    public boolean existsExact(Hebergement h) throws SQLException {
+        String sql = """
+            SELECT COUNT(*) FROM hebergement
+            WHERE LOWER(nom)         = LOWER(?)
+              AND LOWER(ville)       = LOWER(?)
+              AND LOWER(adresse)     = LOWER(?)
+              AND nb_etoiles         = ?
+              AND LOWER(label_eco)   = LOWER(?)
+              AND LOWER(description) = LOWER(?)
+              AND latitude           = ?
+              AND longitude          = ?
+              AND actif              = ?
+              AND categorie_id       = ?
+              AND propietaire_id     = ?
+              AND id                != ?
+            """;
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setString(1,  h.getNom());
+        ps.setString(2,  h.getVille());
+        ps.setString(3,  h.getAdresse());
+        ps.setInt(4,     h.getNb_etoiles());
+        ps.setString(5,  h.getLabel_eco());
+        ps.setString(6,  h.getDescription());
+        ps.setDouble(7,  h.getLatitude());
+        ps.setDouble(8,  h.getLongitude());
+        ps.setInt(9,     h.getActif());
+        ps.setInt(10,    h.getCategorie_id());
+        ps.setInt(11,    h.getPropietaire_id());
+        ps.setInt(12,    h.getId());
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) return rs.getInt(1) > 0;
+        return false;
     }
 }

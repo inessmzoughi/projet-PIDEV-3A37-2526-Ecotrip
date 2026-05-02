@@ -146,8 +146,14 @@
                                     </VBox>
                                 </HBox>
 
+<<<<<<< HEAD
                                 <VBox spacing="8" styleClass="form-group">
                                     <Label text="Photo de l'activite" styleClass="form-label"/>
+=======
+                                <!-- Photo de l'activité -->
+                                <VBox spacing="8" styleClass="form-group">
+                                    <Label text="🖼️ Photo de l'activité" styleClass="form-label"/>
+>>>>>>> f5edda0fe9b7fdd01db449e7860a9adec24944d3
                                     <HBox spacing="10" alignment="CENTER_LEFT">
                                         <ImageView fx:id="photoPreview" fitWidth="60" fitHeight="60"
                                                    preserveRatio="true" styleClass="photo-preview"/>
