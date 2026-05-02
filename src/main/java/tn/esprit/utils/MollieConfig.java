@@ -7,9 +7,9 @@ public final class MollieConfig {
 
     private static final BigDecimal DEFAULT_TEST_DT_TO_EUR_RATE = new BigDecimal("0.2930");
 
-    public static final String API_BASE_URL       = "https://api.mollie.com/v2";
-    public static final String API_KEY            = "test_djSuxkpxBMdaBHu3vUpEy8nQf3SDvx"; // ← ta clé de l'image
-    public static final String PROFILE_ID         = "pfl_2gyqozK2NJ";                       // ← ton profile ID
+    public static final String API_BASE_URL       = "";
+    public static final String API_KEY            = ""; // ← ta clé de l'image
+    public static final String PROFILE_ID         = "";                       // ← ton profile ID
     public static final String PROFILE_WEBSITE    = "https://www.example.org";
     public static final String REDIRECT_URL       = PROFILE_WEBSITE + "/mollie-return";
     public static final String CANCEL_URL         = PROFILE_WEBSITE + "/mollie-cancel";
