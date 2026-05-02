@@ -72,6 +72,7 @@
                     </HBox>
 
                     <HBox spacing="24">
+                        <!-- ✅ form-card contient tout le formulaire -->
                         <VBox minWidth="380" maxWidth="380" styleClass="form-card">
                             <HBox styleClass="form-card-header" alignment="CENTER_LEFT" spacing="14">
                                 <Label fx:id="formIcon" text="🏃" styleClass="form-icon"/>
@@ -81,6 +82,7 @@
                                 </VBox>
                             </HBox>
 
+                            <!-- ✅ form-body DANS form-card -->
                             <VBox styleClass="form-body" spacing="14">
                                 <padding>
                                     <Insets top="20" right="20" bottom="16" left="20"/>
@@ -146,14 +148,9 @@
                                     </VBox>
                                 </HBox>
 
-<<<<<<< HEAD
+                                <!-- ✅ Photo sans doublon -->
                                 <VBox spacing="8" styleClass="form-group">
-                                    <Label text="Photo de l'activite" styleClass="form-label"/>
-=======
-                                <!-- Photo de l'activité -->
-                                <VBox spacing="8" styleClass="form-group">
-                                    <Label text="🖼️ Photo de l'activité" styleClass="form-label"/>
->>>>>>> f5edda0fe9b7fdd01db449e7860a9adec24944d3
+                                    <Label text="🖼️ Photo de l'activite" styleClass="form-label"/>
                                     <HBox spacing="10" alignment="CENTER_LEFT">
                                         <ImageView fx:id="photoPreview" fitWidth="60" fitHeight="60"
                                                    preserveRatio="true" styleClass="photo-preview"/>
@@ -192,8 +189,8 @@
                                             <Button fx:id="openMapBtn" text="Ouvrir"
                                                     styleClass="map-preview-btn" onAction="#onOpenMap"/>
                                         </HBox>
-                                        <WebView fx:id="mapPreview" prefHeight="190" minHeight="190"
-                                                 styleClass="map-preview-webview"/>
+                                        <!-- ✅ styleClass supprime du WebView -->
+                                        <WebView fx:id="mapPreview" prefHeight="190" minHeight="190"/>
                                         <Label fx:id="mapStatusLabel" styleClass="map-status-label"/>
                                     </VBox>
                                 </VBox>
@@ -227,6 +224,7 @@
                                 </VBox>
                             </VBox>
 
+                            <!-- ✅ form-footer DANS form-card -->
                             <HBox styleClass="form-footer" alignment="CENTER_RIGHT" spacing="10">
                                 <Button text="Reinitialiser" styleClass="btn-cancel" onAction="#onReset"/>
                                 <Button fx:id="submitBtn" text="Ajouter" styleClass="btn-submit" onAction="#onSubmit"/>
