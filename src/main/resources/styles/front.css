@@ -1834,3 +1834,302 @@
 .detail-btn-publier:hover {
     -fx-background-color: #1b4332;
 }
+/* ═══════════════════════════════════════════════════════════════════════════
+   MES FAVORIS — À AJOUTER à la fin de front.css
+   Palette identique au reste du projet : #2d5016 / #1a2e1a / #f8faf5
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── ScrollPane racine ──────────────────────────────────────────────────── */
+.favs-scroll {
+    -fx-background-color: #f8faf5;
+    -fx-border-color: transparent;
+}
+.favs-scroll .viewport {
+    -fx-background-color: #f8faf5;
+}
+.favs-scroll .scroll-bar:vertical {
+    -fx-pref-width: 6px;
+}
+.favs-scroll .scroll-bar:vertical .thumb {
+    -fx-background-color: #b7d4a0;
+    -fx-background-radius: 3px;
+}
+
+/* ── Page wrapper ───────────────────────────────────────────────────────── */
+.favs-page {
+    -fx-background-color: #f8faf5;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   HERO — même style que act-hero / Mes Réservations
+   ══════════════════════════════════════════════════════════════════════════ */
+.favs-hero {
+    -fx-background-color: linear-gradient(to bottom right, #2d5016, #1e4620);
+    -fx-padding: 60 80 50 80;
+    -fx-min-height: 200;
+}
+
+.favs-hero-title {
+    -fx-font-size: 40px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 10, 0, 0, 3);
+}
+
+.favs-hero-sub {
+    -fx-font-size: 15px;
+    -fx-text-fill: rgba(255,255,255,0.75);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   BARRE CONTROLES (search + onglets)
+   ══════════════════════════════════════════════════════════════════════════ */
+.favs-controls-bar {
+    -fx-background-color: white;
+    -fx-padding: 20 40 16 40;
+    -fx-border-color: #e8ecef;
+    -fx-border-width: 0 0 1 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.04), 6, 0, 0, 2);
+}
+
+/* ── Recherche ──────────────────────────────────────────────────────────── */
+.favs-search-wrapper {
+    -fx-background-color: #f8faf5;
+    -fx-background-radius: 12;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 12;
+    -fx-border-width: 1.5;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.04), 6, 0, 0, 1);
+}
+
+.favs-search-icon {
+    -fx-font-size: 15px;
+    -fx-padding: 0 8 0 14;
+    -fx-text-fill: #94a3b8;
+}
+
+.favs-search-field {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-font-size: 14px;
+    -fx-text-fill: #1e293b;
+    -fx-prompt-text-fill: #94a3b8;
+    -fx-padding: 11 14 11 4;
+}
+.favs-search-field:focused {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/* ── Onglets — même style que act-tab ──────────────────────────────────── */
+.favs-tabs-row {
+    -fx-padding: 4 0 0 0;
+}
+
+.favs-tab {
+    -fx-background-color: #f1f5f9;
+    -fx-background-radius: 20;
+    -fx-border-width: 0;
+    -fx-text-fill: #475569;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 7 18 7 18;
+    -fx-cursor: hand;
+}
+.favs-tab:hover {
+    -fx-background-color: #e2e8f0;
+}
+
+.favs-tab-active {
+    -fx-background-color: #2d5016;
+    -fx-background-radius: 20;
+    -fx-border-width: 0;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 7 18 7 18;
+    -fx-cursor: hand;
+}
+.favs-tab-active:hover {
+    -fx-background-color: #1e4620;
+}
+
+.favs-result-count {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+    -fx-background-color: #f1f5f9;
+    -fx-background-radius: 20;
+    -fx-padding: 4 14 4 14;
+    -fx-font-weight: bold;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   EN-TÊTES DE SECTION
+   ══════════════════════════════════════════════════════════════════════════ */
+.favs-section-header {
+    -fx-padding: 0 0 4 0;
+}
+
+.favs-section-icon {
+    -fx-font-size: 20px;
+}
+
+.favs-section-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1a2e1a;
+}
+
+.favs-count-badge {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #166534;
+    -fx-background-color: #dcfce7;
+    -fx-background-radius: 20;
+    -fx-padding: 3 10 3 10;
+}
+
+/* ── FlowPane grille ────────────────────────────────────────────────────── */
+.favs-cards-pane {
+    -fx-background-color: transparent;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   SÉPARATEUR
+   ══════════════════════════════════════════════════════════════════════════ */
+.favs-divider-line {
+    -fx-background-color: #e2e8f0;
+    -fx-pref-height: 1px;
+    -fx-max-height: 1px;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   EMPTY STATES — section
+   ══════════════════════════════════════════════════════════════════════════ */
+.favs-section-empty {
+    -fx-background-color: #f8faf5;
+    -fx-background-radius: 14;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+}
+
+.favs-empty-icon-sm  { -fx-font-size: 36px; -fx-opacity: 0.45; }
+.favs-empty-title-sm {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #475569;
+}
+.favs-empty-sub-sm {
+    -fx-font-size: 13px;
+    -fx-text-fill: #94a3b8;
+    -fx-text-alignment: CENTER;
+}
+
+.favs-explore-btn {
+    -fx-background-color: #2d5016;
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-padding: 9 22 9 22;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+.favs-explore-btn:hover { -fx-background-color: #1e4620; }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   GLOBAL EMPTY STATE
+   ══════════════════════════════════════════════════════════════════════════ */
+.favs-empty-global {
+    -fx-background-color: #f8faf5;
+}
+
+.favs-empty-hero-icon  { -fx-font-size: 56px; }
+.favs-empty-hero-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1a2e1a;
+}
+.favs-empty-hero-sub {
+    -fx-font-size: 14px;
+    -fx-text-fill: #64748b;
+    -fx-text-alignment: CENTER;
+    -fx-wrap-text: true;
+    -fx-max-width: 420px;
+}
+
+.favs-cta-btn {
+    -fx-background-color: #2d5016;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-padding: 11 28 11 28;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 8, 0, 0, 3);
+}
+.favs-cta-btn:hover { -fx-background-color: #1e4620; }
+
+.favs-cta-btn-outline {
+    -fx-background-color: white;
+    -fx-text-fill: #2d5016;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-border-color: #2d5016;
+    -fx-border-radius: 8;
+    -fx-border-width: 1.5;
+    -fx-padding: 10 28 10 28;
+    -fx-cursor: hand;
+}
+.favs-cta-btn-outline:hover { -fx-background-color: #f0f7ed; }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   BADGE FAVORI (sur les cartes)
+   ══════════════════════════════════════════════════════════════════════════ */
+.activity-favorite-badge {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-background-color: rgba(208, 64, 64, 0.88);
+    -fx-background-radius: 20;
+    -fx-padding: 4 10 4 10;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   BOUTON RETIRER (sur les cartes favoris)
+   ══════════════════════════════════════════════════════════════════════════ */
+.activity-favorite-list-btn {
+    -fx-background-color: #fee2e2;
+    -fx-text-fill: #991b1b;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-border-width: 0;
+    -fx-padding: 7 14 7 14;
+    -fx-cursor: hand;
+}
+.activity-favorite-list-btn:hover {
+    -fx-background-color: #fca5a5;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   FALLBACK IMAGE ACTIVITÉ
+   ══════════════════════════════════════════════════════════════════════════ */
+.activity-card-image-fallback {
+    -fx-background-color: linear-gradient(to bottom right, #e8f5e9, #c8e6c9);
+    -fx-background-radius: 18 18 0 0;
+    -fx-min-height: 200;
+}
+.activity-card-image-icon {
+    -fx-font-size: 40px;
+}
+.activity-card-image-text {
+    -fx-font-size: 13px;
+    -fx-text-fill: #2d5016;
+    -fx-wrap-text: true;
+    -fx-text-alignment: center;
+}
+

@@ -78,11 +78,11 @@ public class CartController implements Initializable {
     private final ToggleGroup paymentGroup = new ToggleGroup();
 
     // ── Couleurs UI ────────────────────────────────────────────────────────────
-    private static final String GREEN_DARK = "";
-    private static final String GREEN_MED  = "";
-    private static final String WHITE      = "";
-    private static final String BORDER     = "";
-    private static final String GREY       = "";
+    private static final String GREEN_DARK = "#2d5a1b";
+    private static final String GREEN_MED  = "#4a7c3f";
+    private static final String WHITE      = "#ffffff";
+    private static final String BORDER     = "#e0e0e0";
+    private static final String GREY       = "#757575";
 
     // ── Couleurs PDF ───────────────────────────────────────────────────────────
     private static final java.awt.Color PDF_GREEN_DARK  = new java.awt.Color(45,  90,  27);
