@@ -21,6 +21,9 @@ import tn.esprit.models.User;
 import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;
 import tn.esprit.services.hebergement.AvisHebergement_service;
+import tn.esprit.services.hebergement.AvisModeratorService;
+import tn.esprit.services.hebergement.AvisModeratorService.ModerationResult;
+import tn.esprit.services.hebergement.AvisModeratorService.Decision;
 import tn.esprit.services.hebergement.CategorieH_service;
 import tn.esprit.services.hebergement.Chambre_service;
 import tn.esprit.services.hebergement.HebergementEquipement_service;
@@ -38,8 +41,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.UUID;
 
-
-
 public class HebergementDetailController implements Initializable {
 
     /* ─── FXML ─── */
@@ -50,7 +51,7 @@ public class HebergementDetailController implements Initializable {
     @FXML private Label      lblCategorie, lblVilleSidebar, lblAdresse;
     @FXML private Label      lblLikeCount, lblAvisCount;
     @FXML private Button     btnLike, btnRetour, btnReserver;
-    @FXML private Button btnDislike;
+    @FXML private Button     btnDislike;
     @FXML private TextArea   commentaireField;
     @FXML private Button     btnEnvoyerAvis, btnChoisirPhoto;
     @FXML private Label      lblPhotoChoisie;
@@ -60,20 +61,22 @@ public class HebergementDetailController implements Initializable {
     @FXML private HBox       prixBox;
 
     /* ─── Services ─── */
-    private final LikeHebergement_service     likeService       = new LikeHebergement_service();
-    private final AvisHebergement_service     avisService       = new AvisHebergement_service();
-    private final CategorieH_service          categorieService  = new CategorieH_service();
-    private final HebergementEquipement_service equipService    = new HebergementEquipement_service();
-    private final Chambre_service             chambreService    = new Chambre_service();
-    private final CloudinaryService           cloudinaryService = CloudinaryService.getInstance();
+    private final LikeHebergement_service       likeService       = new LikeHebergement_service();
+    private final AvisHebergement_service       avisService       = new AvisHebergement_service();
+    private final CategorieH_service            categorieService  = new CategorieH_service();
+    private final HebergementEquipement_service equipService      = new HebergementEquipement_service();
+    private final Chambre_service               chambreService    = new Chambre_service();
+    private final CloudinaryService             cloudinaryService = CloudinaryService.getInstance();
+    // ── IA Moderator ────────────────────────────────────────────────────────
+    private final AvisModeratorService          moderatorService  = AvisModeratorService.getInstance();
 
     /* ─── State ─── */
     private Hebergement hebergement;
     private User        currentUser;
-    private boolean isLiked    = false;
-    private boolean isDisliked = false;
-    private File        selectedPhoto = null;   // photo choisie pour le nouvel avis
-    private Avis        editingAvis   = null;   // avis en cours d'édition
+    private boolean     isLiked    = false;
+    private boolean     isDisliked = false;
+    private File        selectedPhoto = null;
+    private Avis        editingAvis   = null;
 
     private static final String UPLOADS_AVIS = "uploads/avis/";
     private static final String UPLOADS_HEB  = "uploads/hebergements/";
@@ -86,13 +89,9 @@ public class HebergementDetailController implements Initializable {
             formAvisBox.setDisable(true);
             commentaireField.setPromptText("Connectez-vous pour laisser un avis…");
         }
-        // Assurer que le dossier uploads/avis existe
         new File(UPLOADS_AVIS).mkdirs();
     }
 
-    /* ══════════════════════════════════════════════════════
-       Appelé depuis HebergementsController (même stage)
-       ══════════════════════════════════════════════════════ */
     public void setHebergement(Hebergement h) {
         this.hebergement = h;
         afficherDetails();
@@ -102,11 +101,8 @@ public class HebergementDetailController implements Initializable {
         chargerPrix();
     }
 
-    /* ─── Retour à la liste (même stage, même scène) ─── */
-    @FXML
-    private void onRetour() {
-        SceneManager.navigateTo(Routes.HEBERGEMENTS);
-    }
+    @FXML private void onRetour() { SceneManager.navigateTo(Routes.HEBERGEMENTS); }
+
     @FXML
     private void onReserver() {
         try {
@@ -118,9 +114,8 @@ public class HebergementDetailController implements Initializable {
             ctrl.setHebergement(hebergement);
             ctrl.setOverlayRoot(overlay);
 
-            javafx.scene.Scene scene = btnReserver.getScene();
+            Scene scene = btnReserver.getScene();
             Parent rootNode = scene.getRoot();
-
             StackPane container;
             if (rootNode instanceof StackPane) {
                 container = (StackPane) rootNode;
@@ -134,9 +129,7 @@ public class HebergementDetailController implements Initializable {
                         .setEffect(new javafx.scene.effect.GaussianBlur(8));
             ctrl.setOnCartUpdated(() ->
                     container.getChildren().get(0).setEffect(null));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
     /* ─── Afficher infos ─── */
@@ -144,23 +137,18 @@ public class HebergementDetailController implements Initializable {
         lblNom.setText(hebergement.getNom());
         lblVille.setText("📍  " + hebergement.getVille());
         lblVilleSidebar.setText(hebergement.getVille());
-        lblAdresse.setText(hebergement.getAdresse() != null
-                ? hebergement.getAdresse() : "");
+        lblAdresse.setText(hebergement.getAdresse() != null ? hebergement.getAdresse() : "");
         lblEtoiles.setText("★".repeat(hebergement.getNb_etoiles()));
         lblDescription.setText(hebergement.getDescription() != null
                 ? hebergement.getDescription() : "");
-
-        // Catégorie
         try {
             Categorie_hebergement cat = categorieService.getById(hebergement.getCategorie_id());
             if (cat != null) lblCategorie.setText(cat.getNom().toUpperCase());
         } catch (SQLException ignored) {}
 
-        // Image principale
         Image img = loadImage(hebergement.getImage_principale());
         if (img != null) {
             imageView.setImage(img);
-            // Mettre l'imageView derrière l'overlay
             if (imageStack != null) imageStack.getChildren().remove(imageView);
             if (imageStack != null) imageStack.getChildren().add(0, imageView);
         }
@@ -171,13 +159,12 @@ public class HebergementDetailController implements Initializable {
         try {
             List<Equipement> list = equipService.getEquipementsByHebergement(hebergement.getId());
             equipementsPane.getChildren().clear();
-            if (list != null) {
+            if (list != null)
                 for (Equipement eq : list) {
                     Label tag = new Label(eq.getNom());
                     tag.getStyleClass().add("heb-card-equipement");
                     equipementsPane.getChildren().add(tag);
                 }
-            }
         } catch (SQLException ignored) {}
     }
 
@@ -190,13 +177,13 @@ public class HebergementDetailController implements Initializable {
                     .stream().boxed().findFirst().orElse(null);
             prixBox.getChildren().clear();
             if (min != null) {
-                Label from = new Label("À partir de");
+                Label from   = new Label("À partir de");
                 from.setStyle("-fx-font-size:12px; -fx-text-fill:#64748b;");
                 Label amount = new Label(String.format("%.0f", min));
                 amount.getStyleClass().add("heb-card-price-amount");
-                Label cur = new Label("TND");
+                Label cur    = new Label("TND");
                 cur.getStyleClass().add("heb-card-price-currency");
-                Label unit = new Label("/ nuit");
+                Label unit   = new Label("/ nuit");
                 unit.getStyleClass().add("heb-card-price-unit");
                 prixBox.getChildren().addAll(from, amount, cur, unit);
             } else {
@@ -219,9 +206,7 @@ public class HebergementDetailController implements Initializable {
                 isDisliked = likeService.isDisliked(currentUser.getId(), hebergement.getId());
             }
             updateLikeDislikeBtns();
-        } catch (SQLException e) {
-            lblLikeCount.setText("0");
-        }
+        } catch (SQLException e) { lblLikeCount.setText("0"); }
     }
 
     @FXML
@@ -235,9 +220,7 @@ public class HebergementDetailController implements Initializable {
             isLiked = likeService.toggleLike(currentUser.getId(), hebergement.getId());
             lblLikeCount.setText(String.valueOf(likeService.countLikes(hebergement.getId())));
             updateLikeDislikeBtns();
-        } catch (SQLException e) {
-            showAlert("Erreur like : " + e.getMessage());
-        }
+        } catch (SQLException e) { showAlert("Erreur like : " + e.getMessage()); }
     }
 
     @FXML
@@ -245,20 +228,17 @@ public class HebergementDetailController implements Initializable {
         if (currentUser == null) return;
         try {
             if (isLiked) {
-                likeService.toggleLike(currentUser.getId(), hebergement.getId()); // removes like
+                likeService.toggleLike(currentUser.getId(), hebergement.getId());
                 isLiked = false;
                 lblLikeCount.setText(String.valueOf(likeService.countLikes(hebergement.getId())));
             }
             isDisliked = likeService.toggleDislike(currentUser.getId(), hebergement.getId());
             updateLikeDislikeBtns();
-        } catch (SQLException e) {
-            showAlert("Erreur dislike : " + e.getMessage());
-        }
+        } catch (SQLException e) { showAlert("Erreur dislike : " + e.getMessage()); }
     }
 
     private void updateLikeDislikeBtns() {
         String count = lblLikeCount.getText();
-        // Like button
         if (isLiked) {
             btnLike.setText("❤️  " + count);
             btnLike.setStyle("-fx-background-color:#fee2e2; -fx-text-fill:#e53e3e;"
@@ -272,7 +252,6 @@ public class HebergementDetailController implements Initializable {
                     + "-fx-border-color:#e2e8f0; -fx-border-radius:20;"
                     + "-fx-cursor:hand; -fx-padding:8 20 8 20;");
         }
-        // Dislike button
         if (isDisliked) {
             btnDislike.setText("👎  Pas pour moi");
             btnDislike.setStyle("-fx-background-color:#fef3c7; -fx-text-fill:#92400e;"
@@ -301,7 +280,6 @@ public class HebergementDetailController implements Initializable {
         if (file != null) {
             selectedPhoto = file;
             lblPhotoChoisie.setText(file.getName());
-            // Prévisualisation
             try {
                 Image preview = new Image(file.toURI().toString(), 220, 130, true, true);
                 photoPreview.setImage(preview);
@@ -311,12 +289,12 @@ public class HebergementDetailController implements Initializable {
         }
     }
 
-    /* ── Copie la photo dans uploads/avis/ et retourne le chemin ── */
+    @SuppressWarnings("unused")
     private String savePhoto(File src) {
         try {
             String ext      = src.getName().contains(".")
                     ? src.getName().substring(src.getName().lastIndexOf(".")) : ".jpg";
-            String fileName = UUID.randomUUID().toString() + ext;
+            String fileName = UUID.randomUUID() + ext;
             File   dest     = new File(UPLOADS_AVIS + fileName);
             Files.copy(src.toPath(), dest.toPath(), StandardCopyOption.REPLACE_EXISTING);
             return dest.getPath();
@@ -327,106 +305,207 @@ public class HebergementDetailController implements Initializable {
     }
 
     /* ══════════════════════════════════════════════════════
-       AVIS
+       AVIS  ── avec MODÉRATION IA ──
        ══════════════════════════════════════════════════════ */
-    /* ─── Charger SEULEMENT les avis APPROUVÉS ─── */
+
     private void chargerAvis() {
         try {
-            List<Avis> list = avisService.getApprouvesByHebergement(
-                    hebergement.getId());
+            List<Avis> list = avisService.getApprouvesByHebergement(hebergement.getId());
             int total = avisService.countApprouves(hebergement.getId());
             lblAvisCount.setText(total + " avis");
             avisContainer.getChildren().clear();
             for (Avis av : list)
                 avisContainer.getChildren().add(buildAvisCard(av));
-        } catch (SQLException e) {
-            showAlert("Erreur chargement avis : " + e.getMessage());
-        }
+        } catch (SQLException e) { showAlert("Erreur chargement avis : " + e.getMessage()); }
     }
 
-    /* ─── Publier avis → EN_ATTENTE ─── */
+    /**
+     * Soumission d'un avis avec modération IA automatique.
+     *
+     * Flux :
+     *  1. Validation basique (longueur)
+     *  2. Upload photo si présente
+     *  3. Appel Claude → décision APPROUVE / REJETE / EN_ATTENTE
+     *  4. Sauvegarde avec le bon statut
+     *  5. Popup résultat adapté à la décision
+     */
     @FXML
     private void onEnvoyerAvis() {
         if (currentUser == null) return;
         String texte = commentaireField.getText().trim();
 
-        if (texte.length() < 5) { showErr("⚠ Minimum 5 caractères."); return; }
+        // ── Validation basique ────────────────────────────────────────────────
+        if (texte.length() < 5)   { showErr("⚠ Minimum 5 caractères."); return; }
         if (texte.length() > 500) { showErr("⚠ Maximum 500 caractères."); return; }
         hideErr();
 
-        try {
-            String photoPath = null;
-            if (selectedPhoto != null) {
-                try {
-                    photoPath = cloudinaryService.uploadAvisImage(selectedPhoto);
-                } catch (Exception e) {
-                    showAlert("Erreur upload photo : " + e.getMessage());
-                    return;
-                }
+        // ── Désactiver le bouton pendant le traitement ────────────────────────
+        btnEnvoyerAvis.setDisable(true);
+        btnEnvoyerAvis.setText("🤖  Analyse en cours…");
+
+        // ── Upload photo (synchrone, déjà sur FX thread) ─────────────────────
+        final String[] photoPathHolder = {null};
+        if (selectedPhoto != null) {
+            try {
+                photoPathHolder[0] = cloudinaryService.uploadAvisImage(selectedPhoto);
+            } catch (Exception e) {
+                btnEnvoyerAvis.setDisable(false);
+                btnEnvoyerAvis.setText(editingAvis != null
+                        ? "✏️  Mettre à jour l'avis" : "📤  Publier mon avis");
+                showAlert("Erreur upload photo : " + e.getMessage());
+                return;
             }
-
-            if (editingAvis != null) {
-                editingAvis.setCommentaire(texte);
-                if (photoPath != null) editingAvis.setImagePath(photoPath);
-                avisService.modifier(editingAvis); // remet EN_ATTENTE
-                editingAvis = null;
-                btnEnvoyerAvis.setText("📤  Publier mon avis");
-            } else {
-                Avis avis = new Avis(
-                        currentUser.getId(),
-                        hebergement.getId(),
-                        texte, photoPath);
-                avisService.ajouter(avis);
-            }
-
-            // Reset formulaire
-            commentaireField.clear();
-            selectedPhoto = null;
-            lblPhotoChoisie.setText("Aucune photo choisie");
-            photoPreview.setVisible(false);
-            photoPreview.setManaged(false);
-
-            // ✅ Message EN_ATTENTE au lieu de recharger
-            showEnAttentePopup();
-
-        } catch (SQLException e) {
-            showAlert("Erreur : " + e.getMessage());
         }
+
+        // ── Modération IA en arrière-plan (évite de bloquer le FX thread) ─────
+        final String texteAAnalyser = texte;
+        javafx.concurrent.Task<ModerationResult> moderationTask =
+                new javafx.concurrent.Task<>() {
+                    @Override
+                    protected ModerationResult call() {
+                        return moderatorService.moderer(texteAAnalyser);
+                    }
+                };
+
+        moderationTask.setOnSucceeded(event -> {
+            ModerationResult result = moderationTask.getValue();
+            System.out.println("[AvisModerator] Décision : " + result.decision()
+                    + " — " + result.reason());
+
+            try {
+                String statut = switch (result.decision()) {
+                    case APPROUVE  -> "APPROUVE";
+                    case REJETE    -> "REJETE";
+                    case EN_ATTENTE -> "EN_ATTENTE";
+                };
+
+                if (editingAvis != null) {
+                    // ── Édition d'un avis existant ───────────────────────────
+                    editingAvis.setCommentaire(texteAAnalyser);
+                    editingAvis.setStatut(statut);
+                    if (photoPathHolder[0] != null)
+                        editingAvis.setImagePath(photoPathHolder[0]);
+                    avisService.modifier(editingAvis);
+                    editingAvis = null;
+                } else {
+                    // ── Nouvel avis ──────────────────────────────────────────
+                    Avis avis = new Avis(
+                            currentUser.getId(),
+                            hebergement.getId(),
+                            texteAAnalyser,
+                            photoPathHolder[0]);
+                    avis.setStatut(statut);
+                    avisService.ajouter(avis);
+                }
+
+                // ── Reset formulaire ─────────────────────────────────────────
+                commentaireField.clear();
+                selectedPhoto = null;
+                lblPhotoChoisie.setText("Aucune photo choisie");
+                photoPreview.setVisible(false);
+                photoPreview.setManaged(false);
+
+                // ── Popup adapté à la décision ───────────────────────────────
+                showModerationPopup(result.decision(), result.reason());
+
+                // Recharger seulement si approuvé (sinon rien de nouveau à afficher)
+                if (result.decision() == Decision.APPROUVE) chargerAvis();
+
+            } catch (SQLException e) {
+                showAlert("Erreur sauvegarde : " + e.getMessage());
+            } finally {
+                btnEnvoyerAvis.setDisable(false);
+                btnEnvoyerAvis.setText("📤  Publier mon avis");
+            }
+        });
+
+        moderationTask.setOnFailed(event -> {
+            btnEnvoyerAvis.setDisable(false);
+            btnEnvoyerAvis.setText("📤  Publier mon avis");
+            showAlert("Erreur modération : " + moderationTask.getException().getMessage());
+        });
+
+        new Thread(moderationTask).start();
     }
 
-    /* ─── Popup "en attente de validation" ─── */
-    private void showEnAttentePopup() {
+    // ══════════════════════════════════════════════════════════════════════════
+    // POPUP RÉSULTAT MODÉRATION — 3 variantes selon la décision IA
+    // ══════════════════════════════════════════════════════════════════════════
+
+    /**
+     * Affiche un popup dont le contenu varie selon la décision de l'IA :
+     *
+     *  APPROUVE   → ✅ vert  « Votre avis est publié ! »
+     *  REJETE     → ❌ rouge « Votre avis a été rejeté (raison) »
+     *  EN_ATTENTE → ⏳ bleu  « En attente de validation manuelle »
+     */
+    private void showModerationPopup(Decision decision, String raison) {
         Stage popup = new Stage();
         popup.initStyle(javafx.stage.StageStyle.UNDECORATED);
         popup.initModality(javafx.stage.Modality.APPLICATION_MODAL);
         popup.initOwner(commentaireField.getScene().getWindow());
 
-        Label icon = new Label("⏳");
-        icon.setStyle("-fx-font-size:40px;");
+        // ── Contenu selon décision ────────────────────────────────────────────
+        String emoji, titre, detail, btnColor;
+        switch (decision) {
+            case APPROUVE -> {
+                emoji    = "✅";
+                titre    = "Avis publié !";
+                detail   = "Votre avis est visible par tous les voyageurs. Merci pour votre retour !";
+                btnColor = "#16a34a";
+            }
+            case REJETE -> {
+                emoji    = "❌";
+                titre    = "Avis non publié";
+                detail   = "Votre avis n'a pas pu être publié.\n"
+                        + "Raison détectée : " + raison + "\n\n"
+                        + "Veuillez reformuler votre commentaire de manière respectueuse.";
+                btnColor = "#dc2626";
+            }
+            default -> { // EN_ATTENTE
+                emoji    = "⏳";
+                titre    = "En attente de validation";
+                detail   = "Votre avis a été soumis et sera vérifié par notre équipe "
+                        + "avant d'être publié. Merci de votre patience !";
+                btnColor = "#0ea5e9";
+            }
+        }
 
-        Label msg = new Label("Votre avis a été soumis !\nIl sera visible après validation par l'administrateur.");
-        msg.setStyle("-fx-font-size:13px; -fx-font-weight:bold;"
-                + "-fx-text-fill:#0f172a; -fx-text-alignment:center;");
-        msg.setWrapText(true);
-        msg.setMaxWidth(260);
-        msg.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+        // ── UI ────────────────────────────────────────────────────────────────
+        Label iconLbl = new Label(emoji);
+        iconLbl.setStyle("-fx-font-size:44px;");
+
+        Label titreLbl = new Label(titre);
+        titreLbl.setStyle("-fx-font-size:15px; -fx-font-weight:bold; -fx-text-fill:#0f172a;");
+
+        Label detailLbl = new Label(detail);
+        detailLbl.setStyle("-fx-font-size:12px; -fx-text-fill:#475569; -fx-text-alignment:center;");
+        detailLbl.setWrapText(true);
+        detailLbl.setMaxWidth(260);
+        detailLbl.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+
+        // Badge IA
+        Label iaBadge = new Label("🤖 Modéré automatiquement par IA");
+        iaBadge.setStyle("-fx-background-color:#f1f5f9; -fx-text-fill:#64748b;"
+                + "-fx-font-size:10px; -fx-background-radius:20;"
+                + "-fx-padding:3 10 3 10;");
 
         Button ok = new Button("OK");
-        ok.setStyle("-fx-background-color:#0ea5e9; -fx-text-fill:white;"
+        ok.setStyle("-fx-background-color:" + btnColor + "; -fx-text-fill:white;"
                 + "-fx-font-weight:bold; -fx-background-radius:8;"
                 + "-fx-padding:9 48 9 48; -fx-cursor:hand;"
                 + "-fx-border-width:0; -fx-font-size:13px;");
-        ok.setOnAction(e -> { popup.close(); chargerAvis(); });
+        ok.setOnAction(e -> popup.close());
 
-        VBox box = new VBox(14, icon, msg, ok);
+        VBox box = new VBox(12, iconLbl, titreLbl, detailLbl, iaBadge, ok);
         box.setAlignment(Pos.CENTER);
         box.setPadding(new Insets(32, 36, 28, 36));
-        box.setPrefWidth(320);
+        box.setPrefWidth(340);
         box.setStyle("-fx-background-color:white; -fx-background-radius:14;"
                 + "-fx-effect:dropshadow(gaussian,rgba(0,0,0,0.15),20,0,0,5);"
                 + "-fx-border-color:#e2e8f0; -fx-border-radius:14; -fx-border-width:1;");
 
-        javafx.scene.Scene scene = new javafx.scene.Scene(box);
+        Scene scene = new Scene(box);
         scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
         popup.setScene(scene);
         popup.setOnShown(e -> {
@@ -443,15 +522,6 @@ public class HebergementDetailController implements Initializable {
         commentaireField.setText(av.getCommentaire());
         btnEnvoyerAvis.setText("✏️  Mettre à jour l'avis");
         commentaireField.requestFocus();
-        // scroll vers le formulaire
-        commentaireField.getParent().getParent()
-                .fireEvent(new javafx.scene.input.ScrollEvent(
-                        javafx.scene.input.ScrollEvent.SCROLL,
-                        0, 0, 0, 0, false, false, false, false,
-                        true, false, 0, -300, 0, -300,
-                        javafx.scene.input.ScrollEvent.HorizontalTextScrollUnits.NONE,
-                        0, javafx.scene.input.ScrollEvent.VerticalTextScrollUnits.LINES,
-                        3, 3, null));
     }
 
     /* ─── Build carte avis ─── */
@@ -464,7 +534,6 @@ public class HebergementDetailController implements Initializable {
                 + "-fx-border-radius:12;"
                 + "-fx-border-width:1;");
 
-        // ── Header : avatar + username + date ──
         HBox header = new HBox(10);
         header.setAlignment(Pos.CENTER_LEFT);
 
@@ -491,14 +560,12 @@ public class HebergementDetailController implements Initializable {
         HBox.setHgrow(spacer, Priority.ALWAYS);
         header.getChildren().addAll(avatar, username, spacer, date);
 
-        // ── Texte ──
         Label texte = new Label(av.getCommentaire());
         texte.setWrapText(true);
         texte.setStyle("-fx-font-size:13px; -fx-text-fill:#334155; -fx-line-spacing:3;");
 
         card.getChildren().addAll(header, texte);
 
-        // ── Photo jointe ──
         if (av.getImagePath() != null && !av.getImagePath().isBlank()) {
             try {
                 File f = new File(av.getImagePath());
@@ -510,13 +577,11 @@ public class HebergementDetailController implements Initializable {
                     iv.setFitWidth(300);
                     iv.setFitHeight(200);
                     iv.setPreserveRatio(true);
-                    iv.setStyle("-fx-border-radius:8; -fx-background-radius:8;");
                     card.getChildren().add(iv);
                 }
             } catch (Exception ignored) {}
         }
 
-        // ── Actions (seulement si c'est l'avis du user connecté) ──
         if (currentUser != null && av.getUserId() == currentUser.getId()) {
             HBox actions = new HBox(8);
             actions.setAlignment(Pos.CENTER_LEFT);
@@ -545,7 +610,6 @@ public class HebergementDetailController implements Initializable {
             actions.getChildren().addAll(editBtn, delBtn);
             card.getChildren().add(actions);
         }
-
         return card;
     }
 
@@ -573,12 +637,10 @@ public class HebergementDetailController implements Initializable {
         errCommentaire.setVisible(true);
         errCommentaire.setManaged(true);
     }
-
     private void hideErr() {
         errCommentaire.setVisible(false);
         errCommentaire.setManaged(false);
     }
-
     private void showAlert(String msg) {
         Alert a = new Alert(Alert.AlertType.ERROR);
         a.setContentText(msg);
