@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.web.WebView?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="tn.esprit.controller.front.modals.ActivityDetailController"
+           styleClass="modal-blur-overlay"
+           alignment="CENTER">
+
+    <VBox styleClass="activity-detail-modal" maxWidth="760" maxHeight="820" spacing="0">
+        <HBox styleClass="activity-detail-topbar" alignment="CENTER_LEFT" spacing="12">
+            <Label text="Detail de l'activite" styleClass="activity-detail-topbar-title"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button fx:id="favoriteButton" text="♡ Favori"
+                    styleClass="activity-favorite-detail-btn" onAction="#onToggleFavorite"/>
+            <Button text="✕" styleClass="res-modal-close" onAction="#onClose"/>
+        </HBox>
+
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="front-scroll">
+            <VBox spacing="18" styleClass="activity-detail-body">
+                <padding>
+                    <Insets top="20" right="22" bottom="22" left="22"/>
+                </padding>
+
+                <StackPane fx:id="heroImagePane" prefHeight="260" minHeight="260" styleClass="activity-detail-hero"/>
+
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label fx:id="categoryLabel" styleClass="activity-detail-category"/>
+                    <Label fx:id="availabilityBadge" styleClass="activity-detail-soft-badge"/>
+                </HBox>
+
+                <VBox spacing="6">
+                    <Label fx:id="titleLabel" styleClass="activity-detail-title" wrapText="true"/>
+                    <Label fx:id="locationLabel" styleClass="activity-detail-location"/>
+                </VBox>
+
+                <HBox spacing="12">
+                    <VBox HBox.hgrow="ALWAYS" styleClass="activity-detail-stat-card" spacing="4">
+                        <Label text="Duree" styleClass="activity-detail-stat-label"/>
+                        <Label fx:id="durationLabel" styleClass="activity-detail-stat-value"/>
+                    </VBox>
+                    <VBox HBox.hgrow="ALWAYS" styleClass="activity-detail-stat-card" spacing="4">
+                        <Label text="Capacite" styleClass="activity-detail-stat-label"/>
+                        <Label fx:id="participantsLabel" styleClass="activity-detail-stat-value"/>
+                    </VBox>
+                    <VBox HBox.hgrow="ALWAYS" styleClass="activity-detail-stat-card" spacing="4">
+                        <Label text="Guide" styleClass="activity-detail-stat-label"/>
+                        <Label fx:id="guideLabel" styleClass="activity-detail-stat-value" wrapText="true"/>
+                    </VBox>
+                </HBox>
+
+                <VBox spacing="8" styleClass="detail-card">
+                    <HBox styleClass="detail-row" alignment="CENTER_LEFT">
+                        <Label text="Description" styleClass="detail-label"/>
+                    </HBox>
+                    <VBox spacing="0">
+                        <Label fx:id="descriptionLabel" styleClass="activity-detail-description" wrapText="true"/>
+                    </VBox>
+                </VBox>
+
+                <VBox spacing="10" styleClass="activity-detail-map-card">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <VBox spacing="2" HBox.hgrow="ALWAYS">
+                            <Label text="Localisation" styleClass="detail-label"/>
+                            <Label text="Reperez l'activite avant de lancer votre reservation."
+                                   styleClass="activity-detail-map-subtitle" wrapText="true"/>
+                        </VBox>
+                        <Button fx:id="openMapBtn" text="Ouvrir la carte"
+                                styleClass="res-map-btn" onAction="#onOpenMap"/>
+                    </HBox>
+                    <WebView fx:id="mapView" prefHeight="240" minHeight="240"/>
+                    <Label fx:id="mapStateLabel" visible="false" managed="false"
+                           styleClass="activity-detail-map-status"/>
+                </VBox>
+
+                <VBox spacing="10" styleClass="activity-detail-schedule-card">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <VBox spacing="2" HBox.hgrow="ALWAYS">
+                            <Label text="Planning des departs" styleClass="detail-label"/>
+                            <Label text="Visualisez les creneaux reels sur un calendrier avant de reserver."
+                                   styleClass="activity-detail-schedule-subtitle" wrapText="true"/>
+                        </VBox>
+                        <Button text="Voir le planning"
+                                styleClass="activity-detail-schedule-btn"
+                                onAction="#onShowSchedule"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+
+        <HBox styleClass="activity-detail-footer" alignment="CENTER_LEFT" spacing="16">
+            <VBox spacing="2">
+                <Label text="A partir de" styleClass="activity-detail-price-label"/>
+                <Label fx:id="priceAmountLabel" styleClass="activity-detail-price-value"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Planning" styleClass="res-modal-btn-cancel" onAction="#onShowSchedule"/>
+            <Button text="Fermer" styleClass="res-modal-btn-cancel" onAction="#onClose"/>
+            <Button text="Reserver" styleClass="res-modal-btn-confirm-blue" onAction="#onReserve"/>
+        </HBox>
+    </VBox>
+</StackPane>

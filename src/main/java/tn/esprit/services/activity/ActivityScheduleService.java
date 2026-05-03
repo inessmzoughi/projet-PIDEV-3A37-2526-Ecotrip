@@ -17,6 +17,13 @@ public class ActivityScheduleService {
 
     public void ajouter(ActivitySchedule schedule) throws SQLException {
         validate(schedule);
+        if (repo.hasOverlap(
+                schedule.getActivity().getId(),
+                schedule.getStartAt(),
+                schedule.getEndAt(),
+                0))
+            throw new IllegalArgumentException(
+                    "Ce créneau chevauche un créneau existant pour cette activité.");
         repo.save(schedule);
     }
 
@@ -30,6 +37,13 @@ public class ActivityScheduleService {
 
     public void modifier(ActivitySchedule schedule) throws SQLException {
         validate(schedule);
+        if (repo.hasOverlap(
+                schedule.getActivity().getId(),
+                schedule.getStartAt(),
+                schedule.getEndAt(),
+                schedule.getId()))
+            throw new IllegalArgumentException(
+                    "Ce créneau chevauche un autre créneau existant pour cette activité.");
         repo.update(schedule);
     }
 

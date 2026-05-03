@@ -45,12 +45,18 @@
                     </items>
                 </ComboBox>
                 <ComboBox fx:id="filterCategory" styleClass="heb-filter-input" prefWidth="180"/>
+
+                <!-- ✅ NOUVEAU : Sélecteur de langue ajouté ici -->
+                <ComboBox fx:id="languageSelect"
+                          styleClass="heb-filter-input"
+                          prefWidth="150"
+                          style="-fx-font-size: 13px;"/>
+
                 <Button text="Clear Filters" styleClass="heb-clear-btn" onAction="#onReset" prefWidth="140"/>
             </HBox>
         </VBox>
 
         <!-- ══ RÉSULTATS + BOUTON PANIER ══ -->
-        <!-- ✅ SEUL CHANGEMENT : on ajoute le bouton panier à droite du resultCount -->
         <HBox alignment="CENTER_LEFT">
             <padding><Insets top="24" bottom="12" left="40" right="40"/></padding>
             <Label fx:id="resultCount" text="0 Product(s) Found" styleClass="heb-result-count"
@@ -90,7 +96,6 @@
             <Label fx:id="pagInfo" text="Page 1 / 1" styleClass="heb-page-info"/>
             <Button fx:id="btnNext" text="Suivant →" styleClass="heb-page-btn" onAction="#onNext"/>
         </HBox>
-
 
         <!-- ══ FOOTER ══ -->
         <fx:include source="../components/front-footer.fxml"/>

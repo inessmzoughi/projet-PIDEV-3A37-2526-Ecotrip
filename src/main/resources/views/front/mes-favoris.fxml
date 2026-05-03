@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<ScrollPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="tn.esprit.controller.front.MesFavorisController"
+            fitToWidth="true"
+            hbarPolicy="NEVER"
+            vbarPolicy="AS_NEEDED"
+            styleClass="favs-scroll">
+
+    <VBox styleClass="favs-page" spacing="0">
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- HERO SECTION                                        -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <VBox styleClass="favs-hero" alignment="CENTER" spacing="10">
+            <padding><Insets top="72" bottom="60" left="48" right="48"/></padding>
+            <Label text="❤️  Mes Favoris" styleClass="favs-hero-title"/>
+            <Label text="Retrouvez vos hébergements et activités sauvegardés"
+                   styleClass="favs-hero-sub"/>
+        </VBox>
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- SEARCH + ONGLETS                                    -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <VBox styleClass="favs-controls-bar" spacing="18">
+            <padding><Insets top="28" bottom="0" left="40" right="40"/></padding>
+
+            <!-- Barre de recherche -->
+            <HBox alignment="CENTER_LEFT" spacing="0" styleClass="favs-search-wrapper">
+                <Label text="🔍" styleClass="favs-search-icon"/>
+                <TextField fx:id="searchField"
+                           promptText="Rechercher dans mes favoris..."
+                           styleClass="favs-search-field"
+                           HBox.hgrow="ALWAYS"/>
+            </HBox>
+
+            <!-- Onglets : Tous / Hébergements / Activités -->
+            <HBox alignment="CENTER_LEFT" spacing="12" styleClass="favs-tabs-row">
+                <Button fx:id="tabAll"
+                        text="Tous"
+                        styleClass="favs-tab, favs-tab-active"
+                        onAction="#onTabAll"/>
+                <Button fx:id="tabHebergements"
+                        text="🏨  Hébergements"
+                        styleClass="favs-tab"
+                        onAction="#onTabHebergements"/>
+                <Button fx:id="tabActivites"
+                        text="🎯  Activités"
+                        styleClass="favs-tab"
+                        onAction="#onTabActivites"/>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <Label fx:id="resultCountLabel"
+                       text=""
+                       styleClass="favs-result-count"/>
+            </HBox>
+        </VBox>
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- SECTION HÉBERGEMENTS                                -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <VBox fx:id="sectionHebergements" spacing="0">
+            <padding><Insets top="32" bottom="0" left="40" right="40"/></padding>
+
+            <!-- Titre section -->
+            <HBox alignment="CENTER_LEFT" spacing="10" styleClass="favs-section-header">
+                <Label text="🏨" styleClass="favs-section-icon"/>
+                <Label text="Hébergements" styleClass="favs-section-title"/>
+                <Label fx:id="hebCountBadge" text="0" styleClass="favs-count-badge"/>
+            </HBox>
+
+            <!-- Grille hébergements -->
+            <FlowPane fx:id="favorisContainer"
+                      hgap="26" vgap="26"
+                      styleClass="favs-cards-pane">
+                <padding><Insets top="16" bottom="8" left="0" right="0"/></padding>
+            </FlowPane>
+
+            <!-- Empty state hébergements -->
+            <VBox fx:id="emptyHebergements"
+                  alignment="CENTER" spacing="12"
+                  managed="false" visible="false"
+                  styleClass="favs-section-empty">
+                <padding><Insets top="32" bottom="32"/></padding>
+                <Label text="🏨" styleClass="favs-empty-icon-sm"/>
+                <Label text="Aucun hébergement favori" styleClass="favs-empty-title-sm"/>
+                <Label text="Explorez et sauvegardez vos hébergements préférés"
+                       styleClass="favs-empty-sub-sm"/>
+                <Button text="Explorer les hébergements"
+                        styleClass="favs-explore-btn"
+                        onAction="#onRetour"/>
+            </VBox>
+        </VBox>
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- SÉPARATEUR                                          -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <HBox fx:id="sectionDivider" styleClass="favs-divider">
+            <padding><Insets top="36" bottom="0" left="40" right="40"/></padding>
+            <Region HBox.hgrow="ALWAYS" styleClass="favs-divider-line"/>
+        </HBox>
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- SECTION ACTIVITÉS                                   -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <VBox fx:id="sectionActivites" spacing="0">
+            <padding><Insets top="36" bottom="0" left="40" right="40"/></padding>
+
+            <!-- Titre section -->
+            <HBox alignment="CENTER_LEFT" spacing="10" styleClass="favs-section-header">
+                <Label text="🎯" styleClass="favs-section-icon"/>
+                <Label text="Activités" styleClass="favs-section-title"/>
+                <Label fx:id="actCountBadge" text="0" styleClass="favs-count-badge"/>
+            </HBox>
+
+            <!-- Grille activités -->
+            <FlowPane fx:id="favoritesGrid"
+                      hgap="26" vgap="26"
+                      styleClass="favs-cards-pane">
+                <padding><Insets top="16" bottom="8" left="0" right="0"/></padding>
+            </FlowPane>
+
+            <!-- Empty state activités -->
+            <VBox fx:id="emptyState"
+                  alignment="CENTER" spacing="12"
+                  managed="false" visible="false"
+                  styleClass="favs-section-empty">
+                <padding><Insets top="32" bottom="32"/></padding>
+                <Label text="🎯" styleClass="favs-empty-icon-sm"/>
+                <Label text="Aucune activité favorite" styleClass="favs-empty-title-sm"/>
+                <Label text="Découvrez des activités et ajoutez-les à vos favoris"
+                       styleClass="favs-empty-sub-sm"/>
+                <Button text="Explorer les activités"
+                        styleClass="favs-explore-btn"
+                        onAction="#handleContact"/>
+            </VBox>
+        </VBox>
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- GLOBAL EMPTY STATE (aucun favori du tout)           -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <VBox fx:id="emptyGlobal"
+              alignment="CENTER" spacing="20"
+              managed="false" visible="false"
+              styleClass="favs-empty-global">
+            <padding><Insets top="80" bottom="80"/></padding>
+            <Label text="❤️" styleClass="favs-empty-hero-icon"/>
+            <Label text="Aucun Favori Pour l'Instant" styleClass="favs-empty-hero-title"/>
+            <Label text="Explorez nos hébergements et activités, et sauvegardez vos coups de cœur !"
+                   styleClass="favs-empty-hero-sub" wrapText="true"/>
+            <HBox alignment="CENTER" spacing="16">
+                <Button text="🏨  Hébergements"
+                        styleClass="favs-cta-btn"
+                        onAction="#onRetour"/>
+                <Button text="🎯  Activités"
+                        styleClass="favs-cta-btn-outline"
+                        onAction="#handleContact"/>
+            </HBox>
+        </VBox>
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- BOTTOM PADDING                                      -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <Region minHeight="60" VBox.vgrow="ALWAYS"/>
+        <HBox fx:id="paginationBar"
+              alignment="CENTER" spacing="16"
+              managed="false" visible="false"
+              styleClass="heb-pagination">
+            <padding><Insets top="24" bottom="24" left="40" right="40"/></padding>
+            <Button fx:id="btnPrev" text="← Précédent" styleClass="heb-page-btn" onAction="#onPrev"/>
+            <Label fx:id="pagInfo" text="Page 1 / 1" styleClass="heb-page-info"/>
+            <Button fx:id="btnNext" text="Suivant →"   styleClass="heb-page-btn" onAction="#onNext"/>
+        </HBox>
+
+
+        <!-- ══════════════════════════════════════════════════ -->
+        <!-- FOOTER                                              -->
+        <!-- ══════════════════════════════════════════════════ -->
+        <fx:include source="../components/front-footer.fxml"/>
+
+    </VBox>
+</ScrollPane>

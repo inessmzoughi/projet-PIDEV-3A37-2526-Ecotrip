@@ -70,6 +70,27 @@ public class ActivityScheduleRepository {
         ps.executeUpdate();
     }
 
+    // ── Unicité / chevauchement ────────────────────────────────────────────────
+
+    public boolean hasOverlap(int activityId,
+                              java.time.LocalDateTime startAt,
+                              java.time.LocalDateTime endAt,
+                              int excludeId) throws SQLException {
+        String sql =
+                "SELECT COUNT(*) FROM activity_schedule " +
+                        "WHERE activity_id = ? " +
+                        "AND start_at < ? " +
+                        "AND end_at   > ? " +
+                        "AND id != ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, activityId);
+        ps.setTimestamp(2, Timestamp.valueOf(endAt));
+        ps.setTimestamp(3, Timestamp.valueOf(startAt));
+        ps.setInt(4, excludeId);
+        ResultSet rs = ps.executeQuery();
+        return rs.next() && rs.getInt(1) > 0;
+    }
+
     private ActivitySchedule mapRow(ResultSet rs) throws SQLException {
         ActivitySchedule s = new ActivitySchedule();
         s.setId(rs.getInt("id"));

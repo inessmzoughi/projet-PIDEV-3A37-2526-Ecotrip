@@ -11,7 +11,7 @@ public class FrontNavbarController {
 
     @FXML private Button homeBtn, hebergBtn, activitesBtn;
     @FXML private Button transportBtn, boutiqueBtn, contactBtn;
-    @FXML private Button reservationsBtn, monCompteBtn, logoutBtn, loginBtn;
+    @FXML private Button reservationsBtn, favorisBtn, monCompteBtn, logoutBtn, loginBtn;
 
     // Map each button to its route for active-state highlighting
     private Map<Button, String> routeMap;
@@ -24,13 +24,15 @@ public class FrontNavbarController {
                 activitesBtn,   Routes.ACTIVITES,
                 transportBtn,   Routes.TRANSPORT,
                 boutiqueBtn,    Routes.FRONT_PRODUCTS,
-                contactBtn,     Routes.CONTACT
+                contactBtn,     Routes.CONTACT,
+                favorisBtn,     Routes.MES_FAVORIS
         );
 
         // Show/hide auth buttons based on session
         boolean loggedIn = SessionManager.getInstance().isLoggedIn();
         boolean isAdmin = SessionManager.getInstance().isAdmin();
         reservationsBtn.setVisible(loggedIn);  reservationsBtn.setManaged(loggedIn);
+        favorisBtn.setVisible(loggedIn);       favorisBtn.setManaged(loggedIn);
         if (isAdmin){
             monCompteBtn.setText("Dashboard");
         }
@@ -54,6 +56,7 @@ public class FrontNavbarController {
     @FXML private void handleBoutique()     { SceneManager.navigateTo(Routes.FRONT_PRODUCTS); }
     @FXML private void handleContact()      { SceneManager.navigateTo(Routes.CONTACT); }
     @FXML private void handleReservations() { SceneManager.navigateTo(Routes.MES_RESERVATIONS); }
+    @FXML private void handleFavoris()      { SceneManager.navigateTo(Routes.MES_FAVORIS); }
     @FXML private void handleMonCompte()    {
         boolean isAdmin = SessionManager.getInstance().isAdmin();
         if (isAdmin){

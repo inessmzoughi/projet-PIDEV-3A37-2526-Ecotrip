@@ -110,4 +110,17 @@ public class Chambre_service implements I_service<Chambre> {
         if (rs.next()) return rs.getInt(1);
         return 0;
     }
+    public double getRevenueByHebergement(int hebergementId) throws SQLException {
+        String sql = "SELECT COALESCE(SUM(prix_par_nuit), 0) FROM chambre WHERE hebergement_id = ?";
+
+        PreparedStatement ps = connection.prepareStatement(sql);
+        ps.setInt(1, hebergementId);
+
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            return rs.getDouble(1);
+        }
+        return 0;
+    }
 }

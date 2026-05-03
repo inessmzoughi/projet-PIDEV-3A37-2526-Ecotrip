@@ -1,174 +1,198 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane styleClass="root-pane" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="tn.esprit.controller.back.activity.GuidesController">
+<BorderPane styleClass="root-pane"
+            xmlns="http://javafx.com/javafx/17.0.12"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="tn.esprit.controller.back.activity.GuidesController">
 
     <center>
         <VBox styleClass="main-content">
             <ScrollPane fitToWidth="true" styleClass="scroll-pane" VBox.vgrow="ALWAYS">
                 <VBox spacing="20" styleClass="page-body">
-                    <padding><Insets bottom="32" left="32" right="32" top="32" /></padding>
+                    <padding>
+                        <Insets bottom="32" left="32" right="32" top="32"/>
+                    </padding>
 
-                    <!-- Breadcrumb + Title -->
                     <VBox spacing="4">
                         <HBox spacing="4">
-                            <Button onAction="#onNavDashboard" styleClass="breadcrumb-link" text="Dashboard" />
-                            <Label styleClass="breadcrumb-sep" text=" › " />
-                            <Button onAction="#onNavActivities" styleClass="breadcrumb-link" text="Activités" />
-                            <Label styleClass="breadcrumb-sep" text=" › " />
-                            <Label styleClass="breadcrumb-active" text="Guides" />
+                            <Button onAction="#onNavDashboard" styleClass="breadcrumb-link" text="Dashboard"/>
+                            <Label styleClass="breadcrumb-sep" text=" > "/>
+                            <Button onAction="#onNavActivities" styleClass="breadcrumb-link" text="Activites"/>
+                            <Label styleClass="breadcrumb-sep" text=" > "/>
+                            <Label styleClass="breadcrumb-active" text="Guides"/>
                         </HBox>
-                        <Label styleClass="page-title" text="Gestion des Guides" />
+                        <Label styleClass="page-title" text="Gestion des guides"/>
                     </VBox>
 
-                    <!-- Stat Cards -->
                     <HBox spacing="16">
                         <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
                             <HBox alignment="CENTER_LEFT" spacing="12">
-                                <Label styleClass="stat-icon, stat-icon-green" text="🧭" />
+                                <Label styleClass="stat-icon, stat-icon-green" text="🧭"/>
                                 <VBox spacing="2">
-                                    <Label styleClass="stat-label" text="Total Guides" />
-                                    <Label fx:id="statTotal" styleClass="stat-value" text="0" />
-                                    <Label styleClass="stat-sub" text="guides enregistrés" />
+                                    <Label styleClass="stat-label" text="Total guides"/>
+                                    <Label fx:id="statTotal" styleClass="stat-value" text="0"/>
+                                    <Label styleClass="stat-sub" text="guides enregistres"/>
                                 </VBox>
                             </HBox>
                         </VBox>
                         <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
                             <HBox alignment="CENTER_LEFT" spacing="12">
-                                <Label styleClass="stat-icon, stat-icon-blue" text="⭐" />
+                                <Label styleClass="stat-icon, stat-icon-blue" text="⭐"/>
                                 <VBox spacing="2">
-                                    <Label styleClass="stat-label" text="Note Moyenne" />
-                                    <Label fx:id="statRating" styleClass="stat-value" text="—" />
-                                    <Label styleClass="stat-sub" text="sur 5" />
+                                    <Label styleClass="stat-label" text="Note moyenne"/>
+                                    <Label fx:id="statRating" styleClass="stat-value" text="--"/>
+                                    <Label styleClass="stat-sub" text="sur 5"/>
                                 </VBox>
                             </HBox>
                         </VBox>
                         <VBox styleClass="stat-card" HBox.hgrow="ALWAYS">
                             <HBox alignment="CENTER_LEFT" spacing="12">
-                                <Label styleClass="stat-icon, stat-icon-orange" text="🏃" />
+                                <Label styleClass="stat-icon, stat-icon-orange" text="🏃"/>
                                 <VBox spacing="2">
-                                    <Label styleClass="stat-label" text="Activités Assignées" />
-                                    <Label fx:id="statAssigned" styleClass="stat-value" text="—" />
-                                    <Label styleClass="stat-sub" text="activités avec guide" />
+                                    <Label styleClass="stat-label" text="Activites assignees"/>
+                                    <Label fx:id="statAssigned" styleClass="stat-value" text="--"/>
+                                    <Label styleClass="stat-sub" text="activites avec guide"/>
                                 </VBox>
                             </HBox>
                         </VBox>
                     </HBox>
 
-                    <!-- FORM PANEL (inline, collapsible) -->
                     <VBox fx:id="formPanel" managed="false" spacing="0" styleClass="form-card, inline-form-panel" visible="false">
                         <HBox alignment="CENTER_LEFT" spacing="10" styleClass="cat-form-header">
-                            <Label fx:id="formPanelTitle" styleClass="cat-form-title" text="🧭 Nouveau Guide" HBox.hgrow="ALWAYS" />
-                            <Button onAction="#onCloseForm" styleClass="fp-close-btn" text="✕" />
+                            <Label fx:id="formPanelTitle" styleClass="cat-form-title" text="Nouveau guide" HBox.hgrow="ALWAYS"/>
+                            <Button onAction="#onCloseForm" styleClass="fp-close-btn" text="X"/>
                         </HBox>
                         <VBox spacing="16" styleClass="form-body">
-                            <padding><Insets bottom="12" left="24" right="24" top="20" /></padding>
+                            <padding>
+                                <Insets bottom="12" left="24" right="24" top="20"/>
+                            </padding>
 
-                            <!-- Prénom + Nom -->
                             <HBox spacing="16">
                                 <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
-                                    <Label styleClass="form-label" text="👤 Prénom *" />
-                                    <TextField fx:id="firstNameField" onKeyReleased="#validateFirstName" promptText="Ex: Ahmed" styleClass="form-input" />
-                                    <Label fx:id="errFirstName" managed="false" styleClass="err-msg" text="Prénom requis (min 2 car.)." visible="false" />
+                                    <Label styleClass="form-label" text="Prenom *"/>
+                                    <TextField fx:id="firstNameField" onKeyReleased="#validateFirstName" promptText="Ex: Ahmed" styleClass="form-input"/>
+                                    <Label fx:id="errFirstName" managed="false" styleClass="err-msg" text="Prenom requis (min 2 car.)." visible="false"/>
                                 </VBox>
                                 <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
-                                    <Label styleClass="form-label" text="👤 Nom *" />
-                                    <TextField fx:id="lastNameField" onKeyReleased="#validateLastName" promptText="Ex: Ben Ali" styleClass="form-input" />
-                                    <Label fx:id="errLastName" managed="false" styleClass="err-msg" text="Nom requis (min 2 car.)." visible="false" />
+                                    <Label styleClass="form-label" text="Nom *"/>
+                                    <TextField fx:id="lastNameField" onKeyReleased="#validateLastName" promptText="Ex: Ben Ali" styleClass="form-input"/>
+                                    <Label fx:id="errLastName" managed="false" styleClass="err-msg" text="Nom requis (min 2 car.)." visible="false"/>
                                 </VBox>
                             </HBox>
 
-                            <!-- Email + Phone + Rating -->
                             <HBox spacing="16">
                                 <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
-                                    <Label styleClass="form-label" text="📧 Email *" />
-                                    <TextField fx:id="emailField" onKeyReleased="#validateEmail" promptText="Ex: guide@ecotrip.tn" styleClass="form-input" />
-                                    <Label fx:id="errEmail" managed="false" styleClass="err-msg" text="Email invalide." visible="false" />
+                                    <Label styleClass="form-label" text="Email *"/>
+                                    <TextField fx:id="emailField" onKeyReleased="#validateEmail" promptText="Ex: guide@ecotrip.tn" styleClass="form-input"/>
+                                    <Label fx:id="errEmail" managed="false" styleClass="err-msg" text="Email invalide." visible="false"/>
                                 </VBox>
                                 <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
-                                    <Label styleClass="form-label" text="📞 Téléphone *" />
-                                    <TextField fx:id="phoneField" onKeyReleased="#validatePhone" promptText="Ex: +216 98 123 456" styleClass="form-input" />
-                                    <Label fx:id="errPhone" managed="false" styleClass="err-msg" text="Téléphone requis (min 10 car.)." visible="false" />
+                                    <Label styleClass="form-label" text="Telephone *"/>
+                                    <TextField fx:id="phoneField" onKeyReleased="#validatePhone" promptText="Ex: +216 98 123 456" styleClass="form-input"/>
+                                    <Label fx:id="errPhone" managed="false" styleClass="err-msg" text="Telephone requis (min 10 car.)." visible="false"/>
                                 </VBox>
                                 <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
-                                    <Label styleClass="form-label" text="⭐ Note (0–5)" />
-                                    <TextField fx:id="ratingField" onKeyReleased="#validateRating" promptText="Ex: 4.5" styleClass="form-input" />
-                                    <Label fx:id="errRating" managed="false" styleClass="err-msg" text="Note entre 0 et 5." visible="false" />
+                                    <Label styleClass="form-label" text="Note (0-5)"/>
+                                    <TextField fx:id="ratingField" onKeyReleased="#validateRating" promptText="Ex: 4.5" styleClass="form-input"/>
+                                    <Label fx:id="errRating" managed="false" styleClass="err-msg" text="Note entre 0 et 5." visible="false"/>
                                 </VBox>
                             </HBox>
 
-                            <!-- Bio + Photo -->
+                            <VBox spacing="8" styleClass="form-group">
+                                <HBox styleClass="ai-assist-box" alignment="CENTER_LEFT" spacing="12">
+                                    <VBox spacing="2" HBox.hgrow="ALWAYS">
+                                            <Label text="✨ Assistant biographie" styleClass="ai-assist-title"/>
+                                        <Label text="Cree une bio claire et premium dans le style de votre module."
+                                               styleClass="ai-assist-subtitle" wrapText="true"/>
+                                    </VBox>
+                                    <Button fx:id="generateBioBtn" text="✨ Generer"
+                                            styleClass="ai-assist-btn" onAction="#onGenerateBio"/>
+                                </HBox>
+                                <HBox alignment="CENTER_LEFT" spacing="8">
+                                    <ProgressIndicator fx:id="aiProgress" progress="-1.0"
+                                                       maxHeight="20" maxWidth="20" visible="false"/>
+                                    <Label fx:id="aiStatusLabel" visible="false" managed="false"
+                                           styleClass="ai-assist-status"/>
+                                </HBox>
+                            </VBox>
+
                             <HBox spacing="16">
                                 <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
-                                    <Label styleClass="form-label" text="📝 Biographie" />
-                                    <TextArea fx:id="bioField" onKeyReleased="#updateCounter" prefRowCount="3" promptText="Décrivez le guide…" styleClass="form-input" />
-                                    <Label fx:id="charCount" styleClass="char-count" text="0 / 5000 caractères" />
+                                    <Label styleClass="form-label" text="Biographie"/>
+                                    <TextArea fx:id="bioField" onKeyReleased="#updateCounter" prefRowCount="3" promptText="Decrivez le guide..." styleClass="form-textarea" wrapText="true"/>
+                                    <Label fx:id="charCount" styleClass="char-count" text="0 / 5000 caracteres"/>
                                 </VBox>
                                 <VBox spacing="8" styleClass="form-group" HBox.hgrow="ALWAYS">
-                                    <Label styleClass="form-label" text="🖼️ Photo du guide" />
+                                    <Label styleClass="form-label" text="Photo du guide"/>
                                     <HBox alignment="CENTER_LEFT" spacing="12">
-                                        <ImageView fx:id="photoPreview" fitHeight="60" fitWidth="60" preserveRatio="true" />
+                                        <ImageView fx:id="photoPreview" fitHeight="60" fitWidth="60" preserveRatio="true" styleClass="photo-preview"/>
                                         <VBox spacing="6" HBox.hgrow="ALWAYS">
-                                            <Button maxWidth="Infinity" onAction="#onChoosePhoto" styleClass="photo-upload-btn" text="📁 Choisir une photo" />
-                                            <Label fx:id="photoLabel" styleClass="card-subtitle" text="Aucune photo sélectionnée" />
+                                            <Button maxWidth="Infinity" onAction="#onChoosePhoto" styleClass="photo-upload-btn" text="Choisir une photo"/>
+                                            <Label fx:id="photoLabel" styleClass="card-subtitle" text="Aucune photo selectionnee"/>
                                         </VBox>
                                     </HBox>
-                                    <TextField fx:id="photoField" promptText="Ou coller une URL image" styleClass="form-input" />
+                                    <TextField fx:id="photoField" promptText="Ou coller une URL image" styleClass="form-input"/>
                                 </VBox>
                             </HBox>
                         </VBox>
                         <HBox alignment="CENTER_RIGHT" spacing="10" styleClass="form-footer">
-                            <Button onAction="#onReset" styleClass="btn-cancel" text="↺ Réinitialiser" />
-                            <Button fx:id="submitBtn" onAction="#onSubmit" styleClass="btn-submit" text="➕ Ajouter" />
+                            <Button onAction="#onReset" styleClass="btn-cancel" text="Reinitialiser"/>
+                            <Button fx:id="submitBtn" onAction="#onSubmit" styleClass="btn-submit" text="Ajouter"/>
                         </HBox>
                     </VBox>
 
-                    <!-- Action Bar -->
                     <HBox alignment="CENTER_LEFT" spacing="12" styleClass="action-bar">
-                        <Button onAction="#onOpenForm" styleClass="btn-primary" text="＋ Ajouter un guide" />
-                        <Region HBox.hgrow="ALWAYS" />
+                        <Button onAction="#onOpenForm" styleClass="btn-primary" text="Ajouter un guide"/>
+                        <Region HBox.hgrow="ALWAYS"/>
                         <HBox alignment="CENTER_LEFT" spacing="6" styleClass="search-wrap">
-                            <Label styleClass="search-icon" text="🔍" />
-                            <TextField fx:id="searchField" onKeyReleased="#onSearch" prefWidth="220" promptText="Rechercher…" styleClass="search-input" />
+                            <Label styleClass="search-icon" text="Rech"/>
+                            <TextField fx:id="searchField" onKeyReleased="#onSearch" prefWidth="220" promptText="Rechercher..." styleClass="search-input"/>
                         </HBox>
-                        <ComboBox fx:id="sortCombo" onAction="#onSearch" prefWidth="160" promptText="Trier par…" styleClass="sort-select" />
+                        <ComboBox fx:id="sortCombo" onAction="#onSearch" prefWidth="160" promptText="Trier par..." styleClass="sort-select"/>
                     </HBox>
 
-                    <!-- Table Card -->
                     <VBox spacing="0" styleClass="table-card">
                         <HBox alignment="CENTER_LEFT" spacing="8" styleClass="table-card-header">
-                            <Label styleClass="table-card-title" text="🧭 Liste des Guides" HBox.hgrow="ALWAYS" />
-                            <Label fx:id="badgeCount" styleClass="badge, badge-green" text="0" />
+                            <Label styleClass="table-card-title" text="Liste des guides" HBox.hgrow="ALWAYS"/>
+                            <Label fx:id="badgeCount" styleClass="badge, badge-green" text="0"/>
                         </HBox>
                         <TableView fx:id="tableView" styleClass="main-table" VBox.vgrow="ALWAYS">
                             <columns>
-                                <TableColumn fx:id="colIndex"   prefWidth="50"  text="#" />
-                                <TableColumn fx:id="colName"    prefWidth="180" text="Nom complet" />
-                                <TableColumn fx:id="colEmail"   prefWidth="200" text="Email" />
-                                <TableColumn fx:id="colPhone"   prefWidth="130" text="Téléphone" />
-                                <TableColumn fx:id="colRating"  prefWidth="90"  text="Note" />
-                                <TableColumn fx:id="colActions" prefWidth="160" text="Actions" />
+                                <TableColumn fx:id="colIndex" prefWidth="50" text="#"/>
+                                <TableColumn fx:id="colName" prefWidth="180" text="Nom complet"/>
+                                <TableColumn fx:id="colEmail" prefWidth="200" text="Email"/>
+                                <TableColumn fx:id="colPhone" prefWidth="130" text="Telephone"/>
+                                <TableColumn fx:id="colRating" prefWidth="90" text="Note"/>
+                                <TableColumn fx:id="colActions" prefWidth="180" text="Actions"/>
                             </columns>
                             <placeholder>
                                 <VBox alignment="CENTER" spacing="8" styleClass="empty-state">
-                                    <Label styleClass="empty-icon" text="🧭" />
-                                    <Label styleClass="empty-label" text="Aucun guide trouvé." />
+                                    <Label styleClass="empty-label" text="Aucun guide trouve."/>
                                 </VBox>
                             </placeholder>
                         </TableView>
 
-                        <!-- Pagination -->
-                        <HBox fx:id="paginationBar" alignment="CENTER_LEFT" spacing="8" styleClass="pagination-bar">
-                            <Label fx:id="pagInfo" styleClass="pag-info" HBox.hgrow="ALWAYS" />
-                            <Region HBox.hgrow="ALWAYS" />
-                            <HBox fx:id="pagButtons" spacing="4" />
+                        <HBox alignment="CENTER_LEFT" spacing="8" styleClass="pagination-bar">
+                            <Label fx:id="pagInfo" styleClass="pag-info" HBox.hgrow="ALWAYS"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <HBox fx:id="pagButtons" spacing="4"/>
                         </HBox>
                     </VBox>
-
                 </VBox>
             </ScrollPane>
         </VBox>
