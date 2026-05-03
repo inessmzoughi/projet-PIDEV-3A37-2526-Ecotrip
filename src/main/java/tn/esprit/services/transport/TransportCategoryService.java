@@ -16,6 +16,7 @@ public class TransportCategoryService {
 
     public void ajouter(TransportCategory category) throws SQLException {
         validate(category);
+        validateUniqueness(category);
         repository.save(category);
     }
 
@@ -33,6 +34,7 @@ public class TransportCategoryService {
 
     public void modifier(TransportCategory category) throws SQLException {
         validate(category);
+        validateUniqueness(category);
         repository.update(category);
     }
 
@@ -49,6 +51,13 @@ public class TransportCategoryService {
         }
         if (category.getDescription() != null && category.getDescription().length() > 2000) {
             throw new IllegalArgumentException("Category description must not exceed 2000 characters");
+        }
+    }
+
+    private void validateUniqueness(TransportCategory category) throws SQLException {
+        Integer excludedId = category.getId() > 0 ? category.getId() : null;
+        if (repository.existsByName(category.getName().trim(), excludedId)) {
+            throw new IllegalArgumentException("Une categorie de transport avec ce nom existe deja");
         }
     }
 }

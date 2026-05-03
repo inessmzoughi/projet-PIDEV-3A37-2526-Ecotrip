@@ -11,6 +11,8 @@ public class Routes {
     public static final String HEBERGEMENTS   = "hebergements";
     public static final String ACTIVITES      = "activites";
     public static final String TRANSPORT      = "transport";
+    public static final String TRANSPORT_RECOMMENDATION_FORM = "transport-recommendation-form";
+    public static final String TRANSPORT_RECOMMENDATION_RESULTS = "transport-recommendation-results";
     public static final String BOUTIQUE       = "boutique";
     public static final String CONTACT        = "contact";
     public static final String MES_RESERVATIONS = "mes-reservations";

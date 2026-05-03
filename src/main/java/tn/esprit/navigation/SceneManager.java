@@ -40,6 +40,8 @@ public class SceneManager {
         frontRoutes.put(Routes.HEBERGEMENTS, "/views/front/hebergements.fxml");
         frontRoutes.put(Routes.ACTIVITES,         "/views/front/activities.fxml");
         frontRoutes.put(Routes.TRANSPORT,         "/views/front/transport.fxml");
+        frontRoutes.put(Routes.TRANSPORT_RECOMMENDATION_FORM, "/views/front/transport-recommendation-form.fxml");
+        frontRoutes.put(Routes.TRANSPORT_RECOMMENDATION_RESULTS, "/views/front/transport-recommendation-results.fxml");
         frontRoutes.put(Routes.FRONT_PRODUCTS, "/views/front/Products.fxml");
         frontRoutes.put(Routes.CONTACT, "/views/front/Cart.fxml");
         frontRoutes.put(Routes.MES_RESERVATIONS,  "/views/front/mes-reservations.fxml");

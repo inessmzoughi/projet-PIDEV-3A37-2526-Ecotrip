@@ -16,12 +16,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import tn.esprit.navigation.Routes;
+import tn.esprit.navigation.SceneManager;
 import tn.esprit.controller.front.modals.TransportReservationController;
 import tn.esprit.models.transport.Transport;
+import tn.esprit.services.ExchangeRateService;
+import tn.esprit.services.ExchangeRateService.PriceDisplay;
 import tn.esprit.services.transport.TransportService;
 
 import java.io.File;
@@ -45,6 +47,7 @@ public class TransportController implements Initializable {
     @FXML private VBox emptyState;
 
     private final TransportService service = new TransportService();
+    private final ExchangeRateService exchangeRateService = new ExchangeRateService();
     private List<Transport> allData = new ArrayList<>();
 
     @Override
@@ -133,13 +136,17 @@ public class TransportController implements Initializable {
         emission.getStyleClass().add("heb-card-equipement");
         meta.getChildren().addAll(capacite, emission);
 
-        HBox priceRow = new HBox(10);
-        priceRow.setAlignment(Pos.CENTER_LEFT);
-        Label price = new Label(String.format("%.2f DT / personne", transport.getPrixParPersonne()));
+        VBox priceBox = new VBox(4);
+        priceBox.setAlignment(Pos.CENTER_LEFT);
+        PriceDisplay priceDisplay = exchangeRateService.buildPriceDisplay(transport.getPrixParPersonne());
+        Label price = new Label(priceDisplay.primaryLine());
         price.getStyleClass().add("heb-card-price-amount");
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        priceRow.getChildren().addAll(price, spacer);
+        price.setWrapText(true);
+        Label convertedPrice = new Label(priceDisplay.secondaryLine());
+        convertedPrice.getStyleClass().add("heb-card-price-converted");
+        convertedPrice.setVisible(!priceDisplay.secondaryLine().isBlank());
+        convertedPrice.setManaged(!priceDisplay.secondaryLine().isBlank());
+        priceBox.getChildren().addAll(price, convertedPrice);
 
         Button action = new Button(transport.isDisponible() ? "Ajouter au panier" : "Indisponible");
         action.getStyleClass().add("heb-card-btn");
@@ -148,7 +155,7 @@ public class TransportController implements Initializable {
         action.setOnAction(e -> openTransportModal(transport));
 
 
-        body.getChildren().addAll(badge, title, category, chauffeur, meta, priceRow, action);
+        body.getChildren().addAll(badge, title, category, chauffeur, meta, priceBox, action);
         card.getChildren().add(body);
         return card;
     }
@@ -255,5 +262,10 @@ public class TransportController implements Initializable {
         sortCombo.getSelectionModel().selectFirst();
         availabilityCombo.getSelectionModel().selectFirst();
         applyFilters();
+    }
+
+    @FXML
+    private void onOpenRecommendations() {
+        SceneManager.navigateTo(Routes.TRANSPORT_RECOMMENDATION_FORM);
     }
 }

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="tn.esprit.controller.front.TransportRecommendationResultsController"
+            fitToWidth="true"
+            hbarPolicy="NEVER"
+            vbarPolicy="AS_NEEDED"
+            styleClass="front-scroll">
+
+    <VBox styleClass="reco-page">
+        <VBox styleClass="reco-results-hero" spacing="10">
+            <padding><Insets top="42" right="70" bottom="42" left="70"/></padding>
+
+            <HBox alignment="CENTER_LEFT" spacing="12">
+                <VBox spacing="8">
+                    <Label text="Top 3 Recommended Transports" styleClass="reco-hero-title"/>
+                    <Label fx:id="routeSummaryLabel" styleClass="reco-hero-subtitle" wrapText="true"/>
+                    <Label fx:id="filtersSummaryLabel" styleClass="reco-results-meta" wrapText="true"/>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <VBox alignment="CENTER_RIGHT" spacing="10">
+                    <Button text="Try Again" onAction="#onTryAgain" styleClass="reco-submit-btn"/>
+                    <Button text="Back to Transport" onAction="#onBackToTransport" styleClass="reco-secondary-btn"/>
+                </VBox>
+            </HBox>
+        </VBox>
+
+        <VBox styleClass="reco-results-shell" spacing="20">
+            <padding><Insets top="30" right="24" bottom="40" left="24"/></padding>
+
+            <VBox fx:id="emptyState" alignment="CENTER" spacing="10" styleClass="act-empty-state" visible="false" managed="false">
+                <Label text="No recommendations available" styleClass="act-empty-title"/>
+                <Label text="Try adjusting your route or budget and run the recommendation again." styleClass="act-empty-sub" wrapText="true"/>
+            </VBox>
+
+            <FlowPane fx:id="cardsPane" hgap="18" vgap="18" prefWrapLength="1080"/>
+        </VBox>
+    </VBox>
+</ScrollPane>

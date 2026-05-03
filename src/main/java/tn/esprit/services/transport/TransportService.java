@@ -2,6 +2,7 @@ package tn.esprit.services.transport;
 
 import tn.esprit.models.transport.Transport;
 import tn.esprit.repository.transport.TransportRepository;
+import tn.esprit.services.TwilioService;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -9,14 +10,18 @@ import java.util.List;
 public class TransportService {
 
     private final TransportRepository repository;
+    private final TwilioService twilioService;
 
     public TransportService() {
         this.repository = new TransportRepository();
+        this.twilioService = new TwilioService();
     }
 
     public void ajouter(Transport transport) throws SQLException {
         validate(transport);
+        validateUniqueness(transport);
         repository.save(transport);
+        notifyIfDriverAssigned(transport, null);
     }
 
     public List<Transport> afficherAll() throws SQLException {
@@ -32,8 +37,11 @@ public class TransportService {
     }
 
     public void modifier(Transport transport) throws SQLException {
+        Transport existingTransport = repository.findById(transport.getId());
         validate(transport);
+        validateUniqueness(transport);
         repository.update(transport);
+        notifyIfDriverAssigned(transport, existingTransport);
     }
 
     public void supprimer(int id) throws SQLException {
@@ -53,5 +61,43 @@ public class TransportService {
         if (transport.getPrixParPersonne() <= 0) {
             throw new IllegalArgumentException("Price per person must be positive");
         }
+    }
+
+    private void validateUniqueness(Transport transport) throws SQLException {
+        Integer excludedId = transport.getId() > 0 ? transport.getId() : null;
+        if (repository.existsDuplicate(transport, excludedId)) {
+            throw new IllegalArgumentException("Un transport avec le meme type, la meme categorie et le meme chauffeur existe deja");
+        }
+    }
+
+    private void notifyIfDriverAssigned(Transport transport, Transport existingTransport) {
+        if (transport.getChauffeur() == null) {
+            return;
+        }
+
+        Integer previousDriverId = existingTransport == null || existingTransport.getChauffeur() == null
+                ? null
+                : existingTransport.getChauffeur().getId();
+
+        if (previousDriverId != null && previousDriverId == transport.getChauffeur().getId()) {
+            return;
+        }
+
+        String transportName = buildTransportLabel(transport);
+        twilioService.sendSms(transport.getChauffeur().getFullName(), transportName);
+    }
+
+    private String buildTransportLabel(Transport transport) {
+        String type = transport.getType() == null ? "" : transport.getType().trim();
+        if (!type.isEmpty() && transport.getId() > 0) {
+            return type + " (#" + transport.getId() + ")";
+        }
+        if (!type.isEmpty()) {
+            return type;
+        }
+        if (transport.getId() > 0) {
+            return "#" + transport.getId();
+        }
+        return "unknown transport";
     }
 }

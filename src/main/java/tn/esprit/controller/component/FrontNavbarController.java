@@ -40,10 +40,17 @@ public class FrontNavbarController {
     }
 
     public void setActiveRoute(String routeName) {
+        String activeRoute = routeName;
+        if (Routes.TRANSPORT_RECOMMENDATION_FORM.equals(activeRoute)
+                || Routes.TRANSPORT_RECOMMENDATION_RESULTS.equals(activeRoute)) {
+            activeRoute = Routes.TRANSPORT;
+        }
+
         // Remove active from all, add to matching
+        final String finalActiveRoute = activeRoute;
         routeMap.forEach((btn, route) -> {
             btn.getStyleClass().remove("nav-btn-active");
-            if (route.equals(routeName)) btn.getStyleClass().add("nav-btn-active");
+            if (route.equals(finalActiveRoute)) btn.getStyleClass().add("nav-btn-active");
         });
     }
 

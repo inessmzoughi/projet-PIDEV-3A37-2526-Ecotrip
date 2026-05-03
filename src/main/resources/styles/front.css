@@ -854,6 +854,11 @@
     -fx-text-fill: #2d5016;
 }
 
+.heb-card-price-converted {
+    -fx-font-size: 13px;
+    -fx-text-fill: #7b8794;
+}
+
 .heb-card-price-currency {
     -fx-font-size: 15px;
     -fx-font-weight: bold;
@@ -1381,4 +1386,244 @@
 .res-edit-footer {
     -fx-padding: 14 24 20 24;
     -fx-border-color: #f1f5f9; -fx-border-width: 1 0 0 0;
+}
+
+/* AI transport recommendations */
+.transport-ai-btn {
+    -fx-background-color: linear-gradient(to right, #2d5016, #1e4620);
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 12;
+    -fx-padding: 10 18 10 18;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+
+.transport-ai-btn:hover {
+    -fx-background-color: #3b6720;
+}
+
+.reco-page {
+    -fx-background-color: #f6f9f3;
+}
+
+.reco-hero {
+    -fx-background-color: linear-gradient(to right, #234114, #1e4620);
+}
+
+.reco-results-hero {
+    -fx-background-color: linear-gradient(to right, #1f3f12, #173816);
+}
+
+.reco-hero-title {
+    -fx-font-size: 34px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.reco-hero-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: rgba(255,255,255,0.86);
+}
+
+.reco-results-meta {
+    -fx-font-size: 13px;
+    -fx-text-fill: #d7ead3;
+}
+
+.reco-form-shell,
+.reco-results-shell {
+    -fx-max-width: 1180;
+    -fx-alignment: TOP_CENTER;
+}
+
+.reco-form-card {
+    -fx-background-color: white;
+    -fx-background-radius: 22;
+    -fx-border-radius: 22;
+    -fx-border-color: #e5ece2;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(22,46,20,0.08), 22, 0, 0, 6);
+    -fx-max-width: 760;
+}
+
+.reco-form-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #20361a;
+}
+
+.reco-form-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #6b7d68;
+}
+
+.reco-field-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #35512d;
+}
+
+.reco-text-input,
+.reco-combo,
+.reco-spinner {
+    -fx-background-color: #fbfcfa;
+    -fx-border-color: #d4ddd1;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-border-width: 1.4;
+    -fx-padding: 12 14 12 14;
+    -fx-font-size: 14px;
+    -fx-text-fill: #1f2937;
+}
+
+.reco-text-input:focused,
+.reco-combo:focused,
+.reco-spinner:focused {
+    -fx-border-color: #2d5016;
+    -fx-background-color: white;
+}
+
+.reco-submit-btn {
+    -fx-background-color: linear-gradient(to right, #2d5016, #1e4620);
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 12;
+    -fx-padding: 12 24 12 24;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+
+.reco-submit-btn:hover {
+    -fx-background-color: #365f1d;
+}
+
+.reco-secondary-btn {
+    -fx-background-color: white;
+    -fx-text-fill: #244117;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-border-color: #cfe0cb;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-border-width: 1.2;
+    -fx-padding: 11 18 11 18;
+    -fx-cursor: hand;
+}
+
+.reco-secondary-btn:hover {
+    -fx-background-color: #f5faf2;
+}
+
+.reco-error-label {
+    -fx-text-fill: #c0392b;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.reco-warning-box {
+    -fx-background-color: #fff8e6;
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: #f1d38c;
+    -fx-border-width: 1;
+    -fx-padding: 16 18 16 18;
+}
+
+.reco-warning-title {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #8a5c00;
+}
+
+.reco-warning-text {
+    -fx-font-size: 13px;
+    -fx-text-fill: #7c6518;
+}
+
+.reco-card {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: #e2e8df;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(17,24,39,0.07), 18, 0, 0, 5);
+}
+
+.reco-card:hover {
+    -fx-border-color: #b9d4b1;
+    -fx-effect: dropshadow(gaussian, rgba(45,80,22,0.18), 22, 0, 0, 6);
+}
+
+.reco-card-media {
+    -fx-background-color: #edf4ea;
+    -fx-background-radius: 20 20 0 0;
+    -fx-border-radius: 20 20 0 0;
+    -fx-min-width: 320;
+    -fx-max-width: 320;
+}
+
+.reco-card-media-fallback {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #5f7358;
+}
+
+.reco-rank-chip {
+    -fx-background-color: #edf7e8;
+    -fx-text-fill: #2b5d1d;
+    -fx-background-radius: 999;
+    -fx-padding: 6 12 6 12;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.reco-card-icon {
+    -fx-font-size: 36px;
+}
+
+.reco-card-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1b2e15;
+}
+
+.reco-card-price {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2d5016;
+}
+
+.reco-card-price-secondary {
+    -fx-font-size: 13px;
+    -fx-text-fill: #7b8794;
+}
+
+.reco-card-subtitle {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #607260;
+    -fx-letter-spacing: 0.6px;
+}
+
+.reco-card-justification {
+    -fx-font-size: 14px;
+    -fx-text-fill: #4b5d4a;
+    -fx-line-spacing: 4;
+}
+
+.reco-inline-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #2d5016;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 0;
+    -fx-border-width: 0;
+    -fx-cursor: hand;
+}
+
+.reco-inline-btn:hover {
+    -fx-text-fill: #173816;
 }

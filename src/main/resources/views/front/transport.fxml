@@ -26,6 +26,8 @@
 
         <HBox styleClass="act-results-bar" alignment="CENTER_LEFT" spacing="12">
             <Label fx:id="resultCount" text="0 transport(s) trouve(s)" styleClass="act-results-count"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="AI Recommendations" onAction="#onOpenRecommendations" styleClass="transport-ai-btn"/>
         </HBox>
 
         <VBox styleClass="page-body" spacing="20">
