@@ -55,4 +55,12 @@ public class CategorieH_service implements I_service<Categorie_hebergement> {
         ps.setInt(1, id);
         ps.executeUpdate();
     }
+    public String getNomById(int categorieId) throws SQLException {
+        PreparedStatement ps = connection.prepareStatement(
+                "SELECT nom FROM categorie_hebergement WHERE id = ?");
+        ps.setInt(1, categorieId);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) return rs.getString("nom");
+        return "";
+    }
 }

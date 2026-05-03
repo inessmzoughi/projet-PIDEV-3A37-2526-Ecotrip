@@ -20,11 +20,11 @@
     <ScrollPane fitToWidth="true"
                 hbarPolicy="NEVER"
                 vbarPolicy="AS_NEEDED"
-
                 styleClass="front-scroll">
 
         <VBox spacing="0" styleClass="heb-page">
 
+            <!-- ══ HERO ══ -->
             <VBox styleClass="heb-hero" alignment="CENTER" spacing="14">
                 <padding><Insets top="80" bottom="80" left="40" right="40"/></padding>
                 <Label text="Activites &amp; Aventures" styleClass="heb-hero-title"/>
@@ -32,9 +32,9 @@
                        styleClass="heb-hero-sub" wrapText="true"/>
             </VBox>
 
-
+            <!-- ══ FILTRES ══ -->
             <VBox styleClass="heb-filters-container">
-                <padding><Insets top="30" bottom="30" left="40" right="40"/></padding>
+                <padding><Insets top="30" bottom="20" left="40" right="40"/></padding>
 
                 <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 0 0 20 0;">
                     <Region styleClass="filters-title-bar"/>
@@ -42,6 +42,7 @@
                 </HBox>
 
                 <VBox spacing="18">
+                    <!-- Ligne 1 : champs de recherche / tri / catégorie -->
                     <HBox spacing="16" alignment="CENTER_LEFT">
                         <TextField fx:id="searchField"
                                    promptText="Rechercher par titre ou lieu..."
@@ -64,37 +65,67 @@
                                 prefWidth="160"/>
                     </HBox>
 
+                    <!-- ══ ONGLETS CATÉGORIES ══ -->
+                    <!-- fx:id="categoryTabsBox" requis par ActivitiesController.loadCategories() -->
+                    <HBox fx:id="categoryTabsBox"
+                          spacing="10"
+                          alignment="CENTER_LEFT"
+                          style="-fx-padding: 4 0 0 0;">
+                        <!-- Onglet "Toutes" fixe -->
+                        <Button fx:id="tabAll"
+                                text="Toutes"
+                                styleClass="act-tab, act-tab-active"
+                                onAction="#handleTabAll"/>
+                        <!-- Les onglets de catégories sont ajoutés dynamiquement par le contrôleur -->
+                    </HBox>
                 </VBox>
             </VBox>
 
+            <!-- ══ COMPTEUR + BADGE FILTRE ACTIF ══ -->
             <HBox alignment="CENTER_LEFT">
                 <padding><Insets top="24" bottom="12" left="40" right="40"/></padding>
-                <Label fx:id="resultsCountLabel" text="0 Activite(s) trouvee(s)" styleClass="heb-result-count"/>
+                <Label fx:id="resultsCountLabel"
+                       text="0 Activite(s) trouvee(s)"
+                       styleClass="heb-result-count"/>
                 <Region HBox.hgrow="ALWAYS"/>
-                <Label fx:id="activeFilterLabel" text="" styleClass="act-filter-badge"
+                <Label fx:id="activeFilterLabel"
+                       text=""
+                       styleClass="act-filter-badge"
                        visible="false" managed="false"/>
-                <Button fx:id="clearFilterBtn" text="✕ Effacer filtre"
+                <Button fx:id="clearFilterBtn"
+                        text="✕ Effacer filtre"
                         onAction="#handleClearFilter"
-                        styleClass="act-clear-btn" visible="false" managed="false"/>
+                        styleClass="act-clear-btn"
+                        visible="false" managed="false"/>
             </HBox>
 
-            <FlowPane fx:id="activitiesGrid" hgap="28" vgap="28" styleClass="heb-cards-pane">
+            <!-- ══ GRILLE ACTIVITÉS ══ -->
+            <FlowPane fx:id="activitiesGrid"
+                      hgap="28" vgap="28"
+                      styleClass="heb-cards-pane">
                 <padding><Insets top="0" bottom="20" left="40" right="40"/></padding>
             </FlowPane>
 
-            <VBox fx:id="emptyState" alignment="CENTER" spacing="16"
-                  managed="false" visible="false" styleClass="heb-empty">
+            <!-- ══ EMPTY STATE ══ -->
+            <VBox fx:id="emptyState"
+                  alignment="CENTER" spacing="16"
+                  managed="false" visible="false"
+                  styleClass="heb-empty">
                 <padding><Insets top="60" bottom="60"/></padding>
                 <Label text="🌵" styleClass="heb-empty-icon"/>
                 <Label text="Aucune activite trouvee" styleClass="heb-empty-title"/>
                 <Label text="Essayez de modifier vos filtres pour voir plus de resultats"
                        styleClass="heb-empty-sub" wrapText="true"/>
-                <Button text="↺ Reinitialiser les filtres" styleClass="heb-clear-btn"
+                <Button text="↺ Reinitialiser les filtres"
+                        styleClass="heb-clear-btn"
                         onAction="#handleResetFilters"/>
             </VBox>
 
-            <HBox fx:id="paginationBar" alignment="CENTER" spacing="16"
-                  managed="false" visible="false" styleClass="heb-pagination">
+            <!-- ══ PAGINATION ══ -->
+            <HBox fx:id="paginationBar"
+                  alignment="CENTER" spacing="16"
+                  managed="false" visible="false"
+                  styleClass="heb-pagination">
                 <padding><Insets top="24" bottom="24" left="40" right="40"/></padding>
                 <Button fx:id="btnPrev" text="← Precedent" styleClass="heb-page-btn" onAction="#onPrev"/>
                 <Label fx:id="pagInfo" text="Page 1 / 1" styleClass="heb-page-info"/>
@@ -106,6 +137,7 @@
         </VBox>
     </ScrollPane>
 
+    <!-- ══ CHATBOT FAB ══ -->
     <Button fx:id="chatbotLauncher"
             text=" "
             onAction="#toggleChatbot"
@@ -116,6 +148,7 @@
         </StackPane.margin>
     </Button>
 
+    <!-- ══ CHATBOT PANEL ══ -->
     <VBox fx:id="chatbotPanel"
           visible="false"
           managed="false"
@@ -151,9 +184,9 @@
                 </VBox>
 
                 <FlowPane hgap="8" vgap="8">
-                    <Button text="Nature a Djerba" onAction="#handleChatbotNature" styleClass="activity-chatbot-chip"/>
-                    <Button text="Culture a Tunis" onAction="#handleChatbotCulture" styleClass="activity-chatbot-chip"/>
-                    <Button text="Aventure desert" onAction="#handleChatbotAdventure" styleClass="activity-chatbot-chip"/>
+                    <Button text="Nature a Djerba"  onAction="#handleChatbotNature"    styleClass="activity-chatbot-chip"/>
+                    <Button text="Culture a Tunis"  onAction="#handleChatbotCulture"   styleClass="activity-chatbot-chip"/>
+                    <Button text="Aventure desert"  onAction="#handleChatbotAdventure" styleClass="activity-chatbot-chip"/>
                 </FlowPane>
 
                 <VBox fx:id="chatbotSuggestionsBox" spacing="12"/>
