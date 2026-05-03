@@ -1,28 +1,60 @@
 package tn.esprit.services.hebergement;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
-public class  AvisModeratorService {
+import java.time.Duration;
+import java.util.Properties;
 
-    // ─── Endpoint Anthropic (pas de clé : géré par le proxy claude.ai) ───────
-    private static final String API_URL = "https://api.anthropic.com/v1/messages";
-    private static final String MODEL   = "claude-sonnet-4-20250514";
-
-    // ─── Singleton ────────────────────────────────────────────────────────────
-    private static AvisModeratorService instance;
-    public static AvisModeratorService getInstance() {
-        if (instance == null) instance = new AvisModeratorService();
-        return instance;
-    }
-    private AvisModeratorService() {}
+/**
+ * Service de modération automatique des avis via HuggingFace Inference API.
+ *
+ * Modèle : facebook/bart-large-mnli  (classification zero-shot, gratuit)
+ * Endpoint: https://api-inference.huggingface.co/models/facebook/bart-large-mnli
+ *
+ * Configuration dans config.properties :
+ *   moderation.api.url=https://api-inference.huggingface.co/models/facebook/bart-large-mnli
+ *   moderation.api.key=           ← optionnel, HuggingFace token
+ *   moderation.api.timeout=10     ← secondes
+ */
+public class AvisModeratorService {
 
     // ─── Résultat de modération ───────────────────────────────────────────────
     public enum Decision { APPROUVE, REJETE, EN_ATTENTE }
 
     public record ModerationResult(Decision decision, String reason) {}
+
+    // ─── Config chargée depuis config.properties ──────────────────────────────
+    private final String apiUrl;
+    private final String apiKey;
+    private final int    timeoutSec;
+
+    // ─── Singleton ────────────────────────────────────────────────────────────
+    private static AvisModeratorService instance;
+
+    public static AvisModeratorService getInstance() {
+        if (instance == null) instance = new AvisModeratorService();
+        return instance;
+    }
+
+    private AvisModeratorService() {
+        Properties props = new Properties();
+        try (InputStream in =
+                     getClass().getClassLoader().getResourceAsStream("config.properties")) {
+            if (in != null) props.load(in);
+        } catch (Exception e) {
+            System.err.println("[AvisModerator] Impossible de lire config.properties : "
+                    + e.getMessage());
+        }
+
+        apiUrl     = props.getProperty("moderation.api.url",
+                "https://api-inference.huggingface.co/models/facebook/bart-large-mnli");
+        apiKey     = props.getProperty("moderation.api.key", "").trim();
+        timeoutSec = parseInt(props.getProperty("moderation.api.timeout", "10"), 10);
+    }
 
     // ─────────────────────────────────────────────────────────────────────────
     /**
@@ -35,105 +67,138 @@ public class  AvisModeratorService {
         if (texte == null || texte.isBlank())
             return new ModerationResult(Decision.REJETE, "Commentaire vide.");
 
+        // ── Pré-filtre local rapide (insultes évidentes) ──────────────────────
+        ModerationResult localCheck = localFilter(texte);
+        if (localCheck != null) return localCheck;
+
+        // ── Appel API HuggingFace ─────────────────────────────────────────────
         try {
-            String prompt = buildPrompt(texte);
-            String responseJson = callClaude(prompt);
-            return parseDecision(responseJson);
+            String responseJson = callHuggingFace(texte);
+            return parseHuggingFaceResponse(responseJson);
         } catch (Exception e) {
-            System.err.println("[AvisModerator] Erreur API : " + e.getMessage());
-            // En cas d'erreur réseau, on laisse l'admin décider
-            return new ModerationResult(Decision.EN_ATTENTE,
-                    "Service de modération indisponible – envoyé en attente.");
+            System.err.println("[AvisModerator] Erreur API HuggingFace : " + e.getMessage());
+            // Fallback : règles locales étendues si l'API est indisponible
+            return localFallback(texte);
         }
     }
 
-    // ─── Construction du prompt ───────────────────────────────────────────────
-    private String buildPrompt(String texte) {
-        return """
-                Tu es un modérateur de contenu pour un site de tourisme éco-responsable en Tunisie.
-                Ton rôle est d'analyser un avis client et de décider s'il doit être publié.
-                
-                Règles :
-                - APPROUVE si : l'avis est un retour honnête sur un hébergement (positif ou négatif),
-                  rédigé de façon correcte, sans insultes, sans spam, sans données personnelles.
-                - REJETE si : l'avis contient des insultes, discours haineux, spam, contenu sexuel,
-                  menaces, données personnelles (emails, téléphones), ou est totalement hors sujet.
-                
-                Réponds UNIQUEMENT avec ce JSON (sans markdown, sans explication autour) :
-                {"decision":"APPROUVE","raison":"<explication courte en français, max 15 mots>"}
-                ou
-                {"decision":"REJETE","raison":"<explication courte en français, max 15 mots>"}
-                
-                Avis à analyser :
-                """ + texte;
+    // ─── Pré-filtre local (évite un appel API pour les cas évidents) ──────────
+    private ModerationResult localFilter(String texte) {
+        String lower = texte.toLowerCase();
+        String[] motsCles = {
+                "connard", "salaud", "idiot", "con ", " con,", "merde", "putain",
+                "enculé", "fdp", "nique", "bâtard", "pute", "fuck", "shit", "asshole",
+                "spam", "viagra", "casino", "http://", "https://",
+                "@gmail", "@yahoo", "@hotmail", "whatsapp", "telegram"
+        };
+        for (String mot : motsCles) {
+            if (lower.contains(mot))
+                return new ModerationResult(Decision.REJETE,
+                        "Contenu inapproprié ou spam détecté.");
+        }
+        return null;
     }
 
-    // ─── Appel HTTP à l'API Anthropic ─────────────────────────────────────────
-    private String callClaude(String prompt) throws Exception {
-        HttpClient client = HttpClient.newHttpClient();
+    // ─── Fallback sans API ────────────────────────────────────────────────────
+    private ModerationResult localFallback(String texte) {
+        // Si le filtre local n'a rien trouvé, on approuve par défaut
+        // (l'avis passe en attente uniquement si l'API est requise pour certitude)
+        if (texte.length() < 10)
+            return new ModerationResult(Decision.EN_ATTENTE,
+                    "Commentaire trop court – vérification manuelle.");
+        return new ModerationResult(Decision.EN_ATTENTE,
+                "Service de modération indisponible – envoyé en attente.");
+    }
 
-        // Corps de la requête JSON (assemblé manuellement pour éviter une dépendance)
-        String escapedPrompt = prompt
+    // ─── Appel HTTP HuggingFace Inference API ─────────────────────────────────
+    /**
+     * Requête zero-shot classification :
+     * On soumet le texte avec deux labels candidats :
+     *   "appropriate review" et "inappropriate content"
+     * HuggingFace renvoie un score de confiance pour chaque label.
+     */
+    private String callHuggingFace(String texte) throws Exception {
+        HttpClient client = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(timeoutSec))
+                .build();
+
+        // Escape du texte pour JSON
+        String escaped = texte
                 .replace("\\", "\\\\")
                 .replace("\"", "\\\"")
                 .replace("\n", "\\n")
-                .replace("\r", "")
-                .replace("\t", " ");
+                .replace("\r", "");
 
         String body = "{"
-                + "\"model\":\"" + MODEL + "\","
-                + "\"max_tokens\":150,"
-                + "\"messages\":[{\"role\":\"user\",\"content\":\"" + escapedPrompt + "\"}]"
+                + "\"inputs\":\"" + escaped + "\","
+                + "\"parameters\":{"
+                + "\"candidate_labels\":[\"appropriate hotel review\",\"inappropriate content\"]"
+                + "}"
                 + "}";
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(API_URL))
+        HttpRequest.Builder reqBuilder = HttpRequest.newBuilder()
+                .uri(URI.create(apiUrl))
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(body, StandardCharsets.UTF_8))
-                .build();
+                .timeout(Duration.ofSeconds(timeoutSec))
+                .POST(HttpRequest.BodyPublishers.ofString(body, StandardCharsets.UTF_8));
 
-        HttpResponse<String> response = client.send(request,
-                HttpResponse.BodyHandlers.ofString());
+        // Ajout du token HuggingFace si configuré
+        if (!apiKey.isEmpty())
+            reqBuilder.header("Authorization", "Bearer " + apiKey);
 
-        if (response.statusCode() != 200) {
-            throw new Exception("HTTP " + response.statusCode() + " : " + response.body());
-        }
+        HttpResponse<String> response = client.send(
+                reqBuilder.build(), HttpResponse.BodyHandlers.ofString());
+
+        int status = response.statusCode();
+
+        if (status != 200)
+            throw new Exception("HTTP " + status + " : " + response.body());
+
+        System.out.println("[AvisModerator] Réponse brute : " + response.body());
         return response.body();
     }
 
-    // ─── Parsing de la réponse Claude ────────────────────────────────────────
+    // ─── Parsing de la réponse HuggingFace ───────────────────────────────────
     /**
-     * Extrait le JSON {"decision":"...","raison":"..."} de la réponse Anthropic.
-     * La réponse de l'API a la forme :
-     * {"content":[{"type":"text","text":"{\"decision\":\"APPROUVE\",...}"}], ...}
+     * Réponse attendue :
+     * {
+     *   "sequence": "...",
+     *   "labels":  ["appropriate hotel review", "inappropriate content"],
+     *   "scores":  [0.92, 0.08]
+     * }
+     * On compare les scores : si "appropriate" > 0.60 → APPROUVE, sinon REJETE.
      */
-    private ModerationResult parseDecision(String apiResponse) {
+    private ModerationResult parseHuggingFaceResponse(String json) {
         try {
-            // Extraire le champ "text" de la réponse Anthropic
-            String text = extractJsonValue(apiResponse, "text");
-            if (text == null) {
-                System.err.println("[AvisModerator] Réponse inattendue : " + apiResponse);
-                return new ModerationResult(Decision.EN_ATTENTE, "Réponse IA invalide.");
+            double scoreAppropriate = -1;
+            String[] entries = json.split("\\},\\s*\\{");
+            for (String entry : entries) {
+                if (entry.contains("appropriate hotel review")) {
+                    int idx = entry.indexOf("\"score\":");
+                    if (idx != -1) {
+                        String scoreStr = entry.substring(idx + 8)
+                                .replaceAll("[^0-9.]", "")
+                                .replaceAll("(\\d+\\.?\\d*).*", "$1");
+                        scoreAppropriate = Double.parseDouble(scoreStr);
+                    }
+                }
             }
 
-            // Décoder les escapes JSON (\n, \", etc.)
-            text = text.replace("\\n", "\n")
-                    .replace("\\\"", "\"")
-                    .replace("\\\\", "\\");
+            if (scoreAppropriate < 0)
+                return new ModerationResult(Decision.EN_ATTENTE, "Réponse IA incomplète.");
 
-            // Extraire decision et raison du JSON retourné par Claude
-            String decision = extractJsonValue(text, "decision");
-            String raison   = extractJsonValue(text, "raison");
+            System.out.printf("[AvisModerator] Score approprié : %.2f%n", scoreAppropriate);
 
-            if ("APPROUVE".equalsIgnoreCase(decision))
+            if (scoreAppropriate >= 0.60)
                 return new ModerationResult(Decision.APPROUVE,
-                        raison != null ? raison : "Contenu acceptable.");
-            if ("REJETE".equalsIgnoreCase(decision))
+                        String.format("Avis jugé approprié (%.0f%%)", scoreAppropriate * 100));
+            else if (scoreAppropriate >= 0.35)
+                return new ModerationResult(Decision.EN_ATTENTE,
+                        "Score ambigu – vérification manuelle recommandée.");
+            else
                 return new ModerationResult(Decision.REJETE,
-                        raison != null ? raison : "Contenu inapproprié.");
-
-            // Valeur inconnue → fallback
-            return new ModerationResult(Decision.EN_ATTENTE, "Décision IA non reconnue.");
+                        String.format("Contenu jugé inapproprié (%.0f%% de confiance)",
+                                (1 - scoreAppropriate) * 100));
 
         } catch (Exception e) {
             System.err.println("[AvisModerator] Erreur parsing : " + e.getMessage());
@@ -141,19 +206,11 @@ public class  AvisModeratorService {
         }
     }
 
-    // ─── Utilitaire extraction JSON simple ───────────────────────────────────
-    private String extractJsonValue(String json, String key) {
-        String search = "\"" + key + "\":\"";
-        int start = json.indexOf(search);
-        if (start == -1) return null;
-        start += search.length();
-        // Trouver la fermeture en ignorant les \" échappés
-        int i = start;
-        while (i < json.length()) {
-            if (json.charAt(i) == '\\') { i += 2; continue; }
-            if (json.charAt(i) == '"')  break;
-            i++;
-        }
-        return (i <= json.length()) ? json.substring(start, i) : null;
+
+
+    // ─── Utilitaire ──────────────────────────────────────────────────────────
+    private int parseInt(String val, int defaultVal) {
+        try { return Integer.parseInt(val.trim()); }
+        catch (Exception e) { return defaultVal; }
     }
 }
