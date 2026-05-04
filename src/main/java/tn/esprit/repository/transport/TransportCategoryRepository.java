@@ -59,6 +59,29 @@ public class TransportCategoryRepository {
         return null;
     }
 
+    public boolean existsByName(String name, Integer excludedId) throws SQLException {
+        String sql = """
+                SELECT COUNT(*)
+                FROM transport_category
+                WHERE LOWER(TRIM(name)) = LOWER(TRIM(?))
+                AND (? IS NULL OR id <> ?)
+                """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, name);
+            if (excludedId == null) {
+                ps.setNull(2, java.sql.Types.INTEGER);
+                ps.setNull(3, java.sql.Types.INTEGER);
+            } else {
+                ps.setInt(2, excludedId);
+                ps.setInt(3, excludedId);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                rs.next();
+                return rs.getInt(1) > 0;
+            }
+        }
+    }
+
     public void update(TransportCategory category) throws SQLException {
         String sql = "UPDATE transport_category SET name = ?, description = ? WHERE id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {

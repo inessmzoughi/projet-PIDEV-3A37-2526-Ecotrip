@@ -74,6 +74,52 @@ public class ChauffeurRepository {
         return null;
     }
 
+    public boolean existsByPhone(String phone, Integer excludedId) throws SQLException {
+        String sql = """
+                SELECT COUNT(*)
+                FROM chauffeur
+                WHERE LOWER(TRIM(phone)) = LOWER(TRIM(?))
+                AND (? IS NULL OR id <> ?)
+                """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, phone);
+            if (excludedId == null) {
+                ps.setNull(2, java.sql.Types.INTEGER);
+                ps.setNull(3, java.sql.Types.INTEGER);
+            } else {
+                ps.setInt(2, excludedId);
+                ps.setInt(3, excludedId);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                rs.next();
+                return rs.getInt(1) > 0;
+            }
+        }
+    }
+
+    public boolean existsByLicenseNumber(String licenseNumber, Integer excludedId) throws SQLException {
+        String sql = """
+                SELECT COUNT(*)
+                FROM chauffeur
+                WHERE LOWER(TRIM(license_number)) = LOWER(TRIM(?))
+                AND (? IS NULL OR id <> ?)
+                """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, licenseNumber);
+            if (excludedId == null) {
+                ps.setNull(2, java.sql.Types.INTEGER);
+                ps.setNull(3, java.sql.Types.INTEGER);
+            } else {
+                ps.setInt(2, excludedId);
+                ps.setInt(3, excludedId);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                rs.next();
+                return rs.getInt(1) > 0;
+            }
+        }
+    }
+
     public void update(Chauffeur chauffeur) throws SQLException {
         String sql = """
                 UPDATE chauffeur

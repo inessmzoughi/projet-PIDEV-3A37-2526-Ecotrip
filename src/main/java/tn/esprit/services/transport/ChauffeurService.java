@@ -16,6 +16,7 @@ public class ChauffeurService {
 
     public void ajouter(Chauffeur chauffeur) throws SQLException {
         validate(chauffeur);
+        validateUniqueness(chauffeur);
         repository.save(chauffeur);
     }
 
@@ -33,6 +34,7 @@ public class ChauffeurService {
 
     public void modifier(Chauffeur chauffeur) throws SQLException {
         validate(chauffeur);
+        validateUniqueness(chauffeur);
         repository.update(chauffeur);
     }
 
@@ -58,6 +60,16 @@ public class ChauffeurService {
         }
         if (chauffeur.getRating() < 0 || chauffeur.getRating() > 5) {
             throw new IllegalArgumentException("Rating must be between 0 and 5");
+        }
+    }
+
+    private void validateUniqueness(Chauffeur chauffeur) throws SQLException {
+        Integer excludedId = chauffeur.getId() > 0 ? chauffeur.getId() : null;
+        if (repository.existsByPhone(chauffeur.getPhone().trim(), excludedId)) {
+            throw new IllegalArgumentException("Un chauffeur avec ce numero de telephone existe deja");
+        }
+        if (repository.existsByLicenseNumber(chauffeur.getLicenseNumber().trim(), excludedId)) {
+            throw new IllegalArgumentException("Un chauffeur avec ce numero de permis existe deja");
         }
     }
 

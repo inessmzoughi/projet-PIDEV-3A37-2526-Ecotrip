@@ -79,6 +79,30 @@ public class TransportRepository {
         return null;
     }
 
+    public boolean existsDuplicate(Transport transport, Integer excludedId) throws SQLException {
+        String sql = """
+                SELECT COUNT(*)
+                FROM transport
+                WHERE LOWER(TRIM(type)) = LOWER(TRIM(?))
+                AND ((category_id IS NULL AND ? IS NULL) OR category_id = ?)
+                AND ((chauffeur_id IS NULL AND ? IS NULL) OR chauffeur_id = ?)
+                AND (? IS NULL OR id <> ?)
+                """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, transport.getType());
+            setNullableInteger(ps, 2, transport.getCategory() == null ? null : transport.getCategory().getId());
+            setNullableInteger(ps, 3, transport.getCategory() == null ? null : transport.getCategory().getId());
+            setNullableInteger(ps, 4, transport.getChauffeur() == null ? null : transport.getChauffeur().getId());
+            setNullableInteger(ps, 5, transport.getChauffeur() == null ? null : transport.getChauffeur().getId());
+            setNullableInteger(ps, 6, excludedId);
+            setNullableInteger(ps, 7, excludedId);
+            try (ResultSet rs = ps.executeQuery()) {
+                rs.next();
+                return rs.getInt(1) > 0;
+            }
+        }
+    }
+
     public void update(Transport transport) throws SQLException {
         String sql = """
                 UPDATE transport
@@ -116,6 +140,14 @@ public class TransportRepository {
             ps.setNull(8, java.sql.Types.INTEGER);
         } else {
             ps.setInt(8, transport.getChauffeur().getId());
+        }
+    }
+
+    private void setNullableInteger(PreparedStatement ps, int index, Integer value) throws SQLException {
+        if (value == null) {
+            ps.setNull(index, java.sql.Types.INTEGER);
+        } else {
+            ps.setInt(index, value);
         }
     }
 

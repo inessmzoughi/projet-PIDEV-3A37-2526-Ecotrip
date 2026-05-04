@@ -6,6 +6,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import tn.esprit.models.produit.Product;
@@ -15,12 +17,15 @@ import tn.esprit.services.produit.ProductService;
 import tn.esprit.services.TranslationService;
 import tn.esprit.utils.CartManager;
 
+import java.io.File;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class ProductsController implements Initializable {
+    private static final String PRODUCT_UPLOADS_DIR = "uploads/products/";
+
 
     @FXML private TextField        searchField;
     @FXML private ComboBox<String> sortSelect;
@@ -212,16 +217,8 @@ public class ProductsController implements Initializable {
 
         card.setOnMouseEntered(e -> card.setStyle(styleHover));
         card.setOnMouseExited(e  -> card.setStyle(styleNormal));
-
-        // Header vert
-        HBox header = new HBox();
-        header.setPrefHeight(80);
-        header.setAlignment(Pos.CENTER_LEFT);
-        header.setPadding(new Insets(0, 16, 0, 16));
-        header.setStyle("-fx-background-color: " + GREEN_DARK + "; -fx-background-radius: 14 14 0 0;");
-        Label prodIcon = new Label("🛍");
-        prodIcon.setStyle("-fx-font-size: 36px;");
-        header.getChildren().add(prodIcon);
+        // Header image
+        HBox header = buildImageHeader(p);
 
         // Body
         VBox body = new VBox(10);
@@ -305,6 +302,64 @@ public class ProductsController implements Initializable {
         return card;
     }
 
+    private HBox buildImageHeader(Product product) {
+        HBox header = new HBox();
+        header.setPrefHeight(170);
+        header.setMinHeight(170);
+        header.setMaxHeight(170);
+        header.setAlignment(Pos.CENTER_LEFT);
+        header.setPadding(new Insets(0, 16, 0, 16));
+        header.setStyle("-fx-background-color: " + GREEN_DARK + "; -fx-background-radius: 14 14 0 0;");
+
+        Image image = loadImage(product.getImage());
+        if (image != null) {
+            ImageView imageView = new ImageView(image);
+            imageView.setFitWidth(300);
+            imageView.setFitHeight(170);
+            imageView.setPreserveRatio(false);
+            imageView.setSmooth(true);
+            header.getChildren().add(imageView);
+            return header;
+        }
+
+        Label prodIcon = new Label("🛍");
+        prodIcon.setStyle("-fx-font-size: 36px;");
+        header.getChildren().add(prodIcon);
+        return header;
+    }
+
+    private Image loadImage(String imagePath) {
+        if (imagePath == null || imagePath.isBlank()) {
+            return null;
+        }
+
+        try {
+            if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
+                Image image = new Image(imagePath, 300, 170, false, true, true);
+                return image.isError() ? null : image;
+            }
+
+            File absoluteFile = new File(imagePath);
+            if (absoluteFile.exists()) {
+                return new Image(absoluteFile.toURI().toString(), 300, 170, false, true);
+            }
+
+            String fileName = new File(imagePath).getName();
+            File uploadFile = new File(PRODUCT_UPLOADS_DIR + fileName);
+            if (uploadFile.exists()) {
+                return new Image(uploadFile.toURI().toString(), 300, 170, false, true);
+            }
+
+            URL resource = getClass().getResource("/images/" + fileName);
+            if (resource != null) {
+                return new Image(resource.toExternalForm(), 300, 170, false, true);
+            }
+        } catch (Exception ignored) {
+        }
+
+        return null;
+    }
+
     // ── ✅ CORRECTION PRINCIPALE ──────────────────────────────────────────────
     //
     // AVANT (bug) :
@@ -373,3 +428,4 @@ public class ProductsController implements Initializable {
         if (currentPage < totalPages) { currentPage++; renderPage(); }
     }
 }
+

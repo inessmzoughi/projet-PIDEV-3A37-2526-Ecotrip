@@ -11,11 +11,13 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import tn.esprit.database.Base;
 import tn.esprit.models.produit.Product;
 import tn.esprit.services.produit.ProductService;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
@@ -318,6 +320,21 @@ public class ProductController implements Initializable {
         formPanel.setVisible(false);
         formPanel.setManaged(false);
         editingId = null;
+    }
+
+    @FXML
+    private void onBrowseImage() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Choisir une image produit");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp")
+        );
+
+        Stage stage = (Stage) imageField.getScene().getWindow();
+        File selectedFile = fileChooser.showOpenDialog(stage);
+        if (selectedFile != null) {
+            imageField.setText(selectedFile.getAbsolutePath());
+        }
     }
 
     private void openEdit(Product p) {
