@@ -7,6 +7,8 @@ import tn.esprit.utils.MolliePaymentService;
 import java.math.BigDecimal;
 import com.lowagie.text.*;
 import com.lowagie.text.pdf.*;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -16,6 +18,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.util.Duration;
 import tn.esprit.models.produit.Commande;
 import tn.esprit.models.produit.LigneCommande;
 import tn.esprit.models.produit.Product;
@@ -77,12 +80,23 @@ public class CartController implements Initializable {
     // ── Radio groupe paiement ──────────────────────────────────────────────────
     private final ToggleGroup paymentGroup = new ToggleGroup();
 
+    // ── Timer JavaFX (toutes les secondes, pour rafraîchir les badges) ─────────
+    private Timeline uiTicker;
+
+    // ── Notification banner (warning d'expiration) ─────────────────────────────
+    private Label warningBanner;
+
     // ── Couleurs UI ────────────────────────────────────────────────────────────
-    private static final String GREEN_DARK = "#2d5a1b";
-    private static final String GREEN_MED  = "#4a7c3f";
-    private static final String WHITE      = "#ffffff";
-    private static final String BORDER     = "#e0e0e0";
-    private static final String GREY       = "#757575";
+    private static final String GREEN_DARK  = "#2d5a1b";
+    private static final String GREEN_MED   = "#4a7c3f";
+    private static final String WHITE       = "#ffffff";
+    private static final String BORDER      = "#e0e0e0";
+    private static final String GREY        = "#757575";
+    private static final String WARN_BG     = "#fff3cd";
+    private static final String WARN_BORDER = "#ffc107";
+    private static final String WARN_TEXT   = "#856404";
+    private static final String EXPIRE_BG   = "#ffebee";
+    private static final String EXPIRE_TEXT = "#c62828";
 
     // ── Couleurs PDF ───────────────────────────────────────────────────────────
     private static final java.awt.Color PDF_GREEN_DARK  = new java.awt.Color(45,  90,  27);
@@ -103,7 +117,7 @@ public class CartController implements Initializable {
         rbCash.setToggleGroup(paymentGroup);
         rbCarte.setSelected(true);
 
-        // ── Sélecteur de langue (même pattern que ProductsController) ──────────
+        // ── Sélecteur de langue ────────────────────────────────────────────────
         if (languageSelect != null) {
             languageSelect.getItems().addAll("🇫🇷 Français", "🇬🇧 English", "🇪🇸 Español");
             languageSelect.setValue("🇫🇷 Français");
@@ -116,6 +130,22 @@ public class CartController implements Initializable {
                 refreshCart();
             });
         }
+
+        // ── Callbacks d'expiration ─────────────────────────────────────────────
+        cart.setOnWarning(label -> showWarningBanner(
+                "⚠️  " + t("L'article") + " \"" + label + "\" "
+                        + t("sera supprimé dans 1 minute !")));
+
+        cart.setOnExpired(label -> {
+            hideWarningBanner();
+            refreshCart();
+            showExpiryNotification(label);
+        });
+
+        // ── Ticker UI (1 s) pour rafraîchir les timers ────────────────────────
+        uiTicker = new Timeline(new KeyFrame(Duration.seconds(1), e -> refreshTimerBadges()));
+        uiTicker.setCycleCount(Timeline.INDEFINITE);
+        uiTicker.play();
 
         applyTranslations();
         refreshCart();
@@ -136,7 +166,6 @@ public class CartController implements Initializable {
         return translated;
     }
 
-    /** Met à jour tous les labels statiques de la page selon la langue courante. */
     private void applyTranslations() {
         if (lblHeroTitle     != null) lblHeroTitle.setText("🛒  " + t("Mon Panier"));
         if (lblHeroSub       != null) lblHeroSub.setText(t("Vérifiez vos articles avant de procéder au paiement"));
@@ -170,7 +199,15 @@ public class CartController implements Initializable {
         contentBox.setVisible(!empty);
         contentBox.setManaged(!empty);
 
-        if (empty) return;
+        if (empty) {
+            hideWarningBanner();
+            return;
+        }
+
+        // ── Warning banner (injecté en tête de itemsContainer si présent) ──────
+        if (warningBanner != null) {
+            itemsContainer.getChildren().add(0, warningBanner);
+        }
 
         // ── Réservations ──────────────────────────────────────────────────────
         if (hasReservations) {
@@ -197,6 +234,52 @@ public class CartController implements Initializable {
     }
 
     // ══════════════════════════════════════════════════════════════════════════
+    //  TIMER BADGES – mis à jour chaque seconde sans reconstruire toute l'UI
+    // ══════════════════════════════════════════════════════════════════════════
+
+    /**
+     * Parcourt tous les nœuds ayant le style-class "timer-badge" et met à jour
+     * leur texte + couleur selon le temps restant stocké dans leurs UserData.
+     */
+    @SuppressWarnings("unchecked")
+    private void refreshTimerBadges() {
+        itemsContainer.lookupAll(".timer-badge").forEach(node -> {
+            if (!(node instanceof Label badge)) return;
+            Object ud = badge.getUserData();
+            if (ud == null) return;
+
+            long remaining;
+            boolean warning;
+            if (ud instanceof Product p) {
+                remaining = cart.getRemainingMillis(p);
+                warning   = cart.isWarning(p);
+            } else if (ud instanceof CartItem ci) {
+                remaining = cart.getRemainingMillis(ci);
+                warning   = cart.isWarning(ci);
+            } else return;
+
+            badge.setText("⏱ " + CartManager.formatRemaining(remaining));
+
+            if (warning) {
+                badge.setStyle(
+                        "-fx-background-color:" + WARN_BG + ";" +
+                                "-fx-text-fill:" + WARN_TEXT + ";" +
+                                "-fx-border-color:" + WARN_BORDER + ";" +
+                                "-fx-border-width:1; -fx-border-radius:4;" +
+                                "-fx-background-radius:4; -fx-padding:2 8; -fx-font-size:11px;" +
+                                "-fx-font-weight:bold;");
+            } else {
+                badge.setStyle(
+                        "-fx-background-color:#e8f5e9;" +
+                                "-fx-text-fill:#388e3c;" +
+                                "-fx-border-color:#a5d6a7;" +
+                                "-fx-border-width:1; -fx-border-radius:4;" +
+                                "-fx-background-radius:4; -fx-padding:2 8; -fx-font-size:11px;");
+            }
+        });
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
     //  BUILD ROWS
     // ══════════════════════════════════════════════════════════════════════════
 
@@ -204,10 +287,12 @@ public class CartController implements Initializable {
         HBox row = new HBox(16);
         row.setAlignment(Pos.CENTER_LEFT);
         row.setPadding(new Insets(16));
+
+        boolean warn = cart.isWarning(item);
         row.setStyle(
-                "-fx-background-color:" + WHITE + ";" +
+                "-fx-background-color:" + (warn ? WARN_BG : WHITE) + ";" +
                         "-fx-background-radius:12;-fx-border-radius:12;" +
-                        "-fx-border-color:#c8e6c9;-fx-border-width:1;"
+                        "-fx-border-color:" + (warn ? WARN_BORDER : "#c8e6c9") + ";-fx-border-width:1;"
         );
         row.setEffect(new DropShadow(6, Color.web("#00000015")));
 
@@ -233,7 +318,11 @@ public class CartController implements Initializable {
         dates.setStyle("-fx-font-size:12px;-fx-text-fill:" + GREY + ";");
         Label guests = new Label("👥 " + item.getNumberOfPersons() + " " + t("personne(s)"));
         guests.setStyle("-fx-font-size:12px;-fx-text-fill:" + GREY + ";");
-        info.getChildren().addAll(nom, dates, guests);
+
+        // Timer badge
+        Label timerBadge = buildTimerBadge(item, warn);
+
+        info.getChildren().addAll(nom, dates, guests, timerBadge);
 
         Label total = new Label(String.format("%.2f TND", item.getTotalPrice()));
         total.setStyle("-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:" + GREEN_MED + ";-fx-min-width:100px;");
@@ -250,10 +339,12 @@ public class CartController implements Initializable {
         HBox row = new HBox(16);
         row.setAlignment(Pos.CENTER_LEFT);
         row.setPadding(new Insets(16));
+
+        boolean warn = cart.isWarning(p);
         row.setStyle(
-                "-fx-background-color:" + WHITE + ";" +
+                "-fx-background-color:" + (warn ? WARN_BG : WHITE) + ";" +
                         "-fx-background-radius:12;-fx-border-radius:12;" +
-                        "-fx-border-color:" + BORDER + ";-fx-border-width:1;"
+                        "-fx-border-color:" + (warn ? WARN_BORDER : BORDER) + ";-fx-border-width:1;"
         );
         row.setEffect(new DropShadow(6, Color.web("#00000015")));
 
@@ -266,7 +357,11 @@ public class CartController implements Initializable {
         nom.setStyle("-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:" + GREEN_DARK + ";");
         Label prixUnit = new Label(String.format("%.2f TND / " + t("unité"), p.getPrix()));
         prixUnit.setStyle("-fx-font-size:12px;-fx-text-fill:" + GREY + ";");
-        info.getChildren().addAll(nom, prixUnit);
+
+        // Timer badge
+        Label timerBadge = buildTimerBadge(p, warn);
+
+        info.getChildren().addAll(nom, prixUnit, timerBadge);
 
         String qtyBtnStyle =
                 "-fx-background-color:#f0f0f0;-fx-font-size:16px;-fx-font-weight:bold;" +
@@ -280,14 +375,21 @@ public class CartController implements Initializable {
         Button btnPlus = new Button("+");
         btnPlus.setStyle(qtyBtnStyle);
 
-        btnMinus.setOnAction(e -> { cart.updateQuantity(p, cart.getProductItems().getOrDefault(p, 1) - 1); refreshCart(); });
-        btnPlus.setOnAction(e  -> { cart.updateQuantity(p, cart.getProductItems().getOrDefault(p, 1) + 1); refreshCart(); });
+        btnMinus.setOnAction(e -> {
+            cart.updateQuantity(p, cart.getProductItems().getOrDefault(p, 1) - 1);
+            refreshCart();
+        });
+        btnPlus.setOnAction(e -> {
+            cart.updateQuantity(p, cart.getProductItems().getOrDefault(p, 1) + 1);
+            refreshCart();
+        });
 
         HBox qtyBox = new HBox(8, btnMinus, qtyLabel, btnPlus);
         qtyBox.setAlignment(Pos.CENTER);
 
         Label sousTotal = new Label(String.format("%.2f TND", p.getPrix() * qty));
-        sousTotal.setStyle("-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:" + GREEN_MED + ";-fx-min-width:100px;");
+        sousTotal.setStyle("-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:" + GREEN_MED
+                + ";-fx-min-width:100px;");
         sousTotal.setAlignment(Pos.CENTER_RIGHT);
 
         Button btnDel = buildDeleteButton();
@@ -295,6 +397,43 @@ public class CartController implements Initializable {
 
         row.getChildren().addAll(icon, info, qtyBox, sousTotal, btnDel);
         return row;
+    }
+
+    /**
+     * Crée un badge timer pour un Product.
+     * Le style-class "timer-badge" permet à refreshTimerBadges() de le retrouver via lookup.
+     */
+    private Label buildTimerBadge(Product p, boolean warn) {
+        long remaining = cart.getRemainingMillis(p);
+        Label badge = new Label("⏱ " + CartManager.formatRemaining(remaining));
+        badge.getStyleClass().add("timer-badge");
+        badge.setUserData(p);
+        badge.setStyle(warn
+                ? "-fx-background-color:" + WARN_BG + ";-fx-text-fill:" + WARN_TEXT + ";"
+                + "-fx-border-color:" + WARN_BORDER + ";-fx-border-width:1;-fx-border-radius:4;"
+                + "-fx-background-radius:4;-fx-padding:2 8;-fx-font-size:11px;-fx-font-weight:bold;"
+                : "-fx-background-color:#e8f5e9;-fx-text-fill:#388e3c;"
+                + "-fx-border-color:#a5d6a7;-fx-border-width:1;-fx-border-radius:4;"
+                + "-fx-background-radius:4;-fx-padding:2 8;-fx-font-size:11px;");
+        return badge;
+    }
+
+    /**
+     * Crée un badge timer pour un CartItem (réservation).
+     */
+    private Label buildTimerBadge(CartItem item, boolean warn) {
+        long remaining = cart.getRemainingMillis(item);
+        Label badge = new Label("⏱ " + CartManager.formatRemaining(remaining));
+        badge.getStyleClass().add("timer-badge");
+        badge.setUserData(item);
+        badge.setStyle(warn
+                ? "-fx-background-color:" + WARN_BG + ";-fx-text-fill:" + WARN_TEXT + ";"
+                + "-fx-border-color:" + WARN_BORDER + ";-fx-border-width:1;-fx-border-radius:4;"
+                + "-fx-background-radius:4;-fx-padding:2 8;-fx-font-size:11px;-fx-font-weight:bold;"
+                : "-fx-background-color:#e8f5e9;-fx-text-fill:#388e3c;"
+                + "-fx-border-color:#a5d6a7;-fx-border-width:1;-fx-border-radius:4;"
+                + "-fx-background-radius:4;-fx-padding:2 8;-fx-font-size:11px;");
+        return badge;
     }
 
     private Button buildDeleteButton() {
@@ -309,6 +448,53 @@ public class CartController implements Initializable {
     private void updateSummary() {
         labelTotal.setText(String.format("%.2f TND", cart.getTotal()));
         labelCount.setText(String.valueOf(cart.getCount()));
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    //  BANNER WARNING / EXPIRY NOTIFICATION
+    // ══════════════════════════════════════════════════════════════════════════
+
+    /**
+     * Affiche (ou met à jour) une bannière orange en haut de la liste d'articles.
+     */
+    private void showWarningBanner(String message) {
+        if (warningBanner == null) {
+            warningBanner = new Label();
+            warningBanner.setMaxWidth(Double.MAX_VALUE);
+            warningBanner.setWrapText(true);
+        }
+        warningBanner.setText(message);
+        warningBanner.setStyle(
+                "-fx-background-color:" + WARN_BG + ";" +
+                        "-fx-text-fill:" + WARN_TEXT + ";" +
+                        "-fx-border-color:" + WARN_BORDER + ";" +
+                        "-fx-border-width:1;-fx-border-radius:8;-fx-background-radius:8;" +
+                        "-fx-padding:10 16;-fx-font-size:13px;-fx-font-weight:bold;");
+
+        // Injecter en tête si pas déjà présent
+        if (!itemsContainer.getChildren().contains(warningBanner)) {
+            itemsContainer.getChildren().add(0, warningBanner);
+        }
+    }
+
+    private void hideWarningBanner() {
+        if (warningBanner != null) {
+            itemsContainer.getChildren().remove(warningBanner);
+        }
+        warningBanner = null;
+    }
+
+    /**
+     * Notification rouge (Alert) quand un article est définitivement supprimé.
+     */
+    private void showExpiryNotification(String label) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("⏰ " + t("Article expiré"));
+        alert.setHeaderText(null);
+        alert.setContentText(
+                "\"" + label + "\" " +
+                        t("a été retiré de votre panier car la durée de réservation de 5 minutes est dépassée."));
+        alert.showAndWait();
     }
 
     // ══════════════════════════════════════════════════════════════════════════
@@ -371,6 +557,7 @@ public class CartController implements Initializable {
                             MollieCheckoutWindow.show(molliePayment, mollieService);
 
                     if (result.successful()) {
+                        stopTicker();
                         cart.clear();
                         showAlert(Alert.AlertType.INFORMATION,
                                 t("Paiement confirmé") + " ✅",
@@ -391,6 +578,7 @@ public class CartController implements Initializable {
             }
 
             String mode = rbCarte.isSelected() ? t("Carte bancaire") : t("Espèces");
+            stopTicker();
             cart.clear();
             showAlert(Alert.AlertType.INFORMATION,
                     t("Commande confirmée") + " ✅",
@@ -412,6 +600,12 @@ public class CartController implements Initializable {
                 .orElse(-1);
     }
 
+    // ── Stop/start ticker ─────────────────────────────────────────────────────
+
+    private void stopTicker() {
+        if (uiTicker != null) uiTicker.stop();
+    }
+
     // ══════════════════════════════════════════════════════════════════════════
     //  VIDER PANIER
     // ══════════════════════════════════════════════════════════════════════════
@@ -423,8 +617,11 @@ public class CartController implements Initializable {
         confirm.setHeaderText(t("Êtes-vous sûr de vouloir vider le panier ?"));
         confirm.showAndWait().ifPresent(btn -> {
             if (btn == ButtonType.OK) {
+                stopTicker();
                 cart.clear();
                 refreshCart();
+                // Relancer le ticker (prêt pour un nouvel ajout)
+                uiTicker.play();
             }
         });
     }
