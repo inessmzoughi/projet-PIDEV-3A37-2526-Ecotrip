@@ -33,6 +33,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import tn.esprit.models.activity.Activity;
 import tn.esprit.models.activity.ActivityCategory;
+import tn.esprit.models.activity.ActivityMetrics;
 import tn.esprit.models.activity.Guide;
 import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;
@@ -60,6 +61,8 @@ public class ListActivitiesController implements Initializable {
     @FXML private Label statTotal;
     @FXML private Label statActive;
     @FXML private Label statAvgPrice;
+    @FXML private Label statBookings;
+    @FXML private Label statRevenue;
 
     @FXML private Label formIcon;
     @FXML private Label formTitle;
@@ -201,6 +204,8 @@ public class ListActivitiesController implements Initializable {
         if (total == 0) {
             statActive.setText("--");
             statAvgPrice.setText("--");
+            statBookings.setText("--");
+            statRevenue.setText("--");
             return;
         }
 
@@ -208,6 +213,20 @@ public class ListActivitiesController implements Initializable {
         statActive.setText(active + " actives");
         double avg = allData.stream().mapToDouble(Activity::getPrice).average().orElse(0);
         statAvgPrice.setText(String.format("%.1f TND", avg));
+
+        int bookings = 0;
+        double revenue = 0;
+        for (Activity activity : allData) {
+            try {
+                ActivityMetrics metrics = service.getMetrics(activity);
+                bookings += metrics.getBookingCount();
+                revenue += metrics.getConfirmedRevenue();
+            } catch (SQLException exception) {
+                // Keep dashboard resilient if one metric fails.
+            }
+        }
+        statBookings.setText(String.valueOf(bookings));
+        statRevenue.setText(String.format("%.0f TND", revenue));
     }
 
     private void renderTable() {

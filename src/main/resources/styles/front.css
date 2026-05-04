@@ -1976,6 +1976,15 @@
     -fx-effect: dropshadow(gaussian, rgba(20, 66, 25, 0.05), 14, 0, 0, 3);
 }
 
+.activity-detail-metric-card {
+    -fx-background-color: linear-gradient(to bottom right, #f2fbf3, #eef7ff);
+    -fx-background-radius: 20;
+    -fx-border-color: #d8eadc;
+    -fx-border-width: 1;
+    -fx-border-radius: 20;
+    -fx-padding: 16 18 16 18;
+}
+
 .activity-detail-stat-label {
     -fx-font-size: 12px;
     -fx-font-weight: bold;
@@ -1988,9 +1997,22 @@
     -fx-text-fill: #173c1f;
 }
 
+.activity-detail-metric-value {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #184b24;
+}
+
+.activity-detail-metric-value-soft {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #5f7f68;
+}
+
 .activity-detail-section-card,
 .activity-detail-map-card,
-.activity-detail-schedule-card {
+.activity-detail-schedule-card,
+.activity-detail-weather-card {
     -fx-background-color: white;
     -fx-background-radius: 22;
     -fx-border-color: #deebe0;
@@ -2022,6 +2044,54 @@
 .activity-detail-map-status {
     -fx-font-size: 12px;
     -fx-font-weight: bold;
+}
+
+.activity-weather-badge {
+    -fx-background-color: #eef6ef;
+    -fx-text-fill: #285c35;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 7 14 7 14;
+    -fx-background-radius: 18;
+}
+
+.activity-weather-badge-good {
+    -fx-background-color: #e7f8ec;
+    -fx-text-fill: #1d6d34;
+}
+
+.activity-weather-badge-watch {
+    -fx-background-color: #fff4dd;
+    -fx-text-fill: #9a5b00;
+}
+
+.activity-weather-badge-risk {
+    -fx-background-color: #fde8e8;
+    -fx-text-fill: #b42318;
+}
+
+.activity-detail-weather-metric {
+    -fx-background-color: linear-gradient(to bottom right, #f7fcf7, #f4f9ff);
+    -fx-background-radius: 18;
+    -fx-border-color: #e0ece2;
+    -fx-border-width: 1;
+    -fx-border-radius: 18;
+    -fx-padding: 14 16 14 16;
+}
+
+.activity-detail-weather-value {
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #173c1f;
+}
+
+.activity-detail-weather-note {
+    -fx-background-color: linear-gradient(to right, #f2fbf4, #eef7ff);
+    -fx-background-radius: 18;
+    -fx-text-fill: #355242;
+    -fx-font-size: 13px;
+    -fx-line-spacing: 3px;
+    -fx-padding: 14 16 14 16;
 }
 
 .activity-detail-map-error {
