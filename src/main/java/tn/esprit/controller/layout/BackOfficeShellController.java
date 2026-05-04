@@ -1,24 +1,68 @@
 package tn.esprit.controller.layout;
 
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import tn.esprit.controller.component.BackSidebarController;
+import tn.esprit.services.Auth_User.FaceRecognition.FaceGate;
 import tn.esprit.session.SessionManager;
+import tn.esprit.navigation.Routes;
+import tn.esprit.navigation.SceneManager;
 
-public class BackOfficeShellController {
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class BackOfficeShellController  implements Initializable {
 
     @FXML private StackPane contentArea;
     @FXML private Label pageTitle;
     @FXML private Label adminNameLabel;
     @FXML private BackSidebarController sidebarController;
+    @FXML private HBox faceNudgeBanner;
 
-//    @FXML
-//    public void initialize() {
-//        String name = SessionManager.getInstance().getCurrentUser().getUsername();
-//        adminNameLabel.setText("👤 " + name);
-//    }
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        // ... your existing init code ...
+
+        // Show face enrollment nudge if admin hasn't enrolled yet
+        checkFaceNudge();
+    }
+    private void checkFaceNudge() {
+        // Only show once per session
+        if (SessionManager.getInstance().isFaceEnrollmentNudgeShown()) {
+            faceNudgeBanner.setVisible(false);
+            faceNudgeBanner.setManaged(false);
+            return;
+        }
+
+        if (!FaceGate.isEnrolled()) {
+            faceNudgeBanner.setVisible(true);
+            faceNudgeBanner.setManaged(true);
+            SessionManager.getInstance().markFaceEnrollmentNudgeShown();
+        } else {
+            faceNudgeBanner.setVisible(false);
+            faceNudgeBanner.setManaged(false);
+        }
+    }
+
+    @FXML
+    private void onDismissNudge() {
+        faceNudgeBanner.setVisible(false);
+        faceNudgeBanner.setManaged(false);
+    }
+
+    @FXML
+    private void onGoToFaceEnrollment() {
+        faceNudgeBanner.setVisible(false);
+        faceNudgeBanner.setManaged(false);
+        SessionManager.getInstance().requestOpenFacePanel();
+        SceneManager.navigateTo(Routes.ADMIN_MON_COMPTE);
+        // MonCompteController will open the face panel automatically — see Step 5
+    }
 
     public void loadContent(Node content, String routeName) {
         contentArea.getChildren().setAll(content);
@@ -26,28 +70,4 @@ public class BackOfficeShellController {
 //        pageTitle.setText(getPageTitle(routeName));
     }
 
-    private String getPageTitle(String routeName) {
-        return switch (routeName) {
-            case "admin-dashboard"              -> "Dashboard — Vue d'ensemble";
-            case "admin-activites"              -> "Module Activités";
-            case "admin-transport"              -> "Module Transport";
-            case "admin-chauffeurs"             -> "Chauffeurs";
-            case "admin-transport-categories"   -> "Categories Transport";
-            case "admin-boutique"               -> "Module Boutique";
-            case "admin-reservations"           -> "Réservations";
-            case "admin-users"                  -> "Gestion Utilisateurs";
-            case "admin-mon-compte"             -> "Mon Compte";
-            case "admin-hebergements"           -> "Hébergements";
-            case "admin-add-hebergement"        -> "Ajouter un Hébergement";
-            case "admin-edit-hebergement"       -> "Modifier un Hébergement";
-            case "admin-categories-hebergement" -> "Catégories d'Hébergement";
-            case "admin-chambres"               -> "Chambres";
-            case "admin-equipements"            -> "Équipements";
-            case "admin-activities"           -> "Activités";
-            case "admin-activity-categories"  -> "Catégories d'Activités";
-            case "admin-guides"               -> "Guides";
-            case "admin-schedules"            -> "Plannings";
-            default                             -> "EcoTrip Admin";
-        };
-    }
 }

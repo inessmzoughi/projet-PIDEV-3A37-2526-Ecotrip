@@ -20,11 +20,10 @@ public class AvisHebergement_service {
             ps.setInt(2, avis.getHebergementId());
             ps.setString(3, avis.getCommentaire());
             ps.setString(4, avis.getImagePath());
-            ps.setString(5, "EN_ATTENTE");
+            ps.setString(5, avis.getStatut() != null ? avis.getStatut() : "EN_ATTENTE");
             ps.executeUpdate();
         }
     }
-
     /* ─── Modifier avis ─── */
     public void modifier(Avis avis) throws SQLException {
         String sql = "UPDATE avis_hebergement "

@@ -151,7 +151,7 @@
             </BarChart>
         </VBox>
 
-        <!-- Sub-stats : 3 cards (Chambres removed) -->
+        <!-- Sub-stats -->
         <GridPane styleClass="module-stats-grid" hgap="12">
             <columnConstraints>
                 <ColumnConstraints percentWidth="33.33"/>
@@ -246,12 +246,48 @@
         </VBox>
     </VBox>
 
-    <!-- MODULE: BOUTIQUE -->
+    <!-- ══════════════════════════════════════════════════════════ -->
+    <!-- MODULE: BOUTIQUE  (miroir du module Hébergement)          -->
+    <!-- ══════════════════════════════════════════════════════════ -->
     <VBox styleClass="module-block" spacing="0">
         <HBox styleClass="module-head" spacing="12" alignment="CENTER_LEFT">
             <Label text="🛍" styleClass="module-icon module-icon-red"/>
             <Label text="Module Boutique" styleClass="module-title"/>
         </HBox>
+
+        <!-- PieChart : produits par catégorie (pleine largeur) -->
+        <VBox styleClass="chart-card" spacing="8" style="-fx-padding: 0 0 16 0;">
+            <Label text="Produits par catégorie" styleClass="chart-title"/>
+            <PieChart fx:id="chartBoutiquePie"
+                      styleClass="dash-chart"
+                      prefHeight="300"
+                      animated="false"
+                      labelsVisible="false"/>
+        </VBox>
+
+        <!-- BarChart : Top 5 produits les plus commandés (pleine largeur) -->
+        <VBox styleClass="chart-card" spacing="8" style="-fx-padding: 0 0 16 0;">
+            <Label text="🏆 Top 5 Produits — Quantités Commandées" styleClass="chart-title"/>
+            <BarChart fx:id="chartTopProduits"
+                      animated="true"
+                      prefHeight="300"
+                      prefWidth="-1"
+                      legendVisible="false"
+                      styleClass="dash-chart">
+                <xAxis>
+                    <CategoryAxis fx:id="xAxisProduits" label="Produit"
+                                  tickLabelRotation="-20"/>
+                </xAxis>
+                <yAxis>
+                    <NumberAxis fx:id="yAxisProduits"
+                                label="Quantité commandée"
+                                lowerBound="0"
+                                autoRanging="true"/>
+                </yAxis>
+            </BarChart>
+        </VBox>
+
+        <!-- Sub-stats : 4 cards -->
         <GridPane styleClass="module-stats-grid" hgap="12">
             <columnConstraints>
                 <ColumnConstraints percentWidth="25"/>
@@ -280,6 +316,8 @@
                 <Label text="Paiements" styleClass="mstat-label"/>
             </VBox>
         </GridPane>
+
+        <!-- Quick actions -->
         <VBox styleClass="panel-card" style="-fx-padding: 16 0 0 0;" spacing="12">
             <Label text="⚡ Actions Rapides" styleClass="panel-title"/>
             <GridPane hgap="10" vgap="10">
