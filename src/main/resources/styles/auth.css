@@ -208,3 +208,161 @@
     -fx-fit-to-width: true;
     -fx-opacity: 0.92;
 }
+/* ── Auth page shared background ──────────────────── */
+.auth-root {
+    -fx-background-color: #0d3d18;
+}
+.auth-bg {
+    -fx-background-color: linear-gradient(to bottom right, #0d3d18, #1a5f2a);
+    -fx-min-width: 100%;
+    -fx-min-height: 100%;
+    -fx-padding: 40 0;
+}
+
+/* ── Auth card ─────────────────────────────────────── */
+.auth-card {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.30), 32, 0, 0, 10);
+}
+.auth-card-header {
+    -fx-background-color: #0d3d18;
+    -fx-background-radius: 20 20 0 0;
+}
+.auth-header-icon {
+    -fx-background-color: rgba(255,255,255,0.15);
+    -fx-background-radius: 16;
+    -fx-min-width: 60; -fx-min-height: 60;
+    -fx-max-width: 60; -fx-max-height: 60;
+    -fx-alignment: CENTER;
+}
+.auth-card-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+.auth-card-sub {
+    -fx-font-size: 13px;
+    -fx-text-fill: rgba(255,255,255,0.78);
+    -fx-text-alignment: CENTER;
+    -fx-max-width: 340;
+}
+.auth-card-body  { -fx-background-color: white; }
+.auth-card-footer {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 0 0 20 20;
+    -fx-border-color: #f1f5f9;
+    -fx-border-width: 1 0 0 0;
+}
+
+/* ── Fields ────────────────────────────────────────── */
+.auth-field-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #64748b;
+}
+.auth-input {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 12 14;
+    -fx-font-size: 14px;
+}
+.auth-input:focused  { -fx-border-color: #1a5f2a; }
+.auth-input-mono     { -fx-font-family: monospace; -fx-letter-spacing: 2px; }
+.auth-field-error    { -fx-font-size: 11px; -fx-text-fill: #ef4444; }
+
+/* ── Buttons ───────────────────────────────────────── */
+.auth-btn-primary {
+    -fx-background-color: #1a5f2a;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-background-radius: 10;
+    -fx-padding: 13 0;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+}
+.auth-btn-primary:hover { -fx-background-color: #0d3d18; }
+
+.auth-btn-back {
+    -fx-background-color: transparent;
+    -fx-text-fill: #64748b;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+    -fx-padding: 8 0;
+}
+.auth-btn-back:hover { -fx-text-fill: #1a5f2a; }
+
+.auth-btn-link {
+    -fx-background-color: transparent;
+    -fx-text-fill: #1a5f2a;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+    -fx-underline: true;
+    -fx-padding: 4 0;
+}
+.auth-btn-link:hover { -fx-text-fill: #0d3d18; }
+
+/* ── Feedback ──────────────────────────────────────── */
+.auth-success-box {
+    -fx-background-color: #f0fdf4;
+    -fx-background-radius: 12;
+    -fx-border-color: #bbf7d0;
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+    -fx-padding: 18;
+}
+.auth-success-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #166534;
+}
+.auth-success-sub {
+    -fx-font-size: 13px;
+    -fx-text-fill: #15803d;
+    -fx-text-alignment: CENTER;
+}
+.auth-error-msg {
+    -fx-background-color: #fde8e8;
+    -fx-text-fill: #9b1c1c;
+    -fx-background-radius: 10;
+    -fx-padding: 12 14;
+    -fx-font-size: 13px;
+}
+
+/* ── Info tip ──────────────────────────────────────── */
+.auth-info-tip {
+    -fx-background-color: #f0f9ff;
+    -fx-background-radius: 10;
+    -fx-border-color: #bae6fd;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-padding: 12 14;
+}
+.auth-tip-text { -fx-font-size: 13px; -fx-text-fill: #0c4a6e; }
+/* ── Google sign-in button ─────────────────────────── */
+.btn-google {
+    -fx-background-color: white;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 11 0;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 6, 0, 0, 2);
+}
+.btn-google:hover {
+    -fx-background-color: #f9fafb;
+    -fx-border-color: #d1d5db;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 10, 0, 0, 3);
+}
+.btn-google:pressed {
+    -fx-background-color: #f3f4f6;
+}

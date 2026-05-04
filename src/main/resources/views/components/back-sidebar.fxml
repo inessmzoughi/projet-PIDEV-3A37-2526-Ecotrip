@@ -14,7 +14,7 @@
 
     <!-- Logo -->
     <VBox alignment="CENTER" styleClass="sidebar-logo-wrap">
-        <Label styleClass="sidebar-logo-text" text="🌿 EcoTrip Admin" />
+        <Label styleClass="sidebar-logo-text" text="EcoTrip Dashboard" />
     </VBox>
 
     <ScrollPane fitToWidth="true" styleClass="sidebar-scroll" VBox.vgrow="ALWAYS">
@@ -119,7 +119,7 @@
     <!-- Footer -->
     <VBox spacing="6" styleClass="sidebar-footer">
         <Button maxWidth="Infinity"  onAction="#handleViewSite"  styleClass="sidebar-btn"        text="🌐  Voir le site" />
-        <Button fx:id="monCompteBtn" onAction="#handleMonCompte" styleClass="sidebar-btn"        text="Mon Compte" />
+        <Button fx:id="monCompteBtn" maxWidth="Infinity" onAction="#handleMonCompte" styleClass="sidebar-btn"        text="Mon Compte" />
         <Button maxWidth="Infinity"  onAction="#handleLogout"    styleClass="sidebar-btn-logout" text="⬅  Déconnexion" />
     </VBox>
 

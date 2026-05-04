@@ -1,4 +1,4 @@
-package tn.esprit.models;
+package tn.esprit.models.Auth_User;
 
 import tn.esprit.models.enums.Role;
 
