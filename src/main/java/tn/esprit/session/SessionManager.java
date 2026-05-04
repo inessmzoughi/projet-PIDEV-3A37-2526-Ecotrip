@@ -49,7 +49,7 @@ public class SessionManager {
 
                 case PASS:
                     // Enrolled + verified → allow
-                    SceneManager.navigateTo(Routes.ADMIN_DASHBOARD);
+                    SceneManager.navigateTo(Routes.ADMIN_MON_COMPTE);
                     break;
 
                 case FAIL:
