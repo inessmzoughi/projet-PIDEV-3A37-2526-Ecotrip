@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class   Activity {
+public class Activity {
 
     private int id;
     private String title;

@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -23,7 +24,7 @@
             <Button text="✕" styleClass="res-modal-close" onAction="#onClose"/>
         </HBox>
 
-        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="front-scroll">
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="modal-solid-scroll">
             <VBox spacing="18" styleClass="activity-detail-body">
                 <padding>
                     <Insets top="20" right="22" bottom="22" left="22"/>
@@ -31,17 +32,19 @@
 
                 <StackPane fx:id="heroImagePane" prefHeight="260" minHeight="260" styleClass="activity-detail-hero"/>
 
-                <HBox alignment="CENTER_LEFT" spacing="10">
-                    <Label fx:id="categoryLabel" styleClass="activity-detail-category"/>
-                    <Label fx:id="availabilityBadge" styleClass="activity-detail-soft-badge"/>
-                </HBox>
+                <VBox spacing="16" styleClass="activity-detail-intro-card">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label fx:id="categoryLabel" styleClass="activity-detail-category"/>
+                        <Label fx:id="availabilityBadge" styleClass="activity-detail-soft-badge"/>
+                    </HBox>
 
-                <VBox spacing="6">
-                    <Label fx:id="titleLabel" styleClass="activity-detail-title" wrapText="true"/>
-                    <Label fx:id="locationLabel" styleClass="activity-detail-location"/>
+                    <VBox spacing="8">
+                        <Label fx:id="titleLabel" styleClass="activity-detail-title" wrapText="true"/>
+                        <Label fx:id="locationLabel" styleClass="activity-detail-location"/>
+                    </VBox>
                 </VBox>
 
-                <HBox spacing="12">
+                <HBox spacing="12" styleClass="activity-detail-stats-row">
                     <VBox HBox.hgrow="ALWAYS" styleClass="activity-detail-stat-card" spacing="4">
                         <Label text="Duree" styleClass="activity-detail-stat-label"/>
                         <Label fx:id="durationLabel" styleClass="activity-detail-stat-value"/>
@@ -56,19 +59,69 @@
                     </VBox>
                 </HBox>
 
-                <VBox spacing="8" styleClass="detail-card">
-                    <HBox styleClass="detail-row" alignment="CENTER_LEFT">
-                        <Label text="Description" styleClass="detail-label"/>
-                    </HBox>
-                    <VBox spacing="0">
-                        <Label fx:id="descriptionLabel" styleClass="activity-detail-description" wrapText="true"/>
+                <HBox spacing="12" styleClass="activity-detail-stats-row">
+                    <VBox HBox.hgrow="ALWAYS" styleClass="activity-detail-metric-card" spacing="4">
+                        <Label text="Reservations" styleClass="activity-detail-stat-label"/>
+                        <Label fx:id="bookingCountLabel" styleClass="activity-detail-metric-value"/>
                     </VBox>
+                    <VBox HBox.hgrow="ALWAYS" styleClass="activity-detail-metric-card" spacing="4">
+                        <Label text="Remplissage" styleClass="activity-detail-stat-label"/>
+                        <Label fx:id="occupancyRateLabel" styleClass="activity-detail-metric-value"/>
+                    </VBox>
+                    <VBox HBox.hgrow="ALWAYS" styleClass="activity-detail-metric-card" spacing="4">
+                        <Label text="Places restantes" styleClass="activity-detail-metric-value-soft"/>
+                        <Label fx:id="remainingSpotsLabel" styleClass="activity-detail-metric-value"/>
+                    </VBox>
+                    <VBox HBox.hgrow="ALWAYS" styleClass="activity-detail-metric-card" spacing="4">
+                        <Label text="Prochain depart" styleClass="activity-detail-stat-label"/>
+                        <Label fx:id="nextDepartureLabel" styleClass="activity-detail-metric-value" wrapText="true"/>
+                    </VBox>
+                </HBox>
+
+                <VBox spacing="12" styleClass="activity-detail-section-card">
+                    <HBox alignment="CENTER_LEFT" spacing="12">
+                        <VBox spacing="3" HBox.hgrow="ALWAYS">
+                            <Label text="Description" styleClass="activity-detail-section-title"/>
+                            <Label text="Un apercu complet de l'experience avant votre reservation."
+                                   styleClass="activity-detail-section-subtitle" wrapText="true"/>
+                        </VBox>
+                    </HBox>
+                    <Label fx:id="descriptionLabel" styleClass="activity-detail-description" wrapText="true"/>
+                </VBox>
+
+                <VBox spacing="12" styleClass="activity-detail-weather-card">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <VBox spacing="3" HBox.hgrow="ALWAYS">
+                            <Label text="Conditions sur place" styleClass="activity-detail-section-title"/>
+                            <Label text="Une lecture metier de la meteo actuelle pour mieux choisir votre moment."
+                                   styleClass="activity-detail-section-subtitle" wrapText="true"/>
+                        </VBox>
+                        <Label fx:id="weatherSuitabilityBadge" text="Meteo"
+                               styleClass="activity-weather-badge"/>
+                    </HBox>
+
+                    <HBox spacing="12">
+                        <VBox HBox.hgrow="ALWAYS" styleClass="activity-detail-weather-metric" spacing="4">
+                            <Label text="Etat du ciel" styleClass="activity-detail-stat-label"/>
+                            <Label fx:id="weatherConditionLabel" styleClass="activity-detail-weather-value" wrapText="true"/>
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS" styleClass="activity-detail-weather-metric" spacing="4">
+                            <Label text="Temperature" styleClass="activity-detail-stat-label"/>
+                            <Label fx:id="weatherTemperatureLabel" styleClass="activity-detail-weather-value"/>
+                        </VBox>
+                        <VBox HBox.hgrow="ALWAYS" styleClass="activity-detail-weather-metric" spacing="4">
+                            <Label text="Vent" styleClass="activity-detail-stat-label"/>
+                            <Label fx:id="weatherWindLabel" styleClass="activity-detail-weather-value"/>
+                        </VBox>
+                    </HBox>
+
+                    <Label fx:id="weatherAdvisoryLabel" styleClass="activity-detail-weather-note" wrapText="true"/>
                 </VBox>
 
                 <VBox spacing="10" styleClass="activity-detail-map-card">
                     <HBox alignment="CENTER_LEFT" spacing="10">
                         <VBox spacing="2" HBox.hgrow="ALWAYS">
-                            <Label text="Localisation" styleClass="detail-label"/>
+                            <Label text="Localisation" styleClass="activity-detail-section-title"/>
                             <Label text="Reperez l'activite avant de lancer votre reservation."
                                    styleClass="activity-detail-map-subtitle" wrapText="true"/>
                         </VBox>
@@ -83,7 +136,7 @@
                 <VBox spacing="10" styleClass="activity-detail-schedule-card">
                     <HBox alignment="CENTER_LEFT" spacing="10">
                         <VBox spacing="2" HBox.hgrow="ALWAYS">
-                            <Label text="Planning des departs" styleClass="detail-label"/>
+                            <Label text="Planning des departs" styleClass="activity-detail-section-title"/>
                             <Label text="Visualisez les creneaux reels sur un calendrier avant de reserver."
                                    styleClass="activity-detail-schedule-subtitle" wrapText="true"/>
                         </VBox>
@@ -91,6 +144,11 @@
                                 styleClass="activity-detail-schedule-btn"
                                 onAction="#onShowSchedule"/>
                     </HBox>
+                    <FlowPane hgap="8" vgap="8" styleClass="activity-detail-trip-highlights">
+                        <Label text="Depart organises" styleClass="activity-detail-highlight-chip"/>
+                        <Label text="Reservation rapide" styleClass="activity-detail-highlight-chip"/>
+                        <Label text="Experience EcoTrip" styleClass="activity-detail-highlight-chip"/>
+                    </FlowPane>
                 </VBox>
             </VBox>
         </ScrollPane>

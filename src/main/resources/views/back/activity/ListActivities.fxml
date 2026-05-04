@@ -11,6 +11,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
@@ -38,7 +39,7 @@
                         <Label text="Gestion des Activites" styleClass="page-title"/>
                     </VBox>
 
-                    <HBox spacing="20">
+                    <FlowPane hgap="20" vgap="20">
                         <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
                             <HBox spacing="12" alignment="CENTER_LEFT">
                                 <Label text="🏃" styleClass="stat-icon, stat-icon-green"/>
@@ -69,10 +70,29 @@
                                 </VBox>
                             </HBox>
                         </VBox>
-                    </HBox>
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
+                            <HBox spacing="12" alignment="CENTER_LEFT">
+                                <Label text="ðŸ§­" styleClass="stat-icon, stat-icon-green"/>
+                                <VBox spacing="2">
+                                    <Label text="Reservations" styleClass="stat-label"/>
+                                    <Label fx:id="statBookings" text="--" styleClass="stat-value"/>
+                                    <Label text="demandes activite" styleClass="stat-sub"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                        <VBox styleClass="stat-card" HBox.hgrow="ALWAYS" spacing="8">
+                            <HBox spacing="12" alignment="CENTER_LEFT">
+                                <Label text="ðŸ’¸" styleClass="stat-icon, stat-icon-orange"/>
+                                <VBox spacing="2">
+                                    <Label text="Revenu confirme" styleClass="stat-label"/>
+                                    <Label fx:id="statRevenue" text="--" styleClass="stat-value"/>
+                                    <Label text="performance metier" styleClass="stat-sub"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                    </FlowPane>
 
                     <HBox spacing="24">
-                        <!-- ✅ form-card contient tout le formulaire -->
                         <VBox minWidth="380" maxWidth="380" styleClass="form-card">
                             <HBox styleClass="form-card-header" alignment="CENTER_LEFT" spacing="14">
                                 <Label fx:id="formIcon" text="🏃" styleClass="form-icon"/>
@@ -82,7 +102,6 @@
                                 </VBox>
                             </HBox>
 
-                            <!-- ✅ form-body DANS form-card -->
                             <VBox styleClass="form-body" spacing="14">
                                 <padding>
                                     <Insets top="20" right="20" bottom="16" left="20"/>
@@ -148,9 +167,9 @@
                                     </VBox>
                                 </HBox>
 
-                                <!-- ✅ Photo sans doublon -->
+                                <!-- Photo de l'activité -->
                                 <VBox spacing="8" styleClass="form-group">
-                                    <Label text="🖼️ Photo de l'activite" styleClass="form-label"/>
+                                    <Label text="🖼️ Photo de l'activité" styleClass="form-label"/>
                                     <HBox spacing="10" alignment="CENTER_LEFT">
                                         <ImageView fx:id="photoPreview" fitWidth="60" fitHeight="60"
                                                    preserveRatio="true" styleClass="photo-preview"/>
@@ -189,8 +208,8 @@
                                             <Button fx:id="openMapBtn" text="Ouvrir"
                                                     styleClass="map-preview-btn" onAction="#onOpenMap"/>
                                         </HBox>
-                                        <!-- ✅ styleClass supprime du WebView -->
-                                        <WebView fx:id="mapPreview" prefHeight="190" minHeight="190"/>
+                                        <WebView fx:id="mapPreview" prefHeight="190" minHeight="190"
+                                                 styleClass="map-preview-webview"/>
                                         <Label fx:id="mapStatusLabel" styleClass="map-status-label"/>
                                     </VBox>
                                 </VBox>
@@ -224,7 +243,6 @@
                                 </VBox>
                             </VBox>
 
-                            <!-- ✅ form-footer DANS form-card -->
                             <HBox styleClass="form-footer" alignment="CENTER_RIGHT" spacing="10">
                                 <Button text="Reinitialiser" styleClass="btn-cancel" onAction="#onReset"/>
                                 <Button fx:id="submitBtn" text="Ajouter" styleClass="btn-submit" onAction="#onSubmit"/>

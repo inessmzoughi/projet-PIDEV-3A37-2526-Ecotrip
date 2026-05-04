@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="tn.esprit.controller.front.modals.ActivityReviewController"
+           styleClass="modal-blur-overlay"
+           alignment="CENTER">
+
+    <VBox styleClass="activity-review-modal" maxWidth="560" spacing="0">
+        <HBox styleClass="activity-review-modal-header" alignment="CENTER_LEFT" spacing="14">
+            <VBox spacing="3" HBox.hgrow="ALWAYS">
+                <Label text="Partager votre avis" styleClass="activity-review-modal-title"/>
+                <Label fx:id="activityTitleLabel" text="Activite"
+                       styleClass="activity-review-modal-subtitle" wrapText="true"/>
+            </VBox>
+            <Button text="✕" styleClass="res-modal-close" onAction="#onClose"/>
+        </HBox>
+
+        <VBox spacing="16" styleClass="activity-review-modal-body">
+            <padding>
+                <Insets top="22" right="24" bottom="20" left="24"/>
+            </padding>
+
+            <Label fx:id="reservationHintLabel" text="" styleClass="activity-detail-review-hint"/>
+
+            <VBox spacing="8" styleClass="activity-review-form-card">
+                <Label text="Note de l'activite" styleClass="detail-form-label"/>
+                <HBox fx:id="activityStarsBox" spacing="8"/>
+            </VBox>
+
+            <VBox fx:id="guideRatingBox" spacing="8" styleClass="activity-review-form-card">
+                <Label text="Note du guide" styleClass="detail-form-label"/>
+                <HBox fx:id="guideStarsBox" spacing="8"/>
+            </VBox>
+
+            <VBox spacing="8" styleClass="activity-review-form-card">
+                <Label text="Votre commentaire" styleClass="detail-form-label"/>
+                <TextArea fx:id="commentArea"
+                          promptText="Parlez de l'ambiance, de l'organisation, du guide ou de ce qui vous a marque..."
+                          wrapText="true"
+                          prefRowCount="5"
+                          styleClass="detail-textarea"/>
+            </VBox>
+
+            <Label fx:id="errorLabel" text="" visible="false" managed="false"
+                   styleClass="detail-err-label" wrapText="true"/>
+        </VBox>
+
+        <HBox styleClass="activity-review-modal-footer" alignment="CENTER_RIGHT" spacing="12">
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Annuler" styleClass="res-modal-btn-cancel" onAction="#onClose"/>
+            <Button fx:id="submitButton" text="Publier l'avis"
+                    styleClass="activity-detail-review-btn" onAction="#onSubmit"/>
+        </HBox>
+    </VBox>
+</StackPane>

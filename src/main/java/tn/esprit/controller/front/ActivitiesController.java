@@ -67,8 +67,8 @@ public class ActivitiesController implements Initializable {
     @FXML private Button btnNext;
     @FXML private Button chatbotLauncher;
     @FXML private VBox chatbotPanel;
-    @FXML private Label chatbotGreetingLabel;
-    @FXML private Label chatbotStatusLabel;
+    @FXML private VBox chatbotConversationBox;
+    @FXML private FlowPane chatbotQuickChipsBox;
     @FXML private VBox chatbotSuggestionsBox;
     @FXML private TextField chatbotInputField;
     @FXML private Button chatbotSendBtn;
@@ -111,9 +111,12 @@ public class ActivitiesController implements Initializable {
         chatbotPanel.setMouseTransparent(false);
         chatbotInputField.setEditable(true);
         chatbotInputField.setFocusTraversable(true);
-        chatbotGreetingLabel.setText("Salut ! Je suis ton assistant EcoTrip.");
-        chatbotStatusLabel.setText(
-                "Tu veux une activite a Tunis, a Djerba, quelque chose de calme, d'aventure ou de culturel ? Dis-moi ton envie."
+        chatbotConversationBox.getChildren().clear();
+        String welcomeTitle = "Salut ! Je suis ton assistant EcoTrip.";
+        String welcomeBody =
+                "Tu veux une activite a Tunis, a Djerba, quelque chose de calme, d'aventure ou de culturel ? Dis-moi ton envie.";
+        chatbotConversationBox.getChildren().add(
+                buildAssistantBubble(welcomeTitle, welcomeBody)
         );
         chatbotSuggestionsBox.getChildren().clear();
     }
@@ -147,7 +150,12 @@ public class ActivitiesController implements Initializable {
         } catch (Exception exception) {
             System.err.println("Error loading activities: " + exception.getMessage());
             resultsCountLabel.setText("Erreur de chargement");
-            chatbotStatusLabel.setText("Le catalogue des activites n'a pas pu etre charge pour le moment.");
+            chatbotConversationBox.getChildren().add(
+                    buildAssistantBubble(
+                            "Catalogue indisponible",
+                            "Le catalogue des activites n'a pas pu etre charge pour le moment."
+                    )
+            );
         }
     }
 
@@ -520,12 +528,23 @@ public class ActivitiesController implements Initializable {
     private void handleChatbotSend() {
         String prompt = chatbotInputField.getText() == null ? "" : chatbotInputField.getText().trim();
         if (prompt.isBlank()) {
-            chatbotStatusLabel.setText("Donne-moi une ville, une categorie ou une ambiance pour que je puisse t'aider.");
+            chatbotConversationBox.getChildren().add(
+                    buildAssistantBubble(
+                            "EcoTrip Assistant",
+                            "Donne-moi une ville, une categorie ou une ambiance pour que je puisse t'aider."
+                    )
+            );
             return;
         }
 
+        chatbotConversationBox.getChildren().add(buildUserBubble(prompt));
+        chatbotInputField.clear();
         chatbotSendBtn.setDisable(true);
-        chatbotStatusLabel.setText("Je prepare des suggestions personnalisees dans le style EcoTrip...");
+        VBox loadingBubble = buildAssistantBubble(
+                "EcoTrip Assistant",
+                "Je prepare des suggestions personnalisees dans le style EcoTrip..."
+        );
+        chatbotConversationBox.getChildren().add(loadingBubble);
 
         Task<ActivityAssistantService.ActivitySuggestionResponse> task = new Task<>() {
             @Override
@@ -537,18 +556,25 @@ public class ActivitiesController implements Initializable {
         task.setOnSucceeded(event -> {
             chatbotSendBtn.setDisable(false);
             ActivityAssistantService.ActivitySuggestionResponse result = task.getValue();
-            chatbotGreetingLabel.setText(result.responseText());
-            chatbotStatusLabel.setText(
-                    result.suggestions().isEmpty()
-                            ? "Je n'ai pas trouve mieux pour cette demande. Essaie avec une autre ville ou categorie."
-                            : "Voici les activites qui correspondent le mieux a ta demande."
+            String assistantBody = result.suggestions().isEmpty()
+                    ? "Je n'ai pas trouve mieux pour cette demande. Essaie avec une autre ville ou categorie."
+                    : "Voici les activites qui correspondent le mieux a ta demande.";
+            chatbotConversationBox.getChildren().remove(loadingBubble);
+            chatbotConversationBox.getChildren().add(
+                    buildAssistantBubble(result.responseText(), assistantBody)
             );
             renderChatbotSuggestions(result.suggestions());
         });
 
         task.setOnFailed(event -> {
             chatbotSendBtn.setDisable(false);
-            chatbotStatusLabel.setText("Je n'ai pas pu traiter la demande pour le moment.");
+            chatbotConversationBox.getChildren().remove(loadingBubble);
+            chatbotConversationBox.getChildren().add(
+                    buildAssistantBubble(
+                            "EcoTrip Assistant",
+                            "Je n'ai pas pu traiter la demande pour le moment."
+                    )
+            );
         });
 
         Thread worker = new Thread(task, "activity-chatbot-task");
@@ -747,6 +773,38 @@ public class ActivitiesController implements Initializable {
         body.getChildren().addAll(title, meta, description, actions);
         card.getChildren().addAll(imagePane, body);
         return card;
+    }
+
+    private HBox buildUserBubble(String message) {
+        HBox row = new HBox();
+        row.setAlignment(Pos.CENTER_RIGHT);
+
+        Label bubble = new Label(message);
+        bubble.getStyleClass().add("activity-chatbot-user-bubble");
+        bubble.setWrapText(true);
+        bubble.setMaxWidth(220);
+
+        row.getChildren().add(bubble);
+        return row;
+    }
+
+    private VBox buildAssistantBubble(String titleText, String bodyText) {
+        VBox bubble = new VBox(6);
+        bubble.getStyleClass().add("activity-chatbot-bubble");
+
+        Label title = new Label(titleText);
+        title.getStyleClass().add("activity-chatbot-message");
+        title.setWrapText(true);
+        bubble.getChildren().add(title);
+
+        if (bodyText != null && !bodyText.isBlank()) {
+            Label body = new Label(bodyText);
+            body.getStyleClass().add("activity-chatbot-submessage");
+            body.setWrapText(true);
+            bubble.getChildren().add(body);
+        }
+
+        return bubble;
     }
 
     private String safeLower(String value) {

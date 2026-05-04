@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
@@ -12,22 +13,63 @@
         <fx:include fx:id="sidebar" source="/views/components/back-sidebar.fxml"/>
     </left>
 
-    <!-- CENTER: contenu dynamique -->
+    <!-- CENTER: nudge banner stacked above the content via inner BorderPane -->
     <center>
         <BorderPane styleClass="back-main">
-<!--            <top>-->
-<!--                <HBox fx:id="topbar" styleClass="back-topbar"-->
-<!--                      alignment="CENTER_LEFT" spacing="16">-->
-<!--                    <Label fx:id="pageTitle" styleClass="back-page-title"/>-->
-<!--                    <Region HBox.hgrow="ALWAYS"/>-->
-<!--                    <Label fx:id="adminNameLabel" styleClass="back-admin-name"/>-->
-<!--                </HBox>-->
-<!--            </top>-->
+
+            <!-- ── Face Enrollment Nudge Banner ── -->
+            <top>
+                <HBox fx:id="faceNudgeBanner"
+                      managed="false" visible="false"
+                      alignment="CENTER_LEFT" spacing="14"
+                      style="-fx-background-color:#fffbf0;
+                             -fx-border-color:#f59e0b transparent #fde68a transparent;
+                             -fx-border-width:0 0 1 4;
+                             -fx-padding:12 18 12 18;">
+
+                    <!-- Pulse dot -->
+                    <Label text="●"
+                           style="-fx-text-fill:#f59e0b;-fx-font-size:9px;"/>
+
+                    <!-- Camera icon -->
+                    <Label text="📷"
+                           style="-fx-font-size:20px;"/>
+
+                    <!-- Text block -->
+                    <VBox spacing="2" HBox.hgrow="ALWAYS">
+                        <Label text="Reconnaissance faciale non configurée"
+                               style="-fx-font-size:13px;-fx-font-weight:bold;-fx-text-fill:#78350f;"/>
+                        <Label text="Sécurisez votre accès en enregistrant votre visage — cela ne prend que 30 secondes."
+                               style="-fx-font-size:11.5px;-fx-text-fill:#b45309;"
+                               wrapText="true"/>
+                    </VBox>
+
+                    <!-- CTA -->
+                    <Button text="Configurer maintenant"
+                            onAction="#onGoToFaceEnrollment"
+                            style="-fx-background-color:#78350f;-fx-text-fill:#fef3c7;
+                                   -fx-font-weight:bold;-fx-font-size:12px;
+                                   -fx-background-radius:8;-fx-padding:8 18;
+                                   -fx-cursor:hand;-fx-border-width:0;"/>
+
+                    <!-- Dismiss -->
+                    <Button text="✕"
+                            onAction="#onDismissNudge"
+                            style="-fx-background-color:transparent;-fx-text-fill:#d97706;
+                                   -fx-font-size:14px;-fx-background-radius:20;
+                                   -fx-min-width:28;-fx-min-height:28;
+                                   -fx-max-width:28;-fx-max-height:28;
+                                   -fx-cursor:hand;-fx-border-width:0;
+                                   -fx-alignment:center;"/>
+                </HBox>
+            </top>
+
             <center>
                 <ScrollPane fitToWidth="true" styleClass="back-scroll">
                     <StackPane fx:id="contentArea" styleClass="back-content"/>
                 </ScrollPane>
             </center>
+
         </BorderPane>
     </center>
 

@@ -165,4 +165,22 @@ public class ReservationRepository {
         r.setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime());
         return r;
     }
+    public int countByUser(int userId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM reservation WHERE user_id = ?";
+        try (Connection conn = Base.getInstance().getConnection();
+             PreparedStatement s = conn.prepareStatement(sql)) {
+            s.setInt(1, userId);
+            ResultSet rs = s.executeQuery();
+            if (rs.next()) return rs.getInt(1);
+        }
+        return 0;
+    }
+    public void deleteByUser(int userId) throws SQLException {
+        String sql = "DELETE FROM reservation WHERE user_id = ?";
+        try (Connection conn = Base.getInstance().getConnection();
+             PreparedStatement s = conn.prepareStatement(sql)) {
+            s.setInt(1, userId);
+            s.executeUpdate();
+        }
+    }
 }

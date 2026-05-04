@@ -17,7 +17,7 @@ import tn.esprit.models.hebergements.Categorie_hebergement;
 import tn.esprit.models.hebergements.Chambre;
 import tn.esprit.models.hebergements.Equipement;
 import tn.esprit.models.hebergements.Hebergement;
-import tn.esprit.models.User;
+import tn.esprit.models.Auth_User.User;
 import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;
 import tn.esprit.services.hebergement.AvisHebergement_service;

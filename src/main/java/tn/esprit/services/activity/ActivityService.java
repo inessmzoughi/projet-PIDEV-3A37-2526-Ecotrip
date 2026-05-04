@@ -1,19 +1,31 @@
 package tn.esprit.services.activity;
 
+import tn.esprit.models.Reservation;
 import tn.esprit.models.activity.Activity;
+import tn.esprit.models.activity.ActivityMetrics;
+import tn.esprit.models.activity.ActivitySchedule;
+import tn.esprit.models.activity.ActivityScheduleMetrics;
+import tn.esprit.models.enums.ReservationStatus;
+import tn.esprit.models.enums.ReservationType;
+import tn.esprit.repository.ReservationRepository;
 import tn.esprit.repository.activity.ActivityRepository;
 
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public class ActivityService {
 
-    private ActivityRepository repo;
+    private final ActivityRepository repo;
+    private final ActivityScheduleService scheduleService;
+    private final ReservationRepository reservationRepository;
 
     public ActivityService() {
         repo = new ActivityRepository();
+        scheduleService = new ActivityScheduleService();
+        reservationRepository = new ReservationRepository();
     }
 
     public void ajouter(Activity activity) throws SQLException {
@@ -44,6 +56,93 @@ public class ActivityService {
 
     public void supprimer(int id) throws SQLException {
         repo.delete(id);
+    }
+
+    public ActivityMetrics getMetrics(Activity activity) throws SQLException {
+        ActivityMetrics metrics = new ActivityMetrics();
+        if (activity == null) {
+            return metrics;
+        }
+
+        List<ActivitySchedule> schedules = scheduleService.afficherByActivity(activity.getId());
+        List<Reservation> reservations = reservationRepository.findAll();
+
+        int bookingCount = 0;
+        int confirmedBookingCount = 0;
+        int participantsBooked = 0;
+        int confirmedParticipants = 0;
+        double confirmedRevenue = 0;
+
+        for (Reservation reservation : reservations) {
+            if (reservation.getReservationType() != ReservationType.ACTIVITY
+                    || reservation.getReservationId() != activity.getId()
+                    || reservation.getStatus() == ReservationStatus.CANCELLED) {
+                continue;
+            }
+
+            bookingCount++;
+            int participants = resolveParticipants(reservation);
+            participantsBooked += participants;
+
+            if (reservation.getStatus() == ReservationStatus.CONFIRMED) {
+                confirmedBookingCount++;
+                confirmedParticipants += participants;
+                confirmedRevenue += reservation.getTotalPrice();
+            }
+        }
+
+        int futureScheduleCount = 0;
+        int totalPlannedCapacity = 0;
+        int remainingSpots = 0;
+        LocalDateTime nextDeparture = null;
+
+        for (ActivitySchedule schedule : schedules) {
+            ActivityScheduleMetrics scheduleMetrics = scheduleService.getMetrics(schedule);
+            totalPlannedCapacity += Math.max(0, schedule.getAvailableSpots());
+            remainingSpots += scheduleMetrics.getRemainingSpots();
+
+            if (schedule.getStartAt() != null && schedule.getStartAt().isAfter(LocalDateTime.now())) {
+                futureScheduleCount++;
+                if (scheduleMetrics.getRemainingSpots() > 0
+                        && (nextDeparture == null || schedule.getStartAt().isBefore(nextDeparture))) {
+                    nextDeparture = schedule.getStartAt();
+                }
+            }
+        }
+
+        int occupancyRate = totalPlannedCapacity == 0
+                ? 0
+                : (int) Math.round((participantsBooked * 100.0) / totalPlannedCapacity);
+
+        metrics.setBookingCount(bookingCount);
+        metrics.setConfirmedBookingCount(confirmedBookingCount);
+        metrics.setParticipantsBooked(participantsBooked);
+        metrics.setConfirmedParticipants(confirmedParticipants);
+        metrics.setConfirmedRevenue(confirmedRevenue);
+        metrics.setFutureScheduleCount(futureScheduleCount);
+        metrics.setTotalPlannedCapacity(totalPlannedCapacity);
+        metrics.setRemainingSpots(remainingSpots);
+        metrics.setOccupancyRate(Math.min(occupancyRate, 100));
+        metrics.setNextDeparture(nextDeparture);
+        return metrics;
+    }
+
+    private int resolveParticipants(Reservation reservation) {
+        Map<String, Object> details = reservation.getDetails() != null
+                ? reservation.getDetails()
+                : Collections.emptyMap();
+        Object participantsValue = details.get("participants");
+        if (participantsValue instanceof Number number) {
+            return Math.max(0, number.intValue());
+        }
+        if (participantsValue instanceof String text) {
+            try {
+                return Math.max(0, Integer.parseInt(text.trim()));
+            } catch (NumberFormatException ignored) {
+                return Math.max(0, reservation.getNumberOfPersons());
+            }
+        }
+        return Math.max(0, reservation.getNumberOfPersons());
     }
 
     private void validate(Activity activity) {

@@ -23,7 +23,7 @@
             <Button text="✕" styleClass="res-modal-close" onAction="#onClose"/>
         </HBox>
 
-        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="front-scroll">
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" styleClass="modal-solid-scroll">
             <VBox spacing="18" styleClass="activity-schedule-body">
                 <padding>
                     <Insets top="20" right="22" bottom="22" left="22"/>

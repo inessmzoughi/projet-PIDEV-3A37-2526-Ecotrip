@@ -1,7 +1,7 @@
 package tn.esprit.repository;
 
 import tn.esprit.database.Base;
-import tn.esprit.models.User;
+import tn.esprit.models.Auth_User.User;
 import tn.esprit.models.enums.Role;
 
 import java.sql.*;
