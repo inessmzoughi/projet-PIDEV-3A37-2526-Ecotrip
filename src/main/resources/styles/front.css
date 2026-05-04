@@ -1834,6 +1834,356 @@
 .detail-btn-publier:hover {
     -fx-background-color: #1b4332;
 }
+
+.modal-solid-scroll {
+    -fx-background: transparent;
+    -fx-background-color: transparent;
+}
+
+.modal-solid-scroll > .viewport {
+    -fx-background-color: white;
+}
+
+.activity-detail-modal {
+    -fx-background-color: linear-gradient(to bottom, #ffffff, #f7fcf7);
+    -fx-background-radius: 24;
+    -fx-border-radius: 24;
+    -fx-border-color: #e7eee7;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 40, 0, 0, 12);
+}
+
+.activity-detail-topbar {
+    -fx-background-color: linear-gradient(to right, #ffffff, #f1f9f1);
+    -fx-background-radius: 24 24 0 0;
+    -fx-border-color: #e4efe4;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 18 22 18 22;
+}
+
+.activity-detail-body {
+    -fx-background-color: linear-gradient(to bottom, #ffffff, #fbfefb);
+}
+
+.activity-detail-topbar-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #173c1f;
+}
+
+.activity-detail-hero {
+    -fx-background-color: linear-gradient(to right, #1f5f2e, #2c7a43);
+    -fx-background-radius: 28;
+    -fx-border-radius: 28;
+    -fx-effect: dropshadow(gaussian, rgba(29, 78, 32, 0.16), 28, 0, 0, 8);
+}
+
+.activity-detail-hero-fallback {
+    -fx-background-color: linear-gradient(to bottom right, rgba(255,255,255,0.18), rgba(221,255,230,0.08));
+    -fx-background-radius: 28;
+}
+
+.activity-detail-hero-icon {
+    -fx-font-size: 36px;
+}
+
+.activity-detail-hero-text {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.activity-detail-availability {
+    -fx-background-color: rgba(255,255,255,0.18);
+    -fx-border-color: rgba(255,255,255,0.35);
+    -fx-border-width: 1;
+    -fx-border-radius: 18;
+    -fx-background-radius: 18;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 7 14 7 14;
+}
+
+.activity-detail-intro-card {
+    -fx-background-color: linear-gradient(to right, #f8fcf7, #f4fbf5);
+    -fx-background-radius: 20;
+    -fx-border-color: #e4efe4;
+    -fx-border-width: 1;
+    -fx-border-radius: 20;
+    -fx-padding: 18 20 18 20;
+}
+
+.activity-detail-category {
+    -fx-background-color: #1f5f2d;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 7 14 7 14;
+    -fx-background-radius: 18;
+}
+
+.activity-detail-soft-badge {
+    -fx-background-color: #ebf8ef;
+    -fx-text-fill: #2c6a3a;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 7 14 7 14;
+    -fx-background-radius: 18;
+    -fx-border-color: #ccebd4;
+    -fx-border-width: 1;
+    -fx-border-radius: 18;
+}
+
+.activity-detail-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #173c1f;
+}
+
+.activity-detail-location {
+    -fx-font-size: 15px;
+    -fx-text-fill: #4e6c57;
+}
+
+.activity-detail-stats-row {
+    -fx-padding: 2 0 2 0;
+}
+
+.activity-detail-stat-card {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-border-color: #dbeadf;
+    -fx-border-width: 1;
+    -fx-border-radius: 20;
+    -fx-padding: 16 18 16 18;
+    -fx-effect: dropshadow(gaussian, rgba(20, 66, 25, 0.05), 14, 0, 0, 3);
+}
+
+.activity-detail-metric-card {
+    -fx-background-color: linear-gradient(to bottom right, #f2fbf3, #eef7ff);
+    -fx-background-radius: 20;
+    -fx-border-color: #d8eadc;
+    -fx-border-width: 1;
+    -fx-border-radius: 20;
+    -fx-padding: 16 18 16 18;
+}
+
+.activity-detail-stat-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #6b8a73;
+}
+
+.activity-detail-stat-value {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #173c1f;
+}
+
+.activity-detail-metric-value {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #184b24;
+}
+
+.activity-detail-metric-value-soft {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #5f7f68;
+}
+
+.activity-detail-section-card,
+.activity-detail-map-card,
+.activity-detail-schedule-card,
+.activity-detail-weather-card {
+    -fx-background-color: white;
+    -fx-background-radius: 22;
+    -fx-border-color: #deebe0;
+    -fx-border-width: 1;
+    -fx-border-radius: 22;
+    -fx-padding: 18 18 18 18;
+    -fx-effect: dropshadow(gaussian, rgba(16, 68, 27, 0.05), 16, 0, 0, 4);
+}
+
+.activity-detail-section-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #173c1f;
+}
+
+.activity-detail-section-subtitle,
+.activity-detail-map-subtitle,
+.activity-detail-schedule-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #6f8a76;
+}
+
+.activity-detail-description {
+    -fx-font-size: 15px;
+    -fx-line-spacing: 4px;
+    -fx-text-fill: #294233;
+}
+
+.activity-detail-map-status {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.activity-weather-badge {
+    -fx-background-color: #eef6ef;
+    -fx-text-fill: #285c35;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 7 14 7 14;
+    -fx-background-radius: 18;
+}
+
+.activity-weather-badge-good {
+    -fx-background-color: #e7f8ec;
+    -fx-text-fill: #1d6d34;
+}
+
+.activity-weather-badge-watch {
+    -fx-background-color: #fff4dd;
+    -fx-text-fill: #9a5b00;
+}
+
+.activity-weather-badge-risk {
+    -fx-background-color: #fde8e8;
+    -fx-text-fill: #b42318;
+}
+
+.activity-detail-weather-metric {
+    -fx-background-color: linear-gradient(to bottom right, #f7fcf7, #f4f9ff);
+    -fx-background-radius: 18;
+    -fx-border-color: #e0ece2;
+    -fx-border-width: 1;
+    -fx-border-radius: 18;
+    -fx-padding: 14 16 14 16;
+}
+
+.activity-detail-weather-value {
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #173c1f;
+}
+
+.activity-detail-weather-note {
+    -fx-background-color: linear-gradient(to right, #f2fbf4, #eef7ff);
+    -fx-background-radius: 18;
+    -fx-text-fill: #355242;
+    -fx-font-size: 13px;
+    -fx-line-spacing: 3px;
+    -fx-padding: 14 16 14 16;
+}
+
+.activity-detail-map-error {
+    -fx-text-fill: #b42318;
+}
+
+.activity-detail-map-success {
+    -fx-text-fill: #1a7f37;
+}
+
+.activity-detail-trip-highlights {
+    -fx-padding: 6 0 0 0;
+}
+
+.activity-detail-highlight-chip {
+    -fx-background-color: #f1f8f2;
+    -fx-border-color: #d5e8d9;
+    -fx-border-width: 1;
+    -fx-border-radius: 16;
+    -fx-background-radius: 16;
+    -fx-text-fill: #2b5f36;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 7 12 7 12;
+}
+
+.activity-detail-schedule-btn,
+.res-map-btn {
+    -fx-background-color: linear-gradient(to right, #eef8f0, #e8f4ff);
+    -fx-border-color: #d7e8db;
+    -fx-border-width: 1;
+    -fx-border-radius: 14;
+    -fx-background-radius: 14;
+    -fx-text-fill: #1e5a2d;
+    -fx-font-weight: bold;
+    -fx-padding: 10 16 10 16;
+    -fx-cursor: hand;
+}
+
+.activity-detail-schedule-btn:hover,
+.res-map-btn:hover {
+    -fx-background-color: linear-gradient(to right, #e4f4e7, #dbeeff);
+}
+
+.activity-favorite-detail-btn {
+    -fx-background-color: white;
+    -fx-border-color: #b8d1bc;
+    -fx-border-width: 1.2;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-text-fill: #68816f;
+    -fx-font-weight: bold;
+    -fx-padding: 10 16 10 16;
+    -fx-cursor: hand;
+}
+
+.activity-favorite-detail-btn:hover {
+    -fx-background-color: #f5fbf6;
+    -fx-text-fill: #1b4e27;
+}
+
+.activity-favorite-detail-btn-active {
+    -fx-background-color: linear-gradient(to right, #1f5f2d, #2e7b44);
+    -fx-border-color: transparent;
+    -fx-text-fill: white;
+}
+
+.activity-detail-footer {
+    -fx-background-color: linear-gradient(to right, #f9fcf9, #eef8f0);
+    -fx-background-radius: 0 0 24 24;
+    -fx-border-color: #e3ede4;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 18 22 20 22;
+}
+
+.activity-detail-price-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #6f8a76;
+}
+
+.activity-detail-price-value {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1b5a2c;
+}
+
+.activity-schedule-modal {
+    -fx-background-color: white;
+    -fx-background-radius: 24;
+    -fx-border-radius: 24;
+    -fx-border-color: #e7eee7;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.35), 40, 0, 0, 12);
+}
+
+.activity-schedule-topbar {
+    -fx-background-color: white;
+    -fx-background-radius: 24 24 0 0;
+    -fx-border-color: #eef2ef;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 18 22 18 22;
+}
+
+.activity-schedule-body {
+    -fx-background-color: white;
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    MES FAVORIS — À AJOUTER à la fin de front.css
    Palette identique au reste du projet : #2d5016 / #1a2e1a / #f8faf5

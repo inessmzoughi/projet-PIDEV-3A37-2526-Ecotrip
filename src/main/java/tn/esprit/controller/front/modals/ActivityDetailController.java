@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.concurrent.Task;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -14,16 +15,26 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.web.WebView;
 import tn.esprit.models.activity.Activity;
+import tn.esprit.models.activity.ActivityMetrics;
+import tn.esprit.models.activity.ActivityWeatherSnapshot;
 import tn.esprit.services.activity.ActivityFavoriteService;
 import tn.esprit.services.activity.ActivityImageService;
 import tn.esprit.services.activity.ActivityMapService;
+import tn.esprit.services.activity.ActivityService;
+import tn.esprit.services.activity.ActivityWeatherService;
 
 import java.awt.Desktop;
 import java.net.URI;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 public class ActivityDetailController implements Initializable {
+
+    private static final DateTimeFormatter DEPARTURE_FORMATTER =
+            DateTimeFormatter.ofPattern("EEE d MMM - HH:mm", Locale.FRANCE);
 
     @FXML private StackPane heroImagePane;
     @FXML private Label categoryLabel;
@@ -33,7 +44,16 @@ public class ActivityDetailController implements Initializable {
     @FXML private Label durationLabel;
     @FXML private Label participantsLabel;
     @FXML private Label guideLabel;
+    @FXML private Label bookingCountLabel;
+    @FXML private Label occupancyRateLabel;
+    @FXML private Label remainingSpotsLabel;
+    @FXML private Label nextDepartureLabel;
     @FXML private Label descriptionLabel;
+    @FXML private Label weatherSuitabilityBadge;
+    @FXML private Label weatherConditionLabel;
+    @FXML private Label weatherTemperatureLabel;
+    @FXML private Label weatherWindLabel;
+    @FXML private Label weatherAdvisoryLabel;
     @FXML private Label priceAmountLabel;
     @FXML private Label mapStateLabel;
     @FXML private Button openMapBtn;
@@ -45,6 +65,8 @@ public class ActivityDetailController implements Initializable {
     private Runnable onReserveRequested;
     private Runnable onScheduleRequested;
     private ActivityFavoriteService favoriteService;
+    private final ActivityService activityService = new ActivityService();
+    private final ActivityWeatherService weatherService = new ActivityWeatherService();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -56,6 +78,7 @@ public class ActivityDetailController implements Initializable {
         this.selectedActivity = activity;
         renderHeader();
         renderContent();
+        renderWeather();
         renderMap();
         refreshFavoriteButton();
     }
@@ -187,6 +210,7 @@ public class ActivityDetailController implements Initializable {
                 ? "Cette activite vous plonge dans une experience nature pensee pour l'exploration douce et le tourisme responsable."
                 : selectedActivity.getDescription());
         priceAmountLabel.setText(String.format("%.0f TND", selectedActivity.getPrice()));
+        renderMetrics();
     }
 
     private void renderMap() {
@@ -233,6 +257,128 @@ public class ActivityDetailController implements Initializable {
         }
     }
 
+    private void renderWeather() {
+        if (weatherConditionLabel == null || weatherSuitabilityBadge == null) {
+            return;
+        }
+
+        if (!ActivityMapService.hasValidCoordinates(selectedActivity)) {
+            showWeatherUnavailable("Meteo indisponible", "Ajoutez des coordonnees valides pour obtenir une lecture meteo.");
+            return;
+        }
+
+        weatherSuitabilityBadge.setText("Analyse meteo");
+        weatherSuitabilityBadge.getStyleClass().removeAll(
+                "activity-weather-badge-good",
+                "activity-weather-badge-watch",
+                "activity-weather-badge-risk"
+        );
+        weatherConditionLabel.setText("Chargement en cours...");
+        weatherTemperatureLabel.setText("--");
+        weatherWindLabel.setText("--");
+        weatherAdvisoryLabel.setText("Nous analysons les conditions actuelles autour de cette activite.");
+
+        Task<ActivityWeatherSnapshot> task = new Task<>() {
+            @Override
+            protected ActivityWeatherSnapshot call() {
+                return weatherService.fetchCurrentWeather(selectedActivity);
+            }
+        };
+
+        task.setOnSucceeded(event -> updateWeatherUI(task.getValue()));
+        task.setOnFailed(event -> showWeatherUnavailable("Meteo non disponible", "Impossible de recuperer les conditions actuelles pour le moment."));
+
+        Thread worker = new Thread(task, "activity-weather-task");
+        worker.setDaemon(true);
+        worker.start();
+    }
+
+    private void renderMetrics() {
+        if (selectedActivity == null) {
+            return;
+        }
+
+        try {
+            ActivityMetrics metrics = activityService.getMetrics(selectedActivity);
+            bookingCountLabel.setText(metrics.getBookingCount() + " reservation(s)");
+            occupancyRateLabel.setText(metrics.getOccupancyRate() + "%");
+            remainingSpotsLabel.setText(metrics.getRemainingSpots() + " places");
+            nextDepartureLabel.setText(formatDeparture(metrics.getNextDeparture()));
+
+            if (selectedActivity.isActive()) {
+                availabilityBadge.setText(buildAvailabilityText(metrics));
+            }
+        } catch (Exception exception) {
+            bookingCountLabel.setText("-");
+            occupancyRateLabel.setText("-");
+            remainingSpotsLabel.setText("-");
+            nextDepartureLabel.setText("A confirmer");
+        }
+    }
+
+    private void updateWeatherUI(ActivityWeatherSnapshot snapshot) {
+        if (snapshot == null) {
+            showWeatherUnavailable("Meteo non disponible", "Impossible de recuperer les conditions actuelles pour le moment.");
+            return;
+        }
+
+        weatherSuitabilityBadge.setText(snapshot.getSuitabilityLabel());
+        weatherSuitabilityBadge.getStyleClass().removeAll(
+                "activity-weather-badge-good",
+                "activity-weather-badge-watch",
+                "activity-weather-badge-risk"
+        );
+        weatherSuitabilityBadge.getStyleClass().add(resolveWeatherBadgeClass(snapshot.getSuitabilityLabel()));
+        weatherConditionLabel.setText(snapshot.getConditionLabel());
+        weatherTemperatureLabel.setText(String.format(Locale.US, "%.0f°C ressenti %.0f°C",
+                snapshot.getTemperatureCelsius(),
+                snapshot.getApparentTemperatureCelsius()));
+        weatherWindLabel.setText(String.format(Locale.US, "%.0f km/h · pluie %.1f mm",
+                snapshot.getWindSpeedKmh(),
+                snapshot.getPrecipitationMm()));
+        weatherAdvisoryLabel.setText(snapshot.getAdvisoryText());
+    }
+
+    private void showWeatherUnavailable(String badgeText, String advisory) {
+        weatherSuitabilityBadge.setText(badgeText);
+        weatherSuitabilityBadge.getStyleClass().removeAll(
+                "activity-weather-badge-good",
+                "activity-weather-badge-watch",
+                "activity-weather-badge-risk"
+        );
+        weatherConditionLabel.setText("Conditions inconnues");
+        weatherTemperatureLabel.setText("--");
+        weatherWindLabel.setText("--");
+        weatherAdvisoryLabel.setText(advisory);
+    }
+
+    private String resolveWeatherBadgeClass(String suitability) {
+        if (suitability == null) {
+            return "activity-weather-badge-watch";
+        }
+        String normalized = suitability.toLowerCase(Locale.ROOT);
+        if (normalized.contains("ideale") || normalized.contains("confortable")) {
+            return "activity-weather-badge-good";
+        }
+        if (normalized.contains("peu favorables")) {
+            return "activity-weather-badge-risk";
+        }
+        return "activity-weather-badge-watch";
+    }
+
+    private String buildAvailabilityText(ActivityMetrics metrics) {
+        if (metrics.getFutureScheduleCount() == 0) {
+            return "Aucun depart publie";
+        }
+        if (metrics.getRemainingSpots() <= 0) {
+            return "Complet sur les departs publies";
+        }
+        if (metrics.getOccupancyRate() >= 80) {
+            return "Depart tres demandes";
+        }
+        return metrics.getFutureScheduleCount() + " depart(s) disponible(s)";
+    }
+
     private void closeOverlay() {
         if (overlayRoot != null && overlayRoot.getParent() instanceof StackPane parent) {
             if (!parent.getChildren().isEmpty()) {
@@ -249,5 +395,12 @@ public class ActivityDetailController implements Initializable {
         int hours = minutes / 60;
         int remainingMinutes = minutes % 60;
         return remainingMinutes == 0 ? hours + "h" : hours + "h" + remainingMinutes + "min";
+    }
+
+    private String formatDeparture(LocalDateTime departure) {
+        if (departure == null) {
+            return "A confirmer";
+        }
+        return DEPARTURE_FORMATTER.format(departure);
     }
 }
