@@ -129,11 +129,11 @@
                             <!-- Row 3 : Image -->
                             <HBox spacing="16">
                                 <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
-                                    <Label styleClass="form-label" text="Chemin de l'image" />
-                                    <TextField fx:id="imageField" promptText="Ex: /images/produit.png" styleClass="form-input" />
-                                </VBox>
-                                <VBox spacing="5" styleClass="form-group" HBox.hgrow="ALWAYS">
-                                    <!-- espace réservé pour équilibrer -->
+                                    <Label styleClass="form-label" text="Image" />
+                                    <HBox spacing="8">
+                                        <TextField fx:id="imageField" promptText="Choisir une image..." styleClass="form-input" HBox.hgrow="ALWAYS" />
+                                        <Button onAction="#onBrowseImage" styleClass="btn-cancel" text="Choisir..." />
+                                    </HBox>
                                 </VBox>
                             </HBox>
                         </VBox>
