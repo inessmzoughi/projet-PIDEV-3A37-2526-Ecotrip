@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 
-<ScrollPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
+<ScrollPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="tn.esprit.controller.front.MesFavorisController"
             fitToWidth="true"
             hbarPolicy="NEVER"
@@ -13,41 +18,51 @@
 
     <VBox styleClass="heb-page" spacing="0">
 
-        <!-- ══ HERO ══ -->
         <VBox styleClass="heb-hero" alignment="CENTER" spacing="14">
             <padding><Insets top="80" bottom="80" left="40" right="40"/></padding>
-            <Label text="❤️  Mes Hébergements Favoris" styleClass="heb-hero-title"/>
-            <Label fx:id="lblCount" text="" styleClass="heb-hero-sub"/>
+            <Label text="MES INSPIRATIONS" styleClass="banner-sub"/>
+            <Label text="Mes Favoris" styleClass="heb-hero-title"/>
+            <Label text="Retrouvez les activites que vous avez mises de cote pour preparer vos prochaines experiences EcoTrip."
+                   styleClass="heb-hero-sub" wrapText="true"/>
         </VBox>
 
-        <!-- ══ RÉSULTATS HEADER ══ -->
+        <VBox styleClass="heb-filters-container">
+            <padding><Insets top="30" bottom="30" left="40" right="40"/></padding>
+            <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 0 0 20 0;">
+                <Region styleClass="filters-title-bar"/>
+                <Label text="RECHERCHER DANS VOS FAVORIS" styleClass="filters-section-title"/>
+            </HBox>
+            <HBox spacing="16" alignment="CENTER_LEFT">
+                <TextField fx:id="searchField"
+                           promptText="Rechercher par titre, lieu ou ambiance..."
+                           styleClass="heb-filter-input"
+                           HBox.hgrow="ALWAYS"/>
+                <Button text="Voir les activites" styleClass="heb-clear-btn"
+                        onAction="#handleContact" prefWidth="160"/>
+            </HBox>
+        </VBox>
+
         <HBox alignment="CENTER_LEFT">
             <padding><Insets top="24" bottom="12" left="40" right="40"/></padding>
-            <Label fx:id="resultCountLabel" text="" styleClass="heb-result-count"/>
+            <Label fx:id="resultCountLabel" text="0 activite favorite" styleClass="heb-result-count"/>
         </HBox>
 
-        <!-- ══ CARTES ══ -->
-        <FlowPane fx:id="favorisContainer"
-                  hgap="28" vgap="28"
-                  styleClass="heb-cards-pane">
+        <FlowPane fx:id="favoritesGrid" hgap="28" vgap="28" styleClass="heb-cards-pane">
             <padding><Insets top="0" bottom="20" left="40" right="40"/></padding>
         </FlowPane>
 
-        <!-- ══ EMPTY STATE ══ -->
         <VBox fx:id="emptyState" alignment="CENTER" spacing="16"
-              managed="false" visible="false"
-              styleClass="heb-empty">
+              managed="false" visible="false" styleClass="heb-empty">
             <padding><Insets top="60" bottom="60"/></padding>
             <Label text="❤️" styleClass="heb-empty-icon"/>
-            <Label text="Aucun Favori Trouvé" styleClass="heb-empty-title"/>
-            <Label text="Explorez les hébergements et sauvegardez vos préférés"
-                   styleClass="heb-empty-sub"/>
-            <Button text="🏨  Explorer les hébergements"
+            <Label text="Aucune activite en favori" styleClass="heb-empty-title"/>
+            <Label text="Quand vous cliquez sur Favori depuis une carte ou le detail d'une activite, elle apparaitra ici."
+                   styleClass="heb-empty-sub" wrapText="true"/>
+            <Button text="🏨  Explorer les activites"
                     styleClass="heb-clear-btn"
                     onAction="#onRetour"/>
         </VBox>
 
-        <!-- ══ FOOTER ══ -->
         <fx:include source="../components/front-footer.fxml"/>
 
     </VBox>

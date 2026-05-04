@@ -139,18 +139,9 @@
             <VBox spacing="14" styleClass="activity-chatbot-body">
                 <padding><Insets top="16" right="16" bottom="16" left="16"/></padding>
 
-                <VBox spacing="8" styleClass="activity-chatbot-bubble">
-                    <Label fx:id="chatbotGreetingLabel"
-                           text="Salut ! Je suis ton assistant EcoTrip."
-                           styleClass="activity-chatbot-message"
-                           wrapText="true"/>
-                    <Label fx:id="chatbotStatusLabel"
-                           text="Dis-moi une ville, une categorie ou une ambiance et je te proposerai les meilleures activites."
-                           styleClass="activity-chatbot-submessage"
-                           wrapText="true"/>
-                </VBox>
+                <VBox fx:id="chatbotConversationBox" spacing="12"/>
 
-                <FlowPane hgap="8" vgap="8">
+                <FlowPane fx:id="chatbotQuickChipsBox" hgap="8" vgap="8">
                     <Button text="Nature a Djerba" onAction="#handleChatbotNature" styleClass="activity-chatbot-chip"/>
                     <Button text="Culture a Tunis" onAction="#handleChatbotCulture" styleClass="activity-chatbot-chip"/>
                     <Button text="Aventure desert" onAction="#handleChatbotAdventure" styleClass="activity-chatbot-chip"/>
