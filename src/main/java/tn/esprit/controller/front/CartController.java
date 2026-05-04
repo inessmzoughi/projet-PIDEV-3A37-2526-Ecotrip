@@ -1,8 +1,5 @@
 package tn.esprit.controller.front;
 
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.layout.element.Paragraph;
-import javafx.scene.text.Font;
 import tn.esprit.utils.MollieCheckoutWindow;
 import tn.esprit.utils.MollieConfig;
 import tn.esprit.utils.MolliePayment;
@@ -28,9 +25,8 @@ import tn.esprit.services.produit.LigneCommandeService;
 import tn.esprit.session.SessionManager;
 import tn.esprit.utils.CartManager;
 import tn.esprit.models.cart.CartItem;
-import tn.esprit.services.reservation.ReservationService;
+import tn.esprit.services.ReservationService;
 
-import javax.swing.text.Document;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URL;
@@ -200,74 +196,54 @@ public class CartController implements Initializable {
         updateSummary();
     }
 
+    // ══════════════════════════════════════════════════════════════════════════
+    //  BUILD ROWS
+    // ══════════════════════════════════════════════════════════════════════════
+
     private HBox buildReservationRow(CartItem item) {
         HBox row = new HBox(16);
         row.setAlignment(Pos.CENTER_LEFT);
         row.setPadding(new Insets(16));
         row.setStyle(
-                "-fx-background-color: " + WHITE + ";" +
-                        "-fx-background-radius: 12;" +
-                        "-fx-border-radius: 12;" +
-                        "-fx-border-color: #c8e6c9;" +  // green tint border for reservations
-                        "-fx-border-width: 1;"
+                "-fx-background-color:" + WHITE + ";" +
+                        "-fx-background-radius:12;-fx-border-radius:12;" +
+                        "-fx-border-color:#c8e6c9;-fx-border-width:1;"
         );
         row.setEffect(new DropShadow(6, Color.web("#00000015")));
 
-        // Icon based on type
         String icon = switch (item.getType()) {
             case HEBERGEMENT -> "🏨";
             case ACTIVITY    -> "🧭";
             case TRANSPORT   -> "🚌";
         };
         Label iconLabel = new Label(icon);
-        iconLabel.setStyle("-fx-font-size: 28px;");
+        iconLabel.setStyle("-fx-font-size:28px;");
 
-        // Info
         VBox info = new VBox(4);
         HBox.setHgrow(info, Priority.ALWAYS);
 
         Label nom = new Label(item.getLabel());
-        nom.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: " + GREEN_DARK + ";");
+        nom.setStyle("-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:" + GREEN_DARK + ";");
 
         String dateInfo = item.getDateFrom() != null
                 ? item.getDateFrom() + " → " + item.getDateTo()
-                + (item.getNights() > 0 ? " (" + item.getNights() + " nuits)" : "")
+                + (item.getNights() > 0 ? " (" + item.getNights() + " " + t("nuits") + ")" : "")
                 : "";
-        Label dates = new Label(dateInfo);
-        dates.setStyle("-fx-font-size: 12px; -fx-text-fill: " + GREY + ";");
-
-        Label guests = new Label("👥 " + item.getNumberOfPersons() + " personne(s)");
-        guests.setStyle("-fx-font-size: 12px; -fx-text-fill: " + GREY + ";");
-
+        Label dates  = new Label(dateInfo);
+        dates.setStyle("-fx-font-size:12px;-fx-text-fill:" + GREY + ";");
+        Label guests = new Label("👥 " + item.getNumberOfPersons() + " " + t("personne(s)"));
+        guests.setStyle("-fx-font-size:12px;-fx-text-fill:" + GREY + ";");
         info.getChildren().addAll(nom, dates, guests);
 
-        // Total
         Label total = new Label(String.format("%.2f TND", item.getTotalPrice()));
-        total.setStyle("-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: " + GREEN_MED + "; -fx-min-width: 100px;");
+        total.setStyle("-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:" + GREEN_MED + ";-fx-min-width:100px;");
         total.setAlignment(Pos.CENTER_RIGHT);
 
-        // Delete
-        Button btnDel = new Button("🗑");
-        btnDel.setStyle(
-                "-fx-background-color: #ffebee;" +
-                        "-fx-text-fill: #c62828;" +
-                        "-fx-font-size: 14px;" +
-                        "-fx-background-radius: 6;" +
-                        "-fx-cursor: hand;"
-        );
-        btnDel.setOnAction(e -> {
-            cart.removeReservationItem(item);
-            refreshCart();
-        });
+        Button btnDel = buildDeleteButton();
+        btnDel.setOnAction(e -> { cart.removeReservationItem(item); refreshCart(); });
 
         row.getChildren().addAll(iconLabel, info, total, btnDel);
         return row;
-    }
-
-    // Update updateSummary() to show grand total:
-    private void updateSummary() {
-        labelTotal.setText(String.format("%.2f TND", cart.getTotal()));
-        labelCount.setText(String.valueOf(cart.getCount()));
     }
 
     private HBox buildItemRow(Product p, int qty) {
@@ -275,113 +251,86 @@ public class CartController implements Initializable {
         row.setAlignment(Pos.CENTER_LEFT);
         row.setPadding(new Insets(16));
         row.setStyle(
-                "-fx-background-color: " + WHITE + ";" +
-                        "-fx-background-radius: 12;" +
-                        "-fx-border-radius: 12;" +
-                        "-fx-border-color: " + BORDER + ";" +
-                        "-fx-border-width: 1;"
+                "-fx-background-color:" + WHITE + ";" +
+                        "-fx-background-radius:12;-fx-border-radius:12;" +
+                        "-fx-border-color:" + BORDER + ";-fx-border-width:1;"
         );
         row.setEffect(new DropShadow(6, Color.web("#00000015")));
 
-        // Icône
         Label icon = new Label("🛍");
         icon.setStyle("-fx-font-size:28px;");
 
-        // Infos produit
         VBox info = new VBox(4);
         HBox.setHgrow(info, Priority.ALWAYS);
-        Label nom = new Label(p.getNom());
-        nom.setStyle(
-                "-fx-font-size: 15px;" +
-                        "-fx-font-weight: bold;" +
-                        "-fx-text-fill: " + GREEN_DARK + ";"
-        );
-        Label prixUnit = new Label(String.format("%.2f TND / unité", p.getPrix()));
-        prixUnit.setStyle("-fx-font-size: 12px; -fx-text-fill: " + GREY + ";");
+        Label nom = new Label(t(p.getNom()));
+        nom.setStyle("-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:" + GREEN_DARK + ";");
+        Label prixUnit = new Label(String.format("%.2f TND / " + t("unité"), p.getPrix()));
+        prixUnit.setStyle("-fx-font-size:12px;-fx-text-fill:" + GREY + ";");
         info.getChildren().addAll(nom, prixUnit);
 
-        // Contrôle quantité
-        HBox qtyBox = new HBox(8);
-        qtyBox.setAlignment(Pos.CENTER);
-
         String qtyBtnStyle =
-                "-fx-background-color: #f0f0f0;" +
-                        "-fx-font-size: 16px;" +
-                        "-fx-font-weight: bold;" +
-                        "-fx-min-width: 32px;" +
-                        "-fx-min-height: 32px;" +
-                        "-fx-background-radius: 6;" +
-                        "-fx-cursor: hand;";
+                "-fx-background-color:#f0f0f0;-fx-font-size:16px;-fx-font-weight:bold;" +
+                        "-fx-min-width:32px;-fx-min-height:32px;-fx-background-radius:6;-fx-cursor:hand;";
 
         Button btnMinus = new Button("−");
         btnMinus.setStyle(qtyBtnStyle);
-
         Label qtyLabel = new Label(String.valueOf(qty));
-        qtyLabel.setStyle(
-                "-fx-font-size: 15px;" +
-                        "-fx-font-weight: bold;" +
-                        "-fx-min-width: 30px;"
-        );
+        qtyLabel.setStyle("-fx-font-size:15px;-fx-font-weight:bold;-fx-min-width:30px;");
         qtyLabel.setAlignment(Pos.CENTER);
-
         Button btnPlus = new Button("+");
         btnPlus.setStyle(qtyBtnStyle);
 
-        btnMinus.setOnAction(e -> {
-            cart.updateQuantity(p, cart.getProductItems().getOrDefault(p, 1) - 1);
-            refreshCart();
-        });
-        btnPlus.setOnAction(e -> {
-            cart.updateQuantity(p, cart.getProductItems().getOrDefault(p, 1) + 1);
-            refreshCart();
-        });
-        qtyBox.getChildren().addAll(btnMinus, qtyLabel, btnPlus);
+        btnMinus.setOnAction(e -> { cart.updateQuantity(p, cart.getProductItems().getOrDefault(p, 1) - 1); refreshCart(); });
+        btnPlus.setOnAction(e  -> { cart.updateQuantity(p, cart.getProductItems().getOrDefault(p, 1) + 1); refreshCart(); });
 
-        // Sous-total
+        HBox qtyBox = new HBox(8, btnMinus, qtyLabel, btnPlus);
+        qtyBox.setAlignment(Pos.CENTER);
+
         Label sousTotal = new Label(String.format("%.2f TND", p.getPrix() * qty));
-        sousTotal.setStyle(
-                "-fx-font-size: 15px;" +
-                        "-fx-font-weight: bold;" +
-                        "-fx-text-fill: " + GREEN_MED + ";" +
-                        "-fx-min-width: 100px;"
-        );
+        sousTotal.setStyle("-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:" + GREEN_MED + ";-fx-min-width:100px;");
         sousTotal.setAlignment(Pos.CENTER_RIGHT);
 
-        // Bouton supprimer
-        Button btnDel = new Button("🗑");
-        btnDel.setStyle(
-                "-fx-background-color: #ffebee;" +
-                        "-fx-text-fill: #c62828;" +
-                        "-fx-font-size: 14px;" +
-                        "-fx-background-radius: 6;" +
-                        "-fx-cursor: hand;"
-        );
-        btnDel.setOnAction(e -> {
-            cart.removeProduct(p);
-            refreshCart();
-        });
+        Button btnDel = buildDeleteButton();
+        btnDel.setOnAction(e -> { cart.removeProduct(p); refreshCart(); });
 
         row.getChildren().addAll(icon, info, qtyBox, sousTotal, btnDel);
         return row;
     }
 
+    private Button buildDeleteButton() {
+        Button btn = new Button("🗑");
+        btn.setStyle(
+                "-fx-background-color:#ffebee;-fx-text-fill:#c62828;" +
+                        "-fx-font-size:14px;-fx-background-radius:6;-fx-cursor:hand;"
+        );
+        return btn;
+    }
+
+    private void updateSummary() {
+        labelTotal.setText(String.format("%.2f TND", cart.getTotal()));
+        labelCount.setText(String.valueOf(cart.getCount()));
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    //  CONFIRMER COMMANDE
+    // ══════════════════════════════════════════════════════════════════════════
 
     @FXML
     private void onConfirmer() {
         if (cart.getProductItems().isEmpty() && cart.getReservationItems().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Panier vide", "Ajoutez des articles avant de confirmer.");
+            showAlert(Alert.AlertType.WARNING,
+                    t("Panier vide"),
+                    t("Ajoutez des articles avant de confirmer."));
             return;
         }
 
-        String mode = rbCarte.isSelected() ? "CARTE" : rbPaypal.isSelected() ? "PAYPAL" : "CASH";
+        boolean isPaypal = rbPaypal.isSelected();
 
         try {
-            // ── Finalize reservation items → persist to DB ──
             if (!cart.getReservationItems().isEmpty()) {
                 reservationService.finalizeAllReservations(cart.getReservationItems());
             }
 
-            // ── Finalize product orders (existing logic) ──
             for (Map.Entry<Product, Integer> entry : cart.getProductItems().entrySet()) {
                 Product p   = entry.getKey();
                 int     qty = entry.getValue();
@@ -455,7 +404,6 @@ public class CartController implements Initializable {
         }
     }
 
-    // Récupère l'ID de la dernière commande insérée pour un user+produit
     private int getLastInsertedCommandeId(int userId, int produitId) throws SQLException {
         return commandeService.read().stream()
                 .filter(c -> c.getIdUser() == userId && c.getProduitId() == produitId)

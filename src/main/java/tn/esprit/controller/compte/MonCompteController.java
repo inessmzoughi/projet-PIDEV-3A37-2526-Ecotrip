@@ -10,25 +10,18 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-<<<<<<< HEAD
 import tn.esprit.models.Auth_User.User;
-=======
->>>>>>> eea25a70bee82bd33125413eb8e90597aaad968e
 import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;
 import tn.esprit.services.Auth_User.UserService;
 import tn.esprit.session.SessionManager;
 import tn.esprit.utils.PasswordUtil;
-<<<<<<< HEAD
 import javafx.animation.AnimationTimer;
 import javafx.scene.image.WritableImage;
 import org.opencv.core.Mat;
 import tn.esprit.services.Auth_User.FaceRecognition.FaceEnrollmentService;   // new HF-based one
 import tn.esprit.services.Auth_User.FaceRecognition.WebcamService;
 import tn.esprit.utils.FaceDescriptorUtil;
-=======
-
->>>>>>> eea25a70bee82bd33125413eb8e90597aaad968e
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -64,7 +57,6 @@ public class MonCompteController implements Initializable {
     @FXML private Label toastLabel;
 
     private final UserService service = new UserService();
-<<<<<<< HEAD
     @FXML private VBox      faceFormPanel;
     @FXML private Label     faceSuccessLabel, faceErrorLabel, faceStatusLabel;
     @FXML private javafx.scene.image.ImageView webcamView;
@@ -75,9 +67,6 @@ public class MonCompteController implements Initializable {
     private final WebcamService        webcamService     = new WebcamService();
     private final FaceEnrollmentService enrollmentService = new FaceEnrollmentService();
     private AnimationTimer cameraTimer;
-=======
-
->>>>>>> eea25a70bee82bd33125413eb8e90597aaad968e
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         if (!SessionManager.getInstance().isLoggedIn()) {
@@ -87,13 +76,10 @@ public class MonCompteController implements Initializable {
         loadProfile();
         showPanel(editFormPanel);
         hidePanel(passwordFormPanel);
-<<<<<<< HEAD
         if (SessionManager.getInstance().shouldOpenFacePanelOnLoad()) {
             SessionManager.getInstance().clearOpenFacePanel();
             showFaceForm(); // opens the face panel directly
         }
-=======
->>>>>>> eea25a70bee82bd33125413eb8e90597aaad968e
     }
 
     /* ─── Load profile info ─── */
@@ -361,8 +347,6 @@ public class MonCompteController implements Initializable {
             l.setVisible(false); l.setManaged(false);
         }
     }
-<<<<<<< HEAD
-
     // ── Panel toggle (same as before) ──
     @FXML public void showFaceForm() {
         showPanel(faceFormPanel);
@@ -488,6 +472,4 @@ public class MonCompteController implements Initializable {
         faceSuccessLabel.setVisible(false); faceSuccessLabel.setManaged(false);
         faceErrorLabel.setVisible(false);   faceErrorLabel.setManaged(false);
     }
-=======
->>>>>>> eea25a70bee82bd33125413eb8e90597aaad968e
 }

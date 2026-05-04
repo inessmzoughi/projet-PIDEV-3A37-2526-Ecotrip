@@ -148,12 +148,6 @@
             <artifactId>javax.mail</artifactId>
             <version>1.6.2</version>
         </dependency>
-        <!-- CalendarFX — the main view module -->
-        <dependency>
-            <groupId>com.calendarfx</groupId>
-            <artifactId>view</artifactId>
-            <version>11.12.7</version>
-        </dependency>
 
         <!-- Required by CalendarFX internally -->
         <dependency>

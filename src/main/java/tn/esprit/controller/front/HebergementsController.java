@@ -16,6 +16,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
 import tn.esprit.controller.front.modals.HebergementReservationController;
+import tn.esprit.models.Auth_User.User;
 import tn.esprit.models.hebergements.Categorie_hebergement;
 import tn.esprit.models.hebergements.Chambre;
 import tn.esprit.models.hebergements.Equipement;
