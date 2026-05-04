@@ -9,11 +9,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import tn.esprit.models.Reservation;
 import tn.esprit.models.enums.ReservationStatus;
-import tn.esprit.models.enums.ReservationType;
 import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;
-import tn.esprit.services.reservation.ReservationPdfService;
-import tn.esprit.services.reservation.ReservationService;
+import tn.esprit.services.ReservationService;
 
 import java.net.URL;
 import java.sql.SQLException;
@@ -39,11 +37,6 @@ public class ListReservationsController implements Initializable {
     @FXML private TableColumn<Reservation, Void>   colActions;
     @FXML private Label badgeCount, pagInfo;
     @FXML private HBox  pagButtons;
-    @FXML private Label statTotalSub, statPendingPct, statConfirmedPct;
-    @FXML private Label statCancelledPct, statRevenueSub;
-    @FXML private Label statHeb, statHebPct, statAct, statActPct;
-    @FXML private Label statTrans, statTransPct;
-    @FXML private Label statAvgPersons, statAvgRevenue;
 
     private final ReservationService service = new ReservationService();
     private List<Reservation> allData = new ArrayList<>();
@@ -76,117 +69,15 @@ public class ListReservationsController implements Initializable {
 
     private void updateStats() {
         try {
-            int total      = allData.size();
-            long heb       = allData.stream()
-                    .filter(r -> r.getReservationType() == ReservationType.HEBERGEMENT).count();
-            long act       = allData.stream()
-                    .filter(r -> r.getReservationType() == ReservationType.ACTIVITY).count();
-            long trans     = allData.stream()
-                    .filter(r -> r.getReservationType() == ReservationType.TRANSPORT).count();
-            long confirmed = allData.stream()
-                    .filter(r -> r.getStatus() == ReservationStatus.CONFIRMED).count();
-            long pending   = allData.stream()
-                    .filter(r -> r.getStatus() == ReservationStatus.PENDING).count();
-            long cancelled = allData.stream()
-                    .filter(r -> r.getStatus() == ReservationStatus.CANCELLED).count();
-            double revenue = allData.stream()
-                    .filter(r -> r.getStatus() == ReservationStatus.CONFIRMED)
-                    .mapToDouble(Reservation::getTotalPrice).sum();
-            double avgPersons = total == 0 ? 0 :
-                    allData.stream().mapToInt(Reservation::getNumberOfPersons).average().orElse(0);
-            double avgRevenue = total == 0 ? 0 :
-                    allData.stream().mapToDouble(Reservation::getTotalPrice).average().orElse(0);
-
-            // Row 1
-            statTotal.setText(String.valueOf(total));
-            statTotalSub.setText(confirmed + " confirmées · "
-                    + pending + " en attente");
-
-            statPending.setText(String.valueOf(pending));
-            statPendingPct.setText(pct(pending, total) + " du total");
-
-            statConfirmed.setText(String.valueOf(confirmed));
-            statConfirmedPct.setText(pct(confirmed, total) + " du total");
-
-            statCancelled.setText(String.valueOf(cancelled));
-            statCancelledPct.setText(pct(cancelled, total) + " du total");
-
-            // Row 2
-            statRevenue.setText(String.format("%.2f TND", revenue));
-            statRevenueSub.setText(String.format("moy. %.2f TND/résa", avgRevenue));
-
-            statHeb.setText(String.valueOf(heb));
-            statHebPct.setText(pct(heb, total) + " du total");
-
-            statAct.setText(String.valueOf(act));
-            statActPct.setText(pct(act, total) + " du total");
-
-            statTrans.setText(String.valueOf(trans));
-            statTransPct.setText(pct(trans, total) + " du total");
-
-            statAvgPersons.setText(String.format("%.1f", avgPersons));
-            statAvgRevenue.setText(String.format("moy. %.2f TND", avgRevenue));
-
-        } catch (Exception e) { /* ignore */ }
+            Map<String, Object> stats = service.getStats();
+            statTotal.setText(stats.get("total").toString());
+            statPending.setText(stats.get("pending").toString());
+            statConfirmed.setText(stats.get("confirmed").toString());
+            statCancelled.setText(stats.get("cancelled").toString());
+            statRevenue.setText(String.format("%.2f TND", (double) stats.get("revenue")));
+        } catch (SQLException e) { /* ignore stats error */ }
     }
 
-    private String pct(long part, int total) {
-        if (total == 0) return "0%";
-        return String.format("%.0f%%", (double) part / total * 100);
-    }
-
-    // ── Add onExportPdf() ──
-    @FXML
-    private void onExportPdf() {
-        // Choose whether to export all data or current filtered view
-        List<Reservation> toExport = getFiltered();
-
-        javafx.stage.FileChooser chooser = new javafx.stage.FileChooser();
-        chooser.setTitle("Exporter les réservations en PDF");
-        chooser.setInitialFileName(
-                "ecotrip_reservations_" + java.time.LocalDate.now() + ".pdf");
-        chooser.getExtensionFilters().add(
-                new javafx.stage.FileChooser.ExtensionFilter("PDF", "*.pdf"));
-
-        java.io.File file = chooser.showSaveDialog(tableView.getScene().getWindow());
-        if (file == null) return;
-
-        // Disable button and show progress
-        // Find the PDF button — we use pagInfo label for feedback
-        pagInfo.setText("⏳ Génération du PDF en cours...");
-
-        // Run PDF generation off UI thread — can take a moment for large datasets
-        Thread t = new Thread(() -> {
-            try {
-                ReservationPdfService pdfService = new ReservationPdfService();
-
-                String title = filterStatus.getValue().equals("Tous")
-                        && filterType.getValue().equals("Tous")
-                        ? "Rapport de toutes les réservations"
-                        : "Rapport filtré — " + filterType.getValue()
-                        + " / " + filterStatus.getValue();
-
-                pdfService.generate(toExport, file, title);
-
-                javafx.application.Platform.runLater(() -> {
-                    pagInfo.setText("✅ PDF exporté : " + file.getName());
-
-                    // Open the PDF immediately
-                    try {
-                        java.awt.Desktop.getDesktop().open(file);
-                    } catch (Exception ignored) {}
-                });
-
-            } catch (Exception e) {
-                javafx.application.Platform.runLater(() -> {
-                    pagInfo.setText("❌ Erreur PDF : " + e.getMessage());
-                    showAlert("Erreur PDF", e.getMessage());
-                });
-            }
-        });
-        t.setDaemon(true);
-        t.start();
-    }
     private List<Reservation> getFiltered() {
         String query  = searchField.getText().toLowerCase().trim();
         String status = filterStatus.getValue();

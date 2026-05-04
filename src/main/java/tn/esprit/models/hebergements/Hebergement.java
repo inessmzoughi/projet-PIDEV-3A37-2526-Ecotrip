@@ -135,4 +135,6 @@ public class Hebergement {
     public void setPropietaire_id(int propietaire_id) {
         this.propietaire_id = propietaire_id;
     }
+
+
 }

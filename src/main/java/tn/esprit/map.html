@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; }
+        #map { width: 100%; height: 100vh; border-radius: 8px; }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+    var map = L.map('map').setView([33.8869, 9.5375], 6);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    var marker = null;
+
+    function setMarker(lat, lng, nom, ville) {
+        if (marker) map.removeLayer(marker);
+        marker = L.marker([lat, lng])
+            .addTo(map)
+            .bindPopup(
+                '<div style="font-family:sans-serif;min-width:140px">'
+                + '<b style="font-size:13px">🏨 ' + nom + '</b><br>'
+                + '<span style="color:#64748b;font-size:11px">📍 ' + ville + '</span>'
+                + '</div>'
+            )
+            .openPopup();
+        map.setView([lat, lng], 13);
+    }
+
+    map.on('click', function(e) {
+        if (window.javaConnector) {
+            window.javaConnector.onMapClick(e.latlng.lat, e.latlng.lng);
+        }
+    });
+</script>
+</body>
+</html>
