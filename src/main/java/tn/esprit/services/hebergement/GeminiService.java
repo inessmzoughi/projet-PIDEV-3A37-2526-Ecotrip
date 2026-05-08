@@ -15,7 +15,7 @@ public class GeminiService {
         try (var in = GeminiService.class.getResourceAsStream("/config.properties")) {
             var props = new java.util.Properties();
             props.load(in);
-            return props.getProperty("gemini.api.key");
+            return props.getProperty("GEMINI_API_KEY_I");
         } catch (Exception e) {
             throw new RuntimeException("config.properties introuvable !", e);
         }

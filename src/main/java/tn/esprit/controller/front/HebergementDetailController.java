@@ -12,24 +12,14 @@ import javafx.scene.image.*;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import tn.esprit.models.hebergements.Avis;
-import tn.esprit.models.hebergements.Categorie_hebergement;
-import tn.esprit.models.hebergements.Chambre;
-import tn.esprit.models.hebergements.Equipement;
-import tn.esprit.models.hebergements.Hebergement;
+import tn.esprit.models.hebergements.*;
 import tn.esprit.models.Auth_User.User;
 import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;
-import tn.esprit.services.hebergement.AvisHebergement_service;
-import tn.esprit.services.hebergement.AvisModeratorService;
+import tn.esprit.services.hebergement.*;
 import tn.esprit.services.hebergement.AvisModeratorService.ModerationResult;
 import tn.esprit.services.hebergement.AvisModeratorService.Decision;
-import tn.esprit.services.hebergement.CategorieH_service;
-import tn.esprit.services.hebergement.Chambre_service;
-import tn.esprit.services.hebergement.HebergementEquipement_service;
-import tn.esprit.services.hebergement.LikeHebergement_service;
 import tn.esprit.session.SessionManager;
-import tn.esprit.services.hebergement.CloudinaryService;
 
 import java.io.File;
 import java.net.URL;
@@ -37,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.UUID;
@@ -59,6 +50,13 @@ public class HebergementDetailController implements Initializable {
     @FXML private Label      errCommentaire;
     @FXML private FlowPane   equipementsPane;
     @FXML private HBox       prixBox;
+    @FXML private StackPane  galerieMainPane;
+    @FXML private ImageView  galerieMainView;
+    @FXML private Button     galeriePrev;
+    @FXML private Button     galerieNext;
+    @FXML private Label      galerieCounter;
+    @FXML private Label      galerieLegend;
+    @FXML private HBox       galerieThumbs;
 
     /* ─── Services ─── */
     private final LikeHebergement_service       likeService       = new LikeHebergement_service();
@@ -77,6 +75,9 @@ public class HebergementDetailController implements Initializable {
     private boolean     isDisliked = false;
     private File        selectedPhoto = null;
     private Avis        editingAvis   = null;
+    private final HebergementImage_service galerieService = new HebergementImage_service();
+    private List<HebergementImage>         galerieImages  = new ArrayList<>();
+    private int                            galerieIndex   = 0;
 
     private static final String UPLOADS_AVIS = "uploads/avis/";
     private static final String UPLOADS_HEB  = "uploads/hebergements/";
@@ -96,6 +97,7 @@ public class HebergementDetailController implements Initializable {
         this.hebergement = h;
         afficherDetails();
         chargerEquipements();
+        chargerGalerie();
         chargerLikes();
         chargerAvis();
         chargerPrix();
@@ -645,5 +647,162 @@ public class HebergementDetailController implements Initializable {
         Alert a = new Alert(Alert.AlertType.ERROR);
         a.setContentText(msg);
         a.showAndWait();
+    }
+
+    /* ══════════════════════════════════════════════════════
+       GALERIE  ── FIX : rechargement propre depuis la DB ──
+       ══════════════════════════════════════════════════════ */
+
+    /**
+     * FIX : on vide toujours la liste avant de recharger depuis la DB.
+     * Cela évite que l'ancienne liste (après suppression/modification)
+     * reste en mémoire et pointe vers des images qui n'existent plus.
+     */
+    private void chargerGalerie() {
+        // FIX 1 — toujours repartir d'une liste vide
+        galerieImages = new ArrayList<>();
+
+        try {
+            galerieImages = galerieService.getByHebergement(hebergement.getId());
+        } catch (SQLException ignored) {
+            galerieImages = new ArrayList<>();
+        }
+
+        if (galerieImages.isEmpty()) {
+            galerieMainPane.setVisible(false);
+            galerieMainPane.setManaged(false);
+            return;
+        }
+
+        galerieMainPane.setVisible(true);
+        galerieMainPane.setManaged(true);
+        galerieIndex = 0;
+
+        galerieThumbs.getChildren().clear();
+        for (int i = 0; i < galerieImages.size(); i++) {
+            final int idx = i;
+            final String url = galerieImages.get(i).getUrl();
+
+            StackPane thumbPane = new StackPane();
+            thumbPane.setPrefSize(100, 70);
+            thumbPane.setStyle("-fx-border-color:#e2e8f0; -fx-border-radius:8;"
+                    + "-fx-background-radius:8; -fx-cursor:hand; -fx-border-width:2;"
+                    + "-fx-background-color:#f1f5f9;");
+
+            try {
+                // FIX 2 — chargement asynchrone (true en dernier paramètre)
+                Image thumbImg = new Image(url, 100, 70, true, true, true);
+                ImageView thumb = new ImageView();
+                thumb.setFitWidth(100);
+                thumb.setFitHeight(70);
+                thumb.setPreserveRatio(true);
+                thumb.setSmooth(true);
+
+                // FIX 3 — écouter la fin du chargement pour gérer les erreurs
+                thumbImg.errorProperty().addListener((obs, old, err) -> {
+                    if (err) {
+                        System.err.println("[Galerie] Miniature introuvable : " + url);
+                    }
+                });
+                thumbImg.progressProperty().addListener((obs, old, progress) -> {
+                    if (progress.doubleValue() >= 1.0 && !thumbImg.isError()) {
+                        thumb.setImage(thumbImg);
+                    }
+                });
+                // Si déjà chargée (cache) on l'affiche directement
+                if (!thumbImg.isError() && thumbImg.getProgress() >= 1.0) {
+                    thumb.setImage(thumbImg);
+                }
+                thumbPane.getChildren().add(thumb);
+            } catch (Exception ignored) {}
+
+            thumbPane.setOnMouseClicked(e -> selectGalerieImage(idx));
+            thumbPane.setOnMouseEntered(e ->
+                    thumbPane.setStyle("-fx-border-color:#2d6a4f; -fx-border-radius:8;"
+                            + "-fx-background-radius:8; -fx-cursor:hand; -fx-border-width:2;"
+                            + "-fx-background-color:#f1f5f9;"));
+            thumbPane.setOnMouseExited(e -> {
+                boolean active = (galerieIndex == idx);
+                thumbPane.setStyle("-fx-border-color:" + (active ? "#2d6a4f" : "#e2e8f0")
+                        + "; -fx-border-radius:8; -fx-background-radius:8;"
+                        + "-fx-cursor:hand; -fx-border-width:2;"
+                        + "-fx-background-color:#f1f5f9;");
+            });
+
+            galerieThumbs.getChildren().add(thumbPane);
+        }
+
+        selectGalerieImage(0);
+    }
+
+    private void selectGalerieImage(int idx) {
+        if (galerieImages == null || galerieImages.isEmpty()) return;
+        galerieIndex = idx;
+        HebergementImage img = galerieImages.get(idx);
+
+        // FIX 4 — chargement asynchrone de la grande image (true = background loading)
+        try {
+            Image mainImg = new Image(img.getUrl(), 700, 320, true, true, true);
+
+            // FIX 5 — listener d'erreur pour debug et fallback propre
+            mainImg.errorProperty().addListener((obs, old, err) -> {
+                if (err) {
+                    System.err.println("[Galerie] Erreur chargement image principale : " + img.getUrl());
+                    javafx.application.Platform.runLater(() -> galerieMainView.setImage(null));
+                }
+            });
+
+            // FIX 6 — afficher dès que le chargement est terminé
+            mainImg.progressProperty().addListener((obs, old, progress) -> {
+                if (progress.doubleValue() >= 1.0 && !mainImg.isError()) {
+                    javafx.application.Platform.runLater(() -> galerieMainView.setImage(mainImg));
+                }
+            });
+
+            // Si déjà en cache, affichage immédiat
+            if (!mainImg.isError() && mainImg.getProgress() >= 1.0) {
+                galerieMainView.setImage(mainImg);
+            } else if (!mainImg.isError()) {
+                // Image en cours de chargement : vider l'ancienne image pour éviter l'affichage résiduel
+                galerieMainView.setImage(null);
+            }
+        } catch (Exception e) {
+            System.err.println("[Galerie] Exception chargement image : " + e.getMessage());
+            galerieMainView.setImage(null);
+        }
+
+        // Compteur
+        galerieCounter.setText((idx + 1) + " / " + galerieImages.size());
+
+        // Légende
+        if (img.getLegende() != null && !img.getLegende().isBlank()) {
+            galerieLegend.setText("📝  " + img.getLegende());
+            galerieLegend.setVisible(true);
+            galerieLegend.setManaged(true);
+        } else {
+            galerieLegend.setVisible(false);
+            galerieLegend.setManaged(false);
+        }
+
+        // Surbrillance miniature active
+        for (int i = 0; i < galerieThumbs.getChildren().size(); i++) {
+            StackPane p = (StackPane) galerieThumbs.getChildren().get(i);
+            p.setStyle("-fx-border-color:" + (i == idx ? "#2d6a4f" : "#e2e8f0")
+                    + "; -fx-border-radius:8; -fx-background-radius:8;"
+                    + "-fx-cursor:hand; -fx-border-width:2;"
+                    + "-fx-background-color:#f1f5f9;");
+        }
+    }
+
+    @FXML
+    private void onGaleriePrev() {
+        if (galerieImages == null || galerieImages.isEmpty()) return;
+        selectGalerieImage((galerieIndex - 1 + galerieImages.size()) % galerieImages.size());
+    }
+
+    @FXML
+    private void onGalerieNext() {
+        if (galerieImages == null || galerieImages.isEmpty()) return;
+        selectGalerieImage((galerieIndex + 1) % galerieImages.size());
     }
 }

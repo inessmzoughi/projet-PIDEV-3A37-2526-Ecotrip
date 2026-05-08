@@ -302,6 +302,17 @@ public class ProductController implements Initializable {
         statCategories.setText(String.valueOf(nbCategories));
     }
 
+    // ══════════════════════════════════════════════════════════════════════════
+    //  CONTRÔLE D'UNICITÉ DU NOM ✅
+    //  Retourne true si un autre produit (différent de editingId) porte déjà ce nom
+    // ══════════════════════════════════════════════════════════════════════════
+    private boolean nomDejaExistant(String nom) {
+        return allData.stream()
+                .filter(p -> editingId == null || !Objects.equals(p.getId(), editingId))
+                .anyMatch(p -> p.getNom() != null
+                        && p.getNom().trim().equalsIgnoreCase(nom.trim()));
+    }
+
     @FXML
     private void onOpenForm() {
         editingId = null;
@@ -311,6 +322,8 @@ public class ProductController implements Initializable {
         stockField.clear();
         categoryCombo.getSelectionModel().clearSelection();
         imageField.clear();
+        // Réinitialiser le style du champ nom
+        nomField.setStyle("");
         formPanel.setVisible(true);
         formPanel.setManaged(true);
     }
@@ -320,6 +333,8 @@ public class ProductController implements Initializable {
         formPanel.setVisible(false);
         formPanel.setManaged(false);
         editingId = null;
+        // Réinitialiser le style du champ nom à la fermeture
+        nomField.setStyle("");
     }
 
     @FXML
@@ -327,7 +342,7 @@ public class ProductController implements Initializable {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choisir une image produit");
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp")
+                new FileChooser.ExtensionFilter("Images", ".png", ".jpg", ".jpeg", ".gif", "*.webp")
         );
 
         Stage stage = (Stage) imageField.getScene().getWindow();
@@ -345,12 +360,15 @@ public class ProductController implements Initializable {
         stockField.setText(String.valueOf(p.getStock()));
         categoryCombo.setValue(p.getProductCategoryId());
         imageField.setText(p.getImage() != null ? p.getImage() : "");
+        // Réinitialiser le style du champ nom à l'ouverture de l'édition
+        nomField.setStyle("");
         formPanel.setVisible(true);
         formPanel.setManaged(true);
     }
 
     @FXML
     private void onSave() {
+        // ── 1. Vérification des champs obligatoires ────────────────────────────
         if (nomField.getText().trim().isEmpty()
                 || prixField.getText().trim().isEmpty()
                 || stockField.getText().trim().isEmpty()
@@ -361,11 +379,29 @@ public class ProductController implements Initializable {
             return;
         }
 
+        String nom = nomField.getText().trim();
+
+        // ── 2. ✅ CONTRÔLE D'UNICITÉ DU NOM ───────────────────────────────────
+        if (nomDejaExistant(nom)) {
+            // Mettre le champ en rouge pour signaler l'erreur visuellement
+            nomField.setStyle("-fx-border-color: #e53935; -fx-border-width: 2; "
+                    + "-fx-background-color: #ffebee;");
+            showAlert(Alert.AlertType.WARNING,
+                    "Nom déjà utilisé",
+                    "Un produit avec le nom \"" + nom + "\" existe déjà.\n"
+                            + "Veuillez choisir un nom différent.");
+            nomField.requestFocus();
+            return;
+        }
+
+        // Nom valide : réinitialiser le style du champ
+        nomField.setStyle("");
+
+        // ── 3. Validation des valeurs numériques ──────────────────────────────
         try {
-            String nom = nomField.getText().trim();
-            double prix = Double.parseDouble(prixField.getText().trim());
-            int stock = Integer.parseInt(stockField.getText().trim());
-            int catId = categoryCombo.getValue();
+            double prix  = Double.parseDouble(prixField.getText().trim());
+            int    stock = Integer.parseInt(stockField.getText().trim());
+            int    catId = categoryCombo.getValue();
             String image = imageField.getText() == null ? null : imageField.getText().trim();
 
             if (prix < 0 || stock < 0) {
@@ -379,6 +415,7 @@ public class ProductController implements Initializable {
                 image = null;
             }
 
+            // ── 4. Création ou mise à jour ────────────────────────────────────
             if (editingId != null) {
                 service.update(new Product(editingId, nom, prix, stock, catId, image));
             } else {
@@ -405,7 +442,7 @@ public class ProductController implements Initializable {
         alert.setHeaderText("Supprimer « " + p.getNom() + " » ?");
         alert.setContentText("Cette action est irréversible.");
 
-        ButtonType cancel = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType cancel  = new ButtonType("Annuler",   ButtonBar.ButtonData.CANCEL_CLOSE);
         ButtonType confirm = new ButtonType("Supprimer", ButtonBar.ButtonData.OK_DONE);
         alert.getButtonTypes().setAll(cancel, confirm);
 
@@ -414,8 +451,7 @@ public class ProductController implements Initializable {
             if (css != null) {
                 alert.getDialogPane().getStylesheets().add(css.toExternalForm());
             }
-        } catch (Exception ignored) {
-        }
+        } catch (Exception ignored) {}
 
         alert.showAndWait().filter(b -> b == confirm).ifPresent(b -> {
             try {
@@ -434,16 +470,16 @@ public class ProductController implements Initializable {
         renderTable();
     }
 
-    @FXML private void onNavHebergements() { navigateTo("ListHebergements.fxml", "Hébergements"); }
-    @FXML private void onNavChambres() { navigateTo("Chambres.fxml", "Chambres"); }
-    @FXML private void onNavEquipements() { navigateTo("Equipements.fxml", "Équipements"); }
-    @FXML private void onNavCategories() { navigateTo("CategoriesHebergement.fxml", "Catégories"); }
-    @FXML private void onNavCommandes() { navigateTo("Commande.fxml", "Commandes"); }
-    @FXML private void onNavLignesCommande() { navigateTo("LigneCommande.fxml", "Lignes de commande"); }
-    @FXML private void onNavPaiements() { navigateTo("Payment.fxml", "Paiements"); }
-    @FXML private void onNavUtilisateurs() { navigateTo("Utilisateurs.fxml", "Utilisateurs"); }
-    @FXML private void onNavCategoriesProduit() { navigateTo("ProductCategory.fxml", "Catégories produit"); }
-    
+    @FXML private void onNavHebergements()    { navigateTo("ListHebergements.fxml",   "Hébergements"); }
+    @FXML private void onNavChambres()        { navigateTo("Chambres.fxml",           "Chambres"); }
+    @FXML private void onNavEquipements()     { navigateTo("Equipements.fxml",        "Équipements"); }
+    @FXML private void onNavCategories()      { navigateTo("CategoriesHebergement.fxml", "Catégories"); }
+    @FXML private void onNavCommandes()       { navigateTo("Commande.fxml",           "Commandes"); }
+    @FXML private void onNavLignesCommande()  { navigateTo("LigneCommande.fxml",      "Lignes de commande"); }
+    @FXML private void onNavPaiements()       { navigateTo("Payment.fxml",            "Paiements"); }
+    @FXML private void onNavUtilisateurs()    { navigateTo("Utilisateurs.fxml",       "Utilisateurs"); }
+    @FXML private void onNavCategoriesProduit() { navigateTo("ProductCategory.fxml",  "Catégories produit"); }
+
     @FXML
     private void onLogout() {
         Stage stage = (Stage) tableView.getScene().getWindow();
@@ -481,8 +517,7 @@ public class ProductController implements Initializable {
             if (css != null) {
                 a.getDialogPane().getStylesheets().add(css.toExternalForm());
             }
-        } catch (Exception ignored) {
-        }
+        } catch (Exception ignored) {}
 
         a.showAndWait();
     }
