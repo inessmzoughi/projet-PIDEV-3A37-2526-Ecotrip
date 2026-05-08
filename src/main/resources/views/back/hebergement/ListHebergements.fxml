@@ -330,7 +330,33 @@
                                 </VBox>
 
                             </VBox>
+                            <!-- Galerie d'images -->
+                            <VBox spacing="6" styleClass="form-group">
+                                <Label text="🖼️  Galerie d'images" styleClass="form-label"/>
 
+                                <HBox spacing="8" alignment="CENTER_LEFT">
+                                    <TextField fx:id="galerieUrlField"
+                                               promptText="https://exemple.com/image.jpg"
+                                               styleClass="form-input"
+                                               HBox.hgrow="ALWAYS"/>
+                                    <TextField fx:id="galerieLegendField"
+                                               promptText="Légende (optionnel)"
+                                               styleClass="form-input"
+                                               prefWidth="140"/>
+                                    <Button text="➕ Ajouter"
+                                            onAction="#onAjouterImageGalerie"
+                                            style="-fx-background-color:#0ea5e9;
+                       -fx-text-fill:white;
+                       -fx-font-weight:bold;
+                       -fx-background-radius:8;
+                       -fx-cursor:hand;
+                       -fx-padding:8 14 8 14;
+                       -fx-border-width:0;
+                       -fx-font-size:12px;"/>
+                                </HBox>
+
+                                <VBox fx:id="galerieListBox" spacing="4"/>
+                            </VBox>
                             <!-- Footer boutons -->
                             <HBox styleClass="form-footer" alignment="CENTER_RIGHT" spacing="10">
                                 <Button text="↺  Réinitialiser" styleClass="btn-cancel"

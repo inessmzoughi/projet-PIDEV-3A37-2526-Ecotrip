@@ -79,6 +79,74 @@
                     </HBox>
                     <FlowPane fx:id="equipementsPane" hgap="8" vgap="8"/>
                 </VBox>
+                <!-- ══ GALERIE D'IMAGES ══ -->
+                <VBox spacing="12" styleClass="detail-section-card">
+                    <HBox alignment="CENTER_LEFT" spacing="10">
+                        <Label text="🖼️" styleClass="detail-section-icon"/>
+                        <Label text="Galerie photos" styleClass="detail-section-title"/>
+                        <Label fx:id="galerieCounter" text=""
+                               style="-fx-font-size:11px; -fx-text-fill:#94a3b8;"/>
+                    </HBox>
+
+                    <!-- Image principale galerie -->
+                    <StackPane fx:id="galerieMainPane" visible="false" managed="false">
+                        <StackPane style="-fx-background-color:#f1f5f9; -fx-background-radius:12;">
+                            <ImageView fx:id="galerieMainView"
+                                       fitWidth="700" fitHeight="320"
+                                       preserveRatio="true" smooth="true"/>
+
+                            <!-- Bouton Précédent -->
+                            <Button fx:id="galeriePrev" text="❮"
+                                    onAction="#onGaleriePrev"
+                                    StackPane.alignment="CENTER_LEFT"
+                                    style="-fx-background-color:rgba(0,0,0,0.35);
+                           -fx-text-fill:white;
+                           -fx-font-size:18px;
+                           -fx-font-weight:bold;
+                           -fx-background-radius:50%;
+                           -fx-min-width:36px; -fx-min-height:36px;
+                           -fx-max-width:36px; -fx-max-height:36px;
+                           -fx-cursor:hand;
+                           -fx-border-width:0;
+                           -fx-padding:0;"
+                                    translateX="10"/>
+
+                            <!-- Bouton Suivant -->
+                            <Button fx:id="galerieNext" text="❯"
+                                    onAction="#onGalerieNext"
+                                    StackPane.alignment="CENTER_RIGHT"
+                                    style="-fx-background-color:rgba(0,0,0,0.35);
+                           -fx-text-fill:white;
+                           -fx-font-size:18px;
+                           -fx-font-weight:bold;
+                           -fx-background-radius:50%;
+                           -fx-min-width:36px; -fx-min-height:36px;
+                           -fx-max-width:36px; -fx-max-height:36px;
+                           -fx-cursor:hand;
+                           -fx-border-width:0;
+                           -fx-padding:0;"
+                                    translateX="-10"/>
+                        </StackPane>
+
+                        <!-- Légende -->
+                        <Label fx:id="galerieLegend" text=""
+                               visible="false" managed="false"
+                               style="-fx-font-size:12px; -fx-text-fill:#64748b;
+                      -fx-font-style:italic;"
+                               StackPane.alignment="BOTTOM_CENTER"
+                               translateY="-8"/>
+                    </StackPane>
+
+                    <!-- Miniatures -->
+                    <ScrollPane hbarPolicy="AS_NEEDED" vbarPolicy="NEVER"
+                                fitToHeight="true"
+                                style="-fx-background:transparent; -fx-background-color:transparent;
+                       -fx-border-width:0;">
+                        <HBox fx:id="galerieThumbs" spacing="8" alignment="CENTER_LEFT">
+                            <padding><Insets top="4" bottom="4"/></padding>
+                        </HBox>
+                    </ScrollPane>
+                </VBox>
 
                 <!-- ══ AVIS ══ -->
                 <VBox spacing="16" styleClass="detail-section-card">

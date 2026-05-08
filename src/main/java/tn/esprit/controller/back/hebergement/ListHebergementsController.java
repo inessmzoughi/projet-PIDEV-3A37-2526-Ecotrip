@@ -1,5 +1,12 @@
 package tn.esprit.controller.back.hebergement;
 
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Priority;
 import javafx.scene.web.WebView;
 import javafx.scene.web.WebEngine;
 import netscape.javascript.JSObject;
@@ -7,6 +14,7 @@ import javafx.concurrent.Worker;
 import tn.esprit.models.hebergements.Categorie_hebergement;
 import tn.esprit.models.hebergements.Equipement;
 import tn.esprit.models.hebergements.Hebergement;
+import tn.esprit.models.hebergements.HebergementImage;
 import tn.esprit.navigation.Routes;
 import tn.esprit.navigation.SceneManager;
 import tn.esprit.services.hebergement.*;
@@ -26,14 +34,18 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.util.Duration;
 import tn.esprit.services.hebergement.AvisHebergement_service;
+
+
 
 public class ListHebergementsController implements Initializable {
 
@@ -66,8 +78,12 @@ public class ListHebergementsController implements Initializable {
     @FXML private TableColumn<Hebergement, Void>    colActions;
     @FXML private Label badgeCount, pagInfo;
     @FXML private HBox  pagButtons;
-
+    @FXML private TextField galerieUrlField;
+    @FXML private TextField galerieLegendField;
+    @FXML private VBox      galerieListBox;
     /* ─── State ─── */
+    private final HebergementImage_service galerieService = new HebergementImage_service();
+    private final List<HebergementImage>   galerieTemp    = new ArrayList<>();
     private final Hebergement_service           service              = new Hebergement_service();
     private final CategorieH_service            categorieService     = new CategorieH_service();
     private final Equipement_service            equipementService    = new Equipement_service();
@@ -438,6 +454,19 @@ public class ListHebergementsController implements Initializable {
                 showSuccessPopup("Hébergement modifié avec succès !", "💾");
             }
             hebergementEqService.sauvegarder(hebergementId, selectedEqIds);
+            try {
+                galerieService.supprimerParHebergement(hebergementId);
+                for (int i = 0; i < galerieTemp.size(); i++) {
+                    HebergementImage gImg = galerieTemp.get(i);
+                    gImg.setHebergementId(hebergementId);
+                    gImg.setOrdre(i);
+                    galerieService.ajouter(gImg);
+                }
+            } catch (SQLException e) {
+                showAlert("Erreur galerie", e.getMessage());
+            }
+            galerieTemp.clear();
+            refreshGalerieList();
             onReset();
             refreshAll();
         } catch (SQLException e) { showAlert("Erreur SQL", e.getMessage()); }
@@ -474,6 +503,8 @@ public class ListHebergementsController implements Initializable {
         formSubtitle.setText("Remplissez les informations ci-dessous.");
         submitBtn.setText("➕ Ajouter");
         equipementCheckboxes.forEach(cb -> cb.setSelected(false));
+        galerieTemp.clear();
+        refreshGalerieList();
     }
 
     /* ─── Helper commun IA ─── */
@@ -586,21 +617,32 @@ public class ListHebergementsController implements Initializable {
         hebergementEnEdition = h;
         nomField.setText(h.getNom());
         villeField.setText(h.getVille());
-        adresseField.setText(h.getAdresse()                  != null ? h.getAdresse()            : "");
-        labelEcoField.setText(h.getLabel_eco()               != null ? h.getLabel_eco()          : "");
-        imagePrincipaleField.setText(h.getImage_principale() != null ? h.getImage_principale()   : "");
+        adresseField.setText(h.getAdresse()                  != null ? h.getAdresse()          : "");
+        labelEcoField.setText(h.getLabel_eco()               != null ? h.getLabel_eco()        : "");
+        imagePrincipaleField.setText(h.getImage_principale() != null ? h.getImage_principale() : "");
         nbEtoilesField.setText(String.valueOf(h.getNb_etoiles()));
         latitudeField.setText(String.valueOf(h.getLatitude()));
         longitudeField.setText(String.valueOf(h.getLongitude()));
-        descriptionField.setText(h.getDescription()          != null ? h.getDescription()        : "");
-        categorieMap.forEach((nom, id)   -> { if (id == h.getCategorie_id())   categorieCombo.setValue(nom); });
-        propietaireMap.forEach((nom, id) -> { if (id == h.getPropietaire_id()) propietaireCombo.setValue(nom); });
+        descriptionField.setText(h.getDescription()          != null ? h.getDescription()      : "");
+
+        categorieMap.entrySet().stream()
+                .filter(e -> e.getValue() == h.getCategorie_id())
+                .findFirst()
+                .ifPresent(e -> categorieCombo.setValue(e.getKey()));
+
+        propietaireMap.entrySet().stream()
+                .filter(e -> e.getValue() == h.getPropietaire_id())
+                .findFirst()
+                .ifPresent(e -> propietaireCombo.setValue(e.getKey()));
+
         if (h.getPropietaire_id() == 0) propietaireCombo.setValue("— Aucun —");
         actifCombo.setValue(h.getActif() == 1 ? "Actif" : "Inactif");
+
         categorieCombo.getStyleClass().remove("form-input-error");
         errCategorie.setVisible(false); errCategorie.setManaged(false);
         propietaireCombo.getStyleClass().remove("form-input-error");
         errPropietaire.setVisible(false); errPropietaire.setManaged(false);
+
         updateCounter();
         formIcon.setText("✏️");
         formTitle.setText("Modifier l'Hébergement");
@@ -608,12 +650,19 @@ public class ListHebergementsController implements Initializable {
         submitBtn.setText("💾 Enregistrer");
         nomField.requestFocus();
         updateMapMarker();
+
         try {
             List<Equipement> existing    = hebergementEqService.getEquipementsByHebergement(h.getId());
             List<Integer>    existingIds = existing.stream().map(Equipement::getId).toList();
             equipementCheckboxes.forEach(cb -> cb.setSelected(
                     existingIds.contains((Integer) cb.getUserData())));
         } catch (SQLException e) { showAlert("Erreur", e.getMessage()); }
+
+        galerieTemp.clear();
+        try {
+            galerieTemp.addAll(galerieService.getByHebergement(h.getId()));
+        } catch (SQLException ignored) {}
+        refreshGalerieList();
     }
 
     /* ─── Data ─── */
@@ -834,5 +883,91 @@ public class ListHebergementsController implements Initializable {
         );
         shake.setCycleCount(3);
         shake.play();
+    }
+
+    @FXML
+    private void onAjouterImageGalerie() {
+        String url = galerieUrlField.getText().trim();
+        if (url.isEmpty() || (!url.startsWith("http://") && !url.startsWith("https://"))) {
+            showSuccessPopup("Entrez une URL valide (http:// ou https://)", "⚠️");
+            return;
+        }
+        HebergementImage img = new HebergementImage(
+                0,
+                galerieTemp.size(),           // ordre
+                galerieLegendField.getText().trim(),  // legende
+                url,                          // url  ← ici c'était inversé
+                0                             // hebergementId (sera défini au save)
+        );
+        galerieTemp.add(img);
+        galerieUrlField.clear();
+        galerieLegendField.clear();
+        refreshGalerieList();
+    }
+
+    private void refreshGalerieList() {
+        galerieListBox.getChildren().clear();
+        for (int i = 0; i < galerieTemp.size(); i++) {
+            final int idx = i;
+            HebergementImage img = galerieTemp.get(i);
+
+            HBox row = new HBox(8);
+            row.setAlignment(Pos.CENTER_LEFT);
+            row.setPadding(new Insets(4));
+            row.setStyle("-fx-background-color:#f8fafc; -fx-background-radius:6;");
+
+            Label numLbl = new Label((i + 1) + ".");
+            numLbl.setStyle("-fx-font-weight:bold; -fx-text-fill:#64748b; -fx-min-width:20;");
+
+            // Miniature
+            ImageView thumb = new ImageView();
+            thumb.setFitWidth(54);
+            thumb.setFitHeight(38);
+            thumb.setPreserveRatio(true);
+            try {
+                thumb.setImage(new Image(img.getUrl(), 54, 38, true, true, true));
+            } catch (Exception ignored) {}
+
+            VBox info = new VBox(2);
+            HBox.setHgrow(info, Priority.ALWAYS);
+            Label urlLbl = new Label(img.getUrl().length() > 55
+                    ? img.getUrl().substring(0, 52) + "…" : img.getUrl());
+            urlLbl.setStyle("-fx-font-size:11px; -fx-text-fill:#0f172a;");
+            Label legLbl = new Label(img.getLegende() != null && !img.getLegende().isBlank()
+                    ? "📝 " + img.getLegende() : "");
+            legLbl.setStyle("-fx-font-size:10px; -fx-text-fill:#94a3b8;");
+            info.getChildren().addAll(urlLbl, legLbl);
+
+            Button upBtn = new Button("↑");
+            upBtn.setStyle("-fx-background-color:transparent; -fx-text-fill:#0ea5e9;"
+                    + "-fx-cursor:hand; -fx-font-size:13px; -fx-border-width:0; -fx-padding:2 6;");
+            upBtn.setDisable(i == 0);
+            upBtn.setOnAction(e -> {
+                HebergementImage moved = galerieTemp.remove(idx);
+                galerieTemp.add(idx - 1, moved);
+                refreshGalerieList();
+            });
+
+            Button downBtn = new Button("↓");
+            downBtn.setStyle("-fx-background-color:transparent; -fx-text-fill:#0ea5e9;"
+                    + "-fx-cursor:hand; -fx-font-size:13px; -fx-border-width:0; -fx-padding:2 6;");
+            downBtn.setDisable(i == galerieTemp.size() - 1);
+            downBtn.setOnAction(e -> {
+                HebergementImage moved = galerieTemp.remove(idx);
+                galerieTemp.add(idx + 1, moved);
+                refreshGalerieList();
+            });
+
+            Button delBtn = new Button("🗑");
+            delBtn.setStyle("-fx-background-color:transparent; -fx-text-fill:#e53e3e;"
+                    + "-fx-cursor:hand; -fx-font-size:13px; -fx-border-width:0;");
+            delBtn.setOnAction(e -> {
+                galerieTemp.remove(idx);
+                refreshGalerieList();
+            });
+
+            row.getChildren().addAll(numLbl, thumb, info, upBtn, downBtn, delBtn);
+            galerieListBox.getChildren().add(row);
+        }
     }
 }

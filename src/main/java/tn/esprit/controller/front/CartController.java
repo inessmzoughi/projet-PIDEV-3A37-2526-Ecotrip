@@ -25,6 +25,7 @@ import tn.esprit.models.produit.Product;
 import tn.esprit.services.TranslationService;
 import tn.esprit.services.produit.CommandeService;
 import tn.esprit.services.produit.LigneCommandeService;
+import tn.esprit.services.produit.ProductService;
 import tn.esprit.session.SessionManager;
 import tn.esprit.utils.CartManager;
 import tn.esprit.models.cart.CartItem;
@@ -74,16 +75,17 @@ public class CartController implements Initializable {
     // ── Services ───────────────────────────────────────────────────────────────
     private final CommandeService      commandeService      = new CommandeService();
     private final LigneCommandeService ligneCommandeService = new LigneCommandeService();
+    private final ProductService       productService       = new ProductService(); // ✅ AJOUT
     private final CartManager          cart                 = CartManager.getInstance();
     private final ReservationService   reservationService   = new ReservationService();
 
     // ── Radio groupe paiement ──────────────────────────────────────────────────
     private final ToggleGroup paymentGroup = new ToggleGroup();
 
-    // ── Timer JavaFX (toutes les secondes, pour rafraîchir les badges) ─────────
+    // ── Timer JavaFX (toutes les secondes) ────────────────────────────────────
     private Timeline uiTicker;
 
-    // ── Notification banner (warning d'expiration) ─────────────────────────────
+    // ── Notification banner ────────────────────────────────────────────────────
     private Label warningBanner;
 
     // ── Couleurs UI ────────────────────────────────────────────────────────────
@@ -95,8 +97,6 @@ public class CartController implements Initializable {
     private static final String WARN_BG     = "#fff3cd";
     private static final String WARN_BORDER = "#ffc107";
     private static final String WARN_TEXT   = "#856404";
-    private static final String EXPIRE_BG   = "#ffebee";
-    private static final String EXPIRE_TEXT = "#c62828";
 
     // ── Couleurs PDF ───────────────────────────────────────────────────────────
     private static final java.awt.Color PDF_GREEN_DARK  = new java.awt.Color(45,  90,  27);
@@ -112,29 +112,37 @@ public class CartController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
+        // ── 1. Lier les RadioButtons au ToggleGroup ────────────────────────────
+        rbCash.setToggleGroup(paymentGroup);
         rbCarte.setToggleGroup(paymentGroup);
         rbPaypal.setToggleGroup(paymentGroup);
-        rbCash.setToggleGroup(paymentGroup);
-        rbCarte.setSelected(true);
 
-        // ── Sélecteur de langue ────────────────────────────────────────────────
+        // ── 2. FIX DEFINITIF : forcer le texte des RadioButtons en Java ────────
+        rbCash.setText("Cash");
+        rbCarte.setText("Par carte bancaire");
+        rbPaypal.setText("PayPal");
+
+        // ── 3. Sélectionner Cash par défaut ───────────────────────────────────
+        rbCash.setSelected(true);
+
+        // ── 4. Sélecteur de langue ────────────────────────────────────────────
         if (languageSelect != null) {
-            languageSelect.getItems().addAll("🇫🇷 Français", "🇬🇧 English", "🇪🇸 Español");
-            languageSelect.setValue("🇫🇷 Français");
+            languageSelect.getItems().addAll("FR Francais", "EN English", "ES Espanol");
+            languageSelect.setValue("FR Francais");
             languageSelect.valueProperty().addListener((obs, o, n) -> {
                 if (n == null) return;
                 if      (n.contains("English")) currentLang = "en";
-                else if (n.contains("Español")) currentLang = "es";
+                else if (n.contains("Espanol")) currentLang = "es";
                 else                            currentLang = "fr";
                 applyTranslations();
                 refreshCart();
             });
         }
 
-        // ── Callbacks d'expiration ─────────────────────────────────────────────
+        // ── 5. Callbacks d'expiration ─────────────────────────────────────────
         cart.setOnWarning(label -> showWarningBanner(
-                "⚠️  " + t("L'article") + " \"" + label + "\" "
-                        + t("sera supprimé dans 1 minute !")));
+                "ATTENTION : L'article \"" + label + "\" sera supprime dans 1 minute !"));
 
         cart.setOnExpired(label -> {
             hideWarningBanner();
@@ -142,11 +150,12 @@ public class CartController implements Initializable {
             showExpiryNotification(label);
         });
 
-        // ── Ticker UI (1 s) pour rafraîchir les timers ────────────────────────
+        // ── 6. Ticker UI (1 s) ────────────────────────────────────────────────
         uiTicker = new Timeline(new KeyFrame(Duration.seconds(1), e -> refreshTimerBadges()));
         uiTicker.setCycleCount(Timeline.INDEFINITE);
         uiTicker.play();
 
+        // ── 7. Traductions + rendu ────────────────────────────────────────────
         applyTranslations();
         refreshCart();
     }
@@ -167,20 +176,22 @@ public class CartController implements Initializable {
     }
 
     private void applyTranslations() {
-        if (lblHeroTitle     != null) lblHeroTitle.setText("🛒  " + t("Mon Panier"));
-        if (lblHeroSub       != null) lblHeroSub.setText(t("Vérifiez vos articles avant de procéder au paiement"));
-        if (lblRecap         != null) lblRecap.setText(t("Récapitulatif"));
-        if (lblNbArticles    != null) lblNbArticles.setText(t("Nombre d'articles") + " :");
-        if (lblTotal         != null) lblTotal.setText(t("Total") + " :");
-        if (lblModePaiement  != null) lblModePaiement.setText(t("Mode de paiement"));
-        if (lblEmptyTitle    != null) lblEmptyTitle.setText(t("Votre panier est vide"));
-        if (lblEmptySub      != null) lblEmptySub.setText(t("Retournez à la boutique pour ajouter des produits"));
-        if (rbCarte          != null) rbCarte.setText("💳  " + t("Carte bancaire"));
-        if (rbPaypal         != null) rbPaypal.setText("🅿️  PayPal");
-        if (rbCash           != null) rbCash.setText("💵  " + t("Espèces"));
-        if (btnPayer         != null) btnPayer.setText("✅  " + t("Confirmer la commande"));
-        if (btnVider         != null) btnVider.setText("🗑  " + t("Vider le panier"));
-        if (btnExporterPDF   != null) btnExporterPDF.setText("📄  " + t("Exporter la commande en PDF"));
+        if (lblHeroTitle    != null) lblHeroTitle.setText("Mon Panier");
+        if (lblHeroSub      != null) lblHeroSub.setText(t("Verifiez vos articles avant de proceder au paiement"));
+        if (lblRecap        != null) lblRecap.setText(t("Recapitulatif"));
+        if (lblNbArticles   != null) lblNbArticles.setText(t("Nombre d'articles") + " :");
+        if (lblTotal        != null) lblTotal.setText(t("Total") + " :");
+        if (lblModePaiement != null) lblModePaiement.setText(t("Mode de paiement"));
+        if (lblEmptyTitle   != null) lblEmptyTitle.setText(t("Votre panier est vide"));
+        if (lblEmptySub     != null) lblEmptySub.setText(t("Retournez a la boutique pour ajouter des produits"));
+
+        if (btnPayer       != null) btnPayer.setText(t("Confirmer la commande"));
+        if (btnVider       != null) btnVider.setText(t("Vider le panier"));
+        if (btnExporterPDF != null) btnExporterPDF.setText(t("Exporter la commande en PDF"));
+
+        if (rbCash   != null) rbCash.setText(t("Cash"));
+        if (rbCarte  != null) rbCarte.setText(t("Par carte bancaire"));
+        if (rbPaypal != null) rbPaypal.setText("PayPal");
     }
 
     // ══════════════════════════════════════════════════════════════════════════
@@ -204,14 +215,13 @@ public class CartController implements Initializable {
             return;
         }
 
-        // ── Warning banner (injecté en tête de itemsContainer si présent) ──────
         if (warningBanner != null) {
             itemsContainer.getChildren().add(0, warningBanner);
         }
 
         // ── Réservations ──────────────────────────────────────────────────────
         if (hasReservations) {
-            Label sectionLabel = new Label("🏨  " + t("Réservations"));
+            Label sectionLabel = new Label("Reservations");
             sectionLabel.setStyle("-fx-font-size:15px; -fx-font-weight:bold; -fx-text-fill:" + GREEN_DARK + ";");
             itemsContainer.getChildren().add(sectionLabel);
             for (CartItem item : cart.getReservationItems()) {
@@ -221,7 +231,7 @@ public class CartController implements Initializable {
 
         // ── Produits ──────────────────────────────────────────────────────────
         if (hasProducts) {
-            Label sectionLabel = new Label("🛍  " + t("Produits"));
+            Label sectionLabel = new Label("Produits");
             sectionLabel.setStyle("-fx-font-size:15px; -fx-font-weight:bold; -fx-text-fill:" + GREEN_DARK + ";"
                     + (hasReservations ? "-fx-padding:16 0 0 0;" : ""));
             itemsContainer.getChildren().add(sectionLabel);
@@ -234,13 +244,9 @@ public class CartController implements Initializable {
     }
 
     // ══════════════════════════════════════════════════════════════════════════
-    //  TIMER BADGES – mis à jour chaque seconde sans reconstruire toute l'UI
+    //  TIMER BADGES
     // ══════════════════════════════════════════════════════════════════════════
 
-    /**
-     * Parcourt tous les nœuds ayant le style-class "timer-badge" et met à jour
-     * leur texte + couleur selon le temps restant stocké dans leurs UserData.
-     */
     @SuppressWarnings("unchecked")
     private void refreshTimerBadges() {
         itemsContainer.lookupAll(".timer-badge").forEach(node -> {
@@ -258,7 +264,7 @@ public class CartController implements Initializable {
                 warning   = cart.isWarning(ci);
             } else return;
 
-            badge.setText("⏱ " + CartManager.formatRemaining(remaining));
+            badge.setText("Timer : " + CartManager.formatRemaining(remaining));
 
             if (warning) {
                 badge.setStyle(
@@ -296,13 +302,13 @@ public class CartController implements Initializable {
         );
         row.setEffect(new DropShadow(6, Color.web("#00000015")));
 
-        String icon = switch (item.getType()) {
-            case HEBERGEMENT -> "🏨";
-            case ACTIVITY    -> "🧭";
-            case TRANSPORT   -> "🚌";
+        String iconText = switch (item.getType()) {
+            case HEBERGEMENT -> "[Hotel]";
+            case ACTIVITY    -> "[Activite]";
+            case TRANSPORT   -> "[Transport]";
         };
-        Label iconLabel = new Label(icon);
-        iconLabel.setStyle("-fx-font-size:28px;");
+        Label iconLabel = new Label(iconText);
+        iconLabel.setStyle("-fx-font-size:14px; -fx-font-weight:bold; -fx-text-fill:" + GREEN_DARK + ";");
 
         VBox info = new VBox(4);
         HBox.setHgrow(info, Priority.ALWAYS);
@@ -311,17 +317,15 @@ public class CartController implements Initializable {
         nom.setStyle("-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:" + GREEN_DARK + ";");
 
         String dateInfo = item.getDateFrom() != null
-                ? item.getDateFrom() + " → " + item.getDateTo()
-                + (item.getNights() > 0 ? " (" + item.getNights() + " " + t("nuits") + ")" : "")
+                ? item.getDateFrom() + " -> " + item.getDateTo()
+                + (item.getNights() > 0 ? " (" + item.getNights() + " nuits)" : "")
                 : "";
         Label dates  = new Label(dateInfo);
         dates.setStyle("-fx-font-size:12px;-fx-text-fill:" + GREY + ";");
-        Label guests = new Label("👥 " + item.getNumberOfPersons() + " " + t("personne(s)"));
+        Label guests = new Label(item.getNumberOfPersons() + " personne(s)");
         guests.setStyle("-fx-font-size:12px;-fx-text-fill:" + GREY + ";");
 
-        // Timer badge
         Label timerBadge = buildTimerBadge(item, warn);
-
         info.getChildren().addAll(nom, dates, guests, timerBadge);
 
         Label total = new Label(String.format("%.2f TND", item.getTotalPrice()));
@@ -348,26 +352,24 @@ public class CartController implements Initializable {
         );
         row.setEffect(new DropShadow(6, Color.web("#00000015")));
 
-        Label icon = new Label("🛍");
-        icon.setStyle("-fx-font-size:28px;");
+        Label icon = new Label("[Produit]");
+        icon.setStyle("-fx-font-size:13px;-fx-font-weight:bold;-fx-text-fill:" + GREEN_DARK + ";");
 
         VBox info = new VBox(4);
         HBox.setHgrow(info, Priority.ALWAYS);
-        Label nom = new Label(t(p.getNom()));
+        Label nom = new Label(p.getNom());
         nom.setStyle("-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:" + GREEN_DARK + ";");
-        Label prixUnit = new Label(String.format("%.2f TND / " + t("unité"), p.getPrix()));
+        Label prixUnit = new Label(String.format("%.2f TND / unite", p.getPrix()));
         prixUnit.setStyle("-fx-font-size:12px;-fx-text-fill:" + GREY + ";");
 
-        // Timer badge
         Label timerBadge = buildTimerBadge(p, warn);
-
         info.getChildren().addAll(nom, prixUnit, timerBadge);
 
         String qtyBtnStyle =
                 "-fx-background-color:#f0f0f0;-fx-font-size:16px;-fx-font-weight:bold;" +
                         "-fx-min-width:32px;-fx-min-height:32px;-fx-background-radius:6;-fx-cursor:hand;";
 
-        Button btnMinus = new Button("−");
+        Button btnMinus = new Button("-");
         btnMinus.setStyle(qtyBtnStyle);
         Label qtyLabel = new Label(String.valueOf(qty));
         qtyLabel.setStyle("-fx-font-size:15px;-fx-font-weight:bold;-fx-min-width:30px;");
@@ -399,13 +401,9 @@ public class CartController implements Initializable {
         return row;
     }
 
-    /**
-     * Crée un badge timer pour un Product.
-     * Le style-class "timer-badge" permet à refreshTimerBadges() de le retrouver via lookup.
-     */
     private Label buildTimerBadge(Product p, boolean warn) {
         long remaining = cart.getRemainingMillis(p);
-        Label badge = new Label("⏱ " + CartManager.formatRemaining(remaining));
+        Label badge = new Label("Timer : " + CartManager.formatRemaining(remaining));
         badge.getStyleClass().add("timer-badge");
         badge.setUserData(p);
         badge.setStyle(warn
@@ -418,12 +416,9 @@ public class CartController implements Initializable {
         return badge;
     }
 
-    /**
-     * Crée un badge timer pour un CartItem (réservation).
-     */
     private Label buildTimerBadge(CartItem item, boolean warn) {
         long remaining = cart.getRemainingMillis(item);
-        Label badge = new Label("⏱ " + CartManager.formatRemaining(remaining));
+        Label badge = new Label("Timer : " + CartManager.formatRemaining(remaining));
         badge.getStyleClass().add("timer-badge");
         badge.setUserData(item);
         badge.setStyle(warn
@@ -437,10 +432,10 @@ public class CartController implements Initializable {
     }
 
     private Button buildDeleteButton() {
-        Button btn = new Button("🗑");
+        Button btn = new Button("Supprimer");
         btn.setStyle(
                 "-fx-background-color:#ffebee;-fx-text-fill:#c62828;" +
-                        "-fx-font-size:14px;-fx-background-radius:6;-fx-cursor:hand;"
+                        "-fx-font-size:12px;-fx-background-radius:6;-fx-cursor:hand;"
         );
         return btn;
     }
@@ -451,12 +446,9 @@ public class CartController implements Initializable {
     }
 
     // ══════════════════════════════════════════════════════════════════════════
-    //  BANNER WARNING / EXPIRY NOTIFICATION
+    //  BANNER WARNING / EXPIRY
     // ══════════════════════════════════════════════════════════════════════════
 
-    /**
-     * Affiche (ou met à jour) une bannière orange en haut de la liste d'articles.
-     */
     private void showWarningBanner(String message) {
         if (warningBanner == null) {
             warningBanner = new Label();
@@ -471,7 +463,6 @@ public class CartController implements Initializable {
                         "-fx-border-width:1;-fx-border-radius:8;-fx-background-radius:8;" +
                         "-fx-padding:10 16;-fx-font-size:13px;-fx-font-weight:bold;");
 
-        // Injecter en tête si pas déjà présent
         if (!itemsContainer.getChildren().contains(warningBanner)) {
             itemsContainer.getChildren().add(0, warningBanner);
         }
@@ -484,30 +475,37 @@ public class CartController implements Initializable {
         warningBanner = null;
     }
 
-    /**
-     * Notification rouge (Alert) quand un article est définitivement supprimé.
-     */
     private void showExpiryNotification(String label) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("⏰ " + t("Article expiré"));
+        alert.setTitle("Article expire");
         alert.setHeaderText(null);
         alert.setContentText(
-                "\"" + label + "\" " +
-                        t("a été retiré de votre panier car la durée de réservation de 5 minutes est dépassée."));
+                "\"" + label + "\" a ete retire de votre panier car la duree de reservation de 5 minutes est depassee.");
         alert.showAndWait();
     }
 
     // ══════════════════════════════════════════════════════════════════════════
-    //  CONFIRMER COMMANDE
+    //  CONFIRMER COMMANDE  ✅ MODIFIÉ : décrémentation du stock
     // ══════════════════════════════════════════════════════════════════════════
 
     @FXML
     private void onConfirmer() {
         if (cart.getProductItems().isEmpty() && cart.getReservationItems().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING,
-                    t("Panier vide"),
-                    t("Ajoutez des articles avant de confirmer."));
+            showAlert(Alert.AlertType.WARNING, "Panier vide", "Ajoutez des articles avant de confirmer.");
             return;
+        }
+
+        // ✅ Vérifier que le stock est suffisant avant de procéder
+        for (Map.Entry<Product, Integer> entry : cart.getProductItems().entrySet()) {
+            Product p   = entry.getKey();
+            int     qty = entry.getValue();
+            if (p.getStock() < qty) {
+                showAlert(Alert.AlertType.WARNING,
+                        "Stock insuffisant",
+                        "Stock insuffisant pour \"" + p.getNom() + "\". "
+                                + "Disponible : " + p.getStock() + ", demandé : " + qty);
+                return;
+            }
         }
 
         boolean isPaypal = rbPaypal.isSelected();
@@ -517,14 +515,22 @@ public class CartController implements Initializable {
                 reservationService.finalizeAllReservations(cart.getReservationItems());
             }
 
+            // ✅ Créer commandes + décrémenter le stock pour chaque produit
             for (Map.Entry<Product, Integer> entry : cart.getProductItems().entrySet()) {
                 Product p   = entry.getKey();
                 int     qty = entry.getValue();
                 double  st  = p.getPrix() * qty;
+
+                // Créer la commande
                 Commande commande = new Commande(1, p.getId(), qty, p.getPrix(), st, new Date());
                 commandeService.create(commande);
                 int cid = getLastInsertedCommandeId(1, p.getId());
                 ligneCommandeService.create(new LigneCommande(cid, p.getId(), qty, p.getPrix(), st));
+
+                // ✅ Décrémenter le stock en base de données
+                int nouveauStock = p.getStock() - qty;
+                p.setStock(nouveauStock);
+                productService.update(p);
             }
 
             double total = cart.getTotal();
@@ -532,25 +538,21 @@ public class CartController implements Initializable {
 
             if (isPaypal) {
                 try {
-                    BigDecimal montantEUR = MollieConfig.convertStoreAmountToMollie(
-                            BigDecimal.valueOf(total));
+                    BigDecimal montantEUR = MollieConfig.convertStoreAmountToMollie(BigDecimal.valueOf(total));
                     MolliePaymentService mollieService = new MolliePaymentService();
                     MolliePayment molliePayment = mollieService.createPayment(
                             numeroCommande,
                             "Commande EcoTrip " + numeroCommande,
-                            montantEUR,
-                            ""
-                    );
+                            montantEUR, "");
 
                     Alert info = new Alert(Alert.AlertType.INFORMATION);
-                    info.setTitle(t("Mode test Mollie"));
-                    info.setHeaderText(t("Comment simuler le paiement ?"));
+                    info.setTitle("Mode test Mollie");
+                    info.setHeaderText("Comment simuler le paiement ?");
                     info.setContentText(
-                            t("Dans la fenêtre qui va s'ouvrir") + " :\n\n" +
-                                    "1. " + t("Cliquez sur 'TEST CARDS' (bouton bleu à droite)") + "\n" +
-                                    "2. " + t("Choisissez une carte de test") + "\n" +
-                                    "3. " + t("Le paiement sera simulé automatiquement")
-                    );
+                            "Dans la fenetre qui va s'ouvrir :\n\n" +
+                                    "1. Cliquez sur 'TEST CARDS' (bouton bleu a droite)\n" +
+                                    "2. Choisissez une carte de test\n" +
+                                    "3. Le paiement sera simule automatiquement");
                     info.showAndWait();
 
                     MollieCheckoutWindow.CheckoutResult result =
@@ -559,16 +561,13 @@ public class CartController implements Initializable {
                     if (result.successful()) {
                         stopTicker();
                         cart.clear();
-                        showAlert(Alert.AlertType.INFORMATION,
-                                t("Paiement confirmé") + " ✅",
-                                t("Paiement confirmé via Mollie") + " !\n"
-                                        + t("Commande") + " : " + numeroCommande
+                        showAlert(Alert.AlertType.INFORMATION, "Paiement confirme",
+                                "Paiement confirme via Mollie !\nCommande : " + numeroCommande
                                         + "\nTotal : " + String.format("%.2f TND", total));
                         refreshCart();
                     } else {
-                        showAlert(Alert.AlertType.WARNING,
-                                t("Paiement non complété"),
-                                t("Statut") + " : " + result.status());
+                        showAlert(Alert.AlertType.WARNING, "Paiement non complete",
+                                "Statut : " + result.status());
                     }
                     return;
                 } catch (Exception ex) {
@@ -577,13 +576,11 @@ public class CartController implements Initializable {
                 }
             }
 
-            String mode = rbCarte.isSelected() ? t("Carte bancaire") : t("Espèces");
+            String mode = rbCarte.isSelected() ? "Par carte bancaire" : "Cash";
             stopTicker();
             cart.clear();
-            showAlert(Alert.AlertType.INFORMATION,
-                    t("Commande confirmée") + " ✅",
-                    t("Votre commande a été enregistrée") + " !\n"
-                            + t("Mode") + " : " + mode
+            showAlert(Alert.AlertType.INFORMATION, "Commande confirmee",
+                    "Votre commande a ete enregistree !\nMode : " + mode
                             + "\nTotal : " + String.format("%.2f TND", total));
             refreshCart();
 
@@ -600,8 +597,6 @@ public class CartController implements Initializable {
                 .orElse(-1);
     }
 
-    // ── Stop/start ticker ─────────────────────────────────────────────────────
-
     private void stopTicker() {
         if (uiTicker != null) uiTicker.stop();
     }
@@ -613,14 +608,13 @@ public class CartController implements Initializable {
     @FXML
     private void onVider() {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle(t("Vider le panier"));
-        confirm.setHeaderText(t("Êtes-vous sûr de vouloir vider le panier ?"));
+        confirm.setTitle("Vider le panier");
+        confirm.setHeaderText("Etes-vous sur de vouloir vider le panier ?");
         confirm.showAndWait().ifPresent(btn -> {
             if (btn == ButtonType.OK) {
                 stopTicker();
                 cart.clear();
                 refreshCart();
-                // Relancer le ticker (prêt pour un nouvel ajout)
                 uiTicker.play();
             }
         });
@@ -633,14 +627,12 @@ public class CartController implements Initializable {
     @FXML
     private void onExporterPDF() {
         if (cart.getProductItems().isEmpty() && cart.getReservationItems().isEmpty()) {
-            showAlert(Alert.AlertType.WARNING,
-                    t("Panier vide"),
-                    t("Le panier est vide, rien à exporter."));
+            showAlert(Alert.AlertType.WARNING, "Panier vide", "Le panier est vide, rien a exporter.");
             return;
         }
 
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle(t("Enregistrer la facture PDF"));
+        fileChooser.setTitle("Enregistrer la facture PDF");
         fileChooser.setInitialFileName(
                 "facture_" + new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".pdf");
         fileChooser.getExtensionFilters().add(
@@ -663,12 +655,12 @@ public class CartController implements Initializable {
             Font fGrandTotal = new Font(Font.HELVETICA, 16, Font.BOLD,   PDF_GREEN_DARK);
             Font fMode       = new Font(Font.HELVETICA, 10, Font.ITALIC, PDF_GREY);
 
-            Paragraph titre = new Paragraph(t("FACTURE / BON DE COMMANDE"), fTitle);
+            Paragraph titre = new Paragraph("FACTURE / BON DE COMMANDE", fTitle);
             titre.setAlignment(Element.ALIGN_CENTER);
             doc.add(titre);
 
             String dateStr = new SimpleDateFormat("dd/MM/yyyy  HH:mm").format(new Date());
-            Paragraph datePara = new Paragraph(t("Date") + " : " + dateStr, fSubTitle);
+            Paragraph datePara = new Paragraph("Date : " + dateStr, fSubTitle);
             datePara.setAlignment(Element.ALIGN_CENTER);
             datePara.setSpacingBefore(4);
             doc.add(datePara);
@@ -677,7 +669,7 @@ public class CartController implements Initializable {
             doc.add(new Paragraph(" "));
 
             if (!cart.getReservationItems().isEmpty()) {
-                Paragraph secRes = new Paragraph(t("Réservations"), fSection);
+                Paragraph secRes = new Paragraph("Reservations", fSection);
                 secRes.setSpacingBefore(6);
                 secRes.setSpacingAfter(6);
                 doc.add(secRes);
@@ -685,10 +677,7 @@ public class CartController implements Initializable {
                 PdfPTable tRes = new PdfPTable(new float[]{3f, 2f, 2f, 1.5f, 1.8f});
                 tRes.setWidthPercentage(100);
                 tRes.setSpacingAfter(8);
-
-                addTableHeader(tRes, fTHeader,
-                        t("Désignation"), t("Date début"), t("Date fin"),
-                        t("Personnes"), t("Total (TND)"));
+                addTableHeader(tRes, fTHeader, "Designation", "Date debut", "Date fin", "Personnes", "Total (TND)");
 
                 double sousTotal = 0;
                 boolean alt = false;
@@ -703,13 +692,12 @@ public class CartController implements Initializable {
                     sousTotal += item.getTotalPrice();
                     alt = !alt;
                 }
-                addSubTotalRow(tRes, fSubtotal, 4,
-                        t("Sous-total") + " : " + String.format("%.2f TND", sousTotal));
+                addSubTotalRow(tRes, fSubtotal, 4, "Sous-total : " + String.format("%.2f TND", sousTotal));
                 doc.add(tRes);
             }
 
             if (!cart.getProductItems().isEmpty()) {
-                Paragraph secProd = new Paragraph(t("Produits"), fSection);
+                Paragraph secProd = new Paragraph("Produits", fSection);
                 secProd.setSpacingBefore(12);
                 secProd.setSpacingAfter(6);
                 doc.add(secProd);
@@ -717,9 +705,7 @@ public class CartController implements Initializable {
                 PdfPTable tProd = new PdfPTable(new float[]{3.5f, 2f, 1.2f, 2f});
                 tProd.setWidthPercentage(100);
                 tProd.setSpacingAfter(8);
-
-                addTableHeader(tProd, fTHeader,
-                        t("Produit"), t("Prix unit. (TND)"), t("Qté"), t("Sous-total (TND)"));
+                addTableHeader(tProd, fTHeader, "Produit", "Prix unit. (TND)", "Qte", "Sous-total (TND)");
 
                 double sousTotal = 0;
                 boolean alt = false;
@@ -736,8 +722,7 @@ public class CartController implements Initializable {
                     sousTotal += st;
                     alt = !alt;
                 }
-                addSubTotalRow(tProd, fSubtotal, 3,
-                        t("Sous-total") + " : " + String.format("%.2f TND", sousTotal));
+                addSubTotalRow(tProd, fSubtotal, 3, "Sous-total : " + String.format("%.2f TND", sousTotal));
                 doc.add(tProd);
             }
 
@@ -745,34 +730,31 @@ public class CartController implements Initializable {
             doc.add(new Paragraph(" "));
 
             Paragraph grandTotal = new Paragraph(
-                    t("TOTAL GÉNÉRAL") + " : " + String.format("%.2f TND", cart.getTotal()),
-                    fGrandTotal);
+                    "TOTAL GENERAL : " + String.format("%.2f TND", cart.getTotal()), fGrandTotal);
             grandTotal.setAlignment(Element.ALIGN_RIGHT);
             doc.add(grandTotal);
 
-            String mode = rbCarte.isSelected() ? t("Carte bancaire")
-                    : rbPaypal.isSelected() ? "PayPal" : t("Espèces");
-            Paragraph modePara = new Paragraph(t("Mode de paiement") + " : " + mode, fMode);
+            String mode = rbCarte.isSelected() ? "Par carte bancaire"
+                    : rbPaypal.isSelected() ? "PayPal" : "Cash";
+            Paragraph modePara = new Paragraph("Mode de paiement : " + mode, fMode);
             modePara.setAlignment(Element.ALIGN_RIGHT);
             modePara.setSpacingBefore(4);
             doc.add(modePara);
 
             doc.add(new Paragraph(" "));
             doc.add(buildSeparatorTable(new java.awt.Color(200, 200, 200)));
-            Paragraph footer = new Paragraph(
-                    t("Merci pour votre confiance") + " — ESPRIT Eco-Tourism", fSubTitle);
+            Paragraph footer = new Paragraph("Merci pour votre confiance - ESPRIT Eco-Tourism", fSubTitle);
             footer.setAlignment(Element.ALIGN_CENTER);
             footer.setSpacingBefore(6);
             doc.add(footer);
 
             doc.close();
 
-            showAlert(Alert.AlertType.INFORMATION,
-                    t("Export réussi") + " ✅",
-                    t("Facture enregistrée") + " :\n" + file.getAbsolutePath());
+            showAlert(Alert.AlertType.INFORMATION, "Export reussi",
+                    "Facture enregistree :\n" + file.getAbsolutePath());
 
         } catch (Exception ex) {
-            showAlert(Alert.AlertType.ERROR, t("Erreur export PDF"), ex.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Erreur export PDF", ex.getMessage());
         }
     }
 
