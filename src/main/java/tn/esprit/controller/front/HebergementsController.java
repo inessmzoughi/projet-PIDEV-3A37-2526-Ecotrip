@@ -1,5 +1,6 @@
 package tn.esprit.controller.front;
-
+import javafx.concurrent.Task;
+import javafx.application.Platform;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -40,6 +41,7 @@ import java.util.stream.Collectors;
 
 import javafx.fxml.FXMLLoader;
 import tn.esprit.utils.CartManager;
+import tn.esprit.utils.HebergementEventBus;
 
 public class HebergementsController implements Initializable {
 
@@ -71,11 +73,18 @@ public class HebergementsController implements Initializable {
     private static final String UPLOADS_DIR = "uploads/hebergements/";
 
     private int currentPage = 1;
+    // ── Auto-refresh ──
+    private Timeline      autoRefreshTimeline;
+    private boolean       isFiltering  = false;
+    private boolean       isModalOpen  = false;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         loadData();
         setupFilters();
+        startAutoRefresh();
+        HebergementEventBus.subscribe(this::silentRefresh); // Event Bus
+
     }
 
     /* ─────────────── DATA ─────────────── */
@@ -109,6 +118,34 @@ public class HebergementsController implements Initializable {
         filterVille.setOnAction(e -> applyFilters());
         filterEtoiles.setOnAction(e -> applyFilters());
         sortSelect.setOnAction(e -> applyFilters());
+        // Détecter si l'utilisateur filtre → pause refresh
+        searchField.setOnKeyReleased(e -> {
+            isFiltering = !searchField.getText().trim().isEmpty();
+            applyFilters();
+            if (!isFiltering) restartRefreshTimer();
+        });
+
+        filterVille.setOnAction(e -> {
+            String v = filterVille.getValue();
+            isFiltering = v != null && !v.equals("villes");
+            applyFilters();
+            if (!isFiltering) restartRefreshTimer();
+        });
+
+        filterEtoiles.setOnAction(e -> {
+            String v = filterEtoiles.getValue();
+            isFiltering = v != null && !v.equals("etoiles");
+            applyFilters();
+            if (!isFiltering) restartRefreshTimer();
+        });
+
+        sortSelect.setOnAction(e -> {
+            String v = sortSelect.getValue();
+            isFiltering = v != null && !v.isEmpty()
+                    && !v.equals("Sort by");
+            applyFilters();
+            if (!isFiltering) restartRefreshTimer();
+        });
     }
 
     private void applyFilters() {
@@ -457,7 +494,8 @@ public class HebergementsController implements Initializable {
     private void onReserver(Hebergement h) {
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/views/front/modals/HebergementReservationModal.fxml"));
+                    getClass().getResource(
+                            "/views/front/modals/HebergementReservationModal.fxml"));
             StackPane modalOverlay = loader.load();
 
             HebergementReservationController ctrl = loader.getController();
@@ -480,16 +518,24 @@ public class HebergementsController implements Initializable {
                 overlayContainer.getChildren().get(0)
                         .setEffect(new javafx.scene.effect.GaussianBlur(8));
 
+            // ← Modal ouvert → pause refresh
+            isModalOpen = true;
+            restartRefreshTimer();
+
             ctrl.setOnCartUpdated(() -> {
-                System.out.println("Cart: " + CartManager.getInstance().getCount());
+                System.out.println("Cart: "
+                        + CartManager.getInstance().getCount());
                 overlayContainer.getChildren().get(0).setEffect(null);
+
+                // ← Modal fermé → refresh reprend
+                isModalOpen = false;
+                restartRefreshTimer();
             });
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
     private void ouvrirDetail(Hebergement h) {
         try {
             HebergementDetailController ctrl =
@@ -509,5 +555,62 @@ public class HebergementsController implements Initializable {
         filteredData = allData;
         currentPage  = 1;
         renderPage();
+
+        // ← refresh reprend après reset
+        isFiltering = false;
+        restartRefreshTimer();
+    }
+    /* ─────────────── AUTO-REFRESH ─────────────── */
+
+    private void startAutoRefresh() {
+        autoRefreshTimeline = new Timeline(
+                new KeyFrame(Duration.seconds(30), e -> silentRefresh())
+        );
+        autoRefreshTimeline.setCycleCount(Timeline.INDEFINITE);
+        autoRefreshTimeline.play();
+    }
+
+    private void restartRefreshTimer() {
+        if (autoRefreshTimeline != null) {
+            autoRefreshTimeline.stop();
+            // Ne redémarre pas si filtres actifs ou modal ouvert
+            if (!isFiltering && !isModalOpen) {
+                autoRefreshTimeline.play();
+            }
+        }
+    }
+
+    private void silentRefresh() {
+        // Ne rien faire si filtre actif ou modal ouvert
+        if (isFiltering || isModalOpen) return;
+
+        Task<List<Hebergement>> task = new Task<>() {
+            @Override
+            protected List<Hebergement> call() throws Exception {
+                return service.getAll(); // thread séparé → pas de gel UI
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            // Retour sur le thread JavaFX
+            List<Hebergement> newData = task.getValue();
+
+            // Mettre à jour seulement si changement
+            if (newData.size() != allData.size()) {
+                allData      = newData;
+                filteredData = newData;
+                currentPage  = 1;
+                renderPage();
+                System.out.println("✅ Liste hébergements mise à jour : "
+                        + newData.size() + " éléments");
+            }
+        });
+
+        task.setOnFailed(e -> {
+            System.err.println("❌ Erreur refresh : "
+                    + task.getException().getMessage());
+        });
+
+        new Thread(task).start();
     }
 }

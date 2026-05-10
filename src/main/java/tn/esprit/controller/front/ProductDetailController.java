@@ -49,7 +49,6 @@ public class ProductDetailController implements Initializable {
 
     // ── Constants ─────────────────────────────────────────────────────────────
 
-
     // ── State ─────────────────────────────────────────────────────────────────
     private Product       currentProduct;
     private List<Product> allProducts;
