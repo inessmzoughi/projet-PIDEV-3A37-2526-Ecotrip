@@ -1,4 +1,9 @@
 package tn.esprit.controller.back;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.concurrent.Task;
+import javafx.util.Duration;
+import java.util.List;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -20,6 +25,7 @@ import tn.esprit.services.produit.CommandeService;
 import tn.esprit.services.produit.ProductCategoryService;
 import tn.esprit.services.produit.ProductService;
 import tn.esprit.session.SessionManager;
+import tn.esprit.utils.HebergementEventBus;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -50,6 +56,8 @@ public class DashboardController {
     @FXML private BarChart<String, Number> chartTopRevenueHeb;
     @FXML private CategoryAxis             xAxisRevenue;
     @FXML private NumberAxis               yAxisRevenue;
+    private Timeline dashboardRefreshTimeline;
+
 
     // ── Transport module ──────────────────────────────────────────────────────
     @FXML private Label mstatTransports;
@@ -126,6 +134,9 @@ public class DashboardController {
         loadStats();
         loadCharts();
         loadRecentActivites();
+        startDashboardRefresh();
+        HebergementEventBus.subscribe(this::silentRefreshDashboard); // Event Bus
+
     }
 
     // ── Stats globales ────────────────────────────────────────────────────────
@@ -484,4 +495,44 @@ public class DashboardController {
     @FXML private void handleNewCatBoutique()   { SceneManager.navigateTo(Routes.ADMIN_BOUTIQUE); }
     @FXML private void handleViewCommandes()    { SceneManager.navigateTo(Routes.ADMIN_BOUTIQUE); }
     @FXML private void handleViewPaiements()    { SceneManager.navigateTo(Routes.ADMIN_BOUTIQUE); }
+    /* ─────────────── AUTO-REFRESH DASHBOARD ─────────────── */
+
+    private void startDashboardRefresh() {
+        dashboardRefreshTimeline = new Timeline(
+                new KeyFrame(Duration.seconds(30), e -> silentRefreshDashboard())
+        );
+        dashboardRefreshTimeline.setCycleCount(Timeline.INDEFINITE);
+        dashboardRefreshTimeline.play();
+    }
+
+    private void silentRefreshDashboard() {
+        Task<Void> task = new Task<>() {
+            @Override
+            protected Void call() throws Exception {
+                // Charger en arrière-plan
+                List<Hebergement> hebs    = hebergementService.getAll();
+                int totalHeb              = hebs.size();
+                int totalEq               = equipementService.getAll().size();
+                int totalCat              = categorieHService.getAll().size();
+
+                // Retour sur le thread JavaFX
+                Platform.runLater(() -> {
+                    statHebergements.setText(String.valueOf(totalHeb));
+                    mstatHebergements.setText(String.valueOf(totalHeb));
+                    mstatEquipements.setText(String.valueOf(totalEq));
+                    mstatCategoriesHeb.setText(String.valueOf(totalCat));
+                    System.out.println("✅ Dashboard hébergements rafraîchi : "
+                            + totalHeb + " hébergements");
+                });
+                return null;
+            }
+        };
+
+        task.setOnFailed(e ->
+                System.err.println("❌ Erreur refresh dashboard : "
+                        + task.getException().getMessage())
+        );
+
+        new Thread(task).start();
+    }
 }

@@ -44,7 +44,7 @@ import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.util.Duration;
 import tn.esprit.services.hebergement.AvisHebergement_service;
-
+import tn.esprit.utils.HebergementEventBus;
 
 
 public class ListHebergementsController implements Initializable {
@@ -436,6 +436,7 @@ public class ListHebergementsController implements Initializable {
                         imagePrincipaleField.getText().trim(), labelEcoField.getText().trim(),
                         lat, lng, actif, categorieId, propietaireId));
                 showSuccessPopup("Hébergement ajouté avec succès !", "✅");
+                HebergementEventBus.publish();
             } else {
                 hebergementEnEdition.setNom(nomField.getText().trim());
                 hebergementEnEdition.setVille(villeField.getText().trim());
@@ -452,6 +453,7 @@ public class ListHebergementsController implements Initializable {
                 service.modifier(hebergementEnEdition);
                 hebergementId = hebergementEnEdition.getId();
                 showSuccessPopup("Hébergement modifié avec succès !", "💾");
+                HebergementEventBus.publish();
             }
             hebergementEqService.sauvegarder(hebergementId, selectedEqIds);
             try {
@@ -785,6 +787,7 @@ public class ListHebergementsController implements Initializable {
             try {
                 hebergementEqService.supprimerParHebergement(h.getId());
                 service.supprimer(h.getId());
+                HebergementEventBus.publish();
                 if (hebergementEnEdition != null
                         && hebergementEnEdition.getId() == h.getId()) onReset();
                 refreshAll();
